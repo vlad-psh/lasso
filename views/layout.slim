@@ -8,6 +8,12 @@ html
     script src="/js/jquery-rails.js"
     link rel="stylesheet" type="text/css" href="/main.css"
   body
+    div#main-menu
+      a.r href=path_to(:radicals) Radicals
+      '  | 
+      a.k href=path_to(:kanjis) Kanji
+      '  | 
+      a.w href=path_to(:words) Vocab
     div#container
       == yield
 

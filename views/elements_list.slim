@@ -1,0 +1,10 @@
+- cl = 0
+- @elements.each do |e|
+  div.elements-list-item
+    div.level-wrapper
+      div.level
+        - if cl != e.level
+          - cl = e.level
+          = cl
+    div.element = e.title
+    div.description = e.description

@@ -1,9 +1,12 @@
 table
   tr
     td
-    td.r Radicals
-    td.k Kanji
-    td.w Vocab
+    td.r
+      a href=path_to(:radicals) Radicals
+    td.k
+      a href=path_to(:kanjis) Kanji
+    td.w
+      a href=path_to(:words) Vocab
   tr
     td Current level
     td = @current_level[:r][:level]

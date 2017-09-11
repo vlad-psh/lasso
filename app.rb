@@ -11,7 +11,13 @@ require_relative './models.rb'
 
 also_reload './models.rb'
 
-paths index: '/'
+paths index: '/',
+    radicals: '/radicals',
+    radical: '/radical/:name',
+    kanjis: '/kanjis',
+    kanji: '/kanji/:name',
+    words: '/words',
+    word: '/word/:id'
 
 configure do
   puts '---> init <---'
@@ -39,3 +45,32 @@ get :index do
   slim :index
 end
 
+get :radicals do
+  @elements = Radical.all.order(level: :asc)
+  slim :elements_list
+end
+
+get :radical do
+  @radical = Radical.find_by(title: params[:name])
+  slim :radical
+end
+
+get :kanjis do
+  @elements = Kanji.all.order(level: :asc)
+  slim :elements_list
+end
+
+get :kanji do
+  @kanji = Kanji.find_by(title: params[:name])
+  slim :kanji
+end
+
+get :words do
+  @elements = Word.all.order(level: :asc)
+  slim :elements_list
+end
+
+get :word do
+  @word = Word.find(params[:id])
+  slim :word
+end
