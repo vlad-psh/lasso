@@ -1,0 +1,16 @@
+table
+  tr
+    td
+    td.r Radicals
+    td.k Kanji
+    td.w Vocab
+  tr
+    td Current level
+    td = @current_level[:r][:level]
+    td = @current_level[:k][:level]
+    td = @current_level[:w][:level]
+  tr
+    td Available items
+    td = @current_level[:r][:count]
+    td = @current_level[:k][:count]
+    td = @current_level[:w][:count] 

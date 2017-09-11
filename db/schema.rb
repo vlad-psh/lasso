@@ -22,6 +22,13 @@ ActiveRecord::Schema.define(version: 20170910171629) do
     t.json "yomi"
     t.json "details"
     t.string "similar", array: true
+    t.boolean "unlocked", default: false
+    t.integer "deck", default: 0
+    t.integer "passes", default: 0
+    t.integer "fails", default: 0
+    t.date "reviewed"
+    t.date "scheduled"
+    t.index ["title"], name: "index_kanjis_on_title"
   end
 
   create_table "kanjis_radicals", force: :cascade do |t|
@@ -43,6 +50,13 @@ ActiveRecord::Schema.define(version: 20170910171629) do
     t.string "title"
     t.string "en"
     t.json "details"
+    t.boolean "unlocked", default: false
+    t.integer "deck", default: 0
+    t.integer "passes", default: 0
+    t.integer "fails", default: 0
+    t.date "reviewed"
+    t.date "scheduled"
+    t.index ["en"], name: "index_radicals_on_en"
   end
 
   create_table "words", force: :cascade do |t|
@@ -53,6 +67,12 @@ ActiveRecord::Schema.define(version: 20170910171629) do
     t.string "readings", array: true
     t.json "sentences"
     t.json "details"
+    t.boolean "unlocked", default: false
+    t.integer "deck", default: 0
+    t.integer "passes", default: 0
+    t.integer "fails", default: 0
+    t.date "reviewed"
+    t.date "scheduled"
   end
 
 end

@@ -1,0 +1,17 @@
+body {
+  font-family: Cambria, FA M, serif;
+  font-weight: 300;
+  font-size: 12pt;
+}
+.r {
+  background-color: #0af;
+  color: white;
+}
+.k {
+  background-color: #f0a;
+  color: white;  
+}
+.w {
+  background-color: #a0f;
+  color: white;
+}

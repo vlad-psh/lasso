@@ -7,9 +7,9 @@ gem 'slim'
 
 gem 'sinatra-activerecord'
 ## db engines
-gem 'sqlite3'
+#gem 'sqlite3'
 #gem 'mysql2'
-#gem 'pg'
+gem 'pg'
 
 gem 'rack-flash3'
 gem 'puma'
