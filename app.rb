@@ -6,10 +6,13 @@ require 'slim'
 
 require 'rack-flash'
 require 'yaml'
+require 'redcloth'
 
 require_relative './models.rb'
+require_relative './helpers.rb'
 
 also_reload './models.rb'
+also_reload './helpers.rb'
 
 paths index: '/',
     radicals: '/radicals',
@@ -34,6 +37,8 @@ configure do
   use Rack::Flash
 end
 
+helpers WakameHelpers
+
 get :index do
   # cl is a CurrentLevel information
   cl = {r: {}, k: {}, w: {}}
@@ -51,7 +56,7 @@ get :radicals do
 end
 
 get :radical do
-  @radical = Radical.find_by(title: params[:name])
+  @radical = Radical.find_by(en: params[:name])
   slim :radical
 end
 
