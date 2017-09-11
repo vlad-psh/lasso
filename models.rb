@@ -5,21 +5,22 @@ class Radical < ActiveRecord::Base
     return self.en
   end
 
-  def link
-    path_to(:radical).with(description)
+  def link_params
+    return {resource: :radical, id: self.description}
   end
 end
 
 class Kanji < ActiveRecord::Base
   has_and_belongs_to_many :radicals
   has_and_belongs_to_many :words
+  include(Sinatra::PathBuilderSupport)
 
   def description
     return self.yomi[self.yomi['emph']].split(',')[0].strip
   end
 
-  def link
-    path_to(:kanji).with(self.title)
+  def link_params
+    return {resource: :kanji, id: self.title}
   end
 end
 
@@ -30,7 +31,7 @@ class Word < ActiveRecord::Base
     return self.en.first
   end
 
-  def link
-    path_to(:word).with(self.id)
+  def link_params
+    return {resource: :word, id: self.id}
   end
 end

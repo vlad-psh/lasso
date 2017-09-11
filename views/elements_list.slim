@@ -1,10 +1,14 @@
 - cl = 0
-- @elements.each do |e|
+- elements = @elements unless elements
+- elements.each do |e|
   div.elements-list-item
     div.level-wrapper
       div.level
         - if cl != e.level
           - cl = e.level
           = cl
-    div.element = e.title
-    div.description = e.description
+    - p = e.link_params
+    div.element-block.r
+      a href=path_to(p[:resource]).with(p[:id])
+        div.element = e.title
+        div.description = e.description

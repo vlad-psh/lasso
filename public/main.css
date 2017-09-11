@@ -3,33 +3,42 @@ body {
   font-weight: 300;
   font-size: 12pt;
 }
+.r, .r a,
+.k, .k a,
+.w, .w a,
+.y, .y a {
+  color: white;
+  text-decoration: none;
+}
 .r, .r a {
   background-color: #0af;
-  color: white;
 }
 .k, .k a {
   background-color: #f0a;
-  color: white;  
 }
 .w, .w a {
   background-color: #a0f;
-  color: white;
+}
+.y, .y a {
+  color: black;
+  background-color: #af0;
 }
 .elements-list-item {
   display: inline-block;
-  min-width: 50px;
+  min-width: 4em;
   text-align: center;
-  margin: 12px 6px 6px 6px;
-  background-color: #fff;
+  margin: 0.5em 0.2em 0.2em 0.2em;
 }
 .elements-list-item .level-wrapper {
   font-size: 2em;
   height: 1.4em;
-  text-align: center
+  color: #777;
 }
 .elements-list-item .level {
-  font-weight: bold;
-  position: absolute;
+  font-style: italic;
+}
+.elements-list-item .element-block {
+  padding: 0.5em 0 0.5em 0;
 }
 .elements-list-item .element {
   font-size: 2em;

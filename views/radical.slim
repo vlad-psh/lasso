@@ -1,0 +1,22 @@
+- r = @radical
+div style="width: 400px; background-color: #f5f5f5; padding: 4px 16px; margin: 12px 0"
+  div style="float: left; margin-right: 20px"
+    p style="font-size: 4em; margin: 12px 0 0 0" = r.title
+    p style="margin: 0; text-align: center; color: #777" = r.en
+  div style="float: right; text-align: right; #{r.reviewed ? '' : 'opacity: 0.3'}"
+    p
+      = "DECK: #{r.deck}"
+      br
+      = "PASSES: #{r.passes}"
+      br
+      = "FAILS: #{r.fails}"
+
+  p = "Level: #{r.level}"
+  div style="clear: both; padding-top: 12px; font-style: italic"
+    p = r.details['nmne']
+    - if r.details['nhnt'] && !r.details['nhnt'].empty?
+      p = "Hint: #{r.details['nhnt']}"
+  - if r.reviewed
+    p style="color: #999" = "reviewed at: #{r.reviewed}; scheduled: #{r.scheduled}"
+  div style="font-size: 0.7em"
+    == slim :elements_list, locals: {elements: r.kanjis.order(level: :asc)}
