@@ -4,38 +4,39 @@ ruby:
         'mmne' => 'Meaning Mnemonic', 'mhnt' => 'Meaning Hint',
         'rmne' => 'Reading Mnemonic', 'rhnt' => 'Reading Hint',
         'mexp' => 'Meaning Explanation', 'rexp' => 'Reading Explanation'}
-div style="width: 500px; background-color: #f5f5f5; padding: 4px 16px; margin: 12px 0"
+
+div.element-card
   div style="float: left; margin-right: 20px"
     p style="font-size: 4em; margin: 12px 0 0 0" = e.title
     p style="margin: 0; text-align: center; color: #777" = e.en
 
-  div style="float: right; text-align: right; #{e.reviewed ? '' : 'opacity: 0.3'}"
+  div.srs-info
     p
-      = "DECK: #{e.deck}"
+      = "deck: #{e.deck}"
       br
-      = "PASSES: #{e.passes}"
+      = "passes: #{e.passes}"
       br
-      = "FAILS: #{e.fails}"
+      = "fails: #{e.fails}"
 
   p = "Level: #{e.level}"
 
-  div style="clear: both; padding-top: 12px; font-style: italic"
+  div.mnemonics
     - details_tags.each do |i,title|
       - if e.details[i] && !e.details[i].empty?
         div.hr-title: span = title
-        div style="#{i['hnt'] ? 'color: #777' : nil}" == bb_textile(e.details[i])
+        div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.details[i])
 
   - if e.reviewed
     p style="color: #999" = "reviewed at: #{e.reviewed}; scheduled: #{e.scheduled}"
 
   - if e.kind_of?(Kanji)
     div.hr-title: span Radicals
-    div style="font-size: 0.7em; font-weight: 100"
+    div.relative-elements-list
       == slim :elements_list, locals: {elements: e.radicals.order(level: :asc)}
     div.hr-title: span Vocabulary
-    div style="font-size: 0.7em; font-weight: 100"
+    div.relative-elements-list
       == slim :elements_list, locals: {elements: e.words.order(level: :asc)}
   - else
     div.hr-title: span Kanji
-    div style="font-size: 0.7em; font-weight: 100"
+    div.relative-elements-list
       == slim :elements_list, locals: {elements: e.kanjis.order(level: :asc)}
