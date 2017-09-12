@@ -60,3 +60,22 @@ kanjis.each do |_k|
     end
   end
 end
+
+{'bear' => '㠯', 'beggar' => '丂', 'boob' => '𠫓', 'gun' => '𠂉',
+'leaf' => '丆', 'shark' => '烝', 'bar' => '㦮', 'blackjack' => '龷',
+'chinese' => '𦰩', 'cleat' => '⺤', 'cloak' => '𠃌', 'death star' => '俞',
+'grass' => '⺍', 'hat' => '𠆢', 'hills' => '之', 'horns' => '丷',
+'morning' => '𠦝', 'saw' => '巩', 'spikes' => '业', 'squid' => '㑒',
+'stick' => '⼁', 'train' => '𡗗', 'triceratops' => '⺌', 'water slide' => '⻌'}.each do |k,v|
+  r = Radical.find_by(en: k)
+  if r.title.empty?
+    r.title = v
+    r.save
+  end
+end; nil
+
+# unlock all level 1 radicals
+Radical.where(level: 1).each do |r|
+  r.unlocked = true
+  r.save
+end
