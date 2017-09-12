@@ -46,3 +46,33 @@ body {
 .elements-list-item .description {
   font-size: 0.8em;
 }
+/* ELEMENT ================== */
+.hr-title {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #bbb;
+  font-size: 0.8em;
+}
+.hr-title > span {
+  position: relative;
+  display: inline-block;
+}
+.hr-title > span:before,
+.hr-title > span:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #ddd;
+}
+.hr-title > span:before {
+  right: 100%;
+  margin-right: 15px;
+}
+.hr-title > span:after {
+  left: 100%;
+  margin-left: 15px;
+}

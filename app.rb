@@ -57,7 +57,7 @@ end
 
 get :radical do
   @radical = Radical.find_by(en: params[:name])
-  slim :radical
+  slim :element
 end
 
 get :kanjis do
@@ -67,7 +67,7 @@ end
 
 get :kanji do
   @kanji = Kanji.find_by(title: params[:name])
-  slim :kanji
+  slim :element
 end
 
 get :words do
@@ -77,5 +77,5 @@ end
 
 get :word do
   @word = Word.find(params[:id])
-  slim :word
+  slim :element
 end
