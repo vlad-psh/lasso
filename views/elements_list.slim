@@ -7,8 +7,7 @@
         - if cl != e.level
           - cl = e.level
           = cl
-    - p = e.link_params
     div class="element-block #{wk_level(e)}"
-      a href=path_to(p[:resource]).with(p[:id])
+      a href=wk_link(e)
         div.element = e.title
         div.description = e.description

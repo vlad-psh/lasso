@@ -25,4 +25,20 @@ module WakameHelpers
       return 'locked'
     end
   end
+
+  def wk_link(e)
+    return path_to(e.model_name.singular.to_sym).with(e.id)
+  end
+
+  def find_element(type, id)
+    if [:radical, :r].include?(type.to_sym)
+      return Radical.find(id)
+    elsif [:kanji, :k].include?(type.to_sym)
+      return Kanji.find(id)
+    elsif [:word, :w].include?(type.to_sym)
+      return Word.find(id)
+    else
+      return nil
+    end
+  end
 end

@@ -16,11 +16,12 @@ also_reload './helpers.rb'
 
 paths index: '/',
     radicals: '/radicals',
-    radical: '/radical/:name',
+    radical: '/radical/:id',
     kanjis: '/kanjis',
-    kanji: '/kanji/:name',
+    kanji: '/kanji/:id',
     words: '/words',
-    word: '/word/:id'
+    word: '/word/:id',
+    learn: '/learn/:type/:id'
 
 configure do
   puts '---> init <---'
@@ -56,7 +57,7 @@ get :radicals do
 end
 
 get :radical do
-  @radical = Radical.find_by(en: params[:name])
+  @radical = Radical.find(params[:id])
   slim :element
 end
 
@@ -66,7 +67,7 @@ get :kanjis do
 end
 
 get :kanji do
-  @kanji = Kanji.find_by(title: params[:name])
+  @kanji = Kanji.find(params[:id])
   slim :element
 end
 
@@ -78,4 +79,10 @@ end
 get :word do
   @word = Word.find(params[:id])
   slim :element
+end
+
+post :learn do
+  e = find_element(params[:type], params[:id])
+  halt(503, 'Unknown element type') unless e
+  e.learn!
 end
