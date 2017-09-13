@@ -8,17 +8,44 @@ ruby:
 div.element-card
   div style="float: left; margin-right: 20px"
     p style="font-size: 4em; margin: 12px 0 0 0" = e.title
-    p style="margin: 0; text-align: center; color: #777" = e.en
 
-  div.srs-info
-    p
-      = "deck: #{e.deck}"
-      br
-      = "passes: #{e.passes}"
-      br
-      = "fails: #{e.fails}"
+    table.details
+      tr.headers
+        td Level
+        td Meaning
+        td Reading
+        td Progress
+      tr
+        td.level = e.level 
+        td.meaning
+          - if e.kind_of?(Radical)
+            = e.en
+          - else
+            = e.en.shift
+            span.secondary
+              - e.en.each do |en|
+                = ", #{en}"
+        td.reading
+          - if e.kind_of?(Kanji)
+            - emph = e.yomi['emph']
+            table
+              tr
+                - %w(音 訓 名).each do |y|
+                  td.yomi = y
+              tr
+                - %w(on kun nanori).each do |y|
+                  td class="#{y == emph ? 'primary' : 'secondary'}" = e.yomi[y] ? e.yomi[y] : '-'
+          - elsif e.kind_of?(Word)
+            = e.readings.join(", ")
+        td.progress
+          = "deck: #{e.deck}"
+          br
+          = "passes: #{e.passes}"
+          br
+          = "fails: #{e.fails}"
 
-  p = "Level: #{e.level}"
+  - if e.kind_of?(Word)
+    p = "PoS: #{e.pos}"
 
   div.mnemonics
     - details_tags.each do |i,title|
@@ -26,16 +53,29 @@ div.element-card
         div.hr-title: span = title
         div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.details[i])
 
+  - if e.kind_of?(Word) && e.sentences.length > 0
+    div.hr-title: span Sentence examples
+    - e.sentences.each do |s|
+      p = s['ja']
+      p.mnemonics-hint = s['en']
+
   - if e.reviewed
     p style="color: #999" = "reviewed at: #{e.reviewed}; scheduled: #{e.scheduled}"
 
   - if e.kind_of?(Kanji)
+    - if e.similar.length > 0
+      div.hr-title: span Similar kanji
+      div.relative-elements-list
+        == slim :elements_list, locals: {elements: Kanji.where(title: e.similar)}
+
     div.hr-title: span Radicals
     div.relative-elements-list
       == slim :elements_list, locals: {elements: e.radicals.order(level: :asc)}
+
     div.hr-title: span Vocabulary
     div.relative-elements-list
       == slim :elements_list, locals: {elements: e.words.order(level: :asc)}
+
   - else
     div.hr-title: span Kanji
     div.relative-elements-list

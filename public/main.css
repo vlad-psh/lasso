@@ -148,3 +148,27 @@ body {
   font-size: 0.7em;
   font-weight: 100;
 }
+.element-card table.details tr.headers td,
+.element-card td.reading td.yomi {
+  color: #aaa;
+  text-align: center;
+}
+.element-card table.details td {
+  vertical-align: top;
+  padding: 0 16px;
+}
+.element-card table.details .secondary
+{
+  color: #aaa;
+}
+.element-card table.details td.reading table td {
+  padding: 0 6px;
+}
+.element-card table.details td.level,
+.element-card table.details td.meaning {
+  text-align: center;
+}
+.element-card table.details td.progress {
+  text-align: right;
+  color: #aaa;
+}
