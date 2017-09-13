@@ -7,7 +7,11 @@ module WKElement
   end
 
   def learned?
-    return self.scheduled ? true : false
+    return self.learned_at ? true : false
+  end
+
+  def element_type
+    return self.model_name.singular.to_sym
   end
 end
 
@@ -25,7 +29,7 @@ class Radical < ActiveRecord::Base
 
   def learn!
     unless learned?
-      self.scheduled = DateTime.now
+      self.learned_at = DateTime.now
       self.save
     end
 
@@ -59,7 +63,7 @@ class Kanji < ActiveRecord::Base
 
   def learn!
     unless learned?
-      self.scheduled = DateTime.now
+      self.learned_at = DateTime.now
       self.save
     end
 
@@ -92,7 +96,7 @@ class Word < ActiveRecord::Base
 
   def learn!
     unless learned?
-      self.scheduled = DateTime.now
+      self.learned_at = DateTime.now
       self.save
     end
 

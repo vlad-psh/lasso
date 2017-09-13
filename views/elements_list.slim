@@ -8,6 +8,6 @@
           - cl = e.level
           = cl
     div class="element-block #{wk_level(e)}"
-      a href=wk_link(e)
+      a href=path_to(e.element_type).with(e.id)
         div.element = e.title
         div.description = e.description

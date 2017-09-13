@@ -26,10 +26,6 @@ module WakameHelpers
     end
   end
 
-  def wk_link(e)
-    return path_to(e.model_name.singular.to_sym).with(e.id)
-  end
-
   def find_element(type, id)
     if [:radical, :r].include?(type.to_sym)
       return Radical.find(id)
