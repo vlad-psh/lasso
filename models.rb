@@ -1,7 +1,7 @@
 module WKElement
   def unlock!
-    unless self.unlocked
-      self.unlocked = true
+    unless self.unlocked_at
+      self.unlocked_at = DateTime.now
       self.save
     end
   end

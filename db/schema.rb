@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170910171629) do
+ActiveRecord::Schema.define(version: 20170913162506) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,12 +22,13 @@ ActiveRecord::Schema.define(version: 20170910171629) do
     t.json "yomi"
     t.json "details"
     t.string "similar", array: true
-    t.boolean "unlocked", default: false
     t.integer "deck", default: 0
     t.integer "passes", default: 0
     t.integer "fails", default: 0
     t.date "reviewed"
     t.date "scheduled"
+    t.datetime "unlocked_at"
+    t.datetime "learned_at"
     t.index ["title"], name: "index_kanjis_on_title"
   end
 
@@ -50,12 +51,13 @@ ActiveRecord::Schema.define(version: 20170910171629) do
     t.string "title"
     t.string "en"
     t.json "details"
-    t.boolean "unlocked", default: false
     t.integer "deck", default: 0
     t.integer "passes", default: 0
     t.integer "fails", default: 0
     t.date "reviewed"
     t.date "scheduled"
+    t.datetime "unlocked_at"
+    t.datetime "learned_at"
     t.index ["en"], name: "index_radicals_on_en"
   end
 
@@ -67,12 +69,13 @@ ActiveRecord::Schema.define(version: 20170910171629) do
     t.string "readings", array: true
     t.json "sentences"
     t.json "details"
-    t.boolean "unlocked", default: false
     t.integer "deck", default: 0
     t.integer "passes", default: 0
     t.integer "fails", default: 0
     t.date "reviewed"
     t.date "scheduled"
+    t.datetime "unlocked_at"
+    t.datetime "learned_at"
   end
 
 end

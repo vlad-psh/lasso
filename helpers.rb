@@ -14,8 +14,8 @@ module WakameHelpers
   def wk_level(e)
     # Shuffle for testing purposes
     #return %w(locked unlocked apprentice guru master enlightened burned).shuffle[0]
-    if e.unlocked
-      return 'unlocked'    unless e.scheduled
+    if e.unlocked_at
+      return 'unlocked'    unless e.learned_at
       return 'apprentice'  if e.deck <= 1
       return 'guru'        if e.deck == 2
       return 'master'      if e.deck == 3
