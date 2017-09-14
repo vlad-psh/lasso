@@ -1,4 +1,4 @@
-module WKElement
+module WKElementInstance
   def unlock!
     unless self.unlocked_at
       self.unlocked_at = DateTime.now
@@ -15,9 +15,30 @@ module WKElement
   end
 end
 
+module WKElement
+  def failed
+    # 'learned_at != nil' automatically because of 'fails != 0'
+    self.where(deck: 0).where.not(fails: 0)
+  end
+
+  def expired
+    # 'learned_at != nil' automatically because of 'deck != 0' and 'scheduled != nil'
+    self.where(scheduled: Date.new..Date.today).where.not(deck: 0)
+  end
+
+  def just_learned
+    self.where(deck: 0, fails: 0).where.not(learned_at: nil)
+  end
+
+  def just_unlocked
+    self.where(learned_at: nil).where.not(unlocked_at: nil)
+  end
+end
+
 class Radical < ActiveRecord::Base
   has_and_belongs_to_many :kanjis
-  include WKElement
+  include WKElementInstance
+  extend WKElement
 
   def description
     return self.en
@@ -51,7 +72,8 @@ end
 class Kanji < ActiveRecord::Base
   has_and_belongs_to_many :radicals
   has_and_belongs_to_many :words
-  include WKElement
+  include WKElementInstance
+  extend WKElement
 
   def description
     return self.yomi[self.yomi['emph']].split(',')[0].strip
@@ -84,7 +106,8 @@ end
 
 class Word < ActiveRecord::Base
   has_and_belongs_to_many :kanjis
-  include WKElement
+  include WKElementInstance
+  extend WKElement
 
   def description
     return self.en.first
