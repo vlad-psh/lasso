@@ -9,10 +9,6 @@ module WKElementInstance
   def learned?
     return self.learned_at ? true : false
   end
-
-  def element_type
-    return self.model_name.singular.to_sym
-  end
 end
 
 module WKElement
@@ -42,10 +38,6 @@ class Radical < ActiveRecord::Base
 
   def description
     return self.en
-  end
-
-  def link_params
-    return {resource: :radical, id: self.description}
   end
 
   def learn!
@@ -79,10 +71,6 @@ class Kanji < ActiveRecord::Base
     return self.yomi[self.yomi['emph']].split(',')[0].strip
   end
 
-  def link_params
-    return {resource: :kanji, id: self.title}
-  end
-
   def learn!
     unless learned?
       self.learned_at = DateTime.now
@@ -111,10 +99,6 @@ class Word < ActiveRecord::Base
 
   def description
     return self.en.first
-  end
-
-  def link_params
-    return {resource: :word, id: self.id}
   end
 
   def learn!

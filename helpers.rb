@@ -26,15 +26,11 @@ module WakameHelpers
     end
   end
 
-  def find_element(type, id)
-    if [:radical, :r].include?(type.to_sym)
-      return Radical.find(id)
-    elsif [:kanji, :k].include?(type.to_sym)
-      return Kanji.find(id)
-    elsif [:word, :w].include?(type.to_sym)
-      return Word.find(id)
-    else
-      return nil
+  def get_element_class(type)
+    type = type.to_s
+    [Radical, Kanji, Word].each do |t|
+      return t if (t.model_name.singular == type || t.model_name.plural == type)
     end
+    raise StandardError.new("Unknown element type: #{type}")
   end
 end

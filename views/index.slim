@@ -1,11 +1,20 @@
+ruby:
+  groups = {
+        just_unlocked: 'Unlocked',
+        just_learned: 'New',
+        failed: 'Failed',
+        expired: 'Expired'}
 
-- [Radical, Kanji, Word].each do |k|
-  h2 = k.model_name.plural.capitalize
-  p = "Ready to learn: #{k.just_unlocked.count}"
-  - if (i = k.just_learned.count) > 0
-    p = "New: #{i}"
-  - if (i = k.failed.count) > 0
-    p = "Failed: #{i}"
-  - if (i = k.expired.count) > 0
-    p = "Expired: #{i}"
+table
+  tr
+    td
+    td Radicals
+    td Kanji
+    td Words
+  - groups.each do |gk,gv|
+    tr
+      td = gv
+      - [Radical, Kanji, Word].each do |k|
+        - i = @counters[k.model_name.singular.to_sym][gk]
+        td = i > 0 ? i : '-'
 

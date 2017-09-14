@@ -21,7 +21,8 @@ paths index: '/',
     kanji: '/kanji/:id',
     words: '/words',
     word: '/word/:id',
-    learn: '/learn/:type/:id'
+    learn: '/learn/:class/:id',
+    study: '/study/:class/:group'
 
 configure do
   puts '---> init <---'
@@ -41,6 +42,15 @@ end
 helpers WakameHelpers
 
 get :index do
+  @counters = {}
+  [Radical, Kanji, Word].each do |k|
+    @counters[k.model_name.singular.to_sym] = {
+        just_unlocked: k.just_unlocked.count,
+        just_learned: k.just_learned.count,
+        failed: k.failed.count,
+        expired: k.expired.count}
+  end
+
   slim :index
 end
 
@@ -75,7 +85,14 @@ get :word do
 end
 
 post :learn do
-  e = find_element(params[:type], params[:id])
-  halt(503, 'Unknown element type') unless e
+  c = get_element_class(params[:class])
+  e = c.find(params[:id])
   e.learn!
+end
+
+get :study do
+  halt(503, 'Unknown group #{params[:group]}') unless ['failed', 'expired', 'just_learned'].include?(params[:group])
+  c = get_element_class(params[:class])
+  @elements = [c.send(params[:group]).order('RANDOM()').first]
+  slim :elements_list
 end
