@@ -1,4 +1,5 @@
 div.study-card
+  = "もう#{@element.class.send(params[:group]).count}つ"
   h1 class=@element.model_name.singular[0] = @element.title
   div.answer
     table
@@ -10,3 +11,28 @@ div.study-card
         td == slim :meaning, locals: {e: @element}
         - unless @element.kind_of?(Radical)
           td == slim :reading, locals: {e: @element}
+    br
+    div.hint Was your answer correct? [Y/N]
+  form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
+    input type="hidden" name="element_id" value=@element.id
+    input type="hidden" name="answer" value=''
+
+javascript:
+  var is_answered = false;
+
+  $(document).on('keyup', function (e) {
+    if (is_answered) {
+      if (e.keyCode == 89) { // [Y] key
+        $("#answer-form input[name=answer]").val('yes');
+        $("#answer-form").submit();
+      } else if (e.keyCode == 78) { // [N] key
+        $("#answer-form input[name=answer]").val('no');
+        $("#answer-form").submit();
+      }
+    } else {
+      if (e.keyCode == 13 || e.keyCode == 32) { // Enter or Space
+        $(".answer").show();
+        is_answered = true;
+      }
+    }
+  });

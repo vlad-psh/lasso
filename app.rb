@@ -91,8 +91,24 @@ post :learn do
 end
 
 get :study do
-  halt(503, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
+  halt(400, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
   c = get_element_class(params[:class])
   @element = c.send(params[:group]).order('RANDOM()').first
-  slim :study
+  if @element
+    slim :study
+  else
+    flash[:notice] = "No more items in \"#{params[:group]}\" group"
+    redirect path_to(:index)
+  end
+end
+
+post :study do
+  c = get_element_class(params[:class])
+  e = c.find(params[:element_id])
+  halt(400, 'Element not found') unless e
+
+  halt(400, 'Unknown answer') unless [:yes, :no].include?(params[:answer].to_sym)
+  e.answer!(params[:answer])
+
+  redirect path_to(:study).with(params[:class], params[:group])
 end

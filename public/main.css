@@ -3,6 +3,14 @@ body {
   font-weight: 300;
   font-size: 12pt;
 }
+.flash-error {
+  background-color: red;
+  color: white;
+}
+.flash-notice {
+  background-color: green;
+  color: white;
+}
 .r, .r a,
 .k, .k a,
 .w, .w a,
