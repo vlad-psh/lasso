@@ -97,7 +97,7 @@ get :study do
   if @element
     slim :study
   else
-    flash[:notice] = "No more items in \"#{params[:group]}\" group"
+    flash[:notice] = "No more #{c.model_name.plural} in \"#{params[:group]}\" group"
     redirect path_to(:index)
   end
 end

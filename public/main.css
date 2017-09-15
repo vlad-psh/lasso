@@ -3,14 +3,20 @@ body {
   font-weight: 300;
   font-size: 12pt;
 }
+.flash-notice,
 .flash-error {
-  background-color: red;
   color: white;
+  display: inline-block;
+  padding: 0.2em 0.5em;
+  margin: 0.5em 0;
 }
-.flash-notice {
-  background-color: green;
-  color: white;
-}
+.flash-notice {background-color: #4caf50;}
+.flash-error  {background-color: #e51c23;}
+.blue,   .blue a   {background-color: #2196f3; color: white;}
+.green,  .green a  {background-color: #4caf50; color: white;}
+.purple, .purple a {background-color: #9c27b0; color: white;}
+.yellow, .yellow a {background-color: #ff9800; color: white;}
+.red,    .red a    {background-color: #e51c23; color: white;}
 .r, .r a,
 .k, .k a,
 .w, .w a,
@@ -31,6 +37,19 @@ body {
   color: black;
   background-color: #af0;
 }
+.study-links-table td {
+  text-align: center;
+}
+a.study-button {
+  text-align: center;
+  display: inline-block;
+  width: 5em;
+  padding: 0.2em 0;
+  border-radius: 5px;
+}
+/* ==============================
+   ELEMENTS LIST - RELATED
+   ============================== */
 .locked, .locked a,
 .unlocked, .unlocked a,
 .apprentice, .apprentice a,

@@ -1,11 +1,11 @@
 ruby:
   groups = {
-        just_unlocked: 'Unlocked',
-        just_learned: 'New',
-        failed: 'Failed',
-        expired: 'Expired'}
+        just_unlocked: {title: 'Unlocked', color: :green},
+        just_learned: {title: 'New', color: :blue},
+        failed: {title: 'Failed', color: :red},
+        expired: {title: 'Expired', color: :yellow}}
 
-table
+table.study-links-table
   tr
     td
     td Radicals
@@ -13,12 +13,12 @@ table
     td Words
   - groups.each do |gk,gv|
     tr
-      td = gv
+      td = gv[:title]
       - [Radical, Kanji, Word].each do |k|
         - i = @counters[k.model_name.singular.to_sym][gk]
         td
           - if i > 0
-            a href=path_to(:study).with(k.model_name.plural, gk) = i
+            a class="study-button #{gv[:color]}" href=path_to(:study).with(k.model_name.plural, gk) = i
           - else
             ' -
 
