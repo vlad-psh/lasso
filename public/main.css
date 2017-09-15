@@ -24,19 +24,13 @@ body {
   color: white;
   text-decoration: none;
 }
-.r, .r a {
-  background-color: #0af;
-}
-.k, .k a {
-  background-color: #f0a;
-}
-.w, .w a {
-  background-color: #a0f;
-}
-.y, .y a {
-  color: black;
-  background-color: #af0;
-}
+.r, .r a {background-color: #0af;}
+.k, .k a {background-color: #f0a;}
+.w, .w a {background-color: #a0f;}
+.y, .y a {background-color: #af0; color: black;}
+svg .r {fill: #0af !important;}
+svg .k {fill: #f0a !important;}
+svg .w {fill: #a0f !important;}
 .study-links-table td {
   text-align: center;
 }
@@ -222,4 +216,30 @@ a.study-button {
 }
 .yomi-table td.yomi {
   padding: 0 6px;
+}
+/*
+   GRAPHS
+*/
+svg.upcoming-week-graph,
+svg.decks-graph {
+  background: #eee;
+  padding: 8px 12px 4px 12px;
+  margin-top: 6px;
+  margin-right: 12px;
+  border-radius: 5px;
+}
+svg.upcoming-week-graph .bar,
+svg.decks-graph .bar {
+  fill: #e1282e;
+}
+svg.decks-graph .bar-orange {
+  fill: #e15416;
+}
+svg.decks-graph .bar-green {
+  fill: #98d33a;
+}
+svg.upcoming-week-graph text,
+svg.decks-graph text {
+  text-anchor: middle;
+  font-size: x-small;
 }

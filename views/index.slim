@@ -21,4 +21,39 @@ table.study-links-table
             a class="study-button #{gv[:color]}" href=path_to(:study).with(k.model_name.plural, gk) = i
           - else
             ' -
+ruby:
+  day_cards = {}
+  (Date.today..(Date.today + 14)).each {|d| day_cards[d] = {r: 0, k: 0, w: 0, total: 0}}
+  [Radical, Kanji, Word].each do |k|
+    counts = k.where(scheduled: Date.today..(Date.today + 14)).group(:scheduled).order('count_all').count
+    kname = k.model_name.singular[0].to_sym
+    counts.each do |d,c| 
+      day_cards[d][kname] = c
+      day_cards[d][:total] += c
+    end
+  end
 
+  _height = 70
+  _width = 22
+  _gap = 2
+
+  maxval = 1 # cannot be less than 1
+  graph_width = _width * 14
+  half_bar_width = _width/2.0 - _gap/2.0
+  iter = 0
+  day_cards.each do |k,v|
+    maxval = v[:total] if v[:total] > maxval
+  end
+
+svg.upcoming-week-graph height=_height+30 width=graph_width
+  - day_cards.each do |k,v|
+    - bar_height = _height*v[:total]/maxval.to_f
+    g transform=("translate(#{iter*_width},10)")
+      - height_shift = 0
+      - [:w, :k, :r].each do |s|
+        - part_height = _height*v[s]/maxval.to_f
+        rect class="bar #{s}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
+        - height_shift += part_height
+      text x=half_bar_width y=_height+12 = k.strftime("%a")
+      text x=half_bar_width y=_height-bar_height-2 = v[:total]
+    - iter += 1
