@@ -25,10 +25,11 @@ ruby:
   day_cards = {}
   (Date.today..(Date.today + 14)).each {|d| day_cards[d] = {r: 0, k: 0, w: 0, total: 0}}
   [Radical, Kanji, Word].each do |k|
-    counts = k.where(scheduled: Date.today..(Date.today + 14)).group(:scheduled).order('count_all').count
+    counts = k.where(k.arel_table[:scheduled].lteq(Date.today + 14)).group(:scheduled).count
     kname = k.model_name.singular[0].to_sym
-    counts.each do |d,c| 
-      day_cards[d][kname] = c
+    counts.each do |d,c|
+      d = Date.today if d < Date.today
+      day_cards[d][kname] += c
       day_cards[d][:total] += c
     end
   end

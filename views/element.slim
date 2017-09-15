@@ -29,8 +29,9 @@ div.element-card
   - if e.kind_of?(Word)
     p = "PoS: #{e.pos}"
 
-  form method="POST" action=path_to(:learn).with(e.model_name.singular, e.id) data-remote="true"
+  form method="POST" action=path_to(:learn).with(e.model_name.singular, e.id)
     input disabled=((e.unlocked_at && !e.learned_at) ? nil : 'disabled') type="submit" value=(e.learned_at ? 'Learned' : 'Learn!')
+  a href=path_to(:random_unlocked).with(e.model_name.singular) Next unlocked
 
   div.mnemonics
     - details_tags.each do |i,title|

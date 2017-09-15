@@ -22,6 +22,7 @@ paths index: '/',
     words: '/words',
     word: '/word/:id',
     learn: '/learn/:class/:id',
+    random_unlocked: '/random/:class',
     study: '/study/:class/:group'
 
 configure do
@@ -88,6 +89,19 @@ post :learn do
   c = get_element_class(params[:class])
   e = c.find(params[:id])
   e.learn!
+
+  redirect path_to(c.model_name.singular.to_sym).with(params[:id])
+end
+
+get :random_unlocked do
+  c = get_element_class(params[:class])
+  e = c.just_unlocked.order('RANDOM()').first
+  if e
+    redirect path_to(e.model_name.singular.to_sym).with(e.id)
+  else
+    flash[:notice] = "No more unlocked #{c.model_name.plural}"
+    redirect path_to(:index)
+  end
 end
 
 get :study do
