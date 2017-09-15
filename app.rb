@@ -91,8 +91,8 @@ post :learn do
 end
 
 get :study do
-  halt(503, 'Unknown group #{params[:group]}') unless ['failed', 'expired', 'just_learned'].include?(params[:group])
+  halt(503, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
   c = get_element_class(params[:class])
-  @elements = [c.send(params[:group]).order('RANDOM()').first]
-  slim :elements_list
+  @element = c.send(params[:group]).order('RANDOM()').first
+  slim :study
 end

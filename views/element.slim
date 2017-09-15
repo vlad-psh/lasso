@@ -17,26 +17,8 @@ div.element-card
         td Progress
       tr
         td.level = e.level 
-        td.meaning
-          - if e.kind_of?(Radical)
-            = e.en
-          - else
-            = e.en.shift
-            span.secondary
-              - e.en.each do |en|
-                = ", #{en}"
-        td.reading
-          - if e.kind_of?(Kanji)
-            - emph = e.yomi['emph']
-            table
-              tr
-                - %w(音 訓 名).each do |y|
-                  td.yomi = y
-              tr
-                - %w(on kun nanori).each do |y|
-                  td class="#{y == emph ? 'primary' : 'secondary'}" = e.yomi[y] ? e.yomi[y] : '-'
-          - elsif e.kind_of?(Word)
-            = e.readings.join(", ")
+        td.meaning == slim :meaning, locals: {e: e}
+        td.reading == slim :reading, locals: {e: e}
         td.progress
           = "deck: #{e.deck}"
           br

@@ -91,7 +91,9 @@ body {
 .elements-list-item .description {
   font-size: 0.8em;
 }
-/* ELEMENT ================== */
+/* ==============================
+   ELEMENT
+   ============================== */
 .element-card {
   width: 500px;
   background-color: #f5f5f5;
@@ -148,21 +150,9 @@ body {
   font-size: 0.7em;
   font-weight: 100;
 }
-.element-card table.details tr.headers td,
-.element-card td.reading td.yomi {
-  color: #aaa;
-  text-align: center;
-}
-.element-card table.details td {
+.element-card table.details tr.headers td {
   vertical-align: top;
   padding: 0 16px;
-}
-.element-card table.details .secondary
-{
-  color: #aaa;
-}
-.element-card table.details td.reading table td {
-  padding: 0 6px;
 }
 .element-card table.details td.level,
 .element-card table.details td.meaning {
@@ -171,4 +161,38 @@ body {
 .element-card table.details td.progress {
   text-align: right;
   color: #aaa;
+}
+/* ==============================
+   STUDY CARD
+   ============================== */
+.study-card h1 {
+  font-size: 15em;
+  text-align: center;
+  padding: 0.2em;
+  margin: 0.3em 0 0.1em 0;
+}
+.study-card .answer {
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.5em;
+  display: none;
+}
+.study-card .answer table {
+  margin: 0 auto;
+}
+.study-card .answer td {
+  padding: 0.2em 1em;
+}
+.study-card .answer table tr.headers {
+  color: #aaa;
+}
+.yomi-table {
+  text-align: center;
+}
+.yomi-table .yomi-name,
+.yomi-table .secondary {
+  color: #aaa;
+}
+.yomi-table td.yomi {
+  padding: 0 6px;
 }

@@ -16,5 +16,9 @@ table
       td = gv
       - [Radical, Kanji, Word].each do |k|
         - i = @counters[k.model_name.singular.to_sym][gk]
-        td = i > 0 ? i : '-'
+        td
+          - if i > 0
+            a href=path_to(:study).with(k.model_name.plural, gk) = i
+          - else
+            ' -
 

@@ -1,0 +1,12 @@
+div.study-card
+  h1 class=@element.model_name.singular[0] = @element.title
+  div.answer
+    table
+      tr.headers
+        td Meaning
+        - unless @element.kind_of?(Radical)
+          td Reading
+      tr
+        td == slim :meaning, locals: {e: @element}
+        - unless @element.kind_of?(Radical)
+          td == slim :reading, locals: {e: @element}

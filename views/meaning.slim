@@ -1,0 +1,8 @@
+// locals: e (element)
+- if e.kind_of?(Radical)
+  = e.en
+- else
+  = e.en.shift
+  span.secondary
+    - e.en.each do |en|
+      = ", #{en}"
