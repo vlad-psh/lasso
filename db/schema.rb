@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170913162506) do
+ActiveRecord::Schema.define(version: 20170916200532) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 20170913162506) do
     t.date "scheduled"
     t.datetime "unlocked_at"
     t.datetime "learned_at"
+    t.integer "grade"
+    t.integer "freq"
     t.index ["title"], name: "index_kanjis_on_title"
   end
 
