@@ -192,16 +192,33 @@ a.study-button {
   padding: 0.2em;
   margin: 0.3em 0 0.1em 0;
 }
-.study-card .question-details {
-  margin: 0 auto;
+.study-card .answer {
+  display: none;
+}
+.study-card .additional-info {
+  width: 100%;
   text-align: center;
+}
+.study-card .counter {
+  float: left;
+}
+.study-card .question-details {
+  float: right;
   color: #777;
 }
-.study-card .answer {
+.study-card .sentence-examples {
+  font-size: 1.5em;
+}
+.study-card .sentence-examples .ja {
+  margin-bottom: 1em;
+}
+.study-card .sentence-examples .en {
+  margin-bottom: 2em;
+}
+.study-card .answer-block {
   margin: 0 auto;
   text-align: center;
   font-size: 1.5em;
-  display: none;
 }
 .study-card .answer table {
   margin: 0 auto;
