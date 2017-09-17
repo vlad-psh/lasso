@@ -18,7 +18,8 @@ table.study-links-table
         - i = @counters[k.model_name.singular.to_sym][gk]
         td
           - if i > 0
-            a class="study-button #{gv[:color]}" href=path_to(:study).with(k.model_name.plural, gk) = i
+            - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(k.model_name.singular) : path_to(:study).with(k.model_name.plural, gk) )
+            a class="study-button #{gv[:color]}" href=study_path = i
           - else
             ' -
 ruby:

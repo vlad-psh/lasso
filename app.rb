@@ -98,7 +98,7 @@ end
 
 get :random_unlocked do
   c = get_element_class(params[:class])
-  e = c.just_unlocked.order(level: :asc).first
+  e = c.just_unlocked.order(level: :asc).order('RANDOM()').first
   if e
     redirect path_to(e.model_name.singular.to_sym).with(e.id)
   else
