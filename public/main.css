@@ -192,6 +192,11 @@ a.study-button {
   padding: 0.2em;
   margin: 0.3em 0 0.1em 0;
 }
+.study-card .question-details {
+  margin: 0 auto;
+  text-align: center;
+  color: #777;
+}
 .study-card .answer {
   margin: 0 auto;
   text-align: center;
@@ -217,9 +222,9 @@ a.study-button {
 .yomi-table td.yomi {
   padding: 0 6px;
 }
-/*
+/* ==============================
    GRAPHS
-*/
+   ============================== */
 svg.upcoming-week-graph,
 svg.decks-graph {
   background: #eee;

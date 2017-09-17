@@ -1,6 +1,13 @@
 div.study-card
   = "もう#{@element.class.send(params[:group]).count}つ"
   h1 class=@element.model_name.singular[0] = @element.title
+  div.question-details
+    - if @element.kind_of?(Radical)
+      ' Meaning
+    - elsif @element.kind_of?(Kanji)
+      = "Meaning + #{@element['yomi']['emph']}-yomi reading"
+    - else
+      ' Meaning + reading
   div.answer
     table
       tr.headers
