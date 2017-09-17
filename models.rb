@@ -108,7 +108,7 @@ class Radical < ActiveRecord::Base
       end
       if unlock
         k.unlock!
-        new_elements << k.title
+        new_elements << k
       end
     end
     return new_elements
@@ -139,7 +139,7 @@ class Kanji < ActiveRecord::Base
       end
       if unlock
         w.unlock!
-        new_elements << w.title
+        new_elements << w
       end
     end
     return new_elements

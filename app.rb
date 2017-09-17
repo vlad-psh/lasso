@@ -57,6 +57,7 @@ end
 
 get :radicals do
   @elements = Radical.all.order(level: :asc)
+  @title = "部首"
   slim :elements_list
 end
 
@@ -67,6 +68,7 @@ end
 
 get :kanjis do
   @elements = Kanji.all.order(level: :asc)
+  @title = "漢字"
   slim :elements_list
 end
 
@@ -77,6 +79,7 @@ end
 
 get :words do
   @elements = Word.all.order(level: :asc)
+  @title = "言葉"
   slim :elements_list
 end
 
@@ -95,7 +98,7 @@ end
 
 get :random_unlocked do
   c = get_element_class(params[:class])
-  e = c.just_unlocked.order('RANDOM()').first
+  e = c.just_unlocked.order(level: :asc).first
   if e
     redirect path_to(e.model_name.singular.to_sym).with(e.id)
   else
