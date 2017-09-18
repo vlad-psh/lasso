@@ -7,8 +7,8 @@ ruby:
         'mexp' => 'Meaning Explanation', 'rexp' => 'Reading Explanation'}
 
 div.element-card
-  div style="float: left; margin-right: 20px"
-    p style="font-size: 4em; margin: 12px 0 0 0" = e.title
+  div.top-info
+    div.element-title = e.title
 
     table.details
       tr.headers
@@ -16,6 +16,8 @@ div.element-card
         td Meaning
         td Reading
         td Progress
+        - if e.kind_of?(Word)
+          td PoS
       tr
         td.level = e.level 
         td.meaning == slim :meaning, locals: {e: e}
@@ -26,16 +28,25 @@ div.element-card
           = "passes: #{e.passes}"
           br
           = "fails: #{e.fails}"
+        - if e.kind_of?(Word)
+          td.pos = e.pos
 
-  - if e.kind_of?(Word)
-    p = "PoS: #{e.pos}"
-
+  br
+  - if e.reviewed
+    p style="color: #999" = "reviewed at: #{e.reviewed}; scheduled: #{e.scheduled}"
   form method="POST" action=path_to(:learn).with(e.model_name.singular, e.id)
     input disabled=((e.unlocked_at && !e.learned_at) ? nil : 'disabled') type="submit" value=(e.learned_at ? 'Learned' : 'Learn!')
-  a href=path_to(:random_unlocked).with(e.model_name.singular) Next unlocked
+    a href=path_to(:random_unlocked).with(e.model_name.singular) Next unlocked
 
   div.mnemonics
     - details_tags.each do |i,title|
+      - next if i.to_s.match(/^r/)
+      - if e.details[i] && !e.details[i].empty?
+        div.hr-title: span = title
+        div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.details[i])
+  div.mnemonics
+    - details_tags.each do |i,title|
+      - next unless i.to_s.match(/^r/)
       - if e.details[i] && !e.details[i].empty?
         div.hr-title: span = title
         div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.details[i])
@@ -45,9 +56,6 @@ div.element-card
     - e.sentences.each do |s|
       p = s['ja']
       p.mnemonics-hint = s['en']
-
-  - if e.reviewed
-    p style="color: #999" = "reviewed at: #{e.reviewed}; scheduled: #{e.scheduled}"
 
   - if e.kind_of?(Kanji)
     - if e.similar.length > 0

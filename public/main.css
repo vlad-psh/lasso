@@ -20,7 +20,8 @@ body {
 .r, .r a,
 .k, .k a,
 .w, .w a,
-.y, .y a {
+.y, .y a,
+.m, .m a {
   color: white;
   text-decoration: none;
 }
@@ -28,6 +29,7 @@ body {
 .k, .k a {background-color: #f0a;}
 .w, .w a {background-color: #a0f;}
 .y, .y a {background-color: #af0; color: black;}
+.m, .m a {background-color: #777;}
 svg .r {fill: #0af !important;}
 svg .k {fill: #f0a !important;}
 svg .w {fill: #a0f !important;}
@@ -116,20 +118,43 @@ a.study-button {
    ELEMENT
    ============================== */
 .element-card {
-  width: 500px;
   background-color: #f5f5f5;
   padding: 4px 16px;
-  margin: 12px 0;
+  margin: 12px auto;
+  text-align: center;
 }
-.element-card .srs-info {
-  float: right;
+.element-card .top-info {
+  margin: 1em auto;
+  text-align: center;
+}
+.element-card .element-title {
+  font-size: 4em;
+  display: inline-block;
+}
+.element-card table.details {
+  display: inline-block;
+  vertical-align: middle;
+}
+.element-card table.details td {
+  vertical-align: top;
+  padding: 0 16px;
+}
+.element-card table.details td.level,
+.element-card table.details td.meaning {
+  text-align: center;
+}
+.element-card table.details td.progress {
   text-align: right;
-  color: #bbb;
+  color: #aaa;
 }
 .element-card .mnemonics {
-  clear: both;
+  display: inline-block;
   padding-top: 12px;
+  margin: 1em;
   font-style: italic;
+  max-width: 500px;
+  vertical-align: top;
+  text-align: left;
 }
 .element-card .mnemonics-hint {
   color: #777;
@@ -170,18 +195,6 @@ a.study-button {
 .element-card .relative-elements-list {
   font-size: 0.7em;
   font-weight: 100;
-}
-.element-card table.details tr.headers td {
-  vertical-align: top;
-  padding: 0 16px;
-}
-.element-card table.details td.level,
-.element-card table.details td.meaning {
-  text-align: center;
-}
-.element-card table.details td.progress {
-  text-align: right;
-  color: #aaa;
 }
 /* ==============================
    STUDY CARD
