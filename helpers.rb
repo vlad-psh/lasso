@@ -26,4 +26,19 @@ module WakameHelpers
       return 'locked'
     end
   end
+
+  SAFE_TYPES = [:radicals, :kanjis, :words]
+  SAFE_GROUPS = [:just_unlocked, :just_learned, :expired, :failed]
+
+  def safe_type(method)
+    m = method.to_sym
+    throw StandardError.new("Unknown method: #{method}") unless SAFE_TYPES.include?(m)
+    return m
+  end
+
+  def safe_group(method)
+    m = method.to_sym
+    throw StandardError.new("Unknown method: #{method}") unless SAFE_GROUPS.include?(m)
+    return m
+  end
 end

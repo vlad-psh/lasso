@@ -111,6 +111,8 @@ class Card < ActiveRecord::Base
       self.scheduled = Date.today
       self.save
       Action.create(card: self, action_type: 4) # 4 = incorrect answer
+    else
+      throw StandardError.new("Unknown answer: #{a}")
     end
   end
 

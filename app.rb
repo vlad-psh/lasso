@@ -21,8 +21,7 @@ paths index: '/',
     words: '/words',
     learn: '/learn/:id', # post
     random_unlocked: '/random/:class', # get(redirection)
-    study: '/study/:class/:group', # get, post
-    note: '/note/:class/:id'
+    study: '/study/:class/:group' # get, post
 
 configure do
   puts '---> init <---'
@@ -85,8 +84,8 @@ post :learn do
 end
 
 get :random_unlocked do
-  halt(400, "Parameter not allowed: #{params[:class]}") unless %w(radicals kanjis words).include?(params[:class])
-  e = Card.public_send(params[:class]).just_unlocked.order(level: :asc).order('RANDOM()').first
+  e = Card.public_send(safe_type(params[:class])
+        ).just_unlocked.order(level: :asc).order('RANDOM()').first
   if e
     redirect path_to(:card).with(e.id)
   else
@@ -96,9 +95,10 @@ get :random_unlocked do
 end
 
 get :study do
-  halt(400, "Parameter not allowed: #{params[:class]}") unless %w(radicals kanjis words).include?(params[:class])
-  halt(400, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
-  @element = Card.public_send(params[:class]).public_send(params[:group]).order('RANDOM()').first
+  @element = Card.public_send(safe_type(params[:class])
+        ).public_send(safe_group(params[:group])
+        ).order('RANDOM()').first
+
   if @element
     slim :study
   else
@@ -108,22 +108,11 @@ get :study do
 end
 
 post :study do
-  halt(400, "Parameter not allowed: #{params[:class]}") unless %w(radicals kanjis words).include?(params[:class])
-  halt(400, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
   e = Card.find(params[:element_id])
   halt(400, 'Element not found') unless e
 
-  halt(400, 'Unknown answer') unless [:yes, :no].include?(params[:answer].to_sym)
   e.answer!(params[:answer])
 
-  redirect path_to(:study).with(params[:class], params[:group])
+  redirect path_to(:study).with(safe_type(params[:class]), safe_group(params[:group]))
 end
 
-post :note do
-  c = get_element_class(params[:class])
-  e = c.find(params[:id])
-  halt(400, 'Element not found') unless e
-
-  e.notes = params[:notes]
-  e.save
-end
