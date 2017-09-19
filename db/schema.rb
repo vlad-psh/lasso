@@ -10,10 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170916200532) do
+ActiveRecord::Schema.define(version: 20170919070006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "actions", force: :cascade do |t|
+    t.bigint "card_id"
+    t.integer "action_type", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_actions_on_card_id"
+  end
+
+  create_table "cards", force: :cascade do |t|
+    t.string "element_type"
+    t.integer "level"
+    t.string "title"
+    t.json "details"
+    t.boolean "unlocked", default: false
+    t.boolean "learned", default: false
+    t.integer "deck"
+    t.date "scheduled"
+    t.jsonb "detailsb"
+  end
+
+  create_table "cards_relations", force: :cascade do |t|
+    t.bigint "card_id"
+    t.integer "relation_id", null: false
+    t.index ["card_id"], name: "index_cards_relations_on_card_id"
+  end
 
   create_table "kanjis", force: :cascade do |t|
     t.integer "level"
@@ -31,6 +57,7 @@ ActiveRecord::Schema.define(version: 20170916200532) do
     t.datetime "learned_at"
     t.integer "grade"
     t.integer "freq"
+    t.string "notes"
     t.index ["title"], name: "index_kanjis_on_title"
   end
 
@@ -60,6 +87,7 @@ ActiveRecord::Schema.define(version: 20170916200532) do
     t.date "scheduled"
     t.datetime "unlocked_at"
     t.datetime "learned_at"
+    t.string "notes"
     t.index ["en"], name: "index_radicals_on_en"
   end
 
@@ -78,6 +106,7 @@ ActiveRecord::Schema.define(version: 20170916200532) do
     t.date "scheduled"
     t.datetime "unlocked_at"
     t.datetime "learned_at"
+    t.string "notes"
   end
 
 end

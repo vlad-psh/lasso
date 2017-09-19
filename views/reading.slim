@@ -1,12 +1,12 @@
 // locals: e (element)
-- if e.kind_of?(Kanji)
-  - emph = e.yomi['emph']
+- if e.kanji?
+  - emph = e.detailsb['yomi']['emph']
   table.yomi-table
     tr
       - %w(音 訓 名).each do |y|
         td.yomi-name = y
     tr
       - %w(on kun nanori).each do |y|
-        td.yomi class="#{y == emph ? 'primary' : 'secondary'}" = e.yomi[y] ? e.yomi[y] : '-'
-- elsif e.kind_of?(Word)
-  = e.readings.join(", ")
+        td.yomi class="#{y == emph ? 'primary' : 'secondary'}" = e.detailsb['yomi'][y] ? e.detailsb['yomi'][y] : '-'
+- elsif e.word?
+  = e.detailsb['readings'].join(", ")

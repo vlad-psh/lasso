@@ -1,5 +1,5 @@
 ruby:
-  e = @radical || @kanji || @word
+  e = @element
   @title = e.title
   details_tags = {'nmne' => 'Mnemonic', 'nhnt' => 'Hint',
         'mmne' => 'Meaning Mnemonic', 'mhnt' => 'Meaning Hint',
@@ -16,7 +16,7 @@ div.element-card
         td Meaning
         td Reading
         td Progress
-        - if e.kind_of?(Word)
+        - if e.word?
           td PoS
       tr
         td.level = e.level 
@@ -25,43 +25,47 @@ div.element-card
         td.progress
           = "deck: #{e.deck}"
           br
-          = "passes: #{e.passes}"
+          = "passes: ???"
           br
-          = "fails: #{e.fails}"
-        - if e.kind_of?(Word)
-          td.pos = e.pos
+          = "fails: ???"
+        - if e.word?
+          td.pos = e.detailsb['pos']
 
   br
-  - if e.reviewed
-    p style="color: #999" = "reviewed at: #{e.reviewed}; scheduled: #{e.scheduled}"
-  form method="POST" action=path_to(:learn).with(e.model_name.singular, e.id)
-    input disabled=((e.unlocked_at && !e.learned_at) ? nil : 'disabled') type="submit" value=(e.learned_at ? 'Learned' : 'Learn!')
-    a href=path_to(:random_unlocked).with(e.model_name.singular) Next unlocked
+  - if e.scheduled
+    p style="color: #999" = "reviewed at: ???; scheduled: #{e.scheduled}"
+  form method="POST" action=path_to(:learn).with(e.id)
+    input disabled=((e.unlocked && !e.learned) ? nil : 'disabled') type="submit" value=(e.learned ? 'Learned' : 'Learn!')
+    - card_types = {r: :radicals, k: :kanjis, w: :words}
+    a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
+    '  | 
+    a Add note
 
   div.mnemonics
     - details_tags.each do |i,title|
-      - next if i.to_s.match(/^r/)
-      - if e.details[i] && !e.details[i].empty?
+      - next if i.match(/^r/)
+      - if e.detailsb[i] && !e.detailsb[i].empty?
         div.hr-title: span = title
-        div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.details[i])
+        div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.detailsb[i])
   div.mnemonics
     - details_tags.each do |i,title|
-      - next unless i.to_s.match(/^r/)
-      - if e.details[i] && !e.details[i].empty?
+      - next unless i.match(/^r/)
+      - if e.detailsb[i] && !e.detailsb[i].empty?
         div.hr-title: span = title
-        div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.details[i])
+        div class="#{'mnemonics-hint' if i['hnt']}" == bb_textile(e.detailsb[i])
 
-  - if e.kind_of?(Word) && e.sentences.length > 0
+  - if e.word? && e.detailsb['sentences'].length > 0
+   div.mnemonics
     div.hr-title: span Sentence examples
-    - e.sentences.each do |s|
+    - e.detailsb['sentences'].each do |s|
       p = s['ja']
       p.mnemonics-hint = s['en']
 
-  - if e.kind_of?(Kanji)
-    - if e.similar.length > 0
+  - if e.kanji?
+    - if e.detailsb['similar'].length > 0
       div.hr-title: span Similar kanji
       div.relative-elements-list
-        == slim :elements_list, locals: {elements: Kanji.where(title: e.similar)}
+        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar'])}
 
     div.hr-title: span Radicals
     div.relative-elements-list

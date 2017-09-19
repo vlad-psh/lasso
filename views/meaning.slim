@@ -1,8 +1,8 @@
 // locals: e (element)
-- if e.kind_of?(Radical)
-  = e.en
+- unless e.kanji?
+  = e.detailsb['en'].join(', ')
 - else
-  = e.en.shift
+  = e.detailsb['en'].shift
   span.secondary
-    - e.en.each do |en|
+    - e.detailsb['en'].each do |en|
       = ", #{en}"

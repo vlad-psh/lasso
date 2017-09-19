@@ -1,32 +1,121 @@
-module WKElementInstance
-  def unlock!
-    unless self.unlocked_at
-      self.unlocked_at = DateTime.now
-      self.save
+class Card < ActiveRecord::Base
+  has_many :actions
+  # low-level:
+  has_many :cards_relations
+  has_many :inverse_cards_relations, class_name: 'CardsRelation', foreign_key: :relation_id
+  # high-level:
+  has_many :relations, through: :cards_relations
+  has_many :inverse_relations, through: :inverse_cards_relations, source: :card
+
+# =====================================
+# OBJECT
+
+  scope :radicals, ->{where(element_type: 'r')}
+  scope :kanjis,   ->{where(element_type: 'k')}
+  scope :words,    ->{where(element_type: 'w')}
+
+  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
+  scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
+  scope :just_learned,  ->{where(learned: true, scheduled: nil)}
+  scope :just_unlocked, ->{where(learned: false, unlocked: true)}
+
+# =====================================
+# INSTANCE
+
+  def radicals
+    raise StandardError("Unknown method for type #{self.element_type}") unless self.element_type == 'k'
+    self.relations.where(element_type: 'r')
+  end
+
+  def words
+    raise StandardError("Unknown method for type #{self.element_type}") unless self.element_type == 'k'
+    self.relations.where(element_type: 'w')
+  end
+
+  def kanjis
+    raise StandardError("Unknown method for type #{self.element_type}") if self.element_type == 'k'
+    return self.inverse_relations
+  end
+
+  def radical?
+    element_type == 'r' ? true : false
+  end
+
+  def kanji?
+    element_type == 'k' ? true : false
+  end
+
+  def word?
+    element_type == 'w' ? true : false
+  end
+
+  def description
+    if element_type == 'k'
+      return detailsb['yomi'][detailsb['yomi']['emph']]
+    else
+      return detailsb['en'].first
     end
   end
 
-  def learned?
-    return self.learned_at ? true : false
+  def unlock!
+    unless self.unlocked
+      self.unlocked = true
+      self.save
+      Action.create(card: self, action_type: 1)
+    end
+  end
+
+  def learn!
+    return if learned
+
+    self.learned = true
+    self.save
+    Action.create(card: self, action_type: 2)
+
+    new_elements = []
+    if self.radical?
+      self.kanjis.each do |k|
+        begin
+          k.radicals.each {|r| throw StandardError.new('Will not be unlocked') unless r.learned }
+          k.unlock!
+          new_elements << k
+        rescue
+          next
+        end
+      end
+    elsif self.kanji?
+      self.words.each do |w|
+        begin
+          w.kanjis.each {|k| throw StandardError.new('Will not be unlocked') unless k.learned }
+          w.unlock!
+          new_elements << w
+        rescue
+          next
+        end
+      end
+    end
+    return new_elements
   end
 
   def answer!(a)
+    # answer should be 'yes' or 'no'
     a = a.to_sym
+
     if a == :yes
       self.deck += 1
-      self.passes += 1
-      self.reviewed = Date.today
       self.scheduled = choose_schedule_day(self.deck)
       self.save
+      Action.create(card: self, action_type: 3) # 3 = correct answer
     elsif a == :no
       self.deck = 0
-      self.fails += 1
-      self.reviewed = Date.today
       self.scheduled = Date.today
       self.save
+      Action.create(card: self, action_type: 4) # 4 = incorrect answer
     end
   end
 
+
+  private
   def choose_schedule_day(new_deck)
     ranges = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
     r = ranges[new_deck > 7 ? 7 : new_deck]
@@ -35,10 +124,8 @@ module WKElementInstance
     # make 'day: cards count' hash
     day_cards = {}
     (Date.today + r[0]..Date.today + r[2]).each {|d| day_cards[d] = 0}
-    [Radical, Kanji, Word].each do |k|
-      counts = k.where(scheduled: (Date.today + r[0])..(Date.today + r[2])).group(:scheduled).order('count_all').count
-      counts.each {|d,c| day_cards[d] += c}
-    end
+    counts = Card.where(scheduled: (Date.today + r[0])..(Date.today + r[2])).group(:scheduled).order('count_all').count
+    counts.each {|d,c| day_cards[d] += c}
 
     # transpose hash to 'cards count: [days]'
     cards_days = {}
@@ -65,102 +152,11 @@ module WKElementInstance
   end
 end
 
-module WKElement
-  def failed
-    # 'learned_at != nil' automatically because of 'fails != 0'
-    self.where(deck: 0).where.not(fails: 0)
-  end
-
-  def expired
-    # 'learned_at != nil' automatically because of 'deck != 0' and 'scheduled != nil'
-    self.where(scheduled: Date.new..Date.today).where.not(deck: 0)
-  end
-
-  def just_learned
-    self.where(deck: 0, fails: 0).where.not(learned_at: nil)
-  end
-
-  def just_unlocked
-    self.where(learned_at: nil).where.not(unlocked_at: nil)
-  end
+class Action < ActiveRecord::Base
+  belongs_to :card
 end
 
-class Radical < ActiveRecord::Base
-  has_and_belongs_to_many :kanjis
-  include WKElementInstance
-  extend WKElement
-
-  def description
-    return self.en
-  end
-
-  def learn!
-    unless learned?
-      self.learned_at = DateTime.now
-      self.save
-    end
-
-    new_elements = []
-    self.kanjis.each do |k|
-      unlock = true
-      k.radicals.each do |r|
-        unlock = false unless r.learned?
-      end
-      if unlock
-        k.unlock!
-        new_elements << k
-      end
-    end
-    return new_elements
-  end
-end
-
-class Kanji < ActiveRecord::Base
-  has_and_belongs_to_many :radicals
-  has_and_belongs_to_many :words
-  include WKElementInstance
-  extend WKElement
-
-  def description
-    return self.yomi[self.yomi['emph']].split(',')[0].strip
-  end
-
-  def learn!
-    unless learned?
-      self.learned_at = DateTime.now
-      self.save
-    end
-
-    new_elements = []
-    self.words.each do |w|
-      unlock = true
-      w.kanjis.each do |k|
-        unlock = false unless k.learned?
-      end
-      if unlock
-        w.unlock!
-        new_elements << w
-      end
-    end
-    return new_elements
-  end
-end
-
-class Word < ActiveRecord::Base
-  has_and_belongs_to_many :kanjis
-  include WKElementInstance
-  extend WKElement
-
-  def description
-    return self.en.first
-  end
-
-  def learn!
-    unless learned?
-      self.learned_at = DateTime.now
-      self.save
-    end
-
-    return [] # no new elements learned
-  end
+class CardsRelation < ActiveRecord::Base
+  belongs_to :card
+  belongs_to :relation, class_name: 'Card'
 end

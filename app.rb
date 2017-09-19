@@ -15,15 +15,14 @@ also_reload './models.rb'
 also_reload './helpers.rb'
 
 paths index: '/',
+    card: '/card/:id',
     radicals: '/radicals',
-    radical: '/radical/:id',
     kanjis: '/kanjis',
-    kanji: '/kanji/:id',
     words: '/words',
-    word: '/word/:id',
-    learn: '/learn/:class/:id',
-    random_unlocked: '/random/:class',
-    study: '/study/:class/:group'
+    learn: '/learn/:id', # post
+    random_unlocked: '/random/:class', # get(redirection)
+    study: '/study/:class/:group', # get, post
+    note: '/note/:class/:id'
 
 configure do
   puts '---> init <---'
@@ -44,88 +43,87 @@ helpers WakameHelpers
 
 get :index do
   @counters = {}
-  [Radical, Kanji, Word].each do |k|
-    @counters[k.model_name.singular.to_sym] = {
-        just_unlocked: k.just_unlocked.count,
-        just_learned: k.just_learned.count,
-        failed: k.failed.count,
-        expired: k.expired.count}
+  [:radicals, :kanjis, :words].each do |k|
+    @counters[k] = {
+        just_unlocked: Card.public_send(k).just_unlocked.count,
+        just_learned: Card.public_send(k).just_learned.count,
+        failed: Card.public_send(k).failed.count,
+        expired: Card.public_send(k).expired.count}
   end
 
   slim :index
 end
 
+get :card do
+  @element = Card.find(params[:id])
+  slim :element
+end
+
 get :radicals do
-  @elements = Radical.all.order(level: :asc)
+  @elements = Card.radicals.order(level: :asc)
   @title = "部首"
   slim :elements_list
 end
 
-get :radical do
-  @radical = Radical.find(params[:id])
-  slim :element
-end
-
 get :kanjis do
-  @elements = Kanji.all.order(level: :asc)
+  @elements = Card.kanjis.order(level: :asc)
   @title = "漢字"
   slim :elements_list
 end
 
-get :kanji do
-  @kanji = Kanji.find(params[:id])
-  slim :element
-end
-
 get :words do
-  @elements = Word.all.order(level: :asc)
+  @elements = Card.words.order(level: :asc)
   @title = "言葉"
   slim :elements_list
 end
 
-get :word do
-  @word = Word.find(params[:id])
-  slim :element
-end
-
 post :learn do
-  c = get_element_class(params[:class])
-  e = c.find(params[:id])
+  e = Card.find(params[:id])
   e.learn!
 
-  redirect path_to(c.model_name.singular.to_sym).with(params[:id])
+  redirect path_to(:card).with(params[:id])
 end
 
 get :random_unlocked do
-  c = get_element_class(params[:class])
-  e = c.just_unlocked.order(level: :asc).order('RANDOM()').first
+  halt(400, "Parameter not allowed: #{params[:class]}") unless %w(radicals kanjis words).include?(params[:class])
+  e = Card.public_send(params[:class]).just_unlocked.order(level: :asc).order('RANDOM()').first
   if e
-    redirect path_to(e.model_name.singular.to_sym).with(e.id)
+    redirect path_to(:card).with(e.id)
   else
-    flash[:notice] = "No more unlocked #{c.model_name.plural}"
+    flash[:notice] = "No more unlocked #{params[:class]}"
     redirect path_to(:index)
   end
 end
 
 get :study do
+  halt(400, "Parameter not allowed: #{params[:class]}") unless %w(radicals kanjis words).include?(params[:class])
   halt(400, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
-  c = get_element_class(params[:class])
-  @element = c.send(params[:group]).order('RANDOM()').first
+  @element = Card.public_send(params[:class]).public_send(params[:group]).order('RANDOM()').first
   if @element
     slim :study
   else
-    flash[:notice] = "No more #{c.model_name.plural} in \"#{params[:group]}\" group"
+    flash[:notice] = "No more #{params[:class]} in \"#{params[:group]}\" group"
     redirect path_to(:index)
   end
 end
 
 post :study do
-  c = get_element_class(params[:class])
-  e = c.find(params[:element_id])
+  halt(400, "Parameter not allowed: #{params[:class]}") unless %w(radicals kanjis words).include?(params[:class])
+  halt(400, "Unknown group \"#{params[:group]}\"") unless ['failed', 'expired', 'just_learned'].include?(params[:group])
+  e = Card.find(params[:element_id])
   halt(400, 'Element not found') unless e
 
   halt(400, 'Unknown answer') unless [:yes, :no].include?(params[:answer].to_sym)
   e.answer!(params[:answer])
 
   redirect path_to(:study).with(params[:class], params[:group])
+end
+
+post :note do
+  c = get_element_class(params[:class])
+  e = c.find(params[:id])
+  halt(400, 'Element not found') unless e
+
+  e.notes = params[:notes]
+  e.save
 end

@@ -1,29 +1,29 @@
 div.study-card
-  h1 class=@element.model_name.singular[0] = @element.title
+  h1 class=@element.element_type = @element.title
   div.additional-info
     div.counter
       = "もう#{@element.class.send(params[:group]).count}つ"
     div.question-details
-      - if @element.kind_of?(Radical)
+      - if @element.radical?
         ' Meaning
-      - elsif @element.kind_of?(Kanji)
-        = "Meaning + #{@element['yomi']['emph']}-yomi reading"
+      - elsif @element.kanji?
+        = "Meaning + #{@element.detailsb['yomi']['emph']}-yomi reading"
       - else
         ' Meaning + reading
-    - if @element.kind_of?(Word)
+    - if @element.word?
       div.sentence-examples
-        - @element.sentences.each do |sentence|
+        - @element.detailsb['sentences'].each do |sentence|
           div.ja = sentence['ja']
           div.en.answer = sentence['en']
   div.answer-block.answer
     table
       tr.headers
         td Meaning
-        - unless @element.kind_of?(Radical)
+        - unless @element.radical?
           td Reading
       tr
         td == slim :meaning, locals: {e: @element}
-        - unless @element.kind_of?(Radical)
+        - unless @element.radical?
           td == slim :reading, locals: {e: @element}
     br
     div.hint Was your answer correct? [Y/N]

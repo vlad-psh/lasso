@@ -8,6 +8,6 @@
           - cl = e.level
           = cl
     div class="element-block #{wk_level(e)}"
-      a href=path_to(e.model_name.singular.to_sym).with(e.id)
+      a href=path_to(:card).with(e.id)
         div.element = e.title
         div.description = e.description
