@@ -14,8 +14,8 @@ table.study-links-table
   - groups.each do |gk,gv|
     tr
       td = gv[:title]
-      - [:radicals, :kanjis, :words].each do |k|
-        - i = @counters[k][gk]
+      - %w(r k w).each do |k|
+        - i = @counters[gk][k] || 0
         td
           - if i > 0
             - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(k) : path_to(:study).with(k, gk) )
@@ -24,14 +24,12 @@ table.study-links-table
             ' -
 ruby:
   day_cards = {}
-  (Date.today..(Date.today + 14)).each {|d| day_cards[d] = {radicals: 0, kanjis: 0, words: 0, total: 0}}
-  [:radicals, :kanjis, :words].each do |k|
-    counts = Card.public_send(k).where(Card.arel_table[:scheduled].lteq(Date.today + 14)).group(:scheduled).count
-    counts.each do |d,c|
-      d = Date.today if d < Date.today
-      day_cards[d][k] += c
-      day_cards[d][:total] += c
-    end
+  (Date.today..(Date.today + 14)).each {|d| day_cards[d] = {r: 0, k: 0, w: 0, total: 0}}
+  cc = Card.where(Card.arel_table[:scheduled].lteq(Date.today + 14)).group(:scheduled, :element_type).count
+  cc.each do |daytype,c|
+    d = daytype[0] < Date.today ? Date.today : daytype[0]
+    day_cards[d][daytype[1].to_sym] += c
+    day_cards[d][:total] += c
   end
 
   _height = 70
@@ -51,9 +49,9 @@ svg.upcoming-week-graph height=_height+30 width=graph_width
     - bar_height = _height*v[:total]/maxval.to_f
     g transform=("translate(#{iter*_width},10)")
       - height_shift = 0
-      - [:words, :kanjis, :radicals].each do |s|
+      - [:w, :k, :r].each do |s|
         - part_height = _height*v[s]/maxval.to_f
-        rect class="bar #{s.to_s[0]}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
+        rect class="bar #{s.to_s}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
         - height_shift += part_height
       text x=half_bar_width y=_height+12 = k.strftime("%a")
       text x=half_bar_width y=_height-bar_height-2 = v[:total]

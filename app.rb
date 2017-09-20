@@ -42,12 +42,8 @@ helpers WakameHelpers
 
 get :index do
   @counters = {}
-  [:radicals, :kanjis, :words].each do |k|
-    @counters[k] = {
-        just_unlocked: Card.public_send(k).just_unlocked.count,
-        just_learned: Card.public_send(k).just_learned.count,
-        failed: Card.public_send(k).failed.count,
-        expired: Card.public_send(k).expired.count}
+  [:just_unlocked, :just_learned, :failed, :expired].each do |g|
+    @counters[g] = Card.public_send(g).group(:element_type).count
   end
 
   slim :index
@@ -59,19 +55,19 @@ get :card do
 end
 
 get :radicals do
-  @elements = Card.radicals.order(level: :asc)
+  @elements = Card.radicals.order(level: :asc, id: :asc)
   @title = "部首"
   slim :elements_list
 end
 
 get :kanjis do
-  @elements = Card.kanjis.order(level: :asc)
+  @elements = Card.kanjis.order(level: :asc, id: :asc)
   @title = "漢字"
   slim :elements_list
 end
 
 get :words do
-  @elements = Card.words.order(level: :asc)
+  @elements = Card.words.order(level: :asc, id: :asc)
   @title = "言葉"
   slim :elements_list
 end
