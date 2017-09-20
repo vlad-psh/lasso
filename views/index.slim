@@ -4,6 +4,7 @@ ruby:
         just_learned: {title: 'New', color: :blue},
         failed: {title: 'Failed', color: :red},
         expired: {title: 'Expired', color: :yellow}}
+  tt = {r: :radicals, k: :kanjis, w: :words}
 
 table.study-links-table
   tr
@@ -18,7 +19,7 @@ table.study-links-table
         - i = @counters[gk][k] || 0
         td
           - if i > 0
-            - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(k) : path_to(:study).with(k, gk) )
+            - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(tt[k.to_sym]) : path_to(:study).with(tt[k.to_sym], gk) )
             a class="study-button #{gv[:color]}" href=study_path = i
           - else
             ' -
