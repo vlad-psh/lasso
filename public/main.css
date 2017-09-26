@@ -114,6 +114,23 @@ a.study-button {
 .elements-list-item .description {
   font-size: 0.8em;
 }
+/* COMPACT STYLE */
+.elements-list-compact .elements-list-item {
+  min-width: 0;
+  margin: 1px 1px 0 0;
+}
+.elements-list-compact .elements-list-item .level-wrapper {
+  display: none;
+}
+.elements-list-compact .elements-list-item .element-block {
+  padding: 0.2em 0.3em;
+}
+.elements-list-compact .elements-list-item .element {
+  font-size: 1em;
+}
+.elements-list-compact .elements-list-item .description {
+  display: none;
+}
 /* ==============================
    ELEMENT
    ============================== */

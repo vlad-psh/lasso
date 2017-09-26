@@ -1,13 +1,15 @@
 - cl = 0
 - elements = @elements unless elements
-- elements.each do |e|
-  div.elements-list-item
-    div.level-wrapper
-      div.level
-        - if cl != e.level
-          - cl = e.level
-          = cl
-    div class="element-block #{wk_level(e)}"
-      a href=path_to(:card).with(e.id)
-        div.element = e.title
-        div.description = e.description
+a onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; position: fixed; top: 0.3em; right: 1.5em" Toggle compact mode
+div.elements-list-wrapper.elements-list-compact
+  - elements.each do |e|
+    div.elements-list-item
+      div.level-wrapper
+        div.level
+          - if cl != e.level
+            - cl = e.level
+            = cl
+      div class="element-block #{wk_level(e)}"
+        a href=path_to(:card).with(e.id)
+          div.element = e.title
+          div.description = e.description
