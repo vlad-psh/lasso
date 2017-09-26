@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170919125935) do
+ActiveRecord::Schema.define(version: 20170926132323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,12 @@ ActiveRecord::Schema.define(version: 20170919125935) do
     t.bigint "card_id"
     t.integer "relation_id", null: false
     t.index ["card_id"], name: "index_cards_relations_on_card_id"
+  end
+
+  create_table "statistics", force: :cascade do |t|
+    t.date "date"
+    t.jsonb "learned", default: {"k"=>0, "r"=>0, "w"=>0}
+    t.jsonb "scheduled", default: {"k"=>0, "r"=>0, "w"=>0}
   end
 
 end

@@ -71,6 +71,9 @@ class Card < ActiveRecord::Base
     self.learned = true
     self.save
     Action.create(card: self, action_type: 2)
+    stats = Statistic.find_or_initialize_by(date: Date.today)
+    stats.learned[self.element_type] += 1
+    stats.save
 
     new_elements = []
     if self.radical?
@@ -106,6 +109,9 @@ class Card < ActiveRecord::Base
       self.scheduled = choose_schedule_day(self.deck)
       self.save
       Action.create(card: self, action_type: 3) # 3 = correct answer
+      stats = Statistic.find_or_initialize_by(date: self.scheduled)
+      stats.scheduled[self.element_type] += 1
+      stats.save
     elsif a == :no
       self.deck = 0
       self.scheduled = Date.today
@@ -161,4 +167,14 @@ end
 class CardsRelation < ActiveRecord::Base
   belongs_to :card
   belongs_to :relation, class_name: 'Card'
+end
+
+class Statistic < ActiveRecord::Base
+  def learned_total
+    return learned['r'] + learned['k'] + learned['w']
+  end
+
+  def scheduled_total
+    return scheduled['r'] + scheduled['k'] + scheduled['w']
+  end
 end

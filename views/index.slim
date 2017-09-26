@@ -23,15 +23,16 @@ table.study-links-table
             a class="study-button #{gv[:color]}" href=study_path = i
           - else
             ' -
+
 ruby:
-  day_cards = {}
-  (Date.today..(Date.today + 14)).each {|d| day_cards[d] = {r: 0, k: 0, w: 0, total: 0}}
-  cc = Card.where(Card.arel_table[:scheduled].lteq(Date.today + 14)).group(:scheduled, :element_type).count
-  cc.each do |daytype,c|
-    d = daytype[0] < Date.today ? Date.today : daytype[0]
-    day_cards[d][daytype[1].to_sym] += c
-    day_cards[d][:total] += c
-  end
+  _r_sched = (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
+  _k_sched = (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0)
+  _w_sched = (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
+  _sched = {'r' => _r_sched, 'k' => _k_sched, 'w' => _w_sched}
+  day_cards = {Date.today => Statistic.new(date: Date.today, scheduled: _sched)}
+
+  ss = Statistic.where(date: (Date.today+1)..(Date.today+14))
+  ss.each {|s| day_cards[s.date] = s }
 
   _height = 70
   _width = 22
@@ -42,18 +43,22 @@ ruby:
   half_bar_width = _width/2.0 - _gap/2.0
   iter = 0
   day_cards.each do |k,v|
-    maxval = v[:total] if v[:total] > maxval
+    maxval = v.scheduled_total if v.scheduled_total > maxval
   end
 
 svg.upcoming-week-graph height=_height+30 width=graph_width
-  - day_cards.each do |k,v|
-    - bar_height = _height*v[:total]/maxval.to_f
+  - d = Date.today
+  - while d <= (Date.today + 14)
+    - k = d
+    - v = day_cards[k] || Statistic.new
+    - bar_height = _height*v.scheduled_total/maxval.to_f
     g transform=("translate(#{iter*_width},10)")
       - height_shift = 0
-      - [:w, :k, :r].each do |s|
-        - part_height = _height*v[s]/maxval.to_f
-        rect class="bar #{s.to_s}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
+      - %w(w k r).each do |s|
+        - part_height = _height*v.scheduled[s]/maxval.to_f
+        rect class="bar #{s}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
         - height_shift += part_height
       text x=half_bar_width y=_height+12 = k.strftime("%a")
-      text x=half_bar_width y=_height-bar_height-2 = v[:total]
+      text x=half_bar_width y=_height-bar_height-2 = v.scheduled_total
     - iter += 1
+    - d += 1
