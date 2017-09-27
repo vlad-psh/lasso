@@ -110,6 +110,7 @@ a.study-button {
 }
 .elements-list-item .element {
   font-size: 2em;
+  line-height: 1.3em;
 }
 .elements-list-item .description {
   font-size: 0.8em;
@@ -238,13 +239,13 @@ a.study-button {
   color: #777;
 }
 .study-card .sentence-examples {
-  font-size: 1.5em;
+  font-size: 1em;
 }
 .study-card .sentence-examples .ja {
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 }
 .study-card .sentence-examples .en {
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 .study-card .answer-block {
   margin: 0 auto;

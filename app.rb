@@ -19,6 +19,7 @@ paths index: '/',
     radicals: '/radicals',
     kanjis: '/kanjis',
     words: '/words',
+    note: '/note/:id', # post
     learn: '/learn/:id', # post
     random_unlocked: '/random/:class', # get(redirection)
     study: '/study/:class/:group' # get, post
@@ -70,6 +71,14 @@ get :words do
   @elements = Card.words.order(level: :asc, id: :asc)
   @title = "言葉"
   slim :elements_list
+end
+
+post :note do
+  e = Card.find(params[:id])
+  e.detailsb["mynotes"] = params[:content]
+  e.save
+
+  return bb_textile(e.detailsb["mynotes"])
 end
 
 post :learn do

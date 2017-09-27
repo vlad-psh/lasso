@@ -40,6 +40,9 @@ div.element-card
     a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
     '  | 
     a Add note
+  div style="#{e.detailsb['mynotes'] ? nil : 'display: none'}" == bb_textile(e.detailsb["mynotes"] || '')
+  form method="POST" action=path_to(:note).with(e.id)
+    input type="text" name="content" value=e.detailsb['mynotes']
 
   div.mnemonics
     - details_tags.each do |i,title|
