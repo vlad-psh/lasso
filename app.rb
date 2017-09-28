@@ -89,12 +89,22 @@ post :learn do
 end
 
 get :random_unlocked do
-  e = Card.public_send(safe_type(params[:class])
-        ).just_unlocked.order(level: :asc).order('RANDOM()').first
+  etype = safe_type(params[:class])
+  e = Card.public_send(etype).just_unlocked.order(level: :asc).order('RANDOM()').first
+
   if e
     redirect path_to(:card).with(e.id)
   else
     flash[:notice] = "No more unlocked #{params[:class]}"
+
+    if etype == :radicals
+      # unlock next level
+      lowest_locked = Card.radicals.locked.order(level: :asc).first
+      Card.public_send(etype).locked.where(level: lowest_locked.level).each do |c|
+        c.unlock!
+      end if lowest_locked
+    end
+
     redirect path_to(:index)
   end
 end

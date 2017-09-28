@@ -14,6 +14,7 @@ class Card < ActiveRecord::Base
   scope :kanjis,   ->{where(element_type: 'k')}
   scope :words,    ->{where(element_type: 'w')}
 
+  scope :locked,   ->{where(unlocked: false)}
   scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
   scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
   scope :just_learned,  ->{where(learned: true, scheduled: nil)}
