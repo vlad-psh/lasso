@@ -41,4 +41,19 @@ module WakameHelpers
     throw StandardError.new("Unknown method: #{method}") unless SAFE_GROUPS.include?(m)
     return m
   end
+
+  def weblio_pitch(_word)
+    word = URI::encode(_word)
+    response = HTTParty.get("http://www.weblio.jp/content/#{word}", headers: $weblio_headers)
+    xml = Nokogiri::HTML(response.body)
+    midashigo = xml.css("h2.midashigo")
+    readings = []
+    midashigo.each do |m|
+      mm = m.content.match(/.*［(?<pitch>\d)］.*/)
+      if mm && mm['pitch']
+        readings << {header: m.content.gsub(/ /, ''), pitch: mm['pitch'].to_i}
+      end
+    end
+    return readings
+  end
 end

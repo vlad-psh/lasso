@@ -10,3 +10,5 @@
         td.yomi class="#{y == emph ? 'primary' : 'secondary'}" = e.detailsb['yomi'][y] ? e.detailsb['yomi'][y] : '-'
 - elsif e.word?
   = e.detailsb['readings'].join(", ")
+  - if e.detailsb['pitch'] && e.detailsb['pitch'].count > 0
+    = ' [' + e.detailsb['pitch'].map{|i|i['pitch']}.uniq.join(',') + ']'
