@@ -56,35 +56,49 @@ a.study-button {
   color: white;
   text-decoration: none;
 }
+.locked,
+.unlocked,
+.apprentice,
+.guru,
+.master,
+.enlightened,
+.burned {
+  border-style: solid;
+  border-width: 0 0 5px 0;
+}
 .locked, .locked a {
   background-color: #f5f5f5;
-  color: #999;
-  box-shadow: 1px 1px 0 #aaa;
+  color: #638686;
+  border-color: #b4c6c6;
 }
+/* Green palette from here:
+   http://www.colourlovers.com/palette/580974/Adrift_in_Dreams */
 .unlocked, .unlocked a {
-  background-color: #b4fd00;
-  color: #006865;
-  box-shadow: 1px 1px 0 #374d00;
+  background-color: #cff09e;
+  color: #3b8686; /* master bg */
+  border-color: #b9d78d;
 }
 .apprentice, .apprentice a {
-  background-color: #dd0093;
-  box-shadow: 1px 1px 0 #660044;
+  background-color: #a8dba8; /* #dd0093; */
+  color: #357878; /* master border */
+  border-color: #96c496;
 }
 .guru, .guru a {
-  background-color: #882d9e;
-  box-shadow: 1px 1px 0 #33113c;
+  background-color: #79bd9a; /* #882d9e; */
+  color: #0b486b; /* enlightened bg */
+  border-color: #6ca98a;
 }
 .master, .master a {
-  background-color: #294ddb;
-  box-shadow: 1px 1px 0 #0f1d57;
+  background-color: #3b8686; /* #294ddb; */
+  border-color: #357878;
 }
 .enlightened, .enlightened a {
-  background-color: #0093dd;
-  box-shadow: 1px 1px 0 #004466;
+  background-color: #0b486b; /* #0093dd; */
+  border-color: #094060;
 }
 .burned, .burned a {
   background-color: #434343;
-  box-shadow: 1px 1px 0 #262626;
+  border-color: #262626;
 }
 /* ==============================
    ELEMENTS LIST
@@ -116,9 +130,12 @@ a.study-button {
   font-size: 0.8em;
 }
 /* COMPACT STYLE */
+.elements-list-compact {
+  margin-top: 0.5em;
+}
 .elements-list-compact .elements-list-item {
   min-width: 0;
-  margin: 1px 1px 0 0;
+  margin: 0;
 }
 .elements-list-compact .elements-list-item .level-wrapper {
   display: none;
@@ -131,6 +148,15 @@ a.study-button {
 }
 .elements-list-compact .elements-list-item .description {
   display: none;
+}
+.elements-list-compact .locked,
+.elements-list-compact .unlocked,
+.elements-list-compact .apprentice,
+.elements-list-compact .guru,
+.elements-list-compact .master,
+.elements-list-compact .enlightened,
+.elements-list-compact .burned {
+  border-width: 0 1px 1px 0; 
 }
 /* ==============================
    ELEMENT
