@@ -51,6 +51,8 @@ end
 helpers WakameHelpers
 
 get :index do
+  @current_counters = Card.to_learn.group(:element_type).count
+
   @counters = {}
   [:just_unlocked, :just_learned, :failed, :expired].each do |g|
     @counters[g] = Card.public_send(g).group(:element_type).count
@@ -61,7 +63,7 @@ end
 
 get :card do
   @element = Card.find(params[:id])
-  if @element.element_type == 'w' && @element.detailsb['pitch'].blank?
+  if @element.element_type == 'w' && @element.detailsb['pitch'] == nil
     @element.detailsb['pitch'] = weblio_pitch(@element.title)
     @element.save
   end

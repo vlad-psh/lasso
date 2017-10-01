@@ -20,7 +20,7 @@ table.study-links-table
         td
           - if i > 0
             - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(tt[k.to_sym]) : path_to(:study).with(tt[k.to_sym], gk) )
-            a class="study-button #{gv[:color]}" href=study_path = i
+            a class="study-button #{gv[:color]}" href=study_path = gk == :just_unlocked ? "#{@current_counters[k] || '-'}/#{i}" : i
           - else
             ' -
 

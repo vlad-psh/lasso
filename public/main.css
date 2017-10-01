@@ -64,7 +64,7 @@ a.study-button {
 .enlightened,
 .burned {
   border-style: solid;
-  border-width: 0 0 5px 0;
+  border-width: 0 0 3px 0;
 }
 .locked, .locked a {
   background-color: #f5f5f5;
@@ -90,10 +90,12 @@ a.study-button {
 }
 .master, .master a {
   background-color: #3b8686; /* #294ddb; */
+  color: #c7e3c7;
   border-color: #357878;
 }
 .enlightened, .enlightened a {
   background-color: #0b486b; /* #0093dd; */
+  color: #79bd9a; /* guru bg */
   border-color: #094060;
 }
 .burned, .burned a {
@@ -120,7 +122,7 @@ a.study-button {
   text-shadow: 1px 1px 0 #fff;
 }
 .elements-list-item .element-block {
-  padding: 0.5em 0 0.5em 0;
+  padding: 0.5em 0.3em;
 }
 .elements-list-item .element {
   font-size: 2em;
