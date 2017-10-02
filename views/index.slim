@@ -12,6 +12,10 @@ table.study-links-table
     td Radicals
     td Kanji
     td Words
+  tr
+    td Cards left
+    - %w(r k w).each do |k|
+      td = @current_counters[k] || '-'
   - groups.each do |gk,gv|
     tr
       td = gv[:title]
@@ -20,7 +24,7 @@ table.study-links-table
         td
           - if i > 0
             - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(tt[k.to_sym]) : path_to(:study).with(tt[k.to_sym], gk) )
-            a class="study-button #{gv[:color]}" href=study_path = gk == :just_unlocked ? "#{@current_counters[k] || '-'}/#{i}" : i
+            a class="study-button #{gv[:color]}" href=study_path = i
           - else
             ' -
 

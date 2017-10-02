@@ -36,7 +36,11 @@ class Card < ActiveRecord::Base
   scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
   scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
   # Cards in current level which are not learned yet:
-  scope :to_learn, ->{not_learned.where(level: Card.not_learned.order(level: :asc).first.level)}
+  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
+
+  def self.current_level
+    self.not_learned.order(level: :asc).first.level
+  end
 
 # =====================================
 # INSTANCE

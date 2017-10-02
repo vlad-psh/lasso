@@ -17,10 +17,10 @@ also_reload './models.rb'
 also_reload './helpers.rb'
 
 paths index: '/',
+    list: '/list/:class',
+    current: '/current/:class', # get(redirection)
+    level: '/level/:level/:class',
     card: '/card/:id',
-    radicals: '/radicals',
-    kanjis: '/kanjis',
-    words: '/words',
     note: '/note/:id', # post
     learn: '/learn/:id', # post
     random_unlocked: '/random/:class', # get(redirection)
@@ -70,21 +70,29 @@ get :card do
   slim :element
 end
 
-get :radicals do
-  @elements = Card.radicals.order(level: :asc, id: :asc)
-  @title = "部首"
+get :list do
+  stype = safe_type(params[:class])
+  @elements = Card.public_send(stype).order(level: :asc, id: :asc)
+  @title = case stype
+    when :radicals then "部首"
+    when :kanjis then "漢字"
+    when :words then "言葉"
+  end
   slim :elements_list
 end
 
-get :kanjis do
-  @elements = Card.kanjis.order(level: :asc, id: :asc)
-  @title = "漢字"
-  slim :elements_list
+get :current do
+  redirect path_to(:level).with(Card.current_level, params[:class])
 end
 
-get :words do
-  @elements = Card.words.order(level: :asc, id: :asc)
-  @title = "言葉"
+get :level do
+  stype = safe_type(params[:class])
+  @elements = Card.public_send(stype).where(level: params[:level]).order(id: :asc)
+  @title = case stype
+    when :radicals then "部首##{params[:level]}"
+    when :kanjis then "漢字##{params[:level]}"
+    when :words then "言葉##{params[:level]}"
+  end
   slim :elements_list
 end
 

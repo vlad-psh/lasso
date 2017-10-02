@@ -11,11 +11,23 @@ html
     div#main-menu
       a href=path_to(:index) Wakame
       '  | 
-      a.r href=path_to(:radicals) Radicals
+      span.r
+        ' Radicals:
+        a<> href=path_to(:list).with(:radicals) all
+        ' |
+        a< href=path_to(:current).with(:radicals) current
       '  | 
-      a.k href=path_to(:kanjis) Kanji
+      span.k
+        ' Kanji:
+        a<> href=path_to(:list).with(:kanjis) all
+        ' |
+        a< href=path_to(:current).with(:kanjis) current
       '  | 
-      a.w href=path_to(:words) Vocab
+      span.w
+        ' Words:
+        a<> href=path_to(:list).with(:words) all
+        ' |
+        a< href=path_to(:current).with(:words) current
     == slim :flashes
     div#container
       == yield
