@@ -345,3 +345,7 @@ svg.decks-graph text {
 form.add-note-form {
   display: none;
 }
+.mnemonics form.add-note-form textarea {
+  width: 500px;
+  height: 100px;
+}
