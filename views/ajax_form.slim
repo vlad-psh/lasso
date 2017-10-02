@@ -1,0 +1,13 @@
+// locals: e (element), property_name, [placeholder]
+- placeholder ||= "Add custom description"
+div id="custom-note-#{property_name}"
+  div.custom-note data-id="custom-note-#{property_name}"
+    - if e.detailsb["my_#{property_name}"] && !e.detailsb["my_#{property_name}"].empty?
+      == bb_textile(e.detailsb["my_#{property_name}"])
+    - else
+      p.add-note-show-link = placeholder
+  form.add-note-form method="POST" action=path_to(:note).with(e.id) data-remote="true" data-id="custom-note-#{property_name}"
+    input type="hidden" name="property_name" value="my_#{property_name}"
+    textarea name="content" = e.detailsb["my_#{property_name}"]
+    br
+    input type="submit" value="Submit"

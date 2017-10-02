@@ -6,3 +6,4 @@
   span.secondary
     - e.detailsb['en'].each do |en|
       = ", #{en}"
+== slim :ajax_form, locals: {e: e, property_name: :en, placeholder: "Edit"}

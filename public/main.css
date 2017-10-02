@@ -190,6 +190,9 @@ a.study-button {
 .element-card table.details td.meaning {
   text-align: center;
 }
+.element-card table.details td.meaning p {
+  margin: 0;
+}
 .element-card table.details td.progress {
   text-align: right;
   color: #aaa;
@@ -242,12 +245,6 @@ a.study-button {
 .element-card .relative-elements-list {
   font-size: 0.7em;
   font-weight: 100;
-}
-.mnemonics .add-note-show-link {
-  color: #bbb;
-}
-form.add-note-form {
-  display: none;
 }
 /* ==============================
    STUDY CARD
@@ -330,4 +327,21 @@ svg.upcoming-week-graph text,
 svg.decks-graph text {
   text-anchor: middle;
   font-size: x-small;
+}
+/* ==============================
+   AJAX FORM
+   ============================== */
+.custom-note:hover {
+  background-color: rgba(100,100,100,0.1);
+  cursor: pointer;
+}
+.add-note-show-link {
+  color: #bbb;
+  cursor: pointer;
+}
+.add-note-show-link:hover {
+  color: #777;
+}
+form.add-note-form {
+  display: none;
 }

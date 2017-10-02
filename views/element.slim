@@ -48,16 +48,7 @@ div.element-card
           div class="#{'mnemonics-hint' if p['hnt']}" == bb_textile(e.detailsb[p])
       - unless mne_title == :reading && e.radical?
         div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
-        div id="custom-note-#{mne_title}"
-          div.custom-note data-id="custom-note-#{mne_title}"
-            - if e.detailsb["my_#{mne_title}"] && !e.detailsb["my_#{mne_title}"].empty?
-              == bb_textile(e.detailsb["my_#{mne_title}"])
-            - else
-              p.add-note-show-link Add custom description
-          form.add-note-form method="POST" action=path_to(:note).with(e.id) data-remote="true" data-id="custom-note-#{mne_title}"
-            input type="text" name="property_name" value="my_#{mne_title}" readonly="readonly"
-            input type="text" name="content" value=e.detailsb["my_#{mne_title}"]
-            input type="submit" value="Submit"
+        == slim :ajax_form, locals: {e: e, property_name: mne_title}
 
   - if e.word? && e.detailsb['sentences'].length > 0
    div.mnemonics
