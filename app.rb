@@ -51,7 +51,7 @@ end
 helpers WakameHelpers
 
 get :index do
-  @current_counters = Card.to_learn.group(:element_type).count
+  @current_counters = Card.to_learn.group(:element_type, :unlocked).count
 
   @counters = {}
   [:just_unlocked, :just_learned, :failed, :expired].each do |g|
@@ -97,11 +97,15 @@ get :level do
 end
 
 post :note do
+  sprop = params[:property_name].to_sym
+  allowed_props = [:my_meaning, :my_reading, :my_en]
+  throw StandardError.new("Unknown property: #{sprop}") unless allowed_props.include?(sprop)
+
   e = Card.find(params[:id])
-  e.detailsb["mynotes"] = params[:content]
+  e.detailsb[sprop.to_s] = params[:content]
   e.save
 
-  return bb_textile(e.detailsb["mynotes"])
+  return bb_textile(e.detailsb[sprop.to_s])
 end
 
 post :learn do

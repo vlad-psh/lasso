@@ -15,7 +15,10 @@ table.study-links-table
   tr
     td Cards left
     - %w(r k w).each do |k|
-      td = @current_counters[k] || '-'
+      td
+        - unlocked = @current_counters[[k, true]] || 0
+        - total = unlocked + (@current_counters[[k, false]] || 0)
+        = "#{unlocked}/#{total}"
   - groups.each do |gk,gv|
     tr
       td = gv[:title]
@@ -52,7 +55,7 @@ ruby:
   end
 
 hr
-' Scheduled:
+' Scheduled (for upcoming 3 weeks):
 br
 svg.upcoming-week-graph height=_height+30 width=graph_width
   - d = Date.today
@@ -83,7 +86,7 @@ ruby:
   end
 
 br
-' Learned till today:
+' Learning history (past 3 weeks):
 br
 svg.upcoming-week-graph height=_height+30 width=graph_width
   - d = Date.today - days_in_graph + 1
