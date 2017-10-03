@@ -19,18 +19,19 @@ div.element-card
     div.top-info-block
       div.hr-title: span Reading
       div.top-info-content == slim :reading, locals: {e: e}
-    div.top-info-block
-      div.hr-title: span Progress
-      div.top-info-content
-        = "deck: #{e.deck}"
-        br
-        = "passes: ???"
-        br
-        = "fails: ???"
     - if e.word?
       div.top-info-block
         div.hr-title: span PoS
         div.top-info-content = e.detailsb['pos']
+    - if e.scheduled
+      div.top-info-block
+        div.hr-title: span Progress
+        div.top-info-content
+          = "deck: #{e.deck}"
+          br
+          = "passes: #{e.actions.where(action_type: 3).count}"
+          br
+          = "fails: #{e.actions.where(action_type: 4).count}"
     div.top-info-block
       div.hr-title: span Actions
       div.top-info-content
