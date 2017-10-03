@@ -8,6 +8,7 @@ html
     script src="/js/jquery-rails.js"
     script src="/js/main.js"
     link rel="stylesheet" type="text/css" href="/main.css"
+    meta content="width=device-width, initial-scale=1" name="viewport"
   body
     div#main-menu
       a href=path_to(:index) Wakame
@@ -29,7 +30,8 @@ html
         a<> href=path_to(:list).with(:words) all
         ' |
         a< href=path_to(:current).with(:words) current
+      '  | 
+      a onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; text-align: right" Toggle compact mode
     == slim :flashes
     div#container
       == yield
-

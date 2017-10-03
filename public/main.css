@@ -354,3 +354,30 @@ form.add-note-form {
   width: 500px;
   height: 100px;
 }
+/* ==============================
+   MOBILE
+   default window width: 980
+   with meta:
+     iphone: vertical 320/horizontal 568
+     ipad:   vertical 768/horizontal 1024
+   ============================== */
+@media (max-width: 500px) {
+  body {
+    margin: 0 !important;
+  }
+  #main-menu {
+    margin: 0.2em;
+  }
+  .element-card {
+    padding: 0.5em !important;
+  }
+  .mnemonics {
+    margin: 0 !important;
+  }
+  .elements-list-item {
+    font-size: 0.7em !important;
+  }
+  .elements-list-compact .elements-list-item {
+    font-size: 1.006em !important; /* precise value to fit onto iphone screen without margins :) */
+  }
+}
