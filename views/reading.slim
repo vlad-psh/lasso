@@ -2,11 +2,10 @@
 - if e.kanji?
   - emph = e.detailsb['yomi']['emph']
   table.yomi-table
-    tr
-      - %w(音 訓 名).each do |y|
-        td.yomi-name = y
-    tr
-      - %w(on kun nanori).each do |y|
+    - [['音', 'on'], ['訓', 'kun'], ['名', 'nanori']].each do |i|
+      - t, y = i[0], i[1]
+      tr
+        td.yomi-name = t
         td.yomi class="#{y == emph ? 'primary' : 'secondary'}" = e.detailsb['yomi'][y] ? e.detailsb['yomi'][y] : '-'
 - elsif e.word?
   = e.detailsb['readings'].join(", ")

@@ -174,28 +174,23 @@ a.study-button {
   margin: 1em auto;
   text-align: center;
 }
+.element-card .top-info .top-info-block {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 16px;
+}
+.element-card .top-info .top-info-block .hr-title {
+  margin: 0 -16px;
+}
+.element-card .top-info .top-info-block .top-info-content {
+  margin-top: 0.4em;
+}
+.element-card .top-info .top-info-block .custom-note p {
+  margin: 0;
+}
 .element-card .element-title {
   font-size: 4em;
   display: inline-block;
-}
-.element-card table.details {
-  display: inline-block;
-  vertical-align: middle;
-}
-.element-card table.details td {
-  vertical-align: top;
-  padding: 0 16px;
-}
-.element-card table.details td.level,
-.element-card table.details td.meaning {
-  text-align: center;
-}
-.element-card table.details td.meaning p {
-  margin: 0;
-}
-.element-card table.details td.progress {
-  text-align: right;
-  color: #aaa;
 }
 .element-card .mnemonics {
   display: inline-block;
@@ -294,6 +289,9 @@ a.study-button {
 }
 .yomi-table {
   text-align: center;
+}
+.yomi-table td {
+  padding: 0 4px !important;
 }
 .yomi-table .yomi-name,
 .yomi-table .secondary {

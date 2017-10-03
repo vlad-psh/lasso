@@ -8,34 +8,36 @@ ruby:
 
 div.element-card
   div.top-info
-    div.element-title = e.title
-
-    table.details
-      tr.headers
-        td Level
-        td Meaning
-        td Reading
-        td Progress
-        - if e.word?
-          td PoS
-      tr
-        td.level = e.level 
-        td.meaning == slim :meaning, locals: {e: e}
-        td.reading == slim :reading, locals: {e: e}
-        td.progress
-          = "deck: #{e.deck}"
-          br
-          = "passes: ???"
-          br
-          = "fails: ???"
-        - if e.word?
-          td.pos = e.detailsb['pos']
-        td
-          form method="POST" action=path_to(:learn).with(e.id)
-            input disabled=((e.unlocked && !e.learned) ? nil : 'disabled') type="submit" value=(e.learned ? 'Learned' : 'Learn!')
-            - card_types = {r: :radicals, k: :kanjis, w: :words}
-            br
-            a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
+    div.top-info-block
+      div.element-title = e.title
+    div.top-info-block
+      div.hr-title: span Level
+      div.top-info-content = e.level
+    div.top-info-block
+      div.hr-title: span Meaning
+      div.top-info-content == slim :meaning, locals: {e: e}
+    div.top-info-block
+      div.hr-title: span Reading
+      div.top-info-content == slim :reading, locals: {e: e}
+    div.top-info-block
+      div.hr-title: span Progress
+      div.top-info-content
+        = "deck: #{e.deck}"
+        br
+        = "passes: ???"
+        br
+        = "fails: ???"
+    - if e.word?
+      div.top-info-block
+        div.hr-title: span PoS
+        div.top-info-content = e.detailsb['pos']
+    div.top-info-block
+      div.hr-title: span Actions
+      div.top-info-content
+        form method="POST" action=path_to(:learn).with(e.id)
+          input disabled=((e.unlocked && !e.learned) ? nil : 'disabled') type="submit" value=(e.learned ? 'Learned' : 'Learn!')
+        - card_types = {r: :radicals, k: :kanjis, w: :words}
+        a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
 
   - if e.detailsb['mynotes']
     div == e.detailsb["mynotes"]
