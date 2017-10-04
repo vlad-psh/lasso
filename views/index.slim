@@ -54,10 +54,10 @@ ruby:
     maxval = v.scheduled_total if v.scheduled_total > maxval
   end
 
-hr
+div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
 ' Scheduled (for upcoming 3 weeks):
 br
-svg.upcoming-week-graph height=_height+30 width=graph_width
+svg.upcoming-week-graph viewBox="0 0 #{graph_width} #{_height+30}"
   - d = Date.today
   - iter = 0
   - while d <= (Date.today + days_in_graph - 1)
@@ -88,7 +88,7 @@ ruby:
 br
 ' Learning history (past 3 weeks):
 br
-svg.upcoming-week-graph height=_height+30 width=graph_width
+svg.upcoming-week-graph viewBox="0 0 #{graph_width} #{_height+30}"
   - d = Date.today - days_in_graph + 1
   - iter = 0
   - while d <= Date.today

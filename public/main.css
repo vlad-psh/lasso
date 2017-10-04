@@ -201,7 +201,6 @@ a.study-button {
 }
 .element-card .mnemonics {
   display: inline-block;
-  padding-top: 12px;
   margin: 0 1em;
   font-style: italic;
   max-width: 500px;
@@ -310,26 +309,17 @@ a.study-button {
 /* ==============================
    GRAPHS
    ============================== */
-svg.upcoming-week-graph,
-svg.decks-graph {
+svg.upcoming-week-graph {
   background: #eee;
   padding: 8px 12px 4px 12px;
   margin-top: 6px;
-  margin-right: 12px;
   border-radius: 5px;
+  max-width: 500px;
 }
-svg.upcoming-week-graph .bar,
-svg.decks-graph .bar {
+svg.upcoming-week-graph .bar {
   fill: #e1282e;
 }
-svg.decks-graph .bar-orange {
-  fill: #e15416;
-}
-svg.decks-graph .bar-green {
-  fill: #98d33a;
-}
-svg.upcoming-week-graph text,
-svg.decks-graph text {
+svg.upcoming-week-graph text {
   text-anchor: middle;
   font-size: x-small;
 }
@@ -379,5 +369,9 @@ form.add-note-form {
   }
   .elements-list-compact .elements-list-item {
     font-size: 1.006em !important; /* precise value to fit onto iphone screen without margins :) */
+  }
+  svg.upcoming-week-graph {
+    padding-top: 8px !important;
+    padding-bottom: 4px !important;
   }
 }
