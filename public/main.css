@@ -111,9 +111,19 @@ a.study-button {
 /* ==============================
    ELEMENTS LIST
    ============================== */
+.elements-list-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+.elements-list-wrapper::after {
+  content: '';
+  flex-grow: 1000000000;
+}
 .elements-list-item {
-  display: inline-block;
+  flex: auto;
   min-width: 4em;
+  max-width: 200px;
   text-align: center;
   margin: 0.5em 0.2em 0.2em 0.2em;
 }
