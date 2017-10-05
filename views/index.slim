@@ -104,3 +104,25 @@ svg.upcoming-week-graph viewBox="0 0 #{graph_width} #{_height+30}"
       text x=half_bar_width y=_height-bar_height-2 = v.learned_total
     - iter += 1
     - d += 1
+
+ruby:
+  level_dates = []
+  #not_yet_learned = Card.where(scheduled: nil).group(:level).count
+  not_yet_learned = Card.where(learned: false).group(:level).count
+  level_dates << Action.where(action_type: 2).order(created_at: :asc).first.created_at.to_datetime
+  (1..60).each do |i|
+    break if not_yet_learned[i]
+    # latest learn action at current level
+    a = Action.eager_load(:card).where(action_type: 2, cards: {level: i}).order(created_at: :desc).first
+    level_dates << a.created_at.to_datetime
+  end
+  level_dates << DateTime.now
+  level_duration = {}
+  (level_dates.count - 1).times do |i|
+    level_duration[i+1] = (level_dates[i+1] - level_dates[i]).to_f.round(1)
+  end
+
+br
+' Levels duration:
+= level_duration.inspect
+
