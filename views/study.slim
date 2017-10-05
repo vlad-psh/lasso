@@ -1,8 +1,11 @@
 div.study-card
-  h1 class=@element.element_type = @element.title
-  div.additional-info
+  div.top-info
     div.counter
       = "もう#{@element.class.send(params[:group]).count}つ"
+      br
+      a href=path_to(:card).with(@element.id) = "Card ##{@element.id}"
+    div.show-answer-button
+      ' Show answer [Space]
     div.question-details
       - if @element.radical?
         ' Meaning
@@ -10,6 +13,8 @@ div.study-card
         = "Meaning + #{@element.detailsb['yomi']['emph']}-yomi reading"
       - else
         ' Meaning + reading
+  h1 class=@element.element_type = @element.title
+  div.sentences
     - if @element.word?
       div.sentence-examples
         - @element.detailsb['sentences'].each do |sentence|
@@ -27,6 +32,9 @@ div.study-card
           td == slim :reading, locals: {e: @element}
     br
     div.hint Was your answer correct? [Y/N]
+    div.answer-buttons
+      div.incorrect-answer-button NO
+      div.correct-answer-button YES
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
     input type="hidden" name="element_id" value=@element.id
     input type="hidden" name="answer" value=''
@@ -34,19 +42,34 @@ div.study-card
 javascript:
   var is_answered = false;
 
+  function showAnswer(){
+    $(".show-answer-button").hide();
+    $(".answer").show();
+    is_answered = true;
+  };
+  function answerCorrect(){
+    $("#answer-form input[name=answer]").val('yes');
+    $("#answer-form").submit();
+  };
+  function answerIncorrect(){
+    $("#answer-form input[name=answer]").val('no');
+    $("#answer-form").submit();
+  };
+
   $(document).on('keyup', function (e) {
     if (is_answered) {
       if (e.keyCode == 89) { // [Y] key
-        $("#answer-form input[name=answer]").val('yes');
-        $("#answer-form").submit();
+        answerCorrect();
       } else if (e.keyCode == 78) { // [N] key
-        $("#answer-form input[name=answer]").val('no');
-        $("#answer-form").submit();
+        answerIncorrect();
       }
     } else {
       if (e.keyCode == 13 || e.keyCode == 32) { // Enter or Space
-        $(".answer").show();
-        is_answered = true;
+        showAnswer();
       }
     }
   });
+
+  $(document).on('click', '.show-answer-button', function(){showAnswer();});
+  $(document).on('click', '.correct-answer-button', function(){answerCorrect();});
+  $(document).on('click', '.incorrect-answer-button', function(){answerIncorrect();});

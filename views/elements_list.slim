@@ -1,6 +1,6 @@
 - cl = 0
 - elements = @elements unless elements
-div.elements-list-wrapper
+div class="elements-list-wrapper #{elements[0].kanji? ? 'elements-list-nostretch' : ''}"
   - elements.each do |e|
     div.elements-list-item
       div.level-wrapper

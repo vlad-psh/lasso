@@ -123,9 +123,12 @@ a.study-button {
 .elements-list-item {
   flex: auto;
   min-width: 4em;
-  max-width: 200px;
   text-align: center;
   margin: 0.5em 0.2em 0.2em 0.2em;
+}
+/* an exception from rules because we want perfect table for compact kanji list */
+.elements-list-nostretch.elements-list-compact .elements-list-item {
+  flex: initial !important;
 }
 .elements-list-item .level-wrapper {
   font-size: 1.5em;
@@ -201,6 +204,7 @@ a.study-button {
 }
 .element-card .top-info .top-info-block .top-info-content {
   margin-top: 0.4em;
+  max-width: 15em;
 }
 .element-card .top-info .top-info-block .custom-note p {
   margin: 0;
@@ -261,24 +265,43 @@ a.study-button {
    STUDY CARD
    ============================== */
 .study-card h1 {
-  font-size: 15em;
+  font-size: 15vmax;
   text-align: center;
   padding: 0.2em;
-  margin: 0.3em 0 0.1em 0;
+  margin: 0.07em 0 0.07em 0;
 }
 .study-card .answer {
   display: none;
 }
-.study-card .additional-info {
-  width: 100%;
+.study-card .top-info {
+  text-align: left;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+.study-card .top-info .show-answer-button {
+  cursor: pointer;
+  background: #eee;
   text-align: center;
 }
-.study-card .counter {
-  float: left;
+.study-card .top-info .show-answer-button,
+.study-card .top-info .question-details {
+  display: flex;
+  align-items: center;
 }
-.study-card .question-details {
-  float: right;
-  color: #777;
+.study-card .correct-answer-button,
+.study-card .incorrect-answer-button {
+  display: inline-block;
+  padding: 5px;
+  margin: 0.5em 0.7em;
+  cursor: pointer;
+  color: white;
+}
+.study-card .correct-answer-button {
+  background-color: #4caf50;
+}
+.study-card .incorrect-answer-button {
+  background-color: #e51c23;
 }
 .study-card .sentence-examples {
   font-size: 1em;
@@ -292,7 +315,10 @@ a.study-button {
 .study-card .answer-block {
   margin: 0 auto;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.2em;
+}
+.study-card .answer-block p {
+  margin: 0;
 }
 .study-card .answer table {
   margin: 0 auto;
@@ -377,8 +403,9 @@ form.add-note-form {
   .elements-list-item {
     font-size: 0.7em !important;
   }
-  .elements-list-compact .elements-list-item {
-    font-size: 1.006em !important; /* precise value to fit onto iphone screen without margins :) */
+/* precise value to fit onto iphone screen without margins :) */
+  .elements-list-kanji.elements-list-compact .elements-list-item {
+    font-size: 1.006em !important;
   }
   svg.upcoming-week-graph {
     padding-top: 8px !important;
