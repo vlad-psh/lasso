@@ -1,3 +1,9 @@
+INFODIC = {
+  :r => {singular: :radical, plural: :radicals},
+  :k => {singular: :kanji, plural: :kanjis},
+  :w => {singular: :word, plural: :words}
+}
+
 class Card < ActiveRecord::Base
   has_many :actions
   # low-level:
@@ -70,6 +76,14 @@ class Card < ActiveRecord::Base
 
   def word?
     element_type == 'w' ? true : false
+  end
+
+  def tplural
+    return INFODIC[element_type.to_sym][:plural]
+  end
+
+  def tsingular
+    return INFODIC[element_type.to_sym][:singular]
   end
 
   def description

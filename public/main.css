@@ -93,7 +93,7 @@ a.study-button {
 .enlightened,
 .burned {
   border-style: solid;
-  border-width: 0 0 3px 0;
+  border-width: 0 0 0.2em 0;
 }
 .locked, .locked a {
   background-color: #f5f5f5;
@@ -134,24 +134,29 @@ a.study-button {
 /* ==============================
    ELEMENTS LIST
    ============================== */
-.elements-list-wrapper {
+.elements-list-separate.elements-list-words,
+.elements-list-separate.elements-list-kanjis:not(.elements-list-compact),
+.elements-list-separate.elements-list-radicals:not(.elements-list-compact) {
   display: flex;
   flex-flow: row wrap;
   width: 100%;
 }
-.elements-list-wrapper::after {
+.elements-list-separate.elements-list-radicals.elements-list-compact,
+.elements-list-separate.elements-list-kanjis.elements-list-compact {
+  text-align: left;
+}
+.elements-list-separate::after {
   content: '';
   flex-grow: 1000000000;
 }
 .elements-list-item {
-  flex: auto;
+  display: inline-block;
   min-width: 4em;
   text-align: center;
   margin: 0.5em 0.2em 0.2em 0.2em;
 }
-/* an exception from rules because we want perfect table for compact kanji list */
-.elements-list-nostretch.elements-list-compact .elements-list-item {
-  flex: initial !important;
+.elements-list-separate .elements-list-item {
+  flex: auto;
 }
 .elements-list-item .level-wrapper {
   font-size: 1.5em;
@@ -413,7 +418,7 @@ form.add-note-form {
      iphone: vertical 320/horizontal 568
      ipad:   vertical 768/horizontal 1024
    ============================== */
-@media (max-width: 500px) {
+@media (max-width: 568px) {
   body {
     margin: 0 !important;
   }
@@ -423,14 +428,14 @@ form.add-note-form {
   .mnemonics {
     margin: 0 !important;
   }
-  .elements-list-item {
-    font-size: 0.7em !important;
-  }
-/* precise value to fit onto iphone screen without margins :) */
-  .elements-list-kanji.elements-list-compact .elements-list-item {
-    font-size: 1.006em !important;
-  }
   svg.upcoming-week-graph {
     padding: 8px 0 4px 0 !important;
   }
 }
+@media (max-width: 320px) {
+/* precise value to fit onto iphone (vertical) screen without margins :) */
+  .elements-list-compact .elements-list-item {
+    font-size: 1.006em !important;
+  }
+}
+

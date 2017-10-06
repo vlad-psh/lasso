@@ -78,6 +78,7 @@ get :list do
     when :kanjis then "漢字"
     when :words then "言葉"
   end
+  @separate_list = true
   slim :elements_list
 end
 
@@ -93,6 +94,7 @@ get :level do
     when :kanjis then "漢字##{params[:level]}"
     when :words then "言葉##{params[:level]}"
   end
+  @separate_list = true
   slim :elements_list
 end
 
