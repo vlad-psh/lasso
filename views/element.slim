@@ -16,9 +16,10 @@ div.element-card
     div.top-info-block
       div.hr-title: span Meaning
       div.top-info-content == slim :meaning, locals: {e: e}
-    div.top-info-block
-      div.hr-title: span Reading
-      div.top-info-content == slim :reading, locals: {e: e}
+    - unless e.radical?
+      div.top-info-block
+        div.hr-title: span Reading
+        div.top-info-content == slim :reading, locals: {e: e}
     - if e.word?
       div.top-info-block
         div.hr-title: span PoS

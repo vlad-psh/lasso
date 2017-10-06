@@ -2,6 +2,7 @@ body {
   font-family: Cambria, FA M, serif;
   font-weight: 300;
   font-size: 12pt;
+  margin-top: 0;
 }
 #container {
   text-align: center;
@@ -36,6 +37,28 @@ body {
 svg .r {fill: #0af !important;}
 svg .k {fill: #f0a !important;}
 svg .w {fill: #a0f !important;}
+#main-menu {
+  margin: 0 0.2em;
+}
+.main-menu-block {
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+}
+.main-menu-type-title {
+  font-size: 0.85em;
+}
+.main-menu-type-link {
+  display: inline-block;
+  padding: 0 0.7em;
+}
+a.main-menu-type-link:hover {
+  background-color: rgba(0,0,0,0.2);
+}
+.main-menu-type-title,
+.main-menu-type-link {
+  border-right: 1px solid white;
+}
 .study-links-table {
   display: inline-block;
 }
@@ -292,8 +315,11 @@ a.study-button {
 .study-card .correct-answer-button,
 .study-card .incorrect-answer-button {
   display: inline-block;
-  padding: 5px;
-  margin: 0.5em 0.7em;
+  padding: 0.5em 1em;
+/* bottom margin is big because if these buttons are
+   close to bottom edge of the screen on iphone, it will
+   open toolbar when clicked on this area */
+  margin: 0.5em 0.7em 3em 0.7em;
   cursor: pointer;
   color: white;
 }
@@ -315,7 +341,7 @@ a.study-button {
 .study-card .answer-block {
   margin: 0 auto;
   text-align: center;
-  font-size: 1.2em;
+  font-size: 1em;
 }
 .study-card .answer-block p {
   margin: 0;
@@ -391,9 +417,6 @@ form.add-note-form {
   body {
     margin: 0 !important;
   }
-  #main-menu {
-    margin: 0.2em;
-  }
   .element-card {
     padding: 0.5em !important;
   }
@@ -408,7 +431,6 @@ form.add-note-form {
     font-size: 1.006em !important;
   }
   svg.upcoming-week-graph {
-    padding-top: 8px !important;
-    padding-bottom: 4px !important;
+    padding: 8px 0 4px 0 !important;
   }
 }

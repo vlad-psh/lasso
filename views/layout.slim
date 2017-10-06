@@ -11,27 +11,16 @@ html
     meta content="width=device-width, initial-scale=1" name="viewport"
   body
     div#main-menu
-      a href=path_to(:index) Wakame
-      '  | 
-      span.r
-        ' Radicals:
-        a<> href=path_to(:list).with(:radicals) all
-        ' |
-        a< href=path_to(:current).with(:radicals) current
-      '  | 
-      span.k
-        ' Kanji:
-        a<> href=path_to(:list).with(:kanjis) all
-        ' |
-        a< href=path_to(:current).with(:kanjis) current
-      '  | 
-      span.w
-        ' Words:
-        a<> href=path_to(:list).with(:words) all
-        ' |
-        a< href=path_to(:current).with(:words) current
-      '  | 
-      a onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; text-align: right" Toggle compact mode
+      div.main-menu-block
+        a> href=path_to(:index) わかめ
+        br
+        a> onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; text-align: right" 大小
+      - [[:r, :radicals, '部首'], [:k, :kanjis, '漢字'], [:w, :words, '言葉']].each do |i|
+        div.main-menu-block class=i[0]
+          div.main-menu-type-title = i[2]
+          div.main-menu-type-links
+            a.main-menu-type-link href=path_to(:list).with(i[1]) 全
+            a.main-menu-type-link href=path_to(:current).with(i[1]) 現
     == slim :flashes
     div#container
       == yield
