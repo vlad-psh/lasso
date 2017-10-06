@@ -5,31 +5,59 @@ ruby:
         failed: {title: 'Failed', color: :red},
         expired: {title: 'Expired', color: :yellow}}
   tt = {r: :radicals, k: :kanjis, w: :words}
+  clevel = Card.current_level
+  cstat_raw = Card.where(level: clevel).group(:element_type, :unlocked, :learned).count
+  cstat = {}
+  %w(r k w total).each {|k|cstat[k] = {unlocked: 0, locked: 0, learned: 0, total: 0}}
+  cstat_raw.each do |k,v|
+    _t = case k
+      when [k[0],true,false]  then :unlocked
+      when [k[0],false,false] then :locked
+      when [k[0],true,true]   then :learned
+    end
+    cstat[k[0]][_t]        += v
+    cstat[k[0]][:total]    += v
+    cstat['total'][_t]     += v
+    cstat['total'][:total] += v
+  end
 
-table.study-links-table
-  tr
-    td
-    td Radicals
-    td Kanji
-    td Words
-  tr
-    td Cards left
-    - %w(r k w).each do |k|
-      td
-        - unlocked = @current_counters[[k, true]] || 0
-        - total = unlocked + (@current_counters[[k, false]] || 0)
-        = "#{unlocked}/#{total}"
-  - groups.each do |gk,gv|
+div.stat-table-block
+  div.hr-title: span = "Level #{clevel}"
+  table
     tr
-      td = gv[:title]
-      - %w(r k w).each do |k|
-        - i = @counters[gk][k] || 0
-        td
-          - if i > 0
-            - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(tt[k.to_sym]) : path_to(:study).with(tt[k.to_sym], gk) )
-            a class="study-button #{gv[:color]}" href=study_path = i
-          - else
-            ' -
+      td
+      td Unlocked
+      td Locked
+      td Learned
+      td Learned %
+    - %w(r k w total).each do |k|
+      tr
+        td = k
+        td = cstat[k][:unlocked]
+        td = cstat[k][:locked]
+        td = cstat[k][:learned]
+        td = "#{(cstat[k][:learned].to_f / cstat[k][:total] * 100).round(1)}%"
+
+div.stat-table-block
+  div.hr-title: span Learning
+  table
+    tr
+      td
+      td Unlocked
+      td New
+      td Failed
+      td Expired
+    - %w(r k w).each do |k|
+      tr
+        td = k
+        - groups.each do |gk,gv|
+          - i = @counters[gk][k] || 0
+          td
+            - if i > 0
+              - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(tt[k.to_sym]) : path_to(:study).with(tt[k.to_sym], gk) )
+              a class="study-button #{gv[:color]}" href=study_path = i
+            - else
+              ' -
 
 ruby:
   days_in_graph = 21
@@ -123,6 +151,4 @@ ruby:
   end
 
 br
-' Levels duration:
-= level_duration.inspect
-
+= "Levels duration #{level_duration.inspect}"

@@ -59,18 +59,15 @@ a.main-menu-type-link:hover {
 .main-menu-type-link {
   border-right: 1px solid white;
 }
-.study-links-table {
+.stat-table-block {
   display: inline-block;
-}
-.study-links-table td {
-  text-align: center;
+  padding: 0 0.3em;
 }
 a.study-button {
   text-align: center;
   display: inline-block;
-  width: 5em;
+  width: 4.3em;
   padding: 0.2em 0;
-  border-radius: 5px;
 }
 /* ==============================
    ELEMENTS LIST - RELATED
