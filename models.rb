@@ -1,7 +1,7 @@
 INFODIC = {
-  :r => {singular: :radical, plural: :radicals},
-  :k => {singular: :kanji, plural: :kanjis},
-  :w => {singular: :word, plural: :words}
+  :r => {singular: :radical, plural: :radicals, japanese: '部首'},
+  :k => {singular: :kanji, plural: :kanjis, japanese: '漢字'},
+  :w => {singular: :word, plural: :words, japanese: '言葉'}
 }
 
 class Card < ActiveRecord::Base

@@ -1,6 +1,6 @@
 ruby:
+  LVLS = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
   groups = {
-        just_unlocked: {title: 'Unlocked', color: :green},
         just_learned: {title: 'New', color: :blue},
         failed: {title: 'Failed', color: :red},
         expired: {title: 'Expired', color: :yellow}}
@@ -22,7 +22,7 @@ ruby:
   end
 
 div.stat-table-block
-  div.hr-title: span = "Level #{clevel}"
+  div.hr-title: span = "Level #{clevel} (#{LVLS[(clevel-1)/10]})"
   table
     tr
       td
@@ -32,8 +32,12 @@ div.stat-table-block
       td Learned %
     - %w(r k w total).each do |k|
       tr
-        td = k
-        td = cstat[k][:unlocked]
+        td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
+        td
+          - unless k == 'total'
+            a.study-button.green href=path_to(:random_unlocked).with(tt[k.to_sym]) = cstat[k][:unlocked]
+          - else
+            = cstat[k][:unlocked]
         td = cstat[k][:locked]
         td = cstat[k][:learned]
         td = "#{(cstat[k][:learned].to_f / cstat[k][:total] * 100).round(1)}%"
@@ -43,19 +47,17 @@ div.stat-table-block
   table
     tr
       td
-      td Unlocked
       td New
       td Failed
       td Expired
     - %w(r k w).each do |k|
       tr
-        td = k
+        td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
         - groups.each do |gk,gv|
           - i = @counters[gk][k] || 0
           td
             - if i > 0
-              - study_path = (gk == :just_unlocked ? path_to(:random_unlocked).with(tt[k.to_sym]) : path_to(:study).with(tt[k.to_sym], gk) )
-              a class="study-button #{gv[:color]}" href=study_path = i
+              a class="study-button #{gv[:color]}" href=path_to(:study).with(tt[k.to_sym], gk) = i
             - else
               ' -
 

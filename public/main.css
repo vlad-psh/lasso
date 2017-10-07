@@ -405,8 +405,8 @@ form.add-note-form {
   display: none;
 }
 .mnemonics form.add-note-form textarea {
-  width: 500px;
-  height: 100px;
+  width: 100%;
+  height: 10em;
 }
 /* ==============================
    MOBILE
