@@ -24,7 +24,8 @@ paths index: '/',
     note: '/note/:id', # post
     learn: '/learn/:id', # post
     random_unlocked: '/random/:class', # get(redirection)
-    study: '/study/:class/:group' # get, post
+    study: '/study/:class/:group', # get, post
+    search: '/search' # post
 
 configure do
   puts '---> init <---'
@@ -158,3 +159,9 @@ post :study do
   redirect path_to(:study).with(safe_type(params[:class]), safe_group(params[:group]))
 end
 
+post :search do
+  q = params['query']
+  @elements = Card.where('title LIKE ?', "%#{q}%")
+  @separate_list = true
+  slim :elements_list
+end

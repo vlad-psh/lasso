@@ -21,6 +21,10 @@ html
           div.main-menu-type-links
             a.main-menu-type-link href=path_to(:list).with(i[1]) 全
             a.main-menu-type-link href=path_to(:current).with(i[1]) 現
+      div.main-menu-block
+        form method="POST" action=path_to(:search)
+          input type="text" name="query"
+          input type="submit" value="Search"
     == slim :flashes
     div#container
       == yield
