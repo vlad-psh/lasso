@@ -27,3 +27,12 @@ $(document).on('click', '.toggle-compact-form input', function(event){
   $('.toggle-compact-form').submit();
   $("div.elements-list-wrapper").toggleClass("elements-list-compact");
 });
+/* ====================
+   HAMBURGER MENU
+   ==================== */
+$(document).on('mouseenter', '.hamburger', function(event){
+  $("#overlay-menu").show();
+});
+$(document).on('mouseleave', '#overlay-menu', function(event){
+  $("#overlay-menu").hide();
+});
