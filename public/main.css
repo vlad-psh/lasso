@@ -37,28 +37,6 @@ body {
 svg .r {fill: #0af !important;}
 svg .k {fill: #f0a !important;}
 svg .w {fill: #a0f !important;}
-#main-menu {
-  margin: 0 0.2em;
-}
-.main-menu-block {
-  display: inline-block;
-  text-align: center;
-  vertical-align: top;
-}
-.main-menu-type-title {
-  font-size: 0.85em;
-}
-.main-menu-type-link {
-  display: inline-block;
-  padding: 0 0.7em;
-}
-a.main-menu-type-link:hover {
-  background-color: rgba(0,0,0,0.2);
-}
-.main-menu-type-title,
-.main-menu-type-link {
-  border-right: 1px solid white;
-}
 .stat-table-block {
   display: inline-block;
   padding: 0 0.3em;
@@ -68,6 +46,67 @@ a.study-button {
   display: inline-block;
   width: 4.3em;
   padding: 0.2em 0;
+}
+/* ==============================
+   TOP MENU
+   ============================== */
+#main-menu {
+  margin: 0 0 0.6em 0;
+  text-align: center;
+  font-size: 1.3em;
+}
+#main-menu .center {
+  display: inline-block;
+}
+#main-menu .right {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+#main-menu .left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0.1em 0.3em;
+}
+#main-menu a.r,
+#main-menu a.k,
+#main-menu a.w {
+  padding: 0.1em 0.3em;
+}
+/* ==============================
+   MENU OVERLAY
+   ============================== */
+#overlay-menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: rgba(0,0,0,0.9);
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  color: white;
+  display: none;
+}
+#overlay-menu .close-button {
+  position: fixed;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+#overlay-menu .type-title {
+  display: inline-block;
+  font-size: 2em;
+  padding: 0.1em 0.5em;
+}
+#overlay-menu a {
+  display: inline-block;
+  padding: 0.3em 0.3em;
+  margin: 0em 0.1em;;
+}
+#overlay-menu a:hover {
+  color: rgba(255,255,255,0.5);
 }
 /* ==============================
    ELEMENTS LIST - RELATED
@@ -427,6 +466,13 @@ form.add-note-form {
   }
   svg.upcoming-week-graph {
     padding: 8px 0 4px 0 !important;
+  }
+  #main-menu {
+    font-size: 1em;
+    margin: 0 0 0.4em 0;
+  }
+  #main-menu .right {
+    display: none;
   }
 }
 @media (max-width: 320px) {

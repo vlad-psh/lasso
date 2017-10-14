@@ -2,8 +2,9 @@ ruby:
   cl = 0
   elements = @elements unless elements
   separate_list = @separate_list || false
+  etype = elements[0] ? elements[0].tplural : nil
 
-div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''} elements-list-#{elements[0].tplural}"
+div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''} elements-list-#{etype}"
   - elements.each do |e|
     div.elements-list-item
       div.level-wrapper

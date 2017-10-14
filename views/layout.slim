@@ -11,20 +11,26 @@ html
     meta content="width=device-width, initial-scale=1" name="viewport"
   body
     div#main-menu
-      div.main-menu-block
-        a> href=path_to(:index) わかめ
-        br
-        a> onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; text-align: right" 大小
-      - [[:r, :radicals, '部首'], [:k, :kanjis, '漢字'], [:w, :words, '言葉']].each do |i|
-        div.main-menu-block class=i[0]
-          div.main-menu-type-title = i[2]
-          div.main-menu-type-links
-            a.main-menu-type-link href=path_to(:list).with(i[1]) 全
-            a.main-menu-type-link href=path_to(:current).with(i[1]) 現
-      div.main-menu-block
+      div.left
+        a onclick='$("#overlay-menu").show();' Menu
+      div.center
+        a href=path_to(:index) わかめ
+        ' :
+        - INFODIC.each do |k,v|
+          a class=k href=path_to(:current).with(v[:plural]) = v[:japanese]
+        a< onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; text-align: right" 大小
+      div.right
         form method="POST" action=path_to(:search)
           input type="text" name="query"
           input type="submit" value="Search"
+    div#overlay-menu
+      div.close-button: a onclick='$("#overlay-menu").hide();' Close
+      - INFODIC.each do |k,v|
+        div class="type-block #{k}"
+          div class="type-title #{k}" = v[:japanese]
+          div class="type-links"
+            a href=path_to(:list).with(v[:plural]) 全部
+            a href=path_to(:current).with(v[:plural]) 現行
     == slim :flashes
     div#container
       == yield
