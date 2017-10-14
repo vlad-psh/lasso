@@ -2,10 +2,12 @@ body {
   font-family: Cambria, FA M, serif;
   font-weight: 300;
   font-size: 12pt;
-  margin-top: 0;
+  margin: 0;
+  text-align: center;
 }
 #container {
   text-align: center;
+  margin: 0.5em;
 }
 .flash-notice,
 .flash-error {
@@ -29,11 +31,11 @@ body {
   color: white;
   text-decoration: none;
 }
-.r, .r a {background-color: #0af;}
-.k, .k a {background-color: #f0a;}
-.w, .w a {background-color: #a0f;}
-.y, .y a {background-color: #af0; color: black;}
-.m, .m a {background-color: #777;}
+.r, .r a {background-color: #0af; border: 0px solid #0af;}
+.k, .k a {background-color: #f0a; border: 0px solid #f0a;}
+.w, .w a {background-color: #a0f; border: 0px solid #a0f;}
+.y, .y a {background-color: #af0; border: 0px solid #af0; color: black;}
+.m, .m a {background-color: #777; border: 0px solid #777;}
 svg .r {fill: #0af !important;}
 svg .k {fill: #f0a !important;}
 svg .w {fill: #a0f !important;}
@@ -51,9 +53,32 @@ a.study-button {
    TOP MENU
    ============================== */
 #main-menu {
-  margin: 0 0 0.6em 0;
+  background-color: #222;
+  margin: 0;
+  padding: 0.2em 0 0.3em 0;
   text-align: center;
   font-size: 1.3em;
+  color: white;
+}
+#main-menu a {
+  color: #eee;
+}
+#main-menu a.r,
+#main-menu a.k,
+#main-menu a.w {
+  background-color: transparent;
+  border-bottom-width: 0.2em;
+}
+#main-menu a:hover {
+  opacity: 0.5;
+}
+#main-menu .hamburger {
+  display: block;
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+  cursor: pointer;
+  margin-top: 3px;
 }
 #main-menu .center {
   display: inline-block;
@@ -218,9 +243,6 @@ a.study-button {
   font-size: 0.8em;
 }
 /* COMPACT STYLE */
-.elements-list-compact {
-  margin-top: 0.5em;
-}
 .elements-list-compact .elements-list-item {
   min-width: 0;
   margin: 0;
@@ -324,7 +346,7 @@ a.study-button {
 }
 /* end of title with horizontal line
    --------------------------------- */
-.element-card .relative-elements-list {
+.element-card .relative-elements-list .elements-list-wrapper:not(.elements-list-compact) .elements-list-item {
   font-size: 0.7em;
   font-weight: 100;
 }
@@ -458,9 +480,6 @@ form.add-note-form {
      ipad:   vertical 768/horizontal 1024
    ============================== */
 @media (max-width: 568px) {
-  body {
-    margin: 0 !important;
-  }
   .element-card {
     padding: 0.5em !important;
   }
@@ -472,10 +491,12 @@ form.add-note-form {
   }
   #main-menu {
     font-size: 1em;
-    margin: 0 0 0.4em 0;
   }
   #main-menu .right {
     display: none;
+  }
+  #container {
+    margin: 0;
   }
 }
 @media (max-width: 320px) {

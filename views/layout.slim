@@ -12,15 +12,16 @@ html
   body
     div#main-menu
       div.left
-        a onclick='$("#overlay-menu").show();' Menu
+        a onclick='$("#overlay-menu").show();'
+          svg.hamburger viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false"
+            g: path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
       div.center
-        a href=path_to(:index) わかめ
-        ' :
+        a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
         - INFODIC.each do |k,v|
           a class=k href=path_to(:current).with(v[:plural]) = v[:japanese]
         form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
           input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
-      div.right
+      div.right style="display: none"
         form method="POST" action=path_to(:search)
           input type="text" name="query"
           input type="submit" value="Search"
