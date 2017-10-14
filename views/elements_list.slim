@@ -4,7 +4,7 @@ ruby:
   separate_list = @separate_list || false
   etype = elements[0] ? elements[0].tplural : nil
 
-div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''} elements-list-#{etype}"
+div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''} elements-list-#{etype} #{session[:compact] ? "elements-list-compact" : nil}"
   - elements.each do |e|
     div.elements-list-item
       div.level-wrapper

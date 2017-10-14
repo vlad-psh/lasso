@@ -18,7 +18,8 @@ html
         ' :
         - INFODIC.each do |k,v|
           a class=k href=path_to(:current).with(v[:plural]) = v[:japanese]
-        a< onclick='$("div.elements-list-wrapper").toggleClass("elements-list-compact")' style="text-decoration: underline; color: blue; cursor: pointer; text-align: right" 大小
+        form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
+          input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
       div.right
         form method="POST" action=path_to(:search)
           input type="text" name="query"

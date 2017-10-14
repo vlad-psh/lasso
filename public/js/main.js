@@ -20,3 +20,10 @@ $(document).on('ajax:error', '.add-note-form', function(){
 $(document).on('keyup', 'textarea,input', function(e){
   e.stopPropagation();
 });
+/* ====================
+   TOGGLE COMPACT CHECKBOX
+   ==================== */
+$(document).on('click', '.toggle-compact-form input', function(event){
+  $('.toggle-compact-form').submit();
+  $("div.elements-list-wrapper").toggleClass("elements-list-compact");
+});

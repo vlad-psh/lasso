@@ -26,7 +26,8 @@ paths index: '/',
     learn: '/learn/:id', # post
     random_unlocked: '/random/:class', # get(redirection)
     study: '/study/:class/:group', # get, post
-    search: '/search' # post
+    search: '/search', # post
+    toggle_compact: '/toggle_compact' # post
 
 configure do
   puts '---> init <---'
@@ -173,4 +174,14 @@ post :search do
   @elements = Card.where('title LIKE ?', "%#{q}%")
   @separate_list = true
   slim :elements_list
+end
+
+post :toggle_compact do
+  if params["compact"]
+    request.session["compact"] = true
+    return 200, '{"compact": true}'
+  else
+    request.session["compact"] = false
+    return 200, '{"compact": false}'
+  end
 end

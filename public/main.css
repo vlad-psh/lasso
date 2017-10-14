@@ -74,6 +74,9 @@ a.study-button {
 #main-menu a.w {
   padding: 0.1em 0.3em;
 }
+#main-menu .toggle-compact-form {
+  display: inline-block;
+}
 /* ==============================
    MENU OVERLAY
    ============================== */
