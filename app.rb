@@ -19,6 +19,7 @@ also_reload './helpers.rb'
 paths index: '/',
     list: '/list/:class',
     current: '/current/:class', # get(redirection)
+    difficulty: '/difficulty/:difficulty/:class',
     level: '/level/:level/:class',
     card: '/card/:id',
     note: '/note/:id', # post
@@ -93,6 +94,14 @@ get :level do
     when :kanjis then "漢字##{params[:level]}"
     when :words then "言葉##{params[:level]}"
   end
+  @separate_list = true
+  slim :elements_list
+end
+
+get :difficulty do
+  stype = safe_type(params[:class])
+  d = params[:difficulty].to_i
+  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc)
   @separate_list = true
   slim :elements_list
 end

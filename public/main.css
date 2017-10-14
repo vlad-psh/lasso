@@ -59,12 +59,12 @@ a.study-button {
   display: inline-block;
 }
 #main-menu .right {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
 }
 #main-menu .left {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   margin: 0.1em 0.3em;

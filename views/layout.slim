@@ -31,6 +31,9 @@ html
           div class="type-links"
             a href=path_to(:list).with(v[:plural]) 全部
             a href=path_to(:current).with(v[:plural]) 現行
+            br
+            - (0..5).each do |i|
+              a href=path_to(:difficulty).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
     == slim :flashes
     div#container
       == yield
