@@ -436,17 +436,17 @@ a.study-button {
 /* ==============================
    GRAPHS
    ============================== */
-svg.upcoming-week-graph {
+svg.graph {
   background: #eee;
   padding: 8px 12px 4px 12px;
   margin-top: 6px;
   border-radius: 5px;
   max-width: 500px;
 }
-svg.upcoming-week-graph .bar {
+svg.graph .bar {
   fill: #e1282e;
 }
-svg.upcoming-week-graph text {
+svg.graph text {
   text-anchor: middle;
   font-size: x-small;
 }
@@ -485,7 +485,7 @@ form.add-note-form {
   .mnemonics {
     margin: 0 !important;
   }
-  svg.upcoming-week-graph {
+  svg.graph {
     padding: 8px 0 4px 0 !important;
   }
   #main-menu {

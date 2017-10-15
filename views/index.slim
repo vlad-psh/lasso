@@ -67,73 +67,46 @@ ruby:
   _r_sched = (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
   _k_sched = (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0)
   _w_sched = (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
-  _sched = {'r' => _r_sched, 'k' => _k_sched, 'w' => _w_sched}
-  day_cards = {Date.today => Statistic.new(date: Date.today, scheduled: _sched)}
+
+  gdata = [[_w_sched, _k_sched, _r_sched]]
+  gdesc = [Date.today.strftime("%d")]
 
   ss = Statistic.where(date: (Date.today + 1)..(Date.today + days_in_graph - 1))
-  ss.each {|s| day_cards[s.date] = s }
+  sh = {}
+  ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
 
-  _height = 70
-  _width = 22
-  _gap = 2
-
-  maxval = 1 # cannot be less than 1
-  graph_width = _width * days_in_graph
-  half_bar_width = _width/2.0 - _gap/2.0
-  day_cards.each do |k,v|
-    maxval = v.scheduled_total if v.scheduled_total > maxval
+  d = Date.today + 1
+  while d < Date.today + days_in_graph
+    gdata << (sh[d] || [0,0,0])
+    gdesc << d.strftime("%d")
+    d += 1
   end
 
 div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
 ' Scheduled (for upcoming 3 weeks):
 br
-svg.upcoming-week-graph viewBox="0 0 #{graph_width} #{_height+30}"
-  - d = Date.today
-  - iter = 0
-  - while d <= (Date.today + days_in_graph - 1)
-    - v = day_cards[d] || Statistic.new
-    - bar_height = _height*v.scheduled_total/maxval.to_f
-    g transform=("translate(#{iter*_width},10)")
-      - height_shift = 0
-      - %w(w k r).each do |s|
-        - part_height = _height*v.scheduled[s]/maxval.to_f
-        rect class="bar #{s}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
-        - height_shift += part_height
-      text x=half_bar_width y=_height+12 = d.strftime("%a")
-      text x=half_bar_width y=_height-bar_height-2 = v.scheduled_total
-    - iter += 1
-    - d += 1
+== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
 ruby:
   day_cards = {}
 
   ss = Statistic.where(date: (Date.today - days_in_graph + 1)..(Date.today))
-  ss.each {|s| day_cards[s.date] = s }
+  sh = {}
+  ss.each {|i| sh[i.date] = [i.learned['w'], i.learned['k'], i.learned['r']]}
 
-  maxval = 1 # cannot be less than 1
-  day_cards.each do |k,v|
-    maxval = v.learned_total if v.learned_total > maxval
+  gdata = []
+  gdesc = []
+  d = Date.today - days_in_graph
+  while d <= Date.today
+    gdata << (sh[d] || [0,0,0])
+    gdesc << d.strftime("%d")
+    d += 1
   end
 
 br
 ' Learning history (past 3 weeks):
 br
-svg.upcoming-week-graph viewBox="0 0 #{graph_width} #{_height+30}"
-  - d = Date.today - days_in_graph + 1
-  - iter = 0
-  - while d <= Date.today
-    - v = day_cards[d] || Statistic.new
-    - bar_height = _height*v.learned_total/maxval.to_f
-    g transform=("translate(#{iter*_width},10)")
-      - height_shift = 0
-      - %w(w k r).each do |s|
-        - part_height = _height*v.learned[s]/maxval.to_f
-        rect class="bar #{s}" x=0 y=_height-bar_height+height_shift width=half_bar_width*2 height=part_height
-        - height_shift += part_height
-      text x=half_bar_width y=_height+12 = d.strftime("%a")
-      text x=half_bar_width y=_height-bar_height-2 = v.learned_total
-    - iter += 1
-    - d += 1
+== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
 ruby:
   level_dates = []
