@@ -21,7 +21,7 @@ ruby:
     cstat['total'][:total] += v
   end
 
-div.stat-table-block
+div.stat-table-block style="margin-top: 1em;"
   div.hr-title: span = "Level #{clevel} (#{LVLS[(clevel-1)/10]})"
   table
     tr
@@ -96,7 +96,7 @@ ruby:
 
   gdata = []
   gdesc = []
-  d = Date.today - days_in_graph
+  d = Date.today - days_in_graph + 1
   while d <= Date.today
     gdata << (sh[d] || [0,0,0])
     gdesc << d.strftime("%d")

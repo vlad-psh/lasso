@@ -7,7 +7,8 @@ body {
 }
 #container {
   text-align: center;
-  margin: 0.5em;
+/*  margin: 0.5em;*/
+  margin: 0;
 }
 .flash-notice,
 .flash-error {
@@ -197,9 +198,12 @@ a.study-button {
 /* ==============================
    ELEMENTS LIST
    ============================== */
-.elements-list-separate.elements-list-words,
+/*.elements-list-separate.elements-list-words,
 .elements-list-separate.elements-list-kanjis:not(.elements-list-compact),
-.elements-list-separate.elements-list-radicals:not(.elements-list-compact) {
+.elements-list-separate.elements-list-radicals:not(.elements-list-compact) {*/
+.elements-list-separate.elements-list-words,
+.elements-list-separate.elements-list-kanjis,
+.elements-list-separate.elements-list-radicals {
   display: flex;
   flex-flow: row wrap;
   width: 100%;
