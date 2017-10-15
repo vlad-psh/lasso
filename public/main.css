@@ -441,7 +441,7 @@ svg.graph {
   padding: 8px 12px 4px 12px;
   margin-top: 6px;
   border-radius: 5px;
-  max-width: 500px;
+  max-height: 105px;
 }
 svg.graph .bar {
   fill: #e1282e;
