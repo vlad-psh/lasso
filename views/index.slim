@@ -125,9 +125,8 @@ ruby:
   end
 
 br
-' Decks:
-br
-div style="display: inline"
+div style="display: inline-block"
+  div Decks:
   == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:r, :k]}
 
 ruby:
@@ -147,5 +146,6 @@ ruby:
     level_duration[i+1] = (level_dates[i+1] - level_dates[i]).to_f.round(1)
   end
 
-br
-= "Levels duration #{level_duration.inspect}"
+div style="display: inline-block"
+  div Levels duration
+  == slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
