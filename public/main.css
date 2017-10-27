@@ -58,11 +58,11 @@ a.study-button {
   margin: 0;
   padding: 0.2em 0 0.3em 0;
   text-align: center;
-  font-size: 1.3em;
   color: white;
 }
 #main-menu a {
   color: #eee;
+  padding: 10px 0;
 }
 #main-menu a.r,
 #main-menu a.k,
@@ -381,14 +381,17 @@ a.study-button {
   display: flex;
   align-items: center;
 }
+.study-card .answer-buttons {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
 .study-card .correct-answer-button,
 .study-card .incorrect-answer-button {
   display: inline-block;
+  flex: auto;
   padding: 0.5em 1em;
-/* bottom margin is big because if these buttons are
-   close to bottom edge of the screen on iphone, it will
-   open toolbar when clicked on this area */
-  margin: 0.5em 0.7em 3em 0.7em;
+  margin: 0 0.2em;
   cursor: pointer;
   color: white;
 }
@@ -446,6 +449,7 @@ svg.graph {
   margin-top: 6px;
   border-radius: 5px;
   max-height: 105px;
+  min-height: 75px;
 }
 svg.graph .bar {
   fill: #e1282e;

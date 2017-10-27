@@ -66,6 +66,15 @@ class Card < ActiveRecord::Base
     return self.inverse_relations
   end
 
+  def same_type
+    return case element_type
+        when 'r' then Card.radicals
+        when 'k' then Card.kanjis
+        when 'w' then Card.words
+        else nil
+    end
+  end
+
   def radical?
     element_type == 'r' ? true : false
   end
