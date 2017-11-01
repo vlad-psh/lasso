@@ -16,6 +16,8 @@ require_relative './helpers.rb'
 also_reload './models.rb'
 also_reload './helpers.rb'
 
+helpers WakameHelpers
+
 paths index: '/',
     list: '/list/:class',
     current: '/current/:class', # get(redirection)
@@ -51,7 +53,9 @@ configure do
   }
 end
 
-helpers WakameHelpers
+use Rack::Auth::Basic, "Restricted Area" do |username, password|
+  username == $config['login'] and password == $config['password']
+end
 
 get :index do
   @counters = {}
