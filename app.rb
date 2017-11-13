@@ -29,7 +29,8 @@ paths index: '/',
     random_unlocked: '/random/:class', # get(redirection)
     study: '/study/:class/:group', # get, post
     search: '/search', # post
-    toggle_compact: '/toggle_compact' # post
+    toggle_compact: '/toggle_compact', # post
+    notes: '/notes'
 
 configure do
   puts '---> init <---'
@@ -188,4 +189,14 @@ post :toggle_compact do
     request.session["compact"] = false
     return 200, '{"compact": false}'
   end
+end
+
+get :notes do
+  @notes = Note.all.order(created_at: :desc)
+  slim :notes
+end
+
+post :notes do
+  note = Note.create(content: params[:content])
+  redirect path_to(:notes)
 end

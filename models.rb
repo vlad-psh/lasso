@@ -224,3 +224,6 @@ class Statistic < ActiveRecord::Base
     return scheduled['r'] + scheduled['k'] + scheduled['w']
   end
 end
+
+class Note < ActiveRecord::Base
+end
