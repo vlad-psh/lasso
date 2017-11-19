@@ -382,8 +382,7 @@ a.study-button {
   flex-flow: row wrap;
   width: 100%;
 }
-.study-card .correct-answer-button,
-.study-card .incorrect-answer-button {
+.study-card .answer-buttons div {
   display: inline-block;
   flex: auto;
   padding: 0.5em 1em;

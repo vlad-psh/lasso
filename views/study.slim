@@ -28,12 +28,18 @@ javascript:
     is_answered = true;
   };
   function answerCorrect(){
+    disableButtons();
     $("#answer-form input[name=answer]").val('yes');
     $("#answer-form").submit();
   };
   function answerIncorrect(){
+    disableButtons();
     $("#answer-form input[name=answer]").val('no');
     $("#answer-form").submit();
+  };
+  function disableButtons(){
+    $(".correct-answer-button").removeClass('correct-answer-button');
+    $(".incorrect-answer-button").removeClass('incorrect-answer-button');
   };
 
   $(document).on('keyup', function (e) {
