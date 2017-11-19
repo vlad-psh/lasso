@@ -1,9 +1,5 @@
 div.study-card
-  div.top-info
-    div.counter
-      = "もう#{@element.same_type.send(params[:group]).count}つ"
-      br
-      a href=path_to(:card).with(@element.id) = "Card ##{@element.id}"
+  div.counter-info = "もう#{@element.same_type.send(params[:group]).count}つ"
   h1.show-answer-button class=@element.element_type = @element.title
   div.answer
     div.answer-buttons

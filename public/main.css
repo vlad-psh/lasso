@@ -356,11 +356,19 @@ a.study-button {
 /* ==============================
    STUDY CARD
    ============================== */
+.study-card .counter-info {
+  position: absolute;
+  color: white;
+  font-size: 0.85em;
+}
 .study-card h1 {
-  font-size: 15vmax;
+  font-size: 20vmin;
   text-align: center;
   padding: 0.2em;
-  margin: 0.07em 0 0.07em 0;
+  margin: 0 0 0.07em 0;
+}
+.study-card .show-answer-button {
+  cursor: pointer;
 }
 .study-card .answer {
   display: none;
@@ -368,12 +376,6 @@ a.study-button {
 .study-card .reading-answer .primary {
   color: #aaa;
   background-color: #aaa;
-}
-.study-card .top-info {
-  text-align: left;
-  display: flex;
-  flex-flow: row;
-  justify-content: space-between;
 }
 .study-card .answer-buttons {
   display: flex;
@@ -513,4 +515,3 @@ form.add-note-form {
     font-size: 1.006em !important;
   }
 }
-
