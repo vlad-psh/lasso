@@ -365,21 +365,15 @@ a.study-button {
 .study-card .answer {
   display: none;
 }
+.study-card .reading-answer .primary {
+  color: #aaa;
+  background-color: #aaa;
+}
 .study-card .top-info {
   text-align: left;
   display: flex;
   flex-flow: row;
   justify-content: space-between;
-}
-.study-card .top-info .show-answer-button {
-  cursor: pointer;
-  background: #eee;
-  text-align: center;
-}
-.study-card .top-info .show-answer-button,
-.study-card .top-info .question-details {
-  display: flex;
-  align-items: center;
 }
 .study-card .answer-buttons {
   display: flex;
@@ -414,6 +408,9 @@ a.study-button {
   margin: 0 auto;
   text-align: center;
   font-size: 1em;
+}
+.study-card .answer-block div {
+  vertical-align: top;
 }
 .study-card .answer-block p {
   margin: 0;
