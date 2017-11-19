@@ -460,9 +460,11 @@ svg.graph text {
 /* ==============================
    AJAX FORM
    ============================== */
+.custom-note {
+  cursor: pointer;
+}
 .custom-note:hover {
   background-color: rgba(100,100,100,0.1);
-  cursor: pointer;
 }
 .add-note-show-link {
   color: #bbb;
