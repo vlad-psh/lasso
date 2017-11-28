@@ -43,8 +43,7 @@ module WakameHelpers
   end
 
   def weblio_pitch(_word)
-    word = URI::encode(_word)
-    response = HTTParty.get("http://www.weblio.jp/content/#{word}", headers: $weblio_headers)
+    response = HTTParty.get(URI.encode("https://www.weblio.jp/content/#{_word}"), headers: $weblio_headers)
     xml = Nokogiri::HTML(response.body)
     midashigo = xml.css("h2.midashigo")
     readings = []
