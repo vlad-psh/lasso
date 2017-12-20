@@ -168,17 +168,16 @@ class Card < ActiveRecord::Base
     end
   end
 
-
   private
-  def choose_schedule_day(new_deck)
+  def choose_schedule_day(new_deck, from_date = Date.today)
     ranges = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
     r = ranges[new_deck > 7 ? 7 : new_deck]
-    date_range = [Date.today + r[0], Date.today + r[2]]
+    date_range = [from_date + r[0], from_date + r[2]]
 
     # make 'day: cards count' hash
     day_cards = {}
-    (Date.today + r[0]..Date.today + r[2]).each {|d| day_cards[d] = 0}
-    counts = Card.where(scheduled: (Date.today + r[0])..(Date.today + r[2])).group(:scheduled).order('count_all').count
+    (from_date + r[0]..from_date + r[2]).each {|d| day_cards[d] = 0}
+    counts = Card.where(scheduled: (from_date + r[0])..(from_date + r[2])).group(:scheduled).order('count_all').count
     counts.each {|d,c| day_cards[d] += c}
 
     # transpose hash to 'cards count: [days]'
@@ -193,7 +192,7 @@ class Card < ActiveRecord::Base
 
     # select days with minimal cards count
     vacant_days = cards_days[cards_days.keys.min]
-    optimal_day = Date.today + r[1]
+    optimal_day = from_date + r[1]
     selected_day = vacant_days[0]
     vacant_days.each do |d|
       if (d - optimal_day).abs < (selected_day - optimal_day).abs
