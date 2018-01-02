@@ -1,4 +1,13 @@
 module WakameHelpers
+  def authorized?
+    $config['username'].present? && session['username'] == $config['username']
+  end
+
+  def protect!
+    return if authorized?
+    halt 401, "Not authorized"
+  end
+
   def bb_expand(text)
     text = text.gsub(/\[kanji\]([^\[]*)\[\/kanji\]/, "[%(k)\\1%]")
     text = text.gsub(/\[radical\]([^\[]*)\[\/radical\]/, "[%(r)\\1%]")

@@ -33,13 +33,14 @@ div.element-card
           = "passes: #{e.actions.where(action_type: 3).count}"
           br
           = "fails: #{e.actions.where(action_type: 4).count}"
-    div.top-info-block
-      div.hr-title: span Actions
-      div.top-info-content
-        form method="POST" action=path_to(:learn).with(e.id)
-          input disabled=((e.unlocked && !e.learned) ? nil : 'disabled') type="submit" value=(e.learned ? 'Learned' : 'Learn!')
-        - card_types = {r: :radicals, k: :kanjis, w: :words}
-        a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
+    - if authorized?
+      div.top-info-block
+        div.hr-title: span Actions
+        div.top-info-content
+          form method="POST" action=path_to(:learn).with(e.id)
+            input disabled=((e.unlocked && !e.learned) ? nil : 'disabled') type="submit" value=(e.learned ? 'Learned' : 'Learn!')
+          - card_types = {r: :radicals, k: :kanjis, w: :words}
+          a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
 
   - if e.detailsb['mynotes']
     div == e.detailsb["mynotes"]
@@ -51,8 +52,9 @@ div.element-card
           div.hr-title: span = details_tags[p]
           div class="#{'mnemonics-hint' if p['hnt']}" == bb_textile(e.detailsb[p])
       - unless mne_title == :reading && e.radical?
-        div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
-        == slim :ajax_form, locals: {e: e, property_name: mne_title}
+        - if authorized?
+          div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
+          == slim :ajax_form, locals: {e: e, property_name: mne_title}
 
   - if e.word? && e.detailsb['sentences'].length > 0
    div.mnemonics

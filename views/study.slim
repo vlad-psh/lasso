@@ -27,27 +27,22 @@ javascript:
     $(".answer-block").hide();
     is_answered = true;
   };
-  function answerCorrect(){
-    disableButtons();
-    $("#answer-form input[name=answer]").val('yes');
-    $("#answer-form").submit();
-  };
-  function answerIncorrect(){
-    disableButtons();
-    $("#answer-form input[name=answer]").val('no');
-    $("#answer-form").submit();
-  };
-  function disableButtons(){
+  function submitAnswer(answer){
     $(".correct-answer-button").removeClass('correct-answer-button');
     $(".incorrect-answer-button").removeClass('incorrect-answer-button');
+    //$(".correct-answer-button").hide();
+    //$(".incorrect-answer-button").hide();
+
+    $("#answer-form input[name=answer]").val(answer);
+    $("#answer-form").submit();
   };
 
   $(document).on('keyup', function (e) {
     if (is_answered) {
       if (e.keyCode == 89) { // [Y] key
-        answerCorrect();
+        submitAnswer("yes");
       } else if (e.keyCode == 78) { // [N] key
-        answerIncorrect();
+        submitAnswer("no");
       }
     } else {
       if (e.keyCode == 13 || e.keyCode == 32) { // Enter or Space
@@ -56,6 +51,6 @@ javascript:
     }
   });
 
-  $(document).on('click', '.show-answer-button', function(){showAnswer();});
-  $(document).on('click', '.correct-answer-button', function(){answerCorrect();});
-  $(document).on('click', '.incorrect-answer-button', function(){answerIncorrect();});
+  $(document).on('click', '.show-answer-button', () => showAnswer());
+  $(document).on('click', '.correct-answer-button', () => submitAnswer("yes"));
+  $(document).on('click', '.incorrect-answer-button', () => submitAnswer("no"));

@@ -30,7 +30,8 @@ paths index: '/',
     study: '/study/:class/:group', # get, post
     search: '/search', # post
     toggle_compact: '/toggle_compact', # post
-    notes: '/notes'
+    notes: '/notes',
+    login: '/login' # GET: login form; POST: log in; DELETE: log out
 
 configure do
   puts '---> init <---'
@@ -52,10 +53,6 @@ configure do
     "Accept-Language" => "en-US,en;q=0.5",
     "Referer" => "https://www.weblio.jp/"
   }
-end
-
-use Rack::Auth::Basic, "Restricted Area" do |username, password|
-  username == $config['login'] and password == $config['password']
 end
 
 get :index do
@@ -113,6 +110,8 @@ get :difficulty do
 end
 
 post :note do
+  protect!
+
   sprop = params[:property_name].to_sym
   allowed_props = [:my_meaning, :my_reading, :my_en]
   throw StandardError.new("Unknown property: #{sprop}") unless allowed_props.include?(sprop)
@@ -125,6 +124,8 @@ post :note do
 end
 
 post :learn do
+  protect!
+
   e = Card.find(params[:id])
   e.learn!
 
@@ -153,6 +154,8 @@ get :random_unlocked do
 end
 
 get :study do
+  protect!
+
   @element = Card.public_send(safe_type(params[:class])
         ).public_send(safe_group(params[:group])
         ).order('RANDOM()').first
@@ -166,6 +169,8 @@ get :study do
 end
 
 post :study do
+  protect!
+
   e = Card.find(params[:element_id])
   halt(400, 'Element not found') unless e
 
@@ -192,11 +197,35 @@ post :toggle_compact do
 end
 
 get :notes do
+  protect!
+
   @notes = Note.all.order(created_at: :desc)
   slim :notes
 end
 
 post :notes do
+  protect!
+
   note = Note.create(content: params[:content])
   redirect path_to(:notes)
+end
+
+get :login do
+  if authorized?
+    flash[:notice] = "Already logged in"
+    redirect path_to(:index)
+  else
+    slim :login
+  end
+end
+
+post :login do
+  if $config['username'] == params['username'] && $config['password'] == params['password']
+    flash[:notice] = "Successfully logged in!"
+    session['username'] = $config['username']
+    redirect path_to(:index)
+  else
+    flash[:error] = "Incorrect username or password :("
+    redirect path_to(:login)
+  end
 end
