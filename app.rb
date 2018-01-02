@@ -181,7 +181,7 @@ end
 
 post :search do
   q = params['query']
-  @elements = Card.where('title LIKE ?', "%#{q}%")
+  @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ?", "%#{q}%", "%#{q}%")
   @separate_list = true
   slim :elements_list
 end

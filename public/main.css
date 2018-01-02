@@ -86,8 +86,15 @@ a.study-button {
 }
 #main-menu .right {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0.2em;
+  right: 0.2em;
+}
+#main-menu .right input {
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 0.2em 0.4em;
 }
 #main-menu .left {
   position: absolute;
@@ -499,9 +506,6 @@ form.add-note-form {
   #main-menu {
     font-size: 1em;
   }
-  #main-menu .right {
-    display: none;
-  }
   #container {
     margin: 0;
   }
@@ -514,5 +518,8 @@ form.add-note-form {
 /* precise value to fit onto iphone (vertical) screen without margins :) */
   .elements-list-compact .elements-list-item {
     font-size: 1.006em !important;
+  }
+  #main-menu .right {
+    display: none;
   }
 }
