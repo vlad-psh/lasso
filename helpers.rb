@@ -13,7 +13,7 @@ module WakameHelpers
   end
 
   def hide!
-    return if guest?
+    return if admin? || guest?
     halt 401, "Unauthorized"
   end
 

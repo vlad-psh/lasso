@@ -251,3 +251,9 @@ post :login do
     redirect path_to(:login)
   end
 end
+
+delete :login do
+  session.delete('role')
+  flash[:notice] = "Successfully logged out"
+  redirect path_to(:index)
+end
