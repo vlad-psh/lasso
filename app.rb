@@ -210,6 +210,15 @@ post :notes do
   redirect path_to(:notes)
 end
 
+delete :note do
+  protect!
+
+  note = Note.find(params[:id])
+  note.destroy
+  flash[:notice] = "Note with id = #{params[:id]} was successfully deleted"
+  redirect path_to(:notes)
+end
+
 get :login do
   if authorized?
     flash[:notice] = "Already logged in"

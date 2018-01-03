@@ -487,6 +487,23 @@ form.add-note-form {
   height: 10em;
 }
 /* ==============================
+   NOTES
+   ============================== */
+.notes-list {
+  max-width: 50em;
+  margin: 0 auto 0 auto;
+  text-align: left;
+  font-family: Segoe UI, Helvetica Neue, Trebuchet MS, Trebuchet, sans-serif;
+  font-size: 10pt;
+}
+.note-date {
+  font-size: 1.2em;
+  margin: 1em 0 0.2em 0;
+}
+.note-content {
+
+}
+/* ==============================
    MOBILE
    default window width: 980
    with meta:
