@@ -54,7 +54,7 @@ div.element-card
       - unless mne_title == :reading && e.radical?
         - if admin?
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
-          == slim :ajax_form, locals: {e: e, property_name: mne_title}
+          == slim :ajax_form, locals: {e: e, property_name: mne_title, buttons: true}
 
   - if e.word? && e.detailsb['sentences'].length > 0
    div.mnemonics

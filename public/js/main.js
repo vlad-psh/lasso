@@ -36,3 +36,18 @@ $(document).on('mouseenter', '.hamburger', function(event){
 $(document).on('mouseleave', '#overlay-menu', function(event){
   $("#overlay-menu").hide();
 });
+/* ====================
+   BB CODE FORMAT BUTTONS
+   ==================== */
+$(document).on('click', '.bb-format-link', function(event){
+  var textarea = $(this).parent().find('textarea')[0];
+  var text = textarea.value;
+  var tag = $(this).data('tag');
+  var newText;
+
+  newText = text.substring(0, textarea.selectionStart) + '[' + tag + ']'
+            + text.substring(textarea.selectionStart, textarea.selectionEnd)
+            + '[/' + tag + ']' + text.substr(textarea.selectionEnd);
+  textarea.value = newText;
+  textarea.focus();
+});

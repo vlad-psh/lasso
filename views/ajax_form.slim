@@ -10,4 +10,10 @@ div id="custom-note-#{property_name}"
     input type="hidden" name="property_name" value="my_#{property_name}"
     textarea name="content" = e.detailsb["my_#{property_name}"]
     br
+    - if defined?(buttons) && buttons
+      a.k.bb-format-link> data-tag="kanji" kanji
+      a.r.bb-format-link> data-tag="radical" radical
+      a.m.bb-format-link> data-tag="meaning" meaning
+      a.y.bb-format-link> data-tag="reading" reading
+      a.w.bb-format-link> data-tag="vocabulary" vocabulary
     input type="submit" value="Submit"
