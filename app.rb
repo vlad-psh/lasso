@@ -65,6 +65,8 @@ get :index do
 end
 
 get :card do
+  hide!
+
   @element = Card.find(params[:id])
   if @element.element_type == 'w' && @element.detailsb['pitch'] == nil
     @element.detailsb['pitch'] = weblio_pitch(@element.title)
@@ -133,6 +135,8 @@ post :learn do
 end
 
 get :random_unlocked do
+  hide!
+
   etype = safe_type(params[:class])
   e = Card.public_send(etype).just_unlocked.order(level: :asc).order('RANDOM()').first
 
@@ -180,6 +184,8 @@ post :study do
 end
 
 post :search do
+  hide!
+
   q = params['query']
   @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ?", "%#{q}%", "%#{q}%")
   @separate_list = true
@@ -220,7 +226,7 @@ delete :note do
 end
 
 get :login do
-  if authorized?
+  if admin? || guest?
     flash[:notice] = "Already logged in"
     redirect path_to(:index)
   else
@@ -229,9 +235,16 @@ get :login do
 end
 
 post :login do
-  if $config['username'] == params['username'] && $config['password'] == params['password']
-    flash[:notice] = "Successfully logged in!"
-    session['username'] = $config['username']
+  if params['username'].blank? || params['password'].blank?
+    flash[:error] = "Incorrect username or password :("
+    redirect path_to(:login)
+  elsif $config['admins'] && $config['admins'][params['username']] == params['password']
+    flash[:notice] = "Successfully logged in as admin!"
+    session['role'] = 'admin'
+    redirect path_to(:index)
+  elsif $config['guests'] && $config['guests'][params['username']] == params['password']
+    flash[:notice] = "Successfully logged in as spectator!"
+    session['role'] = 'guest'
     redirect path_to(:index)
   else
     flash[:error] = "Incorrect username or password :("

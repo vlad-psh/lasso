@@ -1,4 +1,6 @@
 ---
 secret: xxx
-username: 123
-password: 123
+admins:
+  login1: password1
+guests:
+  login2: password2

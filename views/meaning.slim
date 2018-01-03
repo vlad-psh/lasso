@@ -6,5 +6,5 @@
   span.secondary
     - e.detailsb['en'].each do |en|
       = ", #{en}"
-- if authorized?
+- if admin?
   == slim :ajax_form, locals: {e: e, property_name: :en, placeholder: "Edit"}

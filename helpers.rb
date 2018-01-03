@@ -1,11 +1,20 @@
 module WakameHelpers
-  def authorized?
-    $config['username'].present? && session['username'] == $config['username']
+  def admin?
+    session['role'] == 'admin'
+  end
+
+  def guest?
+    session['role'] == 'guest'
   end
 
   def protect!
-    return if authorized?
-    halt 401, "Not authorized"
+    return if admin?
+    halt 401, "Unauthorized"
+  end
+
+  def hide!
+    return if guest?
+    halt 401, "Unauthorized"
   end
 
   def bb_expand(text)

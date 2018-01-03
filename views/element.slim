@@ -33,7 +33,7 @@ div.element-card
           = "passes: #{e.actions.where(action_type: 3).count}"
           br
           = "fails: #{e.actions.where(action_type: 4).count}"
-    - if authorized?
+    - if admin?
       div.top-info-block
         div.hr-title: span Actions
         div.top-info-content
@@ -52,7 +52,7 @@ div.element-card
           div.hr-title: span = details_tags[p]
           div class="#{'mnemonics-hint' if p['hnt']}" == bb_textile(e.detailsb[p])
       - unless mne_title == :reading && e.radical?
-        - if authorized?
+        - if admin?
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
           == slim :ajax_form, locals: {e: e, property_name: mne_title}
 
