@@ -19,8 +19,7 @@ html
         - if admin? || guest?
           a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
         a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
-        - INFODIC.each do |k,v|
-          a class=k href=path_to(:current).with(v[:plural]) = v[:japanese]
+        a href=path_to(:current) = "レベル#{Card.current_level}"
         form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
           input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
       div.right

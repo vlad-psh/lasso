@@ -20,9 +20,9 @@ helpers WakameHelpers
 
 paths index: '/',
     list: '/list/:class',
-    current: '/current/:class', # get(redirection)
+    current: '/current', # get(redirection)
     difficulty: '/difficulty/:difficulty/:class',
-    level: '/level/:level/:class',
+    level: '/level/:level',
     card: '/card/:id',
     note: '/note/:id', # post
     learn: '/learn/:id', # post
@@ -89,19 +89,18 @@ get :list do
 end
 
 get :current do
-  redirect path_to(:level).with(Card.current_level, params[:class])
+  redirect path_to(:level).with(Card.current_level)
 end
 
 get :level do
-  stype = safe_type(params[:class])
-  @elements = Card.public_send(stype).where(level: params[:level]).order(id: :asc)
-  @title = case stype
-    when :radicals then "部首##{params[:level]}"
-    when :kanjis then "漢字##{params[:level]}"
-    when :words then "言葉##{params[:level]}"
-  end
+  @radicals = Card.radicals.where(level: params[:level]).order(id: :asc)
+  @kanjis   = Card.kanjis.where(level: params[:level]).order(id: :asc)
+  @words    = Card.words.where(level: params[:level]).order(id: :asc)
+
+  @title = "Level #{params[:level]} elements"
   @separate_list = true
-  slim :elements_list
+
+  slim :level
 end
 
 get :difficulty do

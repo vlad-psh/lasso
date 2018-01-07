@@ -64,12 +64,6 @@ a.study-button {
   color: #eee;
   padding: 10px 0;
 }
-#main-menu a.r,
-#main-menu a.k,
-#main-menu a.w {
-  background-color: transparent;
-  border-bottom-width: 0.2em;
-}
 #main-menu a:hover {
   opacity: 0.5;
 }
@@ -223,6 +217,8 @@ a.study-button {
   display: inline-block;
   min-width: 4em;
   text-align: center;
+  font-size: 0.7em;
+  font-weight: 100;
 }
 .elements-list-separate .elements-list-item {
   flex: auto;
@@ -354,10 +350,6 @@ a.study-button {
    --------------------------------- */
 .relative-elements-list {
   margin: 0.5em 0 0.5em 0;
-}
-.element-card .relative-elements-list .elements-list-item {
-  font-size: 0.7em;
-  font-weight: 100;
 }
 .bb-format-link {
   cursor: pointer;
