@@ -67,15 +67,15 @@ div.element-card
     - if e.detailsb['similar'].length > 0
       div.hr-title: span Similar kanji
       div.relative-elements-list
-        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar'])}
+        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar']), title: 'Similar kanji'}
 
     div.hr-title: span Radicals
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.radicals.order(level: :asc)}
+      == slim :elements_list, locals: {elements: e.radicals.order(level: :asc), title: 'Radicals'}
 
     div.hr-title: span Vocabulary
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.words.order(level: :asc)}
+      == slim :elements_list, locals: {elements: e.words.order(level: :asc), title: 'Vocabulary'}
 
   - else
     div.hr-title: span Kanji

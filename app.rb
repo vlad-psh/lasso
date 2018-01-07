@@ -31,7 +31,8 @@ paths index: '/',
     search: '/search', # post
     toggle_compact: '/toggle_compact', # post
     notes: '/notes',
-    login: '/login' # GET: login form; POST: log in; DELETE: log out
+    login: '/login', # GET: login form; POST: log in
+    logout: '/logout' # DELETE: logout
 
 configure do
   puts '---> init <---'
@@ -252,7 +253,7 @@ post :login do
   end
 end
 
-delete :login do
+delete :logout do
   session.delete('role')
   flash[:notice] = "Successfully logged out"
   redirect path_to(:index)

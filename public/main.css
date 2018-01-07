@@ -164,7 +164,7 @@ a.study-button {
 .enlightened,
 .burned {
   border-style: solid;
-  border-width: 0 0 0.2em 0;
+  border-width: 0 0.1em 0.1em 0;
 }
 .locked, .locked a {
   background-color: #f5f5f5;
@@ -215,10 +215,6 @@ a.study-button {
   flex-flow: row wrap;
   width: 100%;
 }
-.elements-list-separate.elements-list-radicals.elements-list-compact,
-.elements-list-separate.elements-list-kanjis.elements-list-compact {
-  text-align: left;
-}
 .elements-list-separate::after {
   content: '';
   flex-grow: 1000000000;
@@ -227,20 +223,9 @@ a.study-button {
   display: inline-block;
   min-width: 4em;
   text-align: center;
-  margin: 0.5em 0.2em 0.2em 0.2em;
 }
 .elements-list-separate .elements-list-item {
   flex: auto;
-}
-.elements-list-item .level-wrapper {
-  font-size: 1.5em;
-  height: 1.4em;
-  color: #aaa;
-}
-.elements-list-item .level {
-  font-weight: 100;
-  color: #aaa;
-  text-shadow: 1px 1px 0 #fff;
 }
 .elements-list-item .element-block {
   padding: 0.5em 0.3em;
@@ -252,30 +237,41 @@ a.study-button {
 .elements-list-item .description {
   font-size: 0.8em;
 }
+.elements-list-item .level-wrapper {
+  position: absolute;
+  background-color: #ffbc11;
+  color: #99700a;
+  border-radius: 1em;
+  font-size: 0.8em;
+  line-height: 1.6em;
+  width: 1.6em;
+  height: 1.6em;
+  margin: -0.8em 0 0 -0.8em;
+}
 /* COMPACT STYLE */
-.elements-list-compact .elements-list-item {
+.elements-list-separate.elements-list-compact .elements-list-item {
   min-width: 0;
   margin: 0;
 }
-.elements-list-compact .elements-list-item .level-wrapper {
+.elements-list-separate.elements-list-compact .elements-list-item .level-wrapper {
   display: none;
 }
-.elements-list-compact .elements-list-item .element-block {
+.elements-list-separate.elements-list-compact .elements-list-item .element-block {
   padding: 0.2em 0.3em;
 }
-.elements-list-compact .elements-list-item .element {
+.elements-list-separate.elements-list-compact .elements-list-item .element {
   font-size: 1em;
 }
-.elements-list-compact .elements-list-item .description {
+.elements-list-separate.elements-list-compact .elements-list-item .description {
   display: none;
 }
-.elements-list-compact .locked,
-.elements-list-compact .unlocked,
-.elements-list-compact .apprentice,
-.elements-list-compact .guru,
-.elements-list-compact .master,
-.elements-list-compact .enlightened,
-.elements-list-compact .burned {
+.elements-list-separate.elements-list-compact .locked,
+.elements-list-separate.elements-list-compact .unlocked,
+.elements-list-separate.elements-list-compact .apprentice,
+.elements-list-separate.elements-list-compact .guru,
+.elements-list-separate.elements-list-compact .master,
+.elements-list-separate.elements-list-compact .enlightened,
+.elements-list-separate.elements-list-compact .burned {
   border-width: 0 1px 1px 0; 
 }
 /* ==============================
@@ -356,7 +352,10 @@ a.study-button {
 }
 /* end of title with horizontal line
    --------------------------------- */
-.element-card .relative-elements-list .elements-list-wrapper:not(.elements-list-compact) .elements-list-item {
+.relative-elements-list {
+  margin: 0.5em 0 0.5em 0;
+}
+.element-card .relative-elements-list .elements-list-item {
   font-size: 0.7em;
   font-weight: 100;
 }

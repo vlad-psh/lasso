@@ -7,11 +7,10 @@ ruby:
 div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''} elements-list-#{etype} #{session[:compact] ? "elements-list-compact" : nil}"
   - elements.each do |e|
     div.elements-list-item
-      div.level-wrapper
-        div.level
-          - if cl != e.level
-            - cl = e.level
-            = cl
+      - if cl != e.level
+        - cl = e.level
+        div.level-wrapper
+          div.level = cl
       div class="element-block #{wk_level(e)}"
         a href=path_to(:card).with(e.id)
           div.element = e.title
