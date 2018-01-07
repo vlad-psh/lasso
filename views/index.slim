@@ -26,9 +26,9 @@ div.stat-table-block style="margin-top: 1em;"
   table
     tr
       td
-      td 🔒
-      td 🔰
-      td 🎓
+      td title="Locked" 🔒
+      td title="Unlocked" 🔰
+      td title="Learned" 🎓
       td Learned %
     - %w(r k w total).each do |k|
       tr
@@ -50,6 +50,7 @@ div.stat-table-block
       td New
       td Failed
       td Expired
+      td title="Total Learned" 🎓
     - %w(r k w).each do |k|
       tr
         td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
@@ -60,6 +61,7 @@ div.stat-table-block
               a class="study-button #{gv[:color]}" href=path_to(:study).with(tt[k.to_sym], gk) = i
             - else
               ' -
+        td = @counters[:any_learned][k]
 
 ruby:
   days_in_graph = 21

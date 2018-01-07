@@ -58,7 +58,7 @@ end
 
 get :index do
   @counters = {}
-  [:just_unlocked, :just_learned, :failed, :expired].each do |g|
+  [:just_unlocked, :just_learned, :failed, :expired, :any_learned].each do |g|
     @counters[g] = Card.public_send(g).group(:element_type).count
   end
 
