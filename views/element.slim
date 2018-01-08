@@ -9,10 +9,9 @@ ruby:
 div.element-card
   div.top-info
     div.top-info-block
+      div.level-wrapper
+        div.level = e.level
       div.element-title = e.title
-    div.top-info-block
-      div.hr-title: span Level
-      div.top-info-content = e.level
     div.top-info-block
       div.hr-title: span Meaning
       div.top-info-content == slim :meaning, locals: {e: e}

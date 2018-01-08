@@ -56,13 +56,24 @@ a.study-button {
 #main-menu {
   background-color: #222;
   margin: 0;
-  padding: 0.2em 0 0.3em 0;
-  text-align: center;
   color: white;
+  font-family: Segoe UI, Helvetica Neue, sans-serif;
+  font-weight: 700;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+#main-menu>div {
+  flex: 1;
+  padding: 0.2em;
+}
+#main-menu>div.right {
+  text-align: right;
 }
 #main-menu a {
   color: #eee;
   padding: 10px 0;
+  text-decoration: none;
 }
 #main-menu a:hover {
   opacity: 0.5;
@@ -73,28 +84,12 @@ a.study-button {
   height: 24px;
   fill: #fff;
   cursor: pointer;
-  margin-top: 3px;
 }
-#main-menu .center {
-  display: inline-block;
-}
-#main-menu .right {
-  position: absolute;
-  top: 0.2em;
-  right: 0.2em;
-}
-#main-menu .right input {
+#main-menu input.search {
   background: #333;
   color: white;
   border: none;
-  border-radius: 5px;
   padding: 0.2em 0.4em;
-}
-#main-menu .left {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 0.1em 0.3em;
 }
 #main-menu a.r,
 #main-menu a.k,
@@ -233,7 +228,7 @@ a.study-button {
 .elements-list-item .description {
   font-size: 0.8em;
 }
-.elements-list-item .level-wrapper {
+.level-wrapper {
   position: absolute;
   background-color: #ffbc11;
   color: #99700a;
@@ -443,12 +438,12 @@ a.study-button {
    GRAPHS
    ============================== */
 svg.graph {
-  background: #eee;
   padding: 8px 12px 4px 12px;
   margin-top: 6px;
   border-radius: 5px;
   max-height: 105px;
   min-height: 75px;
+  min-width: 130px;
 }
 svg.graph .bar {
   fill: #e1282e;
@@ -530,7 +525,10 @@ form.add-note-form {
   .elements-list-compact .elements-list-item {
     font-size: 1.006em !important;
   }
-  #main-menu .right {
+  #main-menu .right form {
     display: none;
   }
+  #main-menu .left   {flex: 1}
+  #main-menu .center {flex: 5}
+  #main-menu .right  {flex: 1}
 }

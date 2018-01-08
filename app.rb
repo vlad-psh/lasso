@@ -43,7 +43,7 @@ configure do
 #        key: 'fcs.app',
 #        domain: '172.16.0.11',
 #        path: '/',
-#        expire_after: 2592000,
+        expire_after: 2592000, # 30 days
         secret: $config['secret']
 
   use Rack::Flash
@@ -158,7 +158,7 @@ get :random_unlocked do
 end
 
 get :study do
-  protect!
+  hide!
 
   @element = Card.public_send(safe_type(params[:class])
         ).public_send(safe_group(params[:group])
