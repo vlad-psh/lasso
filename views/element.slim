@@ -11,7 +11,7 @@ div.element-card
     div.top-info-block
       div.level-wrapper
         div.level = e.level
-      div.element-title = e.title
+      div.element-title: span.japanese = e.title
     div.top-info-block
       div.hr-title: span Meaning
       div.top-info-content == slim :meaning, locals: {e: e}
@@ -59,7 +59,7 @@ div.element-card
    div.mnemonics
     div.hr-title: span Sentence examples
     - e.detailsb['sentences'].each do |s|
-      p = s['ja']
+      p.japanese = s['ja']
       p.mnemonics-hint = s['en']
 
   - if e.kanji?

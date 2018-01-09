@@ -18,6 +18,8 @@ html
       div.center
         - if admin? || guest?
           a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
+        - else
+          a href=path_to(:login) ●
         a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
         a href=path_to(:current) = "Level #{Card.current_level}"
         //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
