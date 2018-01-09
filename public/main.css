@@ -1,3 +1,16 @@
+@font-face {
+  font-family: "myfont";
+  src: local("myfont"),url("/fonts/myfont") format('truetype')
+}
+@font-face {
+  font-family: "myfont";
+  src: local("myfont"),url("/fonts/myfont_italic") format('truetype');
+  font-style: italic;
+}
+@font-face {
+  font-family: "myfont_jp1";
+  src: local("myfont_jp1"),url("/fonts/myfont_jp1") format('truetype');
+}
 body {
   font-family: myfont, Cambria, myfont_jp1, serif;
   font-weight: 300;
@@ -281,15 +294,17 @@ a.study-button {
   align-items: center;
 }
 .levels-header>div {
-  flex: 1;
+  flex: 3;
 }
 .levels-header>div.left { 
   text-align: left;
   margin-left: 0.5em;
+  flex: 1;
 }
 .levels-header>div.right {
   text-align: right;
   margin-right: 0.5em;
+  flex: 1;
 }
 /* ==============================
    ELEMENT
