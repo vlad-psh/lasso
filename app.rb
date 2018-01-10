@@ -26,7 +26,6 @@ paths index: '/',
     card: '/card/:id',
     note: '/note/:id', # post
     learn: '/learn/:id', # post
-    random_unlocked: '/random/:class', # get(redirection)
     study: '/study/:class/:group', # get, post
     search: '/search', # post
     toggle_compact: '/toggle_compact', # post
@@ -134,29 +133,6 @@ post :learn do
   redirect path_to(:card).with(params[:id])
 end
 
-get :random_unlocked do
-  hide!
-
-  etype = safe_type(params[:class])
-  e = Card.public_send(etype).just_unlocked.order(level: :asc).order('RANDOM()').first
-
-  if e
-    redirect path_to(:card).with(e.id)
-  else
-    flash[:notice] = "No more unlocked #{params[:class]}"
-
-    if etype == :radicals
-      # unlock next level
-      lowest_locked = Card.radicals.locked.order(level: :asc).first
-      Card.public_send(etype).locked.where(level: lowest_locked.level).each do |c|
-        c.unlock!
-      end if lowest_locked
-    end
-
-    redirect path_to(:index)
-  end
-end
-
 get :study do
   hide!
 
@@ -187,7 +163,7 @@ post :search do
   hide!
 
   q = params['query']
-  @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ?", "%#{q}%", "%#{q}%")
+  @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ?", "%#{q}%", "%#{q}%").order(level: :asc)
   @separate_list = true
   slim :elements_list
 end

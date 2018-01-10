@@ -122,6 +122,7 @@ class Card < ActiveRecord::Base
     stats.save
 
     new_elements = []
+    # Unlock linked elements (kanjis for radicals; words for kanjis)
     if self.radical?
       self.kanjis.each do |k|
         begin
@@ -143,6 +144,18 @@ class Card < ActiveRecord::Base
         end
       end
     end
+
+    # Unlock radicals for next level if there was last learned card in current level
+    new_current_level = Card.current_level
+    if (self.level < new_current_level)
+      Card.radicals.where(level: new_current_level).each do |r|
+        unless (r.unlocked?)
+          r.unlock!
+          new_elements << r
+        end
+      end
+    end
+
     return new_elements
   end
 

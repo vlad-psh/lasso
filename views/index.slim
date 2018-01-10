@@ -36,7 +36,7 @@ div.stat-table-block style="margin-top: 1em;"
         td = cstat[k][:locked]
         td
           - unless k == 'total'
-            a.study-button.green href=path_to(:random_unlocked).with(tt[k.to_sym]) = cstat[k][:unlocked]
+            a.study-button.green = cstat[k][:unlocked]
           - else
             = cstat[k][:unlocked]
         td = cstat[k][:learned]

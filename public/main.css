@@ -404,6 +404,7 @@ a.study-button {
   text-align: center;
   padding: 0.2em;
   margin: 0 0 0.07em 0;
+  font-weight: normal;
 }
 .study-card .show-answer-button {
   cursor: pointer;

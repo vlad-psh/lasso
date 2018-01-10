@@ -32,14 +32,12 @@ div.element-card
           = "passes: #{e.actions.where(action_type: 3).count}"
           br
           = "fails: #{e.actions.where(action_type: 4).count}"
-    - if admin?
+    - if admin? && !e.learned
       div.top-info-block
         div.hr-title: span Actions
         div.top-info-content
           form method="POST" action=path_to(:learn).with(e.id)
-            input disabled=((e.unlocked && !e.learned) ? nil : 'disabled') type="submit" value=(e.learned ? 'Learned' : 'Learn!')
-          - card_types = {r: :radicals, k: :kanjis, w: :words}
-          a< href=path_to(:random_unlocked).with(card_types[e.element_type.to_sym]) Next unlocked
+            input type="submit" value='Learn!'
 
   - if e.detailsb['mynotes']
     div == e.detailsb["mynotes"]
