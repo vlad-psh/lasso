@@ -16,4 +16,6 @@
   div.primary
     = e.detailsb['readings'].join(", ")
     - if e.detailsb['pitch'] && e.detailsb['pitch'].count > 0
-      = ' [' + e.detailsb['pitch'].map{|i|i['pitch']}.uniq.join(',') + ']'
+      span.pitch-accent title=e.pitch_detailed_str
+        = " [#{e.pitch_str}]"
+        sup<: a href="http://jglossator.sourceforge.net/#pitch_accents" ？

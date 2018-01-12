@@ -159,6 +159,24 @@ class Card < ActiveRecord::Base
     return new_elements
   end
 
+  def pitch_str
+    throw StandardError.new("Card##{self.id} is not a word") unless self.word?
+
+    return '?' unless self.detailsb['pitch']
+    pitches = []
+    self.detailsb['pitch'].each do |reading,pitch|
+      pitches << pitch if self.detailsb['readings'].include?(reading)
+    end
+    return pitches.flatten.join(', ')
+  end
+
+  def pitch_detailed_str
+    throw StandardError.new("Card##{self.id} is not a word") unless self.word?
+
+    return 'nil' unless self.detailsb['pitch']
+    return self.detailsb['pitch'].to_s
+  end
+
   def answer!(a)
     # answer should be 'yes' or 'no'
     a = a.to_sym

@@ -21,7 +21,7 @@ helpers WakameHelpers
 paths index: '/',
     list: '/list/:class',
     current: '/current', # get(redirection)
-    difficulty: '/difficulty/:difficulty/:class',
+    degree: '/degree/:degree/:class',
     level: '/level/:level',
     card: '/card/:id',
     note: '/note/:id', # post
@@ -47,12 +47,7 @@ configure do
 
   use Rack::Flash
 
-  $weblio_headers = {
-    "User-Agent" => "Mozilla/5.0 (X11; Linux x86_64; rv:57.0) Gecko/20100101 Firefox/57.0",
-    "Accept" => "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language" => "en-US,en;q=0.5",
-    "Referer" => "https://www.weblio.jp/"
-  }
+  DEGREES = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
 end
 
 get :index do
@@ -68,10 +63,6 @@ get :card do
   hide!
 
   @element = Card.find(params[:id])
-  if @element.element_type == 'w' && @element.detailsb['pitch'] == nil
-    @element.detailsb['pitch'] = weblio_pitch(@element.title)
-    @element.save
-  end
   slim :element
 end
 
@@ -96,16 +87,17 @@ get :level do
   @kanjis   = Card.kanjis.where(level: params[:level]).order(id: :asc)
   @words    = Card.words.where(level: params[:level]).order(id: :asc)
 
-  @title = "Level #{params[:level]} elements"
+  @title = "L.#{params[:level]}"
   @separate_list = true
 
   slim :level
 end
 
-get :difficulty do
+get :degree do
   stype = safe_type(params[:class])
-  d = params[:difficulty].to_i
+  d = params[:degree].to_i
   @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc)
+  @title = DEGREES[d]
   @separate_list = true
   slim :elements_list
 end

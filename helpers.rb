@@ -60,17 +60,4 @@ module WakameHelpers
     return m
   end
 
-  def weblio_pitch(_word)
-    response = HTTParty.get(URI.encode("https://www.weblio.jp/content/#{_word}"), headers: $weblio_headers)
-    xml = Nokogiri::HTML(response.body)
-    midashigo = xml.css("h2.midashigo")
-    readings = []
-    midashigo.each do |m|
-      mm = m.content.match(/.*［(?<pitch>\d)］.*/)
-      if mm && mm['pitch']
-        readings << {header: m.content.gsub(/ /, ''), pitch: mm['pitch'].to_i}
-      end
-    end
-    return readings
-  end
 end

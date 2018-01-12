@@ -352,6 +352,9 @@ a.study-button {
 .element-card .mnemonics-hint {
   color: #777;
 }
+.element-card .pitch-accent {
+  opacity: 0.5;
+}
 /* --------------------------
    title with horizontal line */
 .hr-title {

@@ -1,5 +1,4 @@
 ruby:
-  LVLS = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
   groups = {
         just_learned: {title: 'New', color: :blue},
         failed: {title: 'Failed', color: :red},
@@ -22,7 +21,7 @@ ruby:
   end
 
 div.stat-table-block style="margin-top: 1em;"
-  div.hr-title: span = "Level #{clevel} (#{LVLS[(clevel-1)/10]})"
+  div.hr-title: span = "#{DEGREES[(clevel-1)/10]}: Level #{clevel}"
   table
     tr
       td

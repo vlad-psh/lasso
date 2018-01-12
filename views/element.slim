@@ -33,11 +33,24 @@ div.element-card
           br
           = "fails: #{e.actions.where(action_type: 4).count}"
     - if admin? && !e.learned
-      div.top-info-block
-        div.hr-title: span Actions
-        div.top-info-content
-          form method="POST" action=path_to(:learn).with(e.id)
-            input type="submit" value='Learn!'
+      - unless e.radical?
+        div.top-info-block
+          div.hr-title: span Links
+          div.top-info-content
+            a href="http://yakuru.net/search.aspx?w=#{e.title}" yakuru
+            br
+            a href="http://jisho.org/search/#{e.title}%23words" jisho word
+            - if e.kanji?
+              br
+              a href="http://nippon.temerov.org/kandzi_view.php?kandzi=#{e.title}" temerov
+              br
+              a href="http://jisho.org/search/#{e.title}%23kanji" jisho kanji
+      - if e.unlocked
+        div.top-info-block
+          div.hr-title: span Actions
+          div.top-info-content
+            form method="POST" action=path_to(:learn).with(e.id)
+              input type="submit" value='Learn!'
 
   - if e.detailsb['mynotes']
     div == e.detailsb["mynotes"]

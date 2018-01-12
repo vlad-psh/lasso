@@ -2,7 +2,7 @@ doctype html
 html
   head
     meta charset="utf-8"
-    title = (@title ? "【#{@title}】" : '') + "Wakame"
+    title = (@title ? "#{@title}：" : '') + "Wakame"
     / script src="http://code.jquery.com/jquery-2.2.0.min.js"
     script src="/js/jquery-2.2.0.min.js"
     script src="/js/jquery-rails.js"
@@ -38,7 +38,7 @@ html
             a href=path_to(:current).with(v[:plural]) 現行
             br
             - (0..5).each do |i|
-              a href=path_to(:difficulty).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
+              a href=path_to(:degree).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
     == slim :flashes
     div#container
       == yield
