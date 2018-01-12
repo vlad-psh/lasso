@@ -39,12 +39,13 @@ div.element-card
           div.top-info-content
             a href="http://yakuru.net/search.aspx?w=#{e.title}" yakuru
             br
-            a href="http://jisho.org/search/#{e.title}%23words" jisho word
+            a href="http://tangorin.com/general/#{e.title}" tangorin word
             - if e.kanji?
               br
-              a href="http://nippon.temerov.org/kandzi_view.php?kandzi=#{e.title}" temerov
+              ' +
+              a href="http://tangorin.com/kanji/#{e.title}" kanji
               br
-              a href="http://jisho.org/search/#{e.title}%23kanji" jisho kanji
+              a href="http://nippon.temerov.org/kandzi_view.php?kandzi=#{e.title}" temerov
       - if e.unlocked
         div.top-info-block
           div.hr-title: span Actions
@@ -60,7 +61,7 @@ div.element-card
       - mne_block.each do |p|
         - if e.detailsb[p] && !e.detailsb[p].empty?
           div.hr-title: span = details_tags[p]
-          div class="#{'mnemonics-hint' if p['hnt']}" == bb_textile(e.detailsb[p])
+          div class="#{'mnemonics-hint' if p['hnt']}" == bb_textile(' '+e.detailsb[p])
       - unless mne_title == :reading && e.radical?
         - if admin?
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
