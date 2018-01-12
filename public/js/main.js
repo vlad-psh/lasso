@@ -51,3 +51,19 @@ $(document).on('click', '.bb-format-link', function(event){
   textarea.value = newText;
   textarea.focus();
 });
+/* ===================
+   CLICK TO SHOW TITLE
+   =================== */
+$(document).on('click', '[title]', function(event){
+  if ($('#title-tip').length) {
+    $('#title-tip').remove();
+  } else {
+    var p = $(this).offset();
+    var el = $( "<div id='title-tip'>" + $(this).attr("title") + "</div>" );
+    $("body").append(el);
+
+    var pleft = p.left + $(this).outerWidth()/2 - el.outerWidth()/2;
+    var ptop = p.top + $(this).outerHeight() + 8;
+    $("#title-tip").attr("style", "left: " + pleft + "px; top: " + ptop + "px");
+  }
+});

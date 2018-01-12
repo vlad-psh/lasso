@@ -422,9 +422,11 @@ a.study-button {
   flex-flow: row wrap;
   width: 100%;
 }
-.study-card .answer-buttons div {
+.study-card .correct-answer-button,
+.study-card .incorrect-answer-button,
+.study-card .soso-answer-button {
   display: inline-block;
-  flex: auto;
+  flex: 2;
   padding: 0.5em 1em;
   margin: 0 0.2em;
   cursor: pointer;
@@ -438,6 +440,7 @@ a.study-button {
 }
 .study-card .soso-answer-button {
   background-color: #0af;
+  flex: 1;
 }
 .study-card .sentence-examples {
   font-size: 1em;
@@ -538,6 +541,35 @@ form.add-note-form {
 }
 .note-content {
 
+}
+/* ==============================
+   TITLE TIPS
+   ============================== */
+[title] {
+  cursor: pointer;
+}
+#title-tip {
+  background: rgba(0,0,0,0.8);
+  color: #bbb;
+  position: absolute;
+  padding: 8px 10px;
+  font-size: 11px;
+  border-radius: 3px;
+  font-family: Arial;
+  text-align: center;
+  z-index: 99999;
+}
+#title-tip:after {
+  box-sizing:border-box;
+  position:absolute;
+  left:50%;
+  height:5px;
+  width:5px;
+  top:-10px;
+  margin:0 0 0 -5px;
+  content:" ";
+  border:5px solid transparent;
+  border-bottom-color:rgba(0,0,0,0.8)
 }
 /* ==============================
    MOBILE
