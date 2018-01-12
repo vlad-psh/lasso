@@ -2,11 +2,11 @@
 div.levels-header
   div.left
     - unless lvl == 1
-      a href=path_to(:level).with(lvl - 1) = "Level #{lvl - 1}"
-  div: span<> style="font-size: 2em" = "Level #{lvl}"
+      a href=path_to(:level).with(lvl - 1) == "Level&nbsp;#{lvl - 1}"
+  div: span<> style="font-size: 2em" == "Level&nbsp;#{lvl}"
   div.right
     - if lvl != 60
-      a href=path_to(:level).with(lvl + 1) = "Level #{lvl + 1}"
+      a href=path_to(:level).with(lvl + 1) == "Level&nbsp;#{lvl + 1}"
 div.hr-title: span style="margin: 0.4em 0 0.6em 0" Radicals
 == slim :elements_list, locals: {elements: @radicals}
 div.hr-title: span style="margin: 0.4em 0 0.6em 0" Kanji

@@ -178,7 +178,7 @@ class Card < ActiveRecord::Base
   end
 
   def answer!(a)
-    # answer should be 'yes' or 'no'
+    # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
     if a == :yes
@@ -194,6 +194,16 @@ class Card < ActiveRecord::Base
       self.scheduled = Date.today
       self.save
       Action.create(card: self, action_type: 4) # 4 = incorrect answer
+    elsif a == :soso
+      self.deck = self.deck >= 3 ? 3 : self.deck
+      self.scheduled = choose_schedule_day(self.deck)
+      self.save
+      if self.deck != 0
+        Action.create(card: self, action_type: 5) # 5 = soso answer
+        stats = Statistic.find_or_initialize_by(date: self.scheduled)
+        stats.scheduled[self.element_type] += 1
+        stats.save
+      end
     else
       throw StandardError.new("Unknown answer: #{a}")
     end

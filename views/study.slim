@@ -4,15 +4,18 @@ div.study-card
   div.answer
     div.answer-buttons
       div.incorrect-answer-button NO
+      - if @element.deck > 0
+        div.soso-answer-button title="If deck > 3 move to deck 3; else: do not change deck" SO-SO
       div.correct-answer-button YES
   div.answer-block
     div style="display: inline-block;"
       div Meaning
     - unless @element.radical?
-      div style="display: inline-block;"
-        div< + Reading
-        div.reading-answer
-          == slim :reading, locals: {e: @element}
+      div< style="display: inline-block;"
+        div + Reading
+        - if @element.kanji?
+          div.reading-answer
+            == slim :reading, locals: {e: @element}
   div.answer
     == slim :element
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
@@ -29,6 +32,7 @@ javascript:
   };
   function submitAnswer(answer){
     $(".correct-answer-button").removeClass('correct-answer-button');
+    $(".soso-answer-button").removeClass('soso-answer-button');
     $(".incorrect-answer-button").removeClass('incorrect-answer-button');
     //$(".correct-answer-button").hide();
     //$(".incorrect-answer-button").hide();
@@ -43,6 +47,8 @@ javascript:
         submitAnswer("yes");
       } else if (e.keyCode == 78) { // [N] key
         submitAnswer("no");
+      } else if (e.keyCode == 83) { // [S] key
+        submitAnswer("soso");
       }
     } else {
       if (e.keyCode == 13 || e.keyCode == 32) { // Enter or Space
@@ -54,3 +60,4 @@ javascript:
   $(document).on('click', '.show-answer-button', () => showAnswer());
   $(document).on('click', '.correct-answer-button', () => submitAnswer("yes"));
   $(document).on('click', '.incorrect-answer-button', () => submitAnswer("no"));
+  $(document).on('click', '.soso-answer-button', () => submitAnswer("soso"));

@@ -294,17 +294,15 @@ a.study-button {
   align-items: center;
 }
 .levels-header>div {
-  flex: 3;
+  flex: auto;
 }
 .levels-header>div.left { 
   text-align: left;
   margin-left: 0.5em;
-  flex: 1;
 }
 .levels-header>div.right {
   text-align: right;
   margin-right: 0.5em;
-  flex: 1;
 }
 /* ==============================
    ELEMENT
@@ -437,6 +435,9 @@ a.study-button {
 }
 .study-card .incorrect-answer-button {
   background-color: #e51c23;
+}
+.study-card .soso-answer-button {
+  background-color: #0af;
 }
 .study-card .sentence-examples {
   font-size: 1em;
