@@ -110,27 +110,6 @@ br
 == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
 ruby:
-  t = Card.arel_table
-  decks_all = Card.any_learned.group(:deck).count
-  decks_scheduled = Card.any_learned.where(t[:scheduled].lteq(Date.today).
-                  or(t[:scheduled].eq(nil))).group(:deck).count
-  max_deck = Card.order(deck: :desc).pluck(:deck).first
-  max_deck = 7 if max_deck < 7
-  gdata = []
-  gdesc = []
-  (0..max_deck).each do |d|
-    _a = (decks_all[d] || 0)
-    _s = (decks_scheduled[d] || 0)
-    gdata << [_a - _s, _s]
-    gdesc << _s
-  end
-
-br
-div style="display: inline-block;"
-  div Decks:
-  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:r, :k]}
-
-ruby:
   level_dates = []
   #not_yet_learned = Card.where(scheduled: nil).group(:level).count
   not_yet_learned = Card.where(learned: false).group(:level).count
@@ -147,6 +126,29 @@ ruby:
     level_duration[i+1] = (level_dates[i+1] - level_dates[i]).to_f.round(1)
   end
 
-div style="display: inline-block;"
-  div Levels duration
-  == slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
+br
+' Levels duration
+br
+== slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
+
+ruby:
+  t = Card.arel_table
+  decks_all = Card.any_learned.group(:deck).count
+  decks_scheduled = Card.any_learned.where(t[:scheduled].lteq(Date.today).
+                  or(t[:scheduled].eq(nil))).group(:deck).count
+  max_deck = Card.order(deck: :desc).pluck(:deck).first
+  max_deck = 7 if max_deck < 7
+  gdata = []
+  gdesc = []
+  (0..max_deck).each do |d|
+    _a = (decks_all[d] || 0)
+    _s = (decks_scheduled[d] || 0)
+    gdata << [_a - _s, _s]
+    gdesc << _s
+  end
+
+br
+' Decks:
+br
+== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:r, :k]}
+

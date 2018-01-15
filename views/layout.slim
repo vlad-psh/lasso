@@ -22,6 +22,8 @@ html
           a href=path_to(:login) ●
         a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
         a href=path_to(:current) = "Level #{Card.current_level}"
+        - if admin?
+          a style="padding-left: 0.7em" href=path_to(:notes) 📘
         //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
         //  input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
       div.right
