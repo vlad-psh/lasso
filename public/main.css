@@ -11,6 +11,10 @@
   font-family: "myfont_jp1";
   src: local("myfont_jp1"),url("/fonts/myfont_jp1") format('truetype');
 }
+@font-face {
+  font-family: "myfont_jp2";
+  src: local("myfont_jp2"),url("/fonts/myfont_jp2") format('truetype');
+}
 body {
   font-family: myfont, Cambria, myfont_jp1, serif;
   font-weight: 300;
@@ -18,8 +22,20 @@ body {
   margin: 0;
   text-align: center;
 }
-.japanese {
+body.myfont_jp1 {
+  font-family: myfont, Cambria, myfont_jp1, serif;
+}
+body.myfont_jp1 .japanese {
   font-family: myfont_jp1, serif;
+}
+body.myfont_jp2 {
+  font-family: myfont, Cambria, myfont_jp2, serif;
+}
+body.myfont_jp2 .japanese {
+  font-family: myfont_jp2, serif;
+  font-size: 1.2em;
+}
+.japanese {
   font-size: 1.4em;
   font-style: normal !important;
 }
@@ -240,8 +256,8 @@ a.study-button {
   padding: 0.5em 0.3em;
 }
 .elements-list-item .element {
-  font-size: 2em;
-  line-height: 1.3em;
+  font-size: 1.4em;
+  line-height: 1.5em;
 }
 .elements-list-item .description {
   font-size: 0.8em;

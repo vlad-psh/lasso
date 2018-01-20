@@ -13,5 +13,5 @@ div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''
           div.level = cl
       div class="element-block #{wk_level(e)}"
         a href=path_to(:card).with(e.id)
-          div.element = e.title
+          div.element: span.japanese = e.title
           div.description = e.description
