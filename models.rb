@@ -190,6 +190,9 @@ class Card < ActiveRecord::Base
     elsif a == :soso
       self.move_to_deck!(self.deck >= 3 ? 3 : self.deck)
       Action.create(card: self, action_type: 5) if self.deck != 0 # 5 = soso answer
+    elsif a == :burn
+      self.move_to_deck!(100)
+      Action.create(card: self, action_type: 6)
     else
       throw StandardError.new("Unknown answer: #{a}")
     end

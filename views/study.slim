@@ -4,8 +4,6 @@ div.study-card
   div.answer
     div.answer-buttons
       div.incorrect-answer-button NO
-      - if @element.deck > 0
-        div.soso-answer-button title="If deck > 3 move to deck 3; else: do not change deck" SO&#8209;SO
       div.correct-answer-button YES
   div.answer-block
     div style="display: inline-block;"
@@ -18,12 +16,18 @@ div.study-card
             == slim :reading, locals: {e: @element}
   div.answer
     == slim :element
+  div.answer style="margin-bottom: 1em;"
+    div.answer-buttons
+      - if @element.deck > 0
+        div.soso-answer-button title="If deck > 3 move to deck 3; else: do not change deck" SO&#8209;SO
+      div.burn-answer-button BURN!
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
     input type="hidden" name="element_id" value=@element.id
     input type="hidden" name="answer" value=''
 
 javascript:
   var is_answered = false;
+  var answer_submitted = false;
 
   function showAnswer(){
     $(".answer").removeClass('answer');
@@ -31,14 +35,17 @@ javascript:
     is_answered = true;
   };
   function submitAnswer(answer){
-    $(".correct-answer-button").removeClass('correct-answer-button');
-    $(".soso-answer-button").removeClass('soso-answer-button');
-    $(".incorrect-answer-button").removeClass('incorrect-answer-button');
-    //$(".correct-answer-button").hide();
-    //$(".incorrect-answer-button").hide();
+    if (!answer_submitted) {
+      answer_submitted = true;
 
-    $("#answer-form input[name=answer]").val(answer);
-    $("#answer-form").submit();
+      $(".correct-answer-button").hide();
+      $(".incorrect-answer-button").hide();
+      $(".soso-answer-button").hide();
+      $(".burn-answer-button").hide();
+
+      $("#answer-form input[name=answer]").val(answer);
+      $("#answer-form").submit();
+    }
   };
 
   $(document).on('keyup', function (e) {
@@ -49,7 +56,7 @@ javascript:
         submitAnswer("no");
       } else if (e.keyCode == 83) { // [S] key
         submitAnswer("soso");
-      }
+      } // there is no keybinding to 'burn' card
     } else {
       if (e.keyCode == 13 || e.keyCode == 32) { // Enter or Space
         showAnswer();
@@ -61,3 +68,4 @@ javascript:
   $(document).on('click', '.correct-answer-button', () => submitAnswer("yes"));
   $(document).on('click', '.incorrect-answer-button', () => submitAnswer("no"));
   $(document).on('click', '.soso-answer-button', () => submitAnswer("soso"));
+  $(document).on('click', '.burn-answer-button', () => submitAnswer("burn"));

@@ -447,12 +447,15 @@ body.black .element-card {
   display: flex;
   flex-flow: row wrap;
   width: 100%;
+  max-width: 50em;
+  margin: 0 auto;
 }
 .study-card .correct-answer-button,
 .study-card .incorrect-answer-button,
-.study-card .soso-answer-button {
+.study-card .soso-answer-button,
+.study-card .burn-answer-button {
   display: inline-block;
-  flex: 2;
+  flex: auto;
   padding: 0.5em 1em;
   margin: 0 0.2em;
   cursor: pointer;
@@ -466,7 +469,9 @@ body.black .element-card {
 }
 .study-card .soso-answer-button {
   background-color: #0af;
-  flex: 1;
+}
+.study-card .burn-answer-button {
+  background-color: #ff9800;
 }
 .study-card .sentence-examples {
   font-size: 1em;
