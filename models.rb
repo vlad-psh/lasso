@@ -182,35 +182,35 @@ class Card < ActiveRecord::Base
     a = a.to_sym
 
     if a == :yes
-      self.deck += 1
-      self.scheduled = choose_schedule_day(self.deck)
-      self.save
+      self.move_to_deck!(self.deck + 1)
       Action.create(card: self, action_type: 3) # 3 = correct answer
-      stats = Statistic.find_or_initialize_by(date: self.scheduled)
-      stats.scheduled[self.element_type] += 1
-      stats.save
     elsif a == :no
-      self.deck = 0
-      self.scheduled = Date.today
-      self.save
+      self.move_to_deck!(0)
       Action.create(card: self, action_type: 4) # 4 = incorrect answer
     elsif a == :soso
-      self.deck = self.deck >= 3 ? 3 : self.deck
-      self.scheduled = choose_schedule_day(self.deck)
-      self.save
-      if self.deck != 0
-        Action.create(card: self, action_type: 5) # 5 = soso answer
-        stats = Statistic.find_or_initialize_by(date: self.scheduled)
-        stats.scheduled[self.element_type] += 1
-        stats.save
-      end
+      self.move_to_deck!(self.deck >= 3 ? 3 : self.deck)
+      Action.create(card: self, action_type: 5) if self.deck != 0 # 5 = soso answer
     else
       throw StandardError.new("Unknown answer: #{a}")
     end
   end
 
+  def move_to_deck!(deck)
+    self.deck = deck
+    self.scheduled = choose_schedule_day(deck)
+    self.save
+
+    if deck != 0
+      stats = Statistic.find_or_initialize_by(date: self.scheduled)
+      stats.scheduled[self.element_type] += 1
+      stats.save
+    end
+  end
+
   private
   def choose_schedule_day(new_deck, from_date = Date.today)
+    return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
+
     ranges = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
     r = ranges[new_deck > 7 ? 7 : new_deck]
     date_range = [from_date + r[0], from_date + r[2]]

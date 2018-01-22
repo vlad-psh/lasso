@@ -32,7 +32,7 @@ div.element-card
           = "passes: #{e.actions.where(action_type: 3).count}"
           br
           = "fails: #{e.actions.where(action_type: 4).count}"
-    - if admin? && !e.learned
+    - if admin? #&& !e.learned
       - unless e.radical?
         div.top-info-block
           div.hr-title: span Links
@@ -46,6 +46,7 @@ div.element-card
               a href="http://tangorin.com/kanji/#{e.title}" kanji
               br
               a href="http://nippon.temerov.org/kandzi_view.php?kandzi=#{e.title}" temerov
+    - if admin? && !e.learned
       - if e.unlocked
         div.top-info-block
           div.hr-title: span Actions
