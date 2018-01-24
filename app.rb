@@ -24,6 +24,7 @@ paths index: '/',
     current: '/current', # get(redirection)
     degree: '/degree/:degree/:class',
     level: '/level/:level',
+    cards: '/cards',
     card: '/card/:id',
     note: '/note/:id', # post
     learn: '/learn/:id', # post
@@ -58,6 +59,33 @@ get :index do
   end
 
   slim :index
+end
+
+post :cards do
+  c = Card.new(
+        element_type: :w,
+        title: params['title'],
+        unlocked: true,
+        level: 99,
+        deck: 0,
+        detailsb: {
+            en: [params['en']],
+            readings: [params['readings']]
+          }
+        )
+
+  if params['type'] == 'burned'
+    c.learned = true
+    c.level = 100
+    c.move_to_deck!(100)
+  elsif params['type'] == 'learned'
+    c.learn!
+#  elsif params['type'] == 'unlocked'
+#    c.level = 99
+  end
+  c.save
+
+  redirect path_to(:search).with(query: params['search'])
 end
 
 get :card do

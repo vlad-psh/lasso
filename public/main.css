@@ -621,6 +621,9 @@ form.add-note-form {
   vertical-align: top;
   padding: 0.1em 0.3em;
 }
+.search-result div a {
+  text-decoration: none;
+}
 .search-result div:nth-child(1) {
   background: #eee;
 }

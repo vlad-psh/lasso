@@ -4,7 +4,7 @@ div.search-results
   - @elements.each do |e|
     - next unless e.word?
     div.search-result
-      div = e.title
+      div: a href=path_to(:card).with(e.id) = e.title
       div = e.detailsb['readings'].join('; ')
       div = e.detailsb['en'].join('; ')
 
@@ -13,7 +13,7 @@ div.search-results
   - @elements.each do |e|
     - next unless e.kanji?
     div.search-result
-      div = e.title
+      div: a href=path_to(:card).with(e.id) = e.title
       div
       div = e.detailsb['en'].join('; ')
 
@@ -22,4 +22,19 @@ div.search-results
   - @elements.each do |e|
     - next unless e.radical?
     div.search-result
-      div = e.title
+      div: a href=path_to(:card).with(e.id) = e.title
+
+div.hr-title: span Create new BURNED vocabulary card
+form method="POST" action=path_to(:cards)
+  input type="hidden" name="search" value=params['query']
+  ' Word:
+  input> type="text" name="title"
+  ' Reading:
+  input> type="text" name="reading"
+  ' Meaning:
+  input> type="text" name="en"
+  select> name="type"
+    option value="burned" selected="selected" Burned
+    option value="learned" Learned
+    option value="unlocked" Unlocked
+  input type="submit" value="Save"

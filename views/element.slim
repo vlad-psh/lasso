@@ -68,7 +68,7 @@ div.element-card
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
           == slim :ajax_form, locals: {e: e, property_name: mne_title, buttons: true}
 
-  - if e.word? && e.detailsb['sentences'].length > 0
+  - if e.word? && e.detailsb['sentences'] && e.detailsb['sentences'].length > 0
    div.mnemonics
     div.hr-title: span Sentence examples
     - e.detailsb['sentences'].each do |s|
