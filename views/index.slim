@@ -136,7 +136,7 @@ ruby:
   decks_all = Card.any_learned.group(:deck).count
   decks_scheduled = Card.any_learned.where(t[:scheduled].lteq(Date.today).
                   or(t[:scheduled].eq(nil))).group(:deck).count
-  max_deck = Card.order(deck: :desc).pluck(:deck).first
+  max_deck = Card.where(Card.arel_table[:deck].lt(100)).order(deck: :desc).pluck(:deck).first
   max_deck = 7 if max_deck < 7
   gdata = []
   gdesc = []

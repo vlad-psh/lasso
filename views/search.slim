@@ -1,0 +1,25 @@
+
+div.hr-title: span Words
+div.search-results
+  - @elements.each do |e|
+    - next unless e.word?
+    div.search-result
+      div = e.title
+      div = e.detailsb['readings'].join('; ')
+      div = e.detailsb['en'].join('; ')
+
+div.hr-title: span Kanji
+div.search-results
+  - @elements.each do |e|
+    - next unless e.kanji?
+    div.search-result
+      div = e.title
+      div
+      div = e.detailsb['en'].join('; ')
+
+div.hr-title: span Radicals
+div.search-results
+  - @elements.each do |e|
+    - next unless e.radical?
+    div.search-result
+      div = e.title

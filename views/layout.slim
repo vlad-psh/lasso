@@ -27,7 +27,7 @@ html
         //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
         //  input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
       div.right
-        form method="POST" action=path_to(:search)
+        form method="GET" action=path_to(:search)
           input.search type="text" name="query" placeholder="Search..."
           //input type="submit" value="Search"
     div#overlay-menu

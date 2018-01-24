@@ -9,6 +9,7 @@ require 'yaml'
 require 'redcloth'
 require 'httparty'
 require 'nokogiri'
+require 'romaji'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -151,13 +152,15 @@ post :study do
   redirect path_to(:study).with(safe_type(params[:class]), safe_group(params[:group]))
 end
 
-post :search do
+get :search do
   hide!
 
-  q = params['query']
-  @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ?", "%#{q}%", "%#{q}%").order(level: :asc)
-  @separate_list = true
-  slim :elements_list
+  @elements = []
+  if q = params['query']
+    qj = Romaji.romaji2kana(q, kana_type: :hiragana)
+    @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
+  end
+  slim :search
 end
 
 post :toggle_compact do

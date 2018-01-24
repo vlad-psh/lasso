@@ -606,6 +606,28 @@ form.add-note-form {
   border-bottom-color:rgba(0,0,0,0.8)
 }
 /* ==============================
+   SEARCH RESULTS
+   ============================== */
+.search-results {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  align-items: flex-start;
+}
+.search-result div {
+  display: inline-block;
+  text-align: left;
+  width: 100px;
+  vertical-align: top;
+  padding: 0.1em 0.3em;
+}
+.search-result div:nth-child(1) {
+  background: #eee;
+}
+.search-result div:nth-child(3) {
+  width: 200px;
+}
+/* ==============================
    MOBILE
    default window width: 980
    with meta:
