@@ -193,7 +193,8 @@ a.study-button {
   border-style: solid;
   border-width: 0 0.1em 0.1em 0;
 }
-.locked, .locked a {
+.locked, .locked a,
+.unlocked, .unlocked a {
   background-color: rgba(157,157,157,0.1);/*#f5f5f5*/
   color: #638686;
   border-color: #b4c6c6;
@@ -203,10 +204,10 @@ body.black .locked {
 }
 /* Green palette from here:
    http://www.colourlovers.com/palette/580974/Adrift_in_Dreams */
-.unlocked, .unlocked a {
-  background-color: #cff09e;
-  color: #3b8686; /* master bg */
-  border-color: #b9d78d;
+.unlocked .description {
+  background-color: #efeb9e;
+  color: #878764;
+  border-radius: 0.2em;
 }
 .apprentice, .apprentice a {
   background-color: #a8dba8; /* #dd0093; */
@@ -231,6 +232,13 @@ body.black .locked {
 .burned, .burned a {
   background-color: #434343;
   border-color: #262626;
+  color: #ddae35;
+}
+.burned .description {
+  background-color: #ffbc11;
+  background: linear-gradient(to right, #fcc12a, #dd9e00);
+  color: #775704;
+  border-radius: 0.2em;
 }
 /* ==============================
    ELEMENTS LIST

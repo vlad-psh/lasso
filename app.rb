@@ -70,7 +70,7 @@ post :cards do
         deck: 0,
         detailsb: {
             en: [params['en']],
-            readings: [params['readings']]
+            readings: [params['reading']]
           }
         )
 
