@@ -230,15 +230,22 @@ body.black .locked {
   border-color: #094060;
 }
 .burned, .burned a {
-  background-color: #434343;
-  border-color: #262626;
-  color: #ddae35;
+  /* gradient can be created here: http://www.patternify.com/ */
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gITCRIo7aRYngAAABJJREFUCNdjYIABPrHNuBgMDAAuFwKGaxZ92QAAAABJRU5ErkJggg==) repeat;
+  background-size: 3px 3px;
+  background-color: #0b486b;
+  color: #79bd9a;
+  border-color: #022030;
 }
-.burned .description {
-  background-color: #ffbc11;
-  background: linear-gradient(to right, #fcc12a, #dd9e00);
-  color: #775704;
-  border-radius: 0.2em;
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-device-pixel-ratio: 2),
+(min-resolution: 2dppx),
+(min-resolution: 192dpi) {
+  .burned, .burned a {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAABmJLR0QAAAAOABYHCSMkAAAACXBIWXMAAAWJAAAFiQFtaJ36AAAAB3RJTUUH4gITCScv0fEPiwAAADJJREFUCNdty7ENACAMA8ELA6RkK6ZlQSokArg860P2iaFuhuxuhPZDjPbDsyi4jwdhASRcBrlPNop5AAAAAElFTkSuQmCC) repeat;
+    background-size: 3px 3px;
+    background-color: #0b486b;
+  }
 }
 /* ==============================
    ELEMENTS LIST
