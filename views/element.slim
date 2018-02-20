@@ -27,11 +27,7 @@ div.element-card
       div.top-info-block
         div.hr-title: span Progress
         div.top-info-content
-          = "deck: #{e.deck}"
-          br
-          = "passes: #{e.actions.where(action_type: 3).count}"
-          br
-          = "fails: #{e.actions.where(action_type: 4).count}"
+          == slim :progress, locals: {card: e}
     - if admin? #&& !e.learned
       - unless e.radical?
         div.top-info-block

@@ -433,6 +433,22 @@ body.black .element-card {
 .bb-format-link {
   cursor: pointer;
 }
+.srs-progress {
+  font-size: 0.8em;
+}
+.srs-progress table {
+  border-collapse: collapse;
+}
+.srs-progress td {
+  padding: 0 0.3em;
+  color: white;
+  line-height: 1.2em;
+  border-right: 1px solid rgba(255,255,255,0.3);
+}
+.srs-progress .srs-deck {background: rgba(128,128,128,0.4); color: black}
+.srs-progress .srs-pass {background: #4caf50}
+.srs-progress .srs-fail {background: #e51c32}
+.srs-progress .srs-soso {background: #00aaff}
 /* ==============================
    STUDY CARD
    ============================== */
@@ -529,6 +545,9 @@ body.black .element-card {
 }
 .yomi-table td.yomi {
   padding: 0 6px;
+}
+.study-card .element-card .element-title {
+  display: none;
 }
 /* ==============================
    GRAPHS
