@@ -113,12 +113,15 @@ ruby:
   level_dates = []
   #not_yet_learned = Card.where(scheduled: nil).group(:level).count
   not_yet_learned = Card.where(learned: false).group(:level).count
-  level_dates << Action.where(action_type: 2).order(created_at: :asc).first.created_at.to_datetime
-  (1..60).each do |i|
-    break if not_yet_learned[i]
-    # latest learn action at current level
-    a = Action.eager_load(:card).where(action_type: 2, cards: {level: i}).order(created_at: :desc).first
-    level_dates << a.created_at.to_datetime
+  first_action = Action.where(action_type: 2).order(created_at: :asc).first
+  if first_action.present?
+    level_dates << first_action.created_at.to_datetime
+    (1..60).each do |i|
+      break if not_yet_learned[i]
+      # latest learn action at current level
+      a = Action.eager_load(:card).where(action_type: 2, cards: {level: i}).order(created_at: :desc).first
+      level_dates << a.created_at.to_datetime
+    end
   end
   level_dates << DateTime.now
   level_duration = {}

@@ -4,7 +4,7 @@ require 'sinatra/activerecord/rake'
 namespace :wakame do
   desc "Shift your schedule to lower count of expired cards"
   task :comeback do
-    MAXCARDS = 59
+    MAXCARDS = 100
     just_learned_count = Card.just_learned.count
     start_date = Date.today
     while true
