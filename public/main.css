@@ -684,6 +684,10 @@ form.add-note-form {
   #main-menu {
     font-size: 1em;
   }
+  #main-menu .left   {flex: 1}
+  #main-menu .center {flex: 5}
+  #main-menu .right  {flex: 1}
+  #main-menu .search {width: 80px}
   #container {
     margin: 0;
   }
@@ -697,10 +701,4 @@ form.add-note-form {
   .elements-list-compact .elements-list-item {
     font-size: 1.006em !important;
   }
-  #main-menu .right form {
-    display: none;
-  }
-  #main-menu .left   {flex: 1}
-  #main-menu .center {flex: 5}
-  #main-menu .right  {flex: 1}
 }
