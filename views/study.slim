@@ -3,8 +3,13 @@ div.study-card
   h1.show-answer-button class=@element.element_type = @element.title
   div.answer
     div.answer-buttons
-      div.incorrect-answer-button NO
-      div.correct-answer-button YES
+      div.answer-button.incorrect-answer-button data-value="no" NO
+      div.other-answers-button ...
+      div.other-answers.tooltip style="display: none"
+        - if @element.deck > 0
+          div.answer-button.soso-answer-button data-value="soso" title="If deck > 3 move to deck 3; else: do not change deck" SO&#8209;SO
+        div.answer-button.burn-answer-button data-value="burn" BURN!
+      div.answer-button.correct-answer-button data-value="yes" YES
   div.answer-block
     div style="display: inline-block;"
       div Meaning
@@ -16,11 +21,6 @@ div.study-card
             == slim :reading, locals: {e: @element}
   div.answer
     == slim :element
-  div.answer style="margin-bottom: 1em;"
-    div.answer-buttons
-      - if @element.deck > 0
-        div.soso-answer-button title="If deck > 3 move to deck 3; else: do not change deck" SO&#8209;SO
-      div.burn-answer-button BURN!
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
     input type="hidden" name="element_id" value=@element.id
     input type="hidden" name="answer" value=''
@@ -29,24 +29,40 @@ javascript:
   var is_answered = false;
   var answer_submitted = false;
 
-  function showAnswer(){
+  $(document).on('click', '.show-answer-button', function(){
     $(".answer").removeClass('answer');
     $(".answer-block").hide();
     is_answered = true;
-  };
-  function submitAnswer(answer){
+  });
+
+  $(document).on('click', '.answer-button', function(){
     if (!answer_submitted) {
       answer_submitted = true;
 
-      $(".correct-answer-button").hide();
-      $(".incorrect-answer-button").hide();
-      $(".soso-answer-button").hide();
-      $(".burn-answer-button").hide();
+      $(".answer-button").hide();
+      $(".other-answers-button").hide();
 
-      $("#answer-form input[name=answer]").val(answer);
+      $("#answer-form input[name=answer]").val($(this).data('value'));
       $("#answer-form").submit();
     }
-  };
+  });
+
+  $(document).on('click', '.other-answers-button', function(){
+    var oa = $('.other-answers');
+    var p = $(this).offset();
+    var pleft, ptop;
+
+    console.log(oa.is(':visible'));
+    if (oa.is(':visible')){
+      oa.hide();
+    } else {
+      pleft = p.left + $(this).outerWidth()/2 - oa.outerWidth()/2;
+      ptop = p.top + $(this).outerHeight() + 8;
+      oa.attr("style", "left: " + pleft + "px; top: " + ptop + "px");
+
+      oa.show();
+    }
+  });
 
   $(document).on('keyup', function (e) {
     if (is_answered) {
@@ -64,8 +80,3 @@ javascript:
     }
   });
 
-  $(document).on('click', '.show-answer-button', () => showAnswer());
-  $(document).on('click', '.correct-answer-button', () => submitAnswer("yes"));
-  $(document).on('click', '.incorrect-answer-button', () => submitAnswer("no"));
-  $(document).on('click', '.soso-answer-button', () => submitAnswer("soso"));
-  $(document).on('click', '.burn-answer-button', () => submitAnswer("burn"));

@@ -481,16 +481,18 @@ body.black .element-card {
   max-width: 50em;
   margin: 0 auto;
 }
-.study-card .correct-answer-button,
-.study-card .incorrect-answer-button,
-.study-card .soso-answer-button,
-.study-card .burn-answer-button {
+.study-card .answer-button,
+.study-card .other-answers-button {
   display: inline-block;
-  flex: auto;
+  flex: 10;
   padding: 0.5em 1em;
-  margin: 0 0.2em;
+  margin: 0.2em 0.2em;
   cursor: pointer;
   color: white;
+  background-color: #0af;
+}
+.study-card .other-answers-button {
+  flex: 1;
 }
 .study-card .correct-answer-button {
   background-color: #4caf50;
@@ -499,10 +501,17 @@ body.black .element-card {
   background-color: #e51c23;
 }
 .study-card .soso-answer-button {
-  background-color: #0af;
+ /* default color */
 }
 .study-card .burn-answer-button {
   background-color: #ff9800;
+}
+.study-card .other-answers {
+  max-width: 250px;
+  padding: 8px 4px;
+}
+.study-card .other-answers .answer-button {
+  width: 200px;
 }
 .study-card .sentence-examples {
   font-size: 1em;
@@ -616,18 +625,17 @@ form.add-note-form {
 [title] {
   cursor: pointer;
 }
-#title-tip {
+#title-tip,
+.tooltip {
   background: rgba(0,0,0,0.8);
   color: #bbb;
   position: absolute;
-  padding: 8px 10px;
-  font-size: 11px;
   border-radius: 3px;
-  font-family: Arial;
   text-align: center;
   z-index: 99999;
 }
-#title-tip:after {
+#title-tip:after,
+.tooltip:after {
   box-sizing:border-box;
   position:absolute;
   left:50%;
@@ -638,6 +646,11 @@ form.add-note-form {
   content:" ";
   border:5px solid transparent;
   border-bottom-color:rgba(0,0,0,0.8)
+}
+#title-tip {
+  padding: 8px 10px;
+  font-size: 11px;
+  font-family: Arial;
 }
 /* ==============================
    SEARCH RESULTS
