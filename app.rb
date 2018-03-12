@@ -22,16 +22,17 @@ helpers WakameHelpers
 paths index: '/',
     list: '/list/:class',
     current: '/current', # get(redirection)
-    degree: '/degree/:degree/:class',
+    term: '/term/:term/:class',
     level: '/level/:level',
     cards: '/cards',
     card: '/card/:id',
-    note: '/note/:id', # post
+    cardinfo: '/cardinfo/:id', # post
     learn: '/learn/:id', # post
     study: '/study/:class/:group', # get, post
     search: '/search', # post
     toggle_compact: '/toggle_compact', # post
     notes: '/notes',
+    note: '/note/:id',
     login: '/login', # GET: login form; POST: log in
     logout: '/logout' # DELETE: logout
 
@@ -55,13 +56,15 @@ end
 get :index do
   @counters = {}
   [:just_unlocked, :just_learned, :failed, :expired, :any_learned].each do |g|
-    @counters[g] = Card.public_send(g).group(:element_type).count
+    @counters[g] = Card.joins(:user_cards).merge( UserCard.public_send(g).where(user: current_user) ).group(:element_type).count
   end
 
   slim :index
 end
 
 post :cards do
+  protect!
+
   c = Card.new(
         element_type: :w,
         title: params['title'],
@@ -70,7 +73,8 @@ post :cards do
         deck: 0,
         detailsb: {
             en: [params['en']],
-            readings: [params['reading']]
+            readings: [params['reading']],
+            user_id: current_user.id
           }
         )
 
@@ -89,9 +93,11 @@ post :cards do
 end
 
 get :card do
-  hide!
+  protect!
 
   @element = Card.find(params[:id])
+  @element.uinfo = UserCard.find_by(card_id: params[:id], user_id: current_user.id)
+
   slim :element
 end
 
@@ -108,13 +114,19 @@ get :list do
 end
 
 get :current do
-  redirect path_to(:level).with(Card.current_level)
+  redirect path_to(:level).with(current_user.present? ? current_user.current_level : 1)
 end
 
 get :level do
-  @radicals = Card.radicals.where(level: params[:level]).order(id: :asc)
-  @kanjis   = Card.kanjis.where(level: params[:level]).order(id: :asc)
-  @words    = Card.words.where(level: params[:level]).order(id: :asc)
+  @radicals, @kanjis, @words = [], [], []
+
+  cards = Card.where(level: params[:level]).order(id: :asc).with_uinfo(current_user)
+
+  cards.each do |c|
+    @radicals << c if c.radical?
+    @kanjis   << c if c.kanji?
+    @words    << c if c.word?
+  end
 
   @title = "L.#{params[:level]}"
   @separate_list = true
@@ -122,46 +134,49 @@ get :level do
   slim :level
 end
 
-get :degree do
+get :term do
   stype = safe_type(params[:class])
-  d = params[:degree].to_i
-  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc)
+  d = params[:term].to_i
+  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc).with_uinfo(current_user)
   @title = DEGREES[d]
   @separate_list = true
   slim :elements_list
 end
 
-post :note do
+post :cardinfo do
   protect!
 
   sprop = params[:property_name].to_sym
-  allowed_props = [:my_meaning, :my_reading, :my_en]
-  throw StandardError.new("Unknown property: #{sprop}") unless allowed_props.include?(sprop)
+  allowed_props = {my_meaning: :m, my_reading: :r, my_en: :t}
+  throw StandardError.new("Unknown property: #{sprop}") unless allowed_props.keys.include?(sprop)
 
-  e = Card.find(params[:id])
-  e.detailsb[sprop.to_s] = params[:content]
+  e = UserCard.find_or_initialize_by(card_id: params[:id], user_id: current_user.id)
+  e.details ||= {}
+  e.details[allowed_props[sprop]] = params[:content]
   e.save
 
-  return bb_textile(e.detailsb[sprop.to_s])
+  return bb_textile(e.details[allowed_props[sprop].to_s])
 end
 
 post :learn do
   protect!
 
   e = Card.find(params[:id])
-  e.learn!
+  e.learn_by!(current_user)
 
   redirect path_to(:card).with(params[:id])
 end
 
 get :study do
-  hide!
+  protect!
 
-  @element = Card.public_send(safe_type(params[:class])
-        ).public_send(safe_group(params[:group])
-        ).order('RANDOM()').first
+  ucards = UserCard.public_send(safe_group(params[:group])).where(user: current_user)
+  elements = Card.public_send(safe_type(params[:class])).joins(:user_cards).merge(ucards)
+  @element = elements.order('RANDOM()').first
 
-  if @element
+  if @element.present?
+    @element.uinfo = UserCard.find_by(card: @element, user: current_user)
+    @count = elements.count
     slim :study
   else
     flash[:notice] = "No more #{params[:class]} in \"#{params[:group]}\" group"
@@ -175,13 +190,13 @@ post :study do
   e = Card.find(params[:element_id])
   halt(400, 'Element not found') unless e
 
-  e.answer!(params[:answer])
+  e.answer_by!(params[:answer], current_user)
 
   redirect path_to(:study).with(safe_type(params[:class]), safe_group(params[:group]))
 end
 
 get :search do
-  hide!
+  protect!
 
   @elements = []
   if q = params['query']
@@ -204,28 +219,29 @@ end
 get :notes do
   protect!
 
-  @notes = Note.all.order(created_at: :desc)
+  @notes = current_user.notes.order(created_at: :desc)
   slim :notes
 end
 
 post :notes do
   protect!
 
-  note = Note.create(content: params[:content])
+  note = Note.create(content: params[:content], user: current_user)
   redirect path_to(:notes)
 end
 
 delete :note do
   protect!
 
-  note = Note.find(params[:id])
+  note = Note.find_by(id: params[:id], user_id: current_user.id)
   note.destroy
+
   flash[:notice] = "Note with id = #{params[:id]} was successfully deleted"
   redirect path_to(:notes)
 end
 
 get :login do
-  if admin? || guest?
+  if current_user.present?
     flash[:notice] = "Already logged in"
     redirect path_to(:index)
   else
@@ -234,25 +250,24 @@ get :login do
 end
 
 post :login do
-  if params['username'].blank? || params['password'].blank?
-    flash[:error] = "Incorrect username or password :("
-    redirect path_to(:login)
-  elsif $config['admins'] && $config['admins'][params['username']] == params['password']
-    flash[:notice] = "Successfully logged in as admin!"
-    session['role'] = 'admin'
+  begin
+    throw StandardError.new('Blank login or password') if params['username'].blank? || params['password'].blank?
+
+    user = User.find_by(login: params['username'])
+    throw StandardError.new('User not found') unless user.present?
+    throw StandardError.new('Incorrect password') unless user.check_password(params['password'])
+
+    flash[:notice] = "Successfully logged in as #{user.login}!"
+    session['user_id'] = user.id
     redirect path_to(:index)
-  elsif $config['guests'] && $config['guests'][params['username']] == params['password']
-    flash[:notice] = "Successfully logged in as spectator!"
-    session['role'] = 'guest'
-    redirect path_to(:index)
-  else
+  rescue
     flash[:error] = "Incorrect username or password :("
     redirect path_to(:login)
   end
 end
 
 delete :logout do
-  session.delete('role')
+  session.delete('user_id')
   flash[:notice] = "Successfully logged out"
   redirect path_to(:index)
 end

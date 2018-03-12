@@ -1,5 +1,5 @@
 // locals: card
-- actions = card.actions.where(action_type: [3,4,5]).group(:action_type).count
+- actions = Action.where(action_type: [3,4,5], user_id: card.uinfo.user_id, card_id: card.id).group(:action_type).count
 
 div.srs-progress
   table
@@ -9,7 +9,7 @@ div.srs-progress
       td.srs-soso title="So-so" S
       td.srs-fail title="Fails" F
     tr
-      td.srs-deck = card.deck
+      td.srs-deck = card.uinfo.deck
       td.srs-pass = actions[3] || '-'
       td.srs-soso = actions[5] || '-'
       td.srs-fail = actions[4] || '-'

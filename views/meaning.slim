@@ -1,4 +1,4 @@
-// locals: e (element)
+// locals: e (element with uinfo)
 - unless e.kanji?
   = e.detailsb['en'].join(', ')
 - else
@@ -6,5 +6,5 @@
   span.secondary
     - e.detailsb['en'].each do |en|
       = ", #{en}"
-- if admin?
+- if current_user.present?
   == slim :ajax_form, locals: {e: e, property_name: :en, placeholder: "Edit"}

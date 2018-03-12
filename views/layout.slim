@@ -16,13 +16,13 @@ html
           svg.hamburger viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false"
             g: path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
       div.center
-        - if admin? || guest?
-          a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: #{admin? ? 'red' : 'green'}" ●
+        - if current_user.present?
+          a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: red" title=current_user.login ●
         - else
           a href=path_to(:login) ●
         a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
-        a href=path_to(:current) = "Level #{Card.current_level}"
-        - if admin?
+        a href=path_to(:current) = "Level #{current_user.present? ? current_user.current_level : 1}"
+        - if current_user.present?
           a style="padding-left: 0.7em" href=path_to(:notes) 📘
         //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
         //  input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
@@ -40,7 +40,7 @@ html
             a href=path_to(:current).with(v[:plural]) 現行
             br
             - (0..5).each do |i|
-              a href=path_to(:degree).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
+              a href=path_to(:term).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
     == slim :flashes
     div#container
       == yield

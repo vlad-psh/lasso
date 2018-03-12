@@ -1,20 +1,14 @@
 module WakameHelpers
-  def admin?
-    session['role'] == 'admin'
-  end
-
-  def guest?
-    session['role'] == 'guest'
-  end
-
   def protect!
-    return if admin?
+    return if current_user
     halt 401, "Unauthorized"
   end
 
-  def hide!
-    return if admin? || guest?
-    halt 401, "Unauthorized"
+  def current_user
+    return nil unless session['user_id'].present?
+
+    @current_user ||= User.find(session['user_id'])
+    return @current_user
   end
 
   def bb_expand(text)
@@ -33,7 +27,7 @@ module WakameHelpers
   def wk_level(e)
     # Shuffle for testing purposes
     #return %w(locked unlocked apprentice guru master enlightened burned).shuffle[0]
-    if e.unlocked
+    if e.present? && e.try(:unlocked)
       return 'unlocked'    unless e.learned
       return 'apprentice'  if e.deck <= 1
       return 'guru'        if e.deck == 2

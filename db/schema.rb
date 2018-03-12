@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171113135433) do
+ActiveRecord::Schema.define(version: 20180311204720) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20171113135433) do
     t.integer "action_type", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
     t.index ["card_id"], name: "index_actions_on_card_id"
   end
 
@@ -27,10 +28,6 @@ ActiveRecord::Schema.define(version: 20171113135433) do
     t.string "element_type"
     t.integer "level"
     t.string "title"
-    t.boolean "unlocked", default: false
-    t.boolean "learned", default: false
-    t.integer "deck"
-    t.date "scheduled"
     t.jsonb "detailsb"
   end
 
@@ -44,12 +41,32 @@ ActiveRecord::Schema.define(version: 20171113135433) do
     t.string "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "statistics", force: :cascade do |t|
     t.date "date"
     t.jsonb "learned", default: {"k"=>0, "r"=>0, "w"=>0}
     t.jsonb "scheduled", default: {"k"=>0, "r"=>0, "w"=>0}
+    t.integer "user_id"
+  end
+
+  create_table "user_cards", force: :cascade do |t|
+    t.bigint "card_id"
+    t.bigint "user_id"
+    t.boolean "unlocked", default: false
+    t.boolean "learned", default: false
+    t.integer "deck"
+    t.date "scheduled"
+    t.jsonb "details"
+    t.index ["card_id"], name: "index_user_cards_on_card_id"
+    t.index ["user_id"], name: "index_user_cards_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "login"
+    t.string "salt"
+    t.string "pwhash"
   end
 
 end

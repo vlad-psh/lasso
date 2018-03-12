@@ -4,20 +4,23 @@ ruby:
         failed: {title: 'Failed', color: :red},
         expired: {title: 'Expired', color: :yellow}}
   tt = {r: :radicals, k: :kanjis, w: :words}
-  clevel = Card.current_level
-  cstat_raw = Card.where(level: clevel).group(:element_type, :unlocked, :learned).count
+  clevel = current_user.present? ? current_user.current_level : 1
+  uc_arel = UserCard.arel_table
+  clevel_cards = Card.where(level: clevel).with_uinfo(current_user)
   cstat = {}
   %w(r k w total).each {|k|cstat[k] = {unlocked: 0, locked: 0, learned: 0, total: 0}}
-  cstat_raw.each do |k,v|
-    _t = case k
-      when [k[0],true,false]  then :unlocked
-      when [k[0],false,false] then :locked
-      when [k[0],true,true]   then :learned
+  clevel_cards.each do |cc|
+    _t = if cc.uinfo.blank? || (cc.uinfo.unlocked == false && cc.uinfo.learned == false)
+        :locked
+    elsif cc.uinfo.unlocked == true && cc.uinfo.learned == false
+        :unlocked
+    elsif cc.uinfo.unlocked == true && cc.uinfo.learned == true
+        :learned
     end
-    cstat[k[0]][_t]        += v
-    cstat[k[0]][:total]    += v
-    cstat['total'][_t]     += v
-    cstat['total'][:total] += v
+    cstat[cc.element_type][_t]        += 1
+    cstat[cc.element_type][:total]    += 1
+    cstat['total'][_t]     += 1
+    cstat['total'][:total] += 1
   end
 
 div.stat-table-block style="margin-top: 1em;"
@@ -62,96 +65,96 @@ div.stat-table-block
               ' -
         td = @counters[:any_learned][k]
 
-ruby:
-  days_in_graph = 21
+/ruby:
+/  days_in_graph = 21
+/
+/  _r_sched = (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
+/  _k_sched = (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0)
+/  _w_sched = (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
+/
+/  gdata = [[_w_sched, _k_sched, _r_sched]]
+/  gdesc = [Date.today.strftime("%d")]
+/
+/  ss = Statistic.where(date: (Date.today + 1)..(Date.today + days_in_graph - 1))
+/  sh = {}
+/  ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
+/
+/  d = Date.today + 1
+/  while d < Date.today + days_in_graph
+/    gdata << (sh[d] || [0,0,0])
+/    gdesc << d.strftime("%d")
+/    d += 1
+/  end
+/
+/div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
+/' Scheduled (for upcoming 3 weeks):
+/br
+/== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
+/
+/ruby:
+/  day_cards = {}
+/
+/  ss = Statistic.where(date: (Date.today - days_in_graph + 1)..(Date.today))
+/  sh = {}
+/  ss.each {|i| sh[i.date] = [i.learned['w'], i.learned['k'], i.learned['r']]}
+/
+/  gdata = []
+/  gdesc = []
+/  d = Date.today - days_in_graph + 1
+/  while d <= Date.today
+/    gdata << (sh[d] || [0,0,0])
+/    gdesc << d.strftime("%d")
+/    d += 1
+/  end
+/
+/br
+/' Learning history (past 3 weeks):
+/br
+/== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
+/
+/ruby:
+/  level_dates = []
+/  #not_yet_learned = Card.where(scheduled: nil).group(:level).count
+/  not_yet_learned = Card.where(learned: false).group(:level).count
+/  first_action = Action.where(action_type: 2).order(created_at: :asc).first
+/  if first_action.present?
+/    level_dates << first_action.created_at.to_datetime
+/    (1..60).each do |i|
+/      break if not_yet_learned[i]
+/      # latest learn action at current level
+/      a = Action.eager_load(:card).where(action_type: 2, cards: {level: i}).order(created_at: :desc).first
+/      level_dates << a.created_at.to_datetime
+/    end
+/  end
+/  level_dates << DateTime.now
+/  level_duration = {}
+/  (level_dates.count - 1).times do |i|
+/    level_duration[i+1] = (level_dates[i+1] - level_dates[i]).to_f.round(1)
+/  end
 
-  _r_sched = (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
-  _k_sched = (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0)
-  _w_sched = (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
-
-  gdata = [[_w_sched, _k_sched, _r_sched]]
-  gdesc = [Date.today.strftime("%d")]
-
-  ss = Statistic.where(date: (Date.today + 1)..(Date.today + days_in_graph - 1))
-  sh = {}
-  ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
-
-  d = Date.today + 1
-  while d < Date.today + days_in_graph
-    gdata << (sh[d] || [0,0,0])
-    gdesc << d.strftime("%d")
-    d += 1
-  end
-
-div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
-' Scheduled (for upcoming 3 weeks):
-br
-== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
-
-ruby:
-  day_cards = {}
-
-  ss = Statistic.where(date: (Date.today - days_in_graph + 1)..(Date.today))
-  sh = {}
-  ss.each {|i| sh[i.date] = [i.learned['w'], i.learned['k'], i.learned['r']]}
-
-  gdata = []
-  gdesc = []
-  d = Date.today - days_in_graph + 1
-  while d <= Date.today
-    gdata << (sh[d] || [0,0,0])
-    gdesc << d.strftime("%d")
-    d += 1
-  end
-
-br
-' Learning history (past 3 weeks):
-br
-== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
-
-ruby:
-  level_dates = []
-  #not_yet_learned = Card.where(scheduled: nil).group(:level).count
-  not_yet_learned = Card.where(learned: false).group(:level).count
-  first_action = Action.where(action_type: 2).order(created_at: :asc).first
-  if first_action.present?
-    level_dates << first_action.created_at.to_datetime
-    (1..60).each do |i|
-      break if not_yet_learned[i]
-      # latest learn action at current level
-      a = Action.eager_load(:card).where(action_type: 2, cards: {level: i}).order(created_at: :desc).first
-      level_dates << a.created_at.to_datetime
-    end
-  end
-  level_dates << DateTime.now
-  level_duration = {}
-  (level_dates.count - 1).times do |i|
-    level_duration[i+1] = (level_dates[i+1] - level_dates[i]).to_f.round(1)
-  end
-
-br
-' Levels duration
-br
-== slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
-
-ruby:
-  t = Card.arel_table
-  decks_all = Card.any_learned.group(:deck).count
-  decks_scheduled = Card.any_learned.where(t[:scheduled].lteq(Date.today).
-                  or(t[:scheduled].eq(nil))).group(:deck).count
-  max_deck = Card.where(Card.arel_table[:deck].lt(100)).order(deck: :desc).pluck(:deck).first
-  max_deck = 7 if max_deck < 7
-  gdata = []
-  gdesc = []
-  (0..max_deck).each do |d|
-    _a = (decks_all[d] || 0)
-    _s = (decks_scheduled[d] || 0)
-    gdata << [_a - _s, _s]
-    gdesc << _s
-  end
-
-br
-' Decks:
-br
-== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:r, :k]}
+/br
+/' Levels duration
+/br
+/== slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
+/
+/ruby:
+/  t = Card.arel_table
+/  decks_all = Card.any_learned.group(:deck).count
+/  decks_scheduled = Card.any_learned.where(t[:scheduled].lteq(Date.today).
+/                  or(t[:scheduled].eq(nil))).group(:deck).count
+/  max_deck = Card.where(Card.arel_table[:deck].lt(100)).order(deck: :desc).pluck(:deck).first
+/  max_deck = 7 if max_deck < 7
+/  gdata = []
+/  gdesc = []
+/  (0..max_deck).each do |d|
+/    _a = (decks_all[d] || 0)
+/    _s = (decks_scheduled[d] || 0)
+/    gdata << [_a - _s, _s]
+/    gdesc << _s
+/  end
+/
+/br
+/' Decks:
+/br
+/== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:r, :k]}
 

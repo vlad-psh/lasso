@@ -1,12 +1,14 @@
-// locals: e (element), property_name, [placeholder]
+// locals: e (element with .uinfo), property_name, [placeholder]
 - placeholder ||= "Add custom description"
+- kk = {en: :t, meaning: :m, reading: :r}
+- k = kk[property_name.to_sym].to_s
 div id="custom-note-#{property_name}"
   div.custom-note data-id="custom-note-#{property_name}"
-    - if e.detailsb["my_#{property_name}"] && !e.detailsb["my_#{property_name}"].empty?
-      == bb_textile(e.detailsb["my_#{property_name}"])
+    - if e.uinfo && e.uinfo.details && e.uinfo.details[k].present?
+      == bb_textile(e.uinfo.details[k])
     - else
       p.add-note-show-link = placeholder
-  form.add-note-form method="POST" action=path_to(:note).with(e.id) data-remote="true" data-id="custom-note-#{property_name}"
+  form.add-note-form method="POST" action=path_to(:cardinfo).with(e.id) data-remote="true" data-id="custom-note-#{property_name}"
     input type="hidden" name="property_name" value="my_#{property_name}"
     textarea name="content" = e.detailsb["my_#{property_name}"]
     br

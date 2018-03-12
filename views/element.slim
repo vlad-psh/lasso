@@ -23,12 +23,12 @@ div.element-card
       div.top-info-block
         div.hr-title: span PoS
         div.top-info-content = e.detailsb['pos']
-    - if e.scheduled
+    - if e.uinfo.try(:learned)
       div.top-info-block
         div.hr-title: span Progress
         div.top-info-content
           == slim :progress, locals: {card: e}
-    - if admin? #&& !e.learned
+    - if current_user.present? #&& !e.learned
       - unless e.radical?
         div.top-info-block
           div.hr-title: span Links
@@ -42,8 +42,8 @@ div.element-card
               a href="http://tangorin.com/kanji/#{e.title}" kanji
               br
               a href="http://nippon.temerov.org/kandzi_view.php?kandzi=#{e.title}" temerov
-    - if admin? && !e.learned
-      - if e.unlocked
+    - if current_user.present? && !e.uinfo.try(:learned)
+      - if e.uinfo.try(:unlocked)
         div.top-info-block
           div.hr-title: span Actions
           div.top-info-content
@@ -60,7 +60,7 @@ div.element-card
           div.hr-title: span = details_tags[p]
           div class="#{'mnemonics-hint' if p['hnt']}" == bb_textile(' '+e.detailsb[p])
       - unless mne_title == :reading && e.radical?
-        - if admin?
+        - if current_user.present?
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
           == slim :ajax_form, locals: {e: e, property_name: mne_title, buttons: true}
 
@@ -75,18 +75,18 @@ div.element-card
     - if e.detailsb['similar'].length > 0
       div.hr-title: span Similar kanji
       div.relative-elements-list
-        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar']), title: 'Similar kanji'}
+        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar']).with_uinfo(current_user), title: 'Similar kanji'}
 
     div.hr-title: span Radicals
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.radicals.order(level: :asc), title: 'Radicals'}
+      == slim :elements_list, locals: {elements: e.radicals.order(level: :asc).with_uinfo(current_user), title: 'Radicals'}
 
     div.hr-title: span Vocabulary
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.words.order(level: :asc), title: 'Vocabulary'}
+      == slim :elements_list, locals: {elements: e.words.order(level: :asc).with_uinfo(current_user), title: 'Vocabulary'}
 
   - else
     div.hr-title: span Kanji
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.kanjis.order(level: :asc)}
+      == slim :elements_list, locals: {elements: e.kanjis.order(level: :asc).with_uinfo(current_user)}
 
