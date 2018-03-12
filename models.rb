@@ -289,6 +289,40 @@ class User < ActiveRecord::Base
     Card.joins(:user_cards).merge(UserCard.where(learned: false, unlocked: true, user_id: self.id)).order(level: :asc).first.level || 1
 #    self.not_learned.order(level: :asc).first.level
   end
+
+  def comeback!(maxcards = 100)
+    just_learned_count = self.user_cards.just_learned.count
+    start_date = Date.today
+    while true
+      break if UserCard.where(UserCard.arel_table[:scheduled].lteq(start_date)).count + just_learned_count <= maxcards
+      start_date -= 1
+    end
+    date_diff = Date.today - start_date
+
+    if date_diff > 0
+      # start_date is a date with count of items not more than MAXCARDS
+      # we should shift everything after that date
+      start_date += 1
+      puts "Cards, scheduled for #{start_date} and later will be shifted for #{date_diff.to_i} days forward"
+
+      dates = UserCard.where( UserCard.arel_table[:scheduled].gteq(start_date)
+              ).where(user: self).group(:scheduled).order(scheduled: :desc).pluck(:scheduled)
+      dates.each do |d|
+        print "#{d} "
+        stat1 = Statistic.find_or_create_by(user: self, date: d)
+        stat2 = Statistic.find_or_create_by(user: self, date: (d + date_diff))
+        UserCard.eager_load(:card).where(user: self, scheduled: d).each do |c|
+          c.update(scheduled: d + date_diff)
+          stat1.scheduled[c.card.element_type] -= 1
+          stat2.scheduled[c.card.element_type] += 1
+        end
+        stat1.save
+        stat2.save
+      end
+    else
+      puts "You already has a feasible amount of scheduled cards. No need to shift anything."
+    end
+  end
 end
 
 class UserCard < ActiveRecord::Base
