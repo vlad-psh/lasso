@@ -65,29 +65,30 @@ end
 post :cards do
   protect!
 
-  c = Card.new(
+  c = Card.create(
         element_type: :w,
         title: params['title'],
-        unlocked: true,
-        level: 99,
-        deck: 0,
+        level: (params['type'] == 'burned' ? 100 : 99),
         detailsb: {
             en: [params['en']],
             readings: [params['reading']],
-            user_id: current_user.id
+            user_id: current_user.id # author
           }
         )
 
+  uc = UserCard.find_or_initialize_by(card: c, user: current_user)
+  uc.unlocked = true
+  uc.deck = 0
+  uc.save
+
   if params['type'] == 'burned'
-    c.learned = true
-    c.level = 100
-    c.move_to_deck!(100)
+    uc.update(learned: true)
+    c.move_to_deck_by!(100, current_user)
   elsif params['type'] == 'learned'
-    c.learn!
+    c.learn_by!(current_user)
 #  elsif params['type'] == 'unlocked'
 #    c.level = 99
   end
-  c.save
 
   redirect path_to(:search).with(query: params['search'])
 end
