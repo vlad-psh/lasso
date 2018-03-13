@@ -34,7 +34,8 @@ paths index: '/',
     notes: '/notes',
     note: '/note/:id',
     login: '/login', # GET: login form; POST: log in
-    logout: '/logout' # DELETE: logout
+    logout: '/logout', # DELETE: logout
+    settings: '/settings'
 
 configure do
   puts '---> init <---'
@@ -271,4 +272,15 @@ delete :logout do
   session.delete('user_id')
   flash[:notice] = "Successfully logged out"
   redirect path_to(:index)
+end
+
+post :settings do
+  protect!
+
+  if params['black_theme'] != nil
+    current_user.settings['theme'] = (params['black_theme'] == 'true' ? 'black' : 'white')
+  end
+  current_user.save
+
+  'ok'
 end

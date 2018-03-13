@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180311204720) do
+ActiveRecord::Schema.define(version: 20180313074846) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 20180311204720) do
     t.string "login"
     t.string "salt"
     t.string "pwhash"
+    t.jsonb "settings", default: {}
   end
 
 end

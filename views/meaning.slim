@@ -7,4 +7,4 @@
     - e.detailsb['en'].each do |en|
       = ", #{en}"
 - if current_user.present?
-  == slim :ajax_form, locals: {e: e, property_name: :en, placeholder: "Edit"}
+  == slim :ajax_form, locals: {e: e, property_name: :en, placeholder: "Add..."}

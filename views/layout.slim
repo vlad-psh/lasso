@@ -9,7 +9,7 @@ html
     script src="/js/main.js"
     link rel="stylesheet" type="text/css" href="/main.css"
     meta content="width=device-width, initial-scale=1" name="viewport"
-  body.myfont_jp2.blackd
+  body.myfont_jp2 class="#{current_user.try(:settings).try(:[], 'theme') == 'black' ? 'black' : ''}"
     div#main-menu
       div.left
         a onclick='$("#overlay-menu").show();'
@@ -34,13 +34,15 @@ html
       div.close-button: a onclick='$("#overlay-menu").hide();' Close
       - INFODIC.each do |k,v|
         div class="type-block #{k}"
-          div class="type-title #{k}" = v[:japanese]
+          div class="type-title" = v[:japanese]
           div class="type-links"
-            a href=path_to(:list).with(v[:plural]) 全部
-            a href=path_to(:current).with(v[:plural]) 現行
-            br
+            /a href=path_to(:list).with(v[:plural]) 全部
+            /a href=path_to(:current).with(v[:plural]) 現行
+            /br
             - (0..5).each do |i|
               a href=path_to(:term).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
+      div.settings
+        input.black-theme-checkbox type="checkbox" checked=('checked' if current_user.try(:settings).try(:[], 'theme') == 'black') autocomplete="off" Black theme (beta)
     == slim :flashes
     div#container
       == yield

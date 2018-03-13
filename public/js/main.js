@@ -67,3 +67,20 @@ $(document).on('click', '[title]', function(event){
     $("#title-tip").attr("style", "left: " + pleft + "px; top: " + ptop + "px");
   }
 });
+/* ===================
+   SETTINGS
+   =================== */
+$(document).on('click', '.black-theme-checkbox', function(event){
+  $.ajax({
+    method: "POST",
+    url: "/settings",
+    data: {"black_theme": this.checked}
+  });
+  if (this.checked) {
+    $('body').addClass("black");
+  } else {
+    $('body').removeClass("black");
+  };
+  $("#overlay-menu").hide();
+});
+

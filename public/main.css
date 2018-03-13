@@ -57,11 +57,31 @@ body.myfont_jp2 .japanese {
 }
 .flash-notice {background-color: #4caf50;}
 .flash-error  {background-color: #e51c23;}
-.blue,   .blue a   {background-color: #2196f3; color: white;}
-.green,  .green a  {background-color: #4caf50; color: white;}
-.purple, .purple a {background-color: #9c27b0; color: white;}
-.yellow, .yellow a {background-color: #ff9800; color: white;}
-.red,    .red a    {background-color: #e51c23; color: white;}
+
+.r,
+.blue   {background-color: #2196f3; color: white;}
+.green {background-color: #4caf50; color: white;}
+.w,
+.purple {background-color: #aa00ff; color: white;}
+.yellow {background-color: #ff9800; color: white;}
+.red    {background-color: #e51c23; color: white;}
+.y,
+.lime   {background-color: #aaff00; color: white;}
+.k,
+.pink   {background-color: #ff00aa; color: white;}
+
+body.black .r,
+body.black .blue   {background-color: #165e99; border: 1px solid #2196f3;}
+body.black .green  {background-color: #2c662e; border: 1px solid #4caf50;}
+body.black .w,
+body.black .purple {background-color: #53155e; border: 1px solid #9c27b0;}
+body.black .yellow {background-color: #9e5e00; border: 1px solid #ff9800;}
+body.black .red    {background-color: #8c1216; border: 1px solid #e51c23;}
+body.black .y,
+body.black .lime   {background-color: #629300; border: 1px solid #aaff00;}
+body.black .k,
+body.black .pink   {background-color: #89005b; border: 1px solid #ff00aa;}
+
 .r, .r a,
 .k, .k a,
 .w, .w a,
@@ -70,10 +90,6 @@ body.myfont_jp2 .japanese {
   color: white;
   text-decoration: none;
 }
-.r, .r a {background-color: #0af; border: 0px solid #0af;}
-.k, .k a {background-color: #f0a; border: 0px solid #f0a;}
-.w, .w a {background-color: #a0f; border: 0px solid #a0f;}
-.y, .y a {background-color: #af0; border: 0px solid #af0; color: black;}
 .m, .m a {background-color: #777; border: 0px solid #777;}
 svg .r {fill: #0af !important;}
 svg .k {fill: #f0a !important;}
@@ -199,8 +215,19 @@ a.study-button {
   color: #638686;
   border-color: #b4c6c6;
 }
-body.black .locked {
-  border-color: #233;
+body.black .locked, body.black .locked a,
+body.black .unlocked, body.black .unlocked a {
+  border-color: #292929;
+  color: #afc6af;
+}
+body.black .locked, body.black .locked a {
+  opacity: 0.7;
+}
+body.black .unlocked, body.black .unlocked a {
+}
+body.black .unlocked .description {
+  background-color: #79bd9a;
+  color: #0b486b;
 }
 /* Green palette from here:
    http://www.colourlovers.com/palette/580974/Adrift_in_Dreams */
@@ -346,7 +373,7 @@ body.black .locked {
    ELEMENT
    ============================== */
 .element-card {
-  background-color: #f5f5f5;
+/*  background-color: #f5f5f5;*/
   padding: 4px 16px;
   margin: 12px 0;
   text-align: center;
@@ -355,7 +382,7 @@ body.black .locked {
   font-size: 0.9em;
 }
 body.black .element-card {
-  background-color: #171717;
+/*  background-color: #171717;*/
 }
 .element-card .top-info {
   margin: 1em auto;
@@ -445,6 +472,9 @@ body.black .element-card {
   line-height: 1.2em;
   border-right: 1px solid rgba(255,255,255,0.3);
 }
+body.black .srs-progress td {
+  border-right: 1px solid black;
+}
 .srs-progress .srs-deck {background: rgba(128,128,128,0.4); color: black}
 .srs-progress .srs-pass {background: #4caf50}
 .srs-progress .srs-fail {background: #e51c32}
@@ -488,23 +518,9 @@ body.black .element-card {
   padding: 0.5em 1em;
   margin: 0.2em 0.2em;
   cursor: pointer;
-  color: white;
-  background-color: #0af;
 }
 .study-card .other-answers-button {
   flex: 1;
-}
-.study-card .correct-answer-button {
-  background-color: #4caf50;
-}
-.study-card .incorrect-answer-button {
-  background-color: #e51c23;
-}
-.study-card .soso-answer-button {
- /* default color */
-}
-.study-card .burn-answer-button {
-  background-color: #ff9800;
 }
 .study-card .other-answers {
   max-width: 250px;
@@ -551,6 +567,13 @@ body.black .element-card {
 .yomi-table .yomi-name,
 .yomi-table .secondary {
   color: #aaa;
+}
+body.black .yomi-table .primary {
+  font-weight: 900;
+}
+body.black .yomi-table .yomi-name,
+body.black .yomi-table .secondary {
+  color: #666;
 }
 .yomi-table td.yomi {
   padding: 0 6px;
