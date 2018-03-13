@@ -1,3 +1,4 @@
+script src="/js/Chart.min.js"
 ruby:
   groups = {
         just_learned: {title: 'New', color: :blue},
@@ -65,13 +66,64 @@ div.stat-table-block
               ' -
         td = @counters[:any_learned][k]
 
+div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
+' Scheduled (for upcoming 3 weeks):
+br
+div.graph
+  canvas id='scheduled-chart'
+
+ruby:
+  days_in_graph = 21
+  # scd = Scheduled chart data
+  scd = {labels: [], datasets: [
+        {label: 'Radicals', backgroundColor: '#0af', data: []},
+        {label: 'Kanji', backgroundColor: '#f0a', data: []},
+        {label: 'Words', backgroundColor: '#a0f', data:[]}
+    ]}
+
+  scd[:datasets][0][:data] << (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
+  scd[:datasets][1][:data] << (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0)
+  scd[:datasets][2][:data] << (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
+  scd[:labels] << Date.today.strftime("%d")
+
+  ss = Statistic.where(user: current_user, date: (Date.today + 1)..(Date.today + days_in_graph - 1))
+  sh = {}
+  ss.each {|i| sh[i.date] = [i.scheduled['r'], i.scheduled['k'], i.scheduled['w']]}
+
+  d = Date.today + 1
+  while d < Date.today + days_in_graph
+    scd[:datasets][0][:data] << (sh[d].present? ? sh[d][0] : 0)
+    scd[:datasets][1][:data] << (sh[d].present? ? sh[d][1] : 0)
+    scd[:datasets][2][:data] << (sh[d].present? ? sh[d][2] : 0)
+    scd[:labels] << d.strftime("%d")
+    d += 1
+  end
+
+javascript:
+  var scheduledChart = new Chart($('#scheduled-chart'), {
+    type: 'bar',
+    data: #{{scd.to_json}},
+    options: {
+        tooltips: {enabled: false, mode: 'index', intersect: false},
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            xAxes: [{
+                stacked: true,
+                gridLines: {display: false, drawBorder: false},
+                ticks: {fontSize: 9, fontFamily: 'sans-serif'}
+            }], yAxes: [{
+                stacked: true,
+                gridLines: {display: false, drawBorder: false},
+                ticks: {display: false}
+            }]
+        },
+    }
+
+  });
+  
+
 /ruby:
-/  days_in_graph = 21
-/
-/  _r_sched = (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
-/  _k_sched = (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0)
-/  _w_sched = (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
-/
 /  gdata = [[_w_sched, _k_sched, _r_sched]]
 /  gdesc = [Date.today.strftime("%d")]
 /

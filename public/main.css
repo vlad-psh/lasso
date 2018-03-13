@@ -561,15 +561,14 @@ body.black .element-card {
 /* ==============================
    GRAPHS
    ============================== */
-svg.graph {
+div.graph {
   padding: 8px 12px 4px 12px;
-  margin-top: 6px;
+  margin: 0 auto;
   border-radius: 5px;
-  max-height: 105px;
-  min-height: 75px;
-  min-width: 130px;
+  max-height: 144440px;
+  max-width: 500px;
 }
-svg.graph .bar {
+/*svg.graph .bar {
   fill: #e1282e;
 }
 svg.graph text {
@@ -578,7 +577,7 @@ svg.graph text {
 }
 body.black svg.graph text {
   fill: #fff;
-}
+}*/
 /* ==============================
    AJAX FORM
    ============================== */
@@ -691,7 +690,8 @@ form.add-note-form {
   .mnemonics {
     margin: 0 !important;
   }
-  svg.graph {
+  svg.graph,
+  div.graph {
     padding: 8px 0 4px 0 !important;
   }
   #main-menu {
