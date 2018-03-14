@@ -23,7 +23,7 @@ div.element-card
       div.top-info-block
         div.hr-title: span PoS
         div.top-info-content
-          - e.detailsb['pos'].split(', ').each do |pos|
+          - e.detailsb['pos'].try(:split, ', ').try(:each) do |pos|
             div = pos
     - if e.uinfo.try(:learned)
       div.top-info-block
