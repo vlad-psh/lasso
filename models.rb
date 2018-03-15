@@ -172,32 +172,33 @@ class Card < ActiveRecord::Base
     uinfo = UserCard.find_by(card: self, user: user)
     throw StandardError.new("Card info not found") unless uinfo.present?
 
+    throw StandardError.new("Unknown answer: #{a}") unless [:yes, :no, :soso, :burn].include?(a)
+
     if a == :yes
-      self.move_to_deck_by!(uinfo.deck + 1, user)
+      move_to_deck_by!(uinfo.deck + 1, user)
       Action.create(card: self, user: user, action_type: 3) # 3 = correct answer
     elsif a == :no
-      self.move_to_deck_by!(0, user)
+      move_to_deck_by!(uinfo.deck + 1, user, choose_schedule_day_by(uinfo.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
       Action.create(card: self, user: user, action_type: 4) # 4 = incorrect answer
     elsif a == :soso
-      self.move_to_deck_by!(uinfo.deck >= 3 ? 3 : uinfo.deck, user)
+      # leave in the same deck
+      move_to_deck_by!(uinfo.deck, user)
       Action.create(card: self, user: user, action_type: 5) if uinfo.deck != 0 # 5 = soso answer
     elsif a == :burn
-      self.move_to_deck_by!(100, user)
-      Action.create(card: self, user: user, action_type: 6)
-    else
-      throw StandardError.new("Unknown answer: #{a}")
+      move_to_deck_by!(7, user)
+      Action.create(card: self, user: user, action_type: 6) # 6 = burn answer
     end
   end
 
-  def move_to_deck_by!(deck, user)
+  def move_to_deck_by!(deck, user, scheduled = nil)
     uinfo = UserCard.find_by(card: self, user: user)
     throw StandardError.new("Card info not found") unless uinfo.present?
-    
+
     uinfo.deck = deck
-    uinfo.scheduled = choose_schedule_day_by(deck, user)
+    uinfo.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(uinfo.deck, user)
     uinfo.save
 
-    if deck != 0
+    if uinfo.deck != 0
       stats = Statistic.find_or_initialize_by(user: user, date: uinfo.scheduled)
       stats.scheduled[self.element_type] += 1
       stats.save
