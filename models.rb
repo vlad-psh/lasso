@@ -17,7 +17,7 @@ class Card < ActiveRecord::Base
   attr_accessor :uinfo # used to store user info (UserCard)
 
   def self.with_uinfo(user)
-    user_cards = UserCard.joins(:card).merge(all).where(user: user).hash_me
+    user_cards = UserCard.joins(:card).merge( all.unscope(:select) ).where(user: user).hash_me
     all.each do |c|
       c.uinfo = user_cards[c.id] if user_cards[c.id].present?
     end

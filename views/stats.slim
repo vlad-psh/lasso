@@ -1,0 +1,8 @@
+ruby:
+  jlpt_totals = {'5' => 103, '4' => 181, '3' => 367, '2' => 400, '1' => 1207}
+  jlpt_counts = Card.kanjis.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+
+h2 Kanji
+ul
+  - jlpt_totals.each do |k,v|
+    li = "JLPT N#{k}: #{jlpt_counts[k] || 0} of #{v} (#{((jlpt_counts[k] || 0)/v.to_f*100).round()}%)"

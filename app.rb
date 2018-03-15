@@ -35,7 +35,8 @@ paths index: '/',
     note: '/note/:id',
     login: '/login', # GET: login form; POST: log in
     logout: '/logout', # DELETE: logout
-    settings: '/settings'
+    settings: '/settings',
+    stats: '/stats'
 
 configure do
   puts '---> init <---'
@@ -283,4 +284,10 @@ post :settings do
   current_user.save
 
   'ok'
+end
+
+get :stats do
+  protect!
+
+  slim :stats
 end
