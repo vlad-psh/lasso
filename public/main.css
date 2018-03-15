@@ -511,6 +511,7 @@ body.black .srs-progress td {
   width: 100%;
   max-width: 50em;
   margin: 0 auto;
+  vertical-align: center;
 }
 .study-card .answer-button,
 .study-card .other-answers-button {
@@ -519,6 +520,11 @@ body.black .srs-progress td {
   padding: 0.5em 1em;
   margin: 0.2em 0.2em;
   cursor: pointer;
+}
+.study-card .answer-button .answer-details {
+  font-size: x-small;
+  margin: -0.3em 0 -0.2em 0;
+  opacity: 0.6;
 }
 .study-card .other-answers-button {
   flex: 1;

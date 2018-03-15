@@ -3,6 +3,7 @@ INFODIC = {
   :k => {singular: :kanji, plural: :kanjis, japanese: '漢字'},
   :w => {singular: :word, plural: :words, japanese: '言葉'}
 }
+SRS_RANGES = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
 
 class Card < ActiveRecord::Base
   has_many :actions
@@ -207,8 +208,7 @@ class Card < ActiveRecord::Base
   def choose_schedule_day_by(new_deck, user, from_date = Date.today)
     return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
 
-    ranges = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
-    r = ranges[new_deck > 7 ? 7 : new_deck]
+    r = SRS_RANGES[new_deck > 7 ? 7 : new_deck]
     date_range = [from_date + r[0], from_date + r[2]]
 
     # make 'day: cards count' hash

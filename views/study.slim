@@ -3,13 +3,22 @@ div.study-card
   h1.show-answer-button class=@element.element_type = @element.title
   div.answer
     div.answer-buttons
-      div.answer-button.incorrect-answer-button.red data-value="no" NO
-      div.other-answers-button.blue ...
+      div.answer-button.incorrect-answer-button.red data-value="no"
+        ' NO
+        div.answer-details = "#{@element.uinfo.deck} → 0 (today)"
+      div.other-answers-button.blue style="line-height: 2em" ▼
       div.other-answers.tooltip style="display: none"
         - if @element.uinfo.deck > 0
-          div.answer-button.soso-answer-button.blue data-value="soso" title="If deck > 3 move to deck 3; else: do not change deck" SO&#8209;SO
-        div.answer-button.burn-answer-button.yellow data-value="burn" BURN!
-      div.answer-button.correct-answer-button.green data-value="yes" YES
+          div.answer-button.soso-answer-button.blue data-value="soso"
+            ' SO&#8209;SO
+            - sosodeck = @element.uinfo.deck > 3 ? 3 : @element.uinfo.deck
+            div.answer-details = "#{@element.uinfo.deck} → #{sosodeck} (~#{SRS_RANGES[sosodeck][1]} days)"
+        div.answer-button.burn-answer-button.yellow data-value="burn"
+          ' BURN!
+          div.answer-details = "#{@element.uinfo.deck} → 100 (never)"
+      div.answer-button.correct-answer-button.green data-value="yes"
+        ' YES
+        div.answer-details = "#{@element.uinfo.deck} → #{@element.uinfo.deck + 1} (~#{SRS_RANGES[@element.uinfo.deck + 1][1]} days)"
   div.answer-block
     div style="display: inline-block;"
       div Meaning
