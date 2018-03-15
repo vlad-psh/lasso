@@ -9,7 +9,7 @@ require 'yaml'
 require 'redcloth'
 require 'httparty'
 require 'nokogiri'
-require 'romaji'
+require 'mojinizer'
 
 require_relative './models.rb'
 require_relative './helpers.rb'
@@ -92,7 +92,7 @@ post :cards do
 #    c.level = 99
   end
 
-  redirect path_to(:search).with(query: params['search'])
+  redirect path_to(:search).with(query: params['query'])
 end
 
 get :card do
@@ -203,9 +203,14 @@ get :search do
 
   @elements = []
   if q = params['query']
-    qj = Romaji.romaji2kana(q, kana_type: :hiragana)
-    @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
-    @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
+    qj = q.downcase.hiragana
+    if q.length > 1
+      @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
+      @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
+    else
+      @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
+      @russian_words = RussianWord.none
+    end
   end
   slim :search
 end

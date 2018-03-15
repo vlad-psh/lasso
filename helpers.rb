@@ -24,6 +24,43 @@ module WakameHelpers
     RedCloth.new( bb_expand(text) ).to_html
   end
 
+  def highlight(text, term)
+    termj = term.downcase.hiragana
+    hhash = highlight_find(text, term)
+    if termj.japanese?
+      hhash2 = []
+      hhash.each do |h|
+        hhash2 << (h[:h] == true ? h : highlight_find(h[:t], termj))
+      end
+      return highlight_html(hhash2.flatten)
+    else
+      return highlight_html(hhash)
+    end
+  end
+
+  def highlight_html(hhash)
+    result = ""
+    hhash.each do |h|
+      result += h[:h] == true ? "<span class='highlight'>#{h[:t]}</span>" : h[:t]
+    end
+    return result
+  end
+
+  def highlight_find(text, term)
+    i = text.index(Regexp.new(term, Regexp::IGNORECASE))
+    result = []
+    if i != nil
+      result << {t: text[0...i], h: false} if i > 0
+      result << {t: text[i...(i+term.length)], h: true}
+      if i + term.length < text.length
+        result << highlight_find(text[(i+term.length)..-1], term)
+      end
+    else
+      result << {t: text, h: false}
+    end
+    return result.flatten
+  end
+
   def wk_level(e)
     # Shuffle for testing purposes
     #return %w(locked unlocked apprentice guru master enlightened burned).shuffle[0]

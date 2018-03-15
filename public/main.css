@@ -695,8 +695,11 @@ form.add-note-form {
 .search-result div a {
   text-decoration: none;
 }
-.search-result div:nth-child(1) {
+.search-results .search-result:nth-child(odd) {
   background: #eee;
+}
+.highlight {
+  background-color: #ffec83;
 }
 /* ==============================
    MOBILE
