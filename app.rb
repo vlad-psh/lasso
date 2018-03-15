@@ -205,6 +205,7 @@ get :search do
   if q = params['query']
     qj = Romaji.romaji2kana(q, kana_type: :hiragana)
     @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
+    @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
   end
   slim :search
 end

@@ -14,7 +14,6 @@ div.search-results
     - next unless e.kanji?
     div.search-result
       div: a href=path_to(:card).with(e.id) = e.title
-      div
       div = e.detailsb['en'].join('; ')
 
 div.hr-title: span Radicals
@@ -23,8 +22,15 @@ div.search-results
     - next unless e.radical?
     div.search-result
       div: a href=path_to(:card).with(e.id) = e.title
+      div = e.detailsb['en'].join('; ')
 
-div.hr-title: span Create new BURNED vocabulary card
+- if @russian_words.length > 0
+  div.hr-title: span = "Russian words started with \"#{params['query']}\""
+  div.search-results
+    - @russian_words.each do |w|
+      div.search-result: div = w.title
+
+div.hr-title: span Create new vocabulary card
 form method="POST" action=path_to(:cards)
   input type="hidden" name="search" value=params['query']
   ' Word:

@@ -360,3 +360,7 @@ class UserCard < ActiveRecord::Base
   end
 
 end
+
+class RussianWord < ActiveRecord::Base
+
+end

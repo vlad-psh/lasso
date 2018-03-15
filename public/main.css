@@ -685,26 +685,18 @@ form.add-note-form {
    SEARCH RESULTS
    ============================== */
 .search-results {
-  display: flex;
-  flex-flow: row wrap;
-  width: 100%;
-  align-items: flex-start;
+  column-width: 300px;
+  text-align: left;
 }
 .search-result div {
   display: inline-block;
-  text-align: left;
-  width: 100px;
-  vertical-align: top;
-  padding: 0.1em 0.3em;
+  padding: 0.3em 0.5em;
 }
 .search-result div a {
   text-decoration: none;
 }
 .search-result div:nth-child(1) {
   background: #eee;
-}
-.search-result div:nth-child(3) {
-  width: 200px;
 }
 /* ==============================
    MOBILE
