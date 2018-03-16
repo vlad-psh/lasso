@@ -8,7 +8,7 @@ ruby:
     - @elements.each do |e|
       - next unless e.word?
       div.search-result
-        div: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
+        div.search-result-title: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
         div == highlight(e.detailsb['readings'].join('; '), params['query'])
         div == highlight(e.detailsb['en'].join('; '), params['query'])
 
@@ -18,7 +18,7 @@ ruby:
     - @elements.each do |e|
       - next unless e.kanji?
       div.search-result
-        div: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
+        div.search-result-title: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
         div == highlight(e.detailsb['en'].join('; '), params['query'])
 
 - if counters['r'] > 0
@@ -27,14 +27,15 @@ ruby:
     - @elements.each do |e|
       - next unless e.radical?
       div.search-result
-        div: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
+        div.search-result-title: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
         div == highlight(e.detailsb['en'].join('; '), params['query'])
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""
   div.search-results
     - @russian_words.each do |w|
-      div.search-result: div == highlight(w.title, params['query'])
+      div.search-result
+        div == highlight(w.title, params['query'])
 
 div.hr-title: span style="padding: 1em" Create new vocabulary card
 form method="POST" action=path_to(:cards)

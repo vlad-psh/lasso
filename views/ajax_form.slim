@@ -10,7 +10,7 @@ div id="custom-note-#{property_name}"
       p.add-note-show-link = placeholder
   form.add-note-form method="POST" action=path_to(:cardinfo).with(e.id) data-remote="true" data-id="custom-note-#{property_name}"
     input type="hidden" name="property_name" value="my_#{property_name}"
-    textarea name="content" = e.detailsb["my_#{property_name}"]
+    textarea name="content" = e.uinfo.try(:details).try(:[], k)
     br
     - if defined?(buttons) && buttons
       a.k.bb-format-link> data-tag="kanji" kanji

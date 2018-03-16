@@ -687,6 +687,7 @@ form.add-note-form {
 .search-results {
   column-width: 300px;
   text-align: left;
+  font-size: 0.9em;
 }
 .search-result div {
   display: inline-block;
@@ -696,10 +697,14 @@ form.add-note-form {
   text-decoration: none;
 }
 .search-results .search-result:nth-child(odd) {
-  background: #eee;
+  background: rgba(128,128,128,0.2);
+}
+.search-result .search-result-title {
+  font-size: 1.3em;
 }
 .highlight {
   background-color: #ffec83;
+  color: #333;
 }
 /* ==============================
    MOBILE
