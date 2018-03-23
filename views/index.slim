@@ -175,6 +175,8 @@ javascript:
 /      break if not_yet_learned[i]
 /      # latest learn action at current level
 /      a = Action.eager_load(:card).where(action_type: 2, cards: {level: i}).order(created_at: :desc).first
+/      # BETTER REQUEST:
+/      # Action.joins(:card).merge(Card.where(level: 10)).where(action_type: 2).order(created_at: :desc).first
 /      level_dates << a.created_at.to_datetime
 /    end
 /  end

@@ -11,6 +11,23 @@ module WakameHelpers
     return @current_user
   end
 
+  def current_level
+    return 1 unless current_user
+
+    @current_level ||= @current_user.current_level
+    return @current_level
+  end
+
+  def level_started_at(level)
+    return nil unless level && current_user
+
+    if level == 1
+      return Action.joins(:card).merge(Card.where(level: 1)).where(action_type: 2, user: current_user).order(created_at: :asc).first.created_at
+    else
+      return Action.joins(:card).merge(Card.where(level: level-1)).where(action_type: 2, user: current_user).order(created_at: :desc).first.created_at
+    end
+  end
+
   def bb_expand(text)
     text = text.gsub(/\[kanji\]([^\[]*)\[\/kanji\]/, "[%(k)\\1%]")
     text = text.gsub(/\[radical\]([^\[]*)\[\/radical\]/, "[%(r)\\1%]")

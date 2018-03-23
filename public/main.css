@@ -120,14 +120,12 @@ a.study-button {
 }
 #main-menu>div {
   flex: 1;
-  padding: 0.2em;
 }
 #main-menu>div.right {
   text-align: right;
 }
 #main-menu a {
   color: #eee;
-  padding: 10px 0;
   text-decoration: none;
 }
 #main-menu a:hover {
@@ -153,6 +151,20 @@ a.study-button {
 }
 #main-menu .toggle-compact-form {
   display: inline-block;
+}
+#main-menu .center {
+}
+.main-menu-item {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  margin-top: -0.1em;
+}
+.main-menu-item-details {
+  font-weight: normal;
+  font-size: 0.53em;
+  margin-top: -0.4em;
+  margin-bottom: 0.2em;
 }
 /* ==============================
    MENU OVERLAY
