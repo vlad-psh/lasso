@@ -70,7 +70,7 @@ div.element-card
    div.mnemonics
     div.hr-title: span Sentence examples
     - e.detailsb['sentences'].each do |s|
-      p.japanese = s['ja']
+      p.japanese == highlight(s['ja'], e.title)
       p.mnemonics-hint = s['en']
 
   - if e.kanji?
