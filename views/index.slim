@@ -5,9 +5,9 @@ ruby:
         failed: {title: 'Failed', color: :red},
         expired: {title: 'Expired', color: :yellow}}
   tt = {r: :radicals, k: :kanjis, w: :words}
-  clevel = current_user.present? ? current_user.current_level : 1
+  clevel = @view_user.present? ? @view_user.current_level : 1
   uc_arel = UserCard.arel_table
-  clevel_cards = Card.where(level: clevel).with_uinfo(current_user)
+  clevel_cards = Card.where(level: clevel).with_uinfo(@view_user)
   cstat = {}
   %w(r k w total).each {|k|cstat[k] = {unlocked: 0, locked: 0, learned: 0, total: 0}}
   clevel_cards.each do |cc|
@@ -86,7 +86,7 @@ ruby:
   scd[:datasets][2][:data] << (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0)
   scd[:labels] << Date.today.strftime("%d")
 
-  ss = Statistic.where(user: current_user, date: (Date.today + 1)..(Date.today + days_in_graph - 1))
+  ss = Statistic.where(user: @view_user, date: (Date.today + 1)..(Date.today + days_in_graph - 1))
   sh = {}
   ss.each {|i| sh[i.date] = [i.scheduled['r'], i.scheduled['k'], i.scheduled['w']]}
 

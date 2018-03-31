@@ -56,9 +56,10 @@ configure do
 end
 
 get :index do
+  @view_user = current_user || User.first
   @counters = {}
   [:just_unlocked, :just_learned, :failed, :expired, :any_learned].each do |g|
-    @counters[g] = Card.joins(:user_cards).merge( UserCard.public_send(g).where(user: current_user) ).group(:element_type).count
+    @counters[g] = Card.joins(:user_cards).merge( UserCard.public_send(g).where(user: @view_user) ).group(:element_type).count
   end
 
   slim :index
@@ -121,9 +122,10 @@ get :current do
 end
 
 get :level do
+  @view_user = current_user || User.first
   @radicals, @kanjis, @words = [], [], []
 
-  cards = Card.where(level: params[:level]).order(id: :asc).with_uinfo(current_user)
+  cards = Card.where(level: params[:level]).order(id: :asc).with_uinfo(@view_user)
 
   cards.each do |c|
     @radicals << c if c.radical?
@@ -138,9 +140,10 @@ get :level do
 end
 
 get :term do
+  @view_user = current_user || User.first
   stype = safe_type(params[:class])
   d = params[:term].to_i
-  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc).with_uinfo(current_user)
+  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc).with_uinfo(@view_user)
   @title = DEGREES[d]
   @separate_list = true
   slim :elements_list

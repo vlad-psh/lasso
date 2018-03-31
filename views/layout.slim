@@ -26,9 +26,10 @@ html
         div.main-menu-item
           a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
         div.main-menu-item
-          a href=path_to(:current) = "Level #{current_user.present? ? current_user.current_level : 1}"
+          - level = current_user.present? ? current_user.current_level : (@view_user.present? ? @view_user.current_level : 1)
+          a href=path_to(:level).with(level) = "Level #{level}"
           br
-          div.main-menu-item-details = "#{((Time.now - (level_started_at(current_level) || DateTime.now)) / (60*60*24)).round(1)} days"
+          div.main-menu-item-details = "#{((Time.now - (level_started_at(level) || DateTime.now)) / (60*60*24)).round(1)} days"
         - if current_user.present?
           a style="padding-left: 0.7em" href=path_to(:notes) 📘
         //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
