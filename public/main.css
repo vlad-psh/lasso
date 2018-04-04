@@ -121,6 +121,9 @@ a.study-button {
 #main-menu>div {
   flex: 1;
 }
+#main-menu>div.left {
+  margin: 0.2em 0.4em;
+}
 #main-menu>div.right {
   text-align: right;
 }
@@ -137,12 +140,14 @@ a.study-button {
   height: 24px;
   fill: #fff;
   cursor: pointer;
+  shape-rendering: crispedges;
 }
 #main-menu input.search {
   background: #333;
   color: white;
   border: none;
   padding: 0.2em 0.4em;
+  margin: 0.2em 0.2em 0 0;
 }
 #main-menu a.r,
 #main-menu a.k,

@@ -324,6 +324,32 @@ class User < ActiveRecord::Base
       puts "You already has a feasible amount of scheduled cards. No need to shift anything."
     end
   end
+
+  def learn_time(day = nil) # If day == nil, calculate TOTAL learn time
+    total = 0
+    prev = nil
+
+    actions = Action.where(action_type: 2..4, user_id: self.id)
+    actions = actions.where(created_at: day..(day+1)) if day.present?
+
+    actions.order(created_at: :asc).each do |a|
+      unless prev
+        prev = a
+        next
+      end
+      diff = a.created_at - prev.created_at
+      if diff < 300 && diff > 0.1 # in seconds
+        total += diff
+      elsif a.action_type == 2
+        total += 120 # 2 minutes for learning
+      else
+        total += 20 # 20 seconds for answering
+      end
+      prev = a
+    end
+
+    puts "Total learn time#{day.present? ? ' at ' + day.to_s : ''}: #{(total/60/60).round(1)} hours"
+  end
 end
 
 class UserCard < ActiveRecord::Base
