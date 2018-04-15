@@ -295,7 +295,7 @@ class User < ActiveRecord::Base
     just_learned_count = self.user_cards.just_learned.count
     start_date = Date.today
     while true
-      break if UserCard.where(UserCard.arel_table[:scheduled].lteq(start_date)).count + just_learned_count <= maxcards
+      break if UserCard.where(UserCard.arel_table[:scheduled].lteq(start_date)).where(user: self).count + just_learned_count <= maxcards
       start_date -= 1
     end
     date_diff = Date.today - start_date
@@ -304,7 +304,6 @@ class User < ActiveRecord::Base
       # start_date is a date with count of items not more than MAXCARDS
       # we should shift everything after that date
       start_date += 1
-      puts "Cards, scheduled for #{start_date} and later will be shifted for #{date_diff.to_i} days forward"
 
       dates = UserCard.where( UserCard.arel_table[:scheduled].gteq(start_date)
               ).where(user: self).group(:scheduled).order(scheduled: :desc).pluck(:scheduled)
@@ -320,6 +319,8 @@ class User < ActiveRecord::Base
         stat1.save
         stat2.save
       end
+
+      puts "Cards, scheduled for #{start_date} and later have been shifted for #{date_diff.to_i} days forward"
     else
       puts "You already has a feasible amount of scheduled cards. No need to shift anything."
     end
