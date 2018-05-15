@@ -178,7 +178,7 @@ class Card < ActiveRecord::Base
       move_to_deck_by!(uinfo.deck + 1, user)
       Action.create(card: self, user: user, action_type: 3) # 3 = correct answer
     elsif a == :no
-      move_to_deck_by!(uinfo.deck + 1, user, choose_schedule_day_by(uinfo.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
+      move_to_deck_by!(uinfo.deck - 1, user, choose_schedule_day_by(uinfo.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
       Action.create(card: self, user: user, action_type: 4) # 4 = incorrect answer
     elsif a == :soso
       # leave in the same deck
@@ -193,6 +193,12 @@ class Card < ActiveRecord::Base
   def move_to_deck_by!(deck, user, scheduled = nil)
     uinfo = UserCard.find_by(card: self, user: user)
     throw StandardError.new("Card info not found") unless uinfo.present?
+
+    if deck < uinfo.deck # only when failed
+      uinfo.failed = true
+    elsif uinfo.failed == true && deck > uinfo.deck # correct and burned
+      uinfo.failed = false # reset failed status
+    end
 
     uinfo.deck = deck
     uinfo.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(uinfo.deck, user)
