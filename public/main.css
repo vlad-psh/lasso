@@ -608,14 +608,14 @@ body.black .yomi-table .secondary {
 /* ==============================
    GRAPHS
    ============================== */
-div.graph {
+svg.graph {
   padding: 8px 12px 4px 12px;
   margin: 0 auto;
   border-radius: 5px;
   max-height: 144440px;
   max-width: 500px;
 }
-/*svg.graph .bar {
+svg.graph .bar {
   fill: #e1282e;
 }
 svg.graph text {
@@ -624,7 +624,7 @@ svg.graph text {
 }
 body.black svg.graph text {
   fill: #fff;
-}*/
+}
 /* ==============================
    AJAX FORM
    ============================== */

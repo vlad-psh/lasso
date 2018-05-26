@@ -194,13 +194,19 @@ class Card < ActiveRecord::Base
     uinfo = UserCard.find_by(card: self, user: user)
     throw StandardError.new("Card info not found") unless uinfo.present?
 
-    if deck < uinfo.deck # only when failed
-      uinfo.failed = true
-    elsif uinfo.failed == true && deck > uinfo.deck # correct and burned
-      uinfo.failed = false # reset failed status
+    if uinfo.failed == true
+# TODO: made logic clearer/simplier
+      # no:   failed  update_deck
+      # yes:  -       -
+      # soso: failed  -
+      # burn: -       update_deck
+      uinfo.failed = false if deck > uinfo.deck # answer is correct or burn
+      uinfo.deck = deck unless (uinfo.deck == deck) || (uinfo.deck + 1 == deck) # answer is no or burn
+    else
+      uinfo.failed = true if deck < uinfo.deck # when answer is incorrect
+      uinfo.deck = deck
     end
 
-    uinfo.deck = deck
     uinfo.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(uinfo.deck, user)
     uinfo.save
 
