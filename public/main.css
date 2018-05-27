@@ -497,6 +497,9 @@ body.black .srs-progress td {
 .srs-progress .srs-pass {background: #4caf50}
 .srs-progress .srs-fail {background: #e51c32}
 .srs-progress .srs-soso {background: #00aaff}
+.speech-link {
+  cursor: pointer;
+}
 /* ==============================
    STUDY CARD
    ============================== */

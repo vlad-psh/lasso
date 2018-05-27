@@ -83,4 +83,12 @@ $(document).on('click', '.black-theme-checkbox', function(event){
   };
   $("#overlay-menu").hide();
 });
-
+/* ===================
+   SPEECH
+   =================== */
+$(document).on('click', '.speech-link', function(event){
+  if ($('#main-player').attr('src') != $(this).data('src')) {
+    $('#main-player').attr('src', $(this).data('src'));
+  }
+  $('#main-player')[0].play();
+});

@@ -6,6 +6,8 @@ ruby:
         'rmne' => 'Reading Mnemonic', 'rhnt' => 'Reading Hint',
         'mexp' => 'Meaning Explanation', 'rexp' => 'Reading Explanation'}
 
+audio#main-player
+
 div.element-card
   div.top-info
     div.top-info-block
@@ -69,8 +71,10 @@ div.element-card
   - if e.word? && e.detailsb['sentences'] && e.detailsb['sentences'].length > 0
    div.mnemonics
     div.hr-title: span Sentence examples
-    - e.detailsb['sentences'].each do |s|
-      p.japanese == highlight(s['ja'], e.title)
+    - e.detailsb['sentences'].each_with_index do |s,idx|
+      p.japanese
+        == highlight(s['ja'], e.title)
+        a.speech-link data-src="/audio/s#{e.id}_#{idx}.mp3" &#x1F50A;
       p.mnemonics-hint = s['en']
 
   - if e.kanji?
