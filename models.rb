@@ -107,7 +107,7 @@ class Card < ActiveRecord::Base
     unless uinfo.unlocked
       uinfo.unlocked = true
       uinfo.save
-      Action.create(card: self, user: user, action_type: 1)
+      Action.create(card: self, user: user, action_type: 'unlocked')
     end
   end
 
@@ -120,7 +120,7 @@ class Card < ActiveRecord::Base
     uinfo.deck = 0
     uinfo.save
 
-    Action.create(card: self, user: user, action_type: 2)
+    Action.create(card: self, user: user, action_type: 'learned')
 
     stats = Statistic.find_or_initialize_by(user: user, date: Date.today)
     stats.learned[self.element_type] += 1
@@ -176,17 +176,17 @@ class Card < ActiveRecord::Base
 
     if a == :yes
       move_to_deck_by!(uinfo.deck + 1, user)
-      Action.create(card: self, user: user, action_type: 3) # 3 = correct answer
+      Action.create(card: self, user: user, action_type: 'correct')
     elsif a == :no
       move_to_deck_by!(uinfo.deck - 1, user, choose_schedule_day_by(uinfo.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
-      Action.create(card: self, user: user, action_type: 4) # 4 = incorrect answer
+      Action.create(card: self, user: user, action_type: 'incorrect')
     elsif a == :soso
       # leave in the same deck
       move_to_deck_by!(uinfo.deck, user)
-      Action.create(card: self, user: user, action_type: 5) if uinfo.deck != 0 # 5 = soso answer
+      Action.create(card: self, user: user, action_type: 'soso') if uinfo.deck != 0
     elsif a == :burn
       move_to_deck_by!(7, user)
-      Action.create(card: self, user: user, action_type: 6) # 6 = burn answer
+      Action.create(card: self, user: user, action_type: 'burn')
     end
   end
 
@@ -259,6 +259,16 @@ end
 class Action < ActiveRecord::Base
   belongs_to :card
   belongs_to :user
+
+  enum action_type: {
+        unlocked:  1,
+        learned:   2,
+        correct:   3,
+        incorrect: 4,
+        soso:      5,
+        burn:      6,
+        levelup:   7
+  }
 end
 
 class CardsRelation < ActiveRecord::Base
@@ -353,7 +363,7 @@ class User < ActiveRecord::Base
       diff = a.created_at - prev.created_at
       if diff < 300 && diff > 0.1 # in seconds
         total += diff
-      elsif a.action_type == 2
+      elsif a.action_type == 'learned'
         total += 120 # 2 minutes for learning
       else
         total += 20 # 20 seconds for answering
