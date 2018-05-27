@@ -127,25 +127,18 @@ br
 == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
 ruby:
-  level_dates = []
-  #not_yet_learned = Card.where(learned: false).group(:level).count
-  first_action = Action.where(user: @view_user, action_type: 2).order(created_at: :asc).first
-  if first_action.present?
-    level_dates << first_action.created_at.to_datetime
-    (1..60).each do |i|
-      #break if not_yet_learned[i]
-      # latest learn action at current level
-      a = Action.eager_load(:card).where(user: @view_user, action_type: 2, cards: {level: i}).order(created_at: :desc).first
-      break unless a # TODO: This dirty hack can lead to incorrect graph when eg. we are on 12th level, but have learned some cards from 13th level; I recommend to rewrite whole code block
-      # BETTER REQUEST:
-      # Action.joins(:card).merge(Card.where(level: 10)).where(action_type: 2).order(created_at: :desc).first
-      level_dates << a.created_at.to_datetime
-    end
-  end
-  level_dates << DateTime.now
   level_duration = {}
-  (level_dates.count - 1).times do |i|
-    level_duration[i+1] = (level_dates[i+1] - level_dates[i]).to_f.round(1)
+  first_action = Action.where(user: @view_user, action_type: 'learned').order(created_at: :asc).first
+  if first_action.present?
+    levelups = Action.where(user: @view_user, action_type: 'levelup').order(created_at: :asc)
+    level_index = 1
+    levelups.each do |lup|
+      sec = lup.created_at - (level_index == 1 ? first_action : levelups[level_index - 2]).created_at
+      level_duration[level_index] = (sec / 86400).round(1)
+      level_index += 1
+    end
+    # Add current level duration:
+    level_duration[level_index] = ((Time.now - levelups.last.created_at) / 86400).round(1)
   end
 
 br

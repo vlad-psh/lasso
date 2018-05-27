@@ -160,6 +160,8 @@ class Card < ActiveRecord::Base
           new_elements << r
         end
       end
+      # ... and add new Action, showing that we are completed another level
+      Action.create(card: self, user: user, action_type: 'levelup')
     end
 
     return new_elements
