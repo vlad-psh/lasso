@@ -138,7 +138,7 @@ ruby:
       level_index += 1
     end
     # Add current level duration:
-    level_duration[level_index] = ((Time.now - levelups.last.created_at) / 86400).round(1)
+    level_duration[level_index] = ((Time.now - (levelups.last || first_action).created_at) / 86400).round(1)
   end
 
 br
