@@ -10,6 +10,7 @@ require 'redcloth'
 require 'httparty'
 require 'nokogiri'
 require 'mojinizer'
+require 'open-uri'
 
 require_relative './models.rb'
 require_relative './helpers.rb'

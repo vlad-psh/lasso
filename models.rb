@@ -219,6 +219,13 @@ class Card < ActiveRecord::Base
     end
   end
 
+  def download_audio!
+    until try_download("http://speech.fc:53000/?v=VW%20Show&t=#{URI::encode(self.title)}", "public/audio/#{self.id}.mp3") do true end
+    self.detailsb['sentences'].each_with_index do |sentence, i|
+      until try_download("http://speech.fc:53000/?v=VW%20Show&t=#{URI::encode(sentence['ja'])}", "public/audio/s#{self.id}_#{i}.mp3") do true end
+    end if self.detailsb['sentences']
+  end
+
   private
   def choose_schedule_day_by(new_deck, user, from_date = Date.today)
     return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
@@ -256,6 +263,21 @@ class Card < ActiveRecord::Base
     return selected_day
   end
 
+
+  def try_download(url, path)
+    begin
+      puts "Downloading #{url}"
+      File.open(path, "w") do |f|
+        IO.copy_stream(open(url), f)
+      end
+      return true
+    rescue StandardError => e
+      puts "Got an error: #{e.inspect}"
+      puts "Sleeping for 1 second"
+      sleep 1
+      return false
+    end
+  end
 end
 
 class Action < ActiveRecord::Base
