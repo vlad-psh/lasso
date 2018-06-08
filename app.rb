@@ -206,7 +206,7 @@ get :search do
   protect!
 
   @elements = []
-  if q = params['query']
+  if q = params['query'].strip
     qj = q.downcase.hiragana
     if q.length > 1
       @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
@@ -216,7 +216,12 @@ get :search do
       @russian_words = RussianWord.none
     end
   end
-  slim :search
+
+  if @elements.count == 1
+    redirect path_to(:card).with(@elements.first.id)
+  else
+    slim :search
+  end
 end
 
 post :toggle_compact do
