@@ -37,6 +37,9 @@ ruby:
       div.search-result
         div == highlight(w.title, params['query'])
 
+- if @elements.length == 0 && @russian_words.length == 0
+  p Sorry, nothing found
+
 div.hr-title: span style="padding: 1em" Create new vocabulary card
 form method="POST" action=path_to(:cards)
   input type="hidden" name="search" value=params['query']
