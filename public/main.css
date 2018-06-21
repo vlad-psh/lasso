@@ -339,6 +339,8 @@ body.black .unlocked .description {
   width: 1.6em;
   height: 1.6em;
   margin: -0.8em 0 0 -0.8em;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 /* COMPACT STYLE */
 .elements-list-separate.elements-list-compact .elements-list-item {

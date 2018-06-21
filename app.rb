@@ -94,7 +94,7 @@ post :cards do
 #    c.level = 99
   end
 
-  redirect path_to(:search).with(query: params['query'])
+  redirect "#{path_to(:search)}?query=#{params['search']}"
 end
 
 get :card do

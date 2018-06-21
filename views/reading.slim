@@ -18,6 +18,6 @@
     - if e.detailsb['pitch'] && e.detailsb['pitch'].count > 0
       br
       span.pitch-accent title=e.pitch_detailed_str
-        = " [#{e.pitch_str}]"
-        sup<: a href="http://jglossator.sourceforge.net/#pitch_accents" ？
+        a href="http://jglossator.sourceforge.net/#pitch_accents" ⌘
+        = " [#{e.pitch_str}] "
     a.speech-link data-src="/audio/#{e.id}.mp3" &#x1F50A;
