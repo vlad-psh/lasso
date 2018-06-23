@@ -42,6 +42,8 @@ module WakameHelpers
   end
 
   def highlight(text, term)
+    return text unless term.present?
+
     termj = term.downcase.hiragana
     hhash = highlight_find(text, term)
     if termj.japanese?

@@ -205,15 +205,17 @@ end
 get :search do
   protect!
 
-  @elements = []
-  if q = params['query'].strip
+  @elements = Card.none
+  @russian_words = RussianWord.none
+  q = params['query'].strip
+
+  if q.present?
     qj = q.downcase.hiragana
     if q.length > 1
       @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
       @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
     else
       @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
-      @russian_words = RussianWord.none
     end
   end
 
