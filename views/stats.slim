@@ -1,35 +1,44 @@
 ruby:
-  jlptk_totals = {'5' => 103, '4' => 181, '3' => 367, '2' => 400, '1' => 1207}
-  jlptk_counts = Card.kanjis.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+  stats = {
+    kanji: {
+      learned: Card.kanjis.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count,
+      total: {'5' => 103, '4' => 181, '3' => 367, '2' => 400, '1' => 1207}
+    },
+    words: {
+      learned: Card.words.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count,
+      total: {'5' => 438, '4' => 416, '3' => 964, '2' => 531, '1' => 681} # has in db + 3284 of unknown level
+      # {'5' => 602, '4' => 595, '3' => 2165, '2' => 3249, '1' => 2708} # real life total counts
+    }
+  }
 
-  jlptw_totals = {'5' => 602, '4' => 595, '3' => 2165, '2' => 3249, '1' => 2708}
-  jlptw_totals = {'5' => 438, '4' => 416, '3' => 964, '2' => 531, '1' => 681} # has in db + 3284 of unknown level
-  jlptw_counts = Card.words.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+  cumulative_stats = {
+    kanji: {learned: {}, total: {}},
+    words: {learned: {}, total: {}}
+  }
 
-  # ck_totals refers to 'cumulative kanji totals'; 'cw_counts' refers to 'cumulative word counts'
-  ck_totals, ck_counts, cw_totals, cw_counts = {}, {}, {}, {}
   [5, 4, 3, 2, 1].each do |i|
     j = i
     while j >= 1
-      ck_totals[j.to_s] ||= 0
-      ck_totals[j.to_s] += jlptk_totals[i.to_s]
-      ck_counts[j.to_s] ||= 0
-      ck_counts[j.to_s] += jlptk_counts[i.to_s]
-
-      cw_totals[j.to_s] ||= 0
-      cw_totals[j.to_s] += jlptw_totals[i.to_s]
-      cw_counts[j.to_s] ||= 0
-      cw_counts[j.to_s] += jlptw_counts[i.to_s]
+      [:kanji, :words].each do |_type|
+        [:learned, :total].each do |_group|
+          cumulative_stats[_type][_group][j.to_s] ||= 0
+          cumulative_stats[_type][_group][j.to_s] += stats[_type][_group][i.to_s]
+        end
+      end
       j -= 1
     end
   end
 
 h2 Kanji
 ul
-  - ck_totals.each do |k,v|
-    li = "JLPT N#{k}: #{ck_counts[k] || 0} of #{v} (#{((ck_counts[k] || 0)/v.to_f*100).round()}%)"
+  - %w(5 4 3 2 1).each do |i|
+    - learned = cumulative_stats[:kanji][:learned][i]
+    - total = cumulative_stats[:kanji][:total][i]
+    li = "JLPT N#{i}: #{learned} of #{total} (#{(learned/total.to_f*100).round()}%)"
 
 h2 Words
 ul
-  - cw_totals.each do |k,v|
-    li = "JLPT N#{k}: #{cw_counts[k]} of #{v} (#{(cw_counts[k]/v.to_f*100).round()}%)"
+  - %w(5 4 3 2 1).each do |i|
+    - learned = cumulative_stats[:words][:learned][i]
+    - total = cumulative_stats[:words][:total][i]
+    li = "JLPT N#{i}: #{learned} of #{total} (#{(learned/total.to_f*100).round()}%)"
