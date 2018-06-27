@@ -32,17 +32,18 @@ div.stat-table-block style="margin-top: 1em;"
       td title="Unlocked" 🔰
       td title="Learned" 🎓
       td Learned %
-    - %w(r k w total).each do |k|
+    - %w(r k w).each do |k|
       tr
-        td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
+        td class=k = INFODIC[k.to_sym][:japanese]
         td = cstat[k][:locked]
-        td
-          - unless k == 'total'
-            a.study-button.green = cstat[k][:unlocked]
-          - else
-            = cstat[k][:unlocked]
+        td: a.study-button.green = cstat[k][:unlocked]
         td = cstat[k][:learned]
         td = "#{(cstat[k][:learned].to_f / cstat[k][:total] * 100).round(1)}%"
+    tr
+      td total
+      td colspan='2' = cstat['total'][:locked] + cstat['total'][:unlocked]
+      td = cstat['total'][:learned]
+      td = "#{(cstat['total'][:learned].to_f / cstat['total'][:total] * 100).round(1)}%"
 
 div.stat-table-block
   div.hr-title: span SRS
