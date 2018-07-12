@@ -1,0 +1,69 @@
+<!DOCTYPE html><html><head>
+  <meta charset="utf-8" />
+  <title>Wakame v2.0 prototype</title>
+  <link href="/v2/main.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head><body>
+  <div id="app">
+    <h1><ruby><rb>仏像</rb><rt>ぶつぞう</rt></h1>
+
+    <table>
+      <tr v-for="sentence in sentences" :class="Math.min(...sentence.words.map(i=>words[i]).map(i=>i.l)) < 0 ? 'sentence-locked' : ''">
+        <td>{{sentence.jp}}<br><span class="english">{{sentence.en}}</span></td>
+        <td><div v-for="word in sentence.words" class="card" :class="`card-${words[word].l}`">{{word}}</div></td>
+      </tr>
+    </table>
+
+    <hr>
+
+    <h1>
+      <span v-for="word in question" :class="word.w !== undefined ? `card-${words[word.w].l}` : ''">{{word.d}}</span>
+    </h1>
+
+    <h2>Answer</h2>
+    <table>
+      <tr v-for="(word, wordIndex) of question.filter(i => i.w !== undefined).slice(0, answers.length + 1)">
+        <td>{{word.d}}</td>
+        <td v-if="answers[wordIndex] === undefined">
+          <input type="button" value="NO" @click="answers.push(false)">
+          <input type="button" value="YES" @click="answers.push(true)">
+        </td>
+        <td v-else style="font-size: x-small">
+          {{answers[wordIndex]}}
+        </td>
+      </tr>
+    </table>
+
+    <div v-if="question.filter(i => i.w !== undefined).length === answers.length">
+      <input type="button" value="Submit answers">
+    </div>
+  </div>
+
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      words: {
+        '金':{l:2,e:'gold'},
+        '色':{l:3,e:'color'},
+        '仏像':{l:0,e:'statue of buddha'},
+        '古い':{l:3,e:'old'},
+        '石':{l:4,e:'stone'},
+        '使う':{l:2,e:'to use'},
+        '国宝':{l:1,e:'national treasure'},
+        '螺髪':{l:-1,e:'spiral'},
+        '頭髪':{l:-1,e:'hair on head'}
+      },
+      sentences: [
+        {jp: "金色の仏像", en: "A gold coloured image of Buddha", words: '金 色 仏像'.split(' ')},
+        {jp: "古い仏像", en: "An old statue in the image of Buddha", words: '古い 仏像'.split(' ')},
+        {jp: "石で使った仏像", en: "A stone Buddhist statue", words: "石 使う 仏像".split(' ')},
+        {jp: "この仏像は国宝です", en: "This Buddha statue is a national treasure", words: "仏像 国宝".split(' ')},
+        {jp: "螺髪という,仏像の頭髪", en: "The hair of an image of Buddha, called 'spiral'", words: "螺髪 頭髪".split(' ')}
+      ],
+      question: [{d:'石',w:'石'},{d:'で'},{d:'使った',w:'使う'},{d:'仏像',w:'仏像'}],
+      answers: []
+    }
+  });
+</script>
+</body></head>
