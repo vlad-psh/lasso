@@ -5,6 +5,8 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head><body>
   <div id="app">
+    <h2>Word's card</h2>
+
     <h1><ruby><rb>仏像</rb><rt>ぶつぞう</rt></h1>
 
     <table>
@@ -15,6 +17,8 @@
     </table>
 
     <hr>
+
+    <h2>Quiz</h2>
 
     <h1>
       <span v-for="(word, wordIndex) of question">
@@ -35,6 +39,16 @@
     <div v-if="question.filter(i=>i.w!==undefined).filter(i=>i.a===undefined).length === 0">
       <input type="button" value="SUBMIT">
     </div>
+
+    <hr>
+    <h2>New sentence</h2>
+
+    <textarea @select="newSentencePartSelected">石で使った仏像
+A stone Buddhist statue</textarea>
+    <div class='new-sentence' @select="console.log('select')">
+      <ruby v-for="(substr, sIdx) of newSentence" :class="substr.c ? 'question-word' : ''" @click="newSentenceResetPart(sIdx)"><rb>{{substr.t}}<rb><rt v-if="substr.c && words[substr.t]">{{words[substr.t].r}}</rt><rtc v-if="substr.c && words[substr.t]">{{words[substr.t].e}}</rtc></ruby>
+    </div>
+    <p>{{JSON.stringify(newSentence.map(i=>i.t))}}</p>
   </div>
 
 <script>
@@ -50,7 +64,9 @@
         '使う':{l:2,e:'to use',r:'つかう'},
         '国宝':{l:1,e:'national treasure',r:'こくほう'},
         '螺髪':{l:-1,e:'spiral',r:'らほつ'},
-        '頭髪':{l:-1,e:'hair on head',r:'とうはつ'}
+        '頭髪':{l:-1,e:'hair on head',r:'とうはつ'},
+        '使った':{e:'to use',r:'つかった'},
+        '使っ':{e:'to use',r:'つかっ'}
       },
       sentences: [
         {jp: "金色の仏像", en: "A gold coloured image of Buddha", words: '金 色 仏像'.split(' ')},
@@ -60,7 +76,8 @@
         {jp: "螺髪という,仏像の頭髪", en: "The hair of an image of Buddha, called 'spiral'", words: "螺髪 頭髪".split(' ')}
       ],
       question: [{d:'石',w:'石'},{d:'で'},{d:'使った',w:'使う'},{d:'仏像',w:'仏像'}],
-      answering: null
+      answering: null,
+      newSentence: [{t:'石で使った仏像'}]
     },
     methods: {
       hideAnswering() {
@@ -88,6 +105,50 @@
         var word = document.querySelectorAll(`#word-${this.answering}`)[0];
         this.$set(this.question[this.answering], 'a', 'incorrect');
         this.hideAnswering();
+      },
+      newSentencePartSelected() {
+        var textarea = document.querySelectorAll('textarea')[0];
+        var start = textarea.selectionStart;
+        var finish = textarea.selectionEnd;
+        if (start === finish) return;
+
+        var result = [];
+        var i = 0;
+        for (substr of this.newSentence) {
+            if (i <= start && i + substr.t.length >= finish) {
+                if (i !== start) result.push({t:substr.t.substring(0, start - i)});
+                result.push({t:substr.t.substring(start - i, finish - i), c:true});
+                if (i + substr.t.length !== finish) result.push({t:substr.t.substring(finish - i, substr.t.length)});
+            } else {
+                result.push(substr);
+            }
+            i += substr.t.length;
+        }
+        textarea.selectionStart = textarea.selectionEnd = 0;
+        this.newSentence = result;
+      },
+      newSentenceResetPart(partIdx) {
+        var result = [];
+        var tmpString = '';
+        delete this.newSentence[partIdx].c;
+        for (part of this.newSentence) {
+          if (part.c !== true) {
+            tmpString += part.t;
+          } else {
+            if (tmpString !== '') {
+              result.push({t:tmpString});
+              tmpString = '';
+            }
+            result.push(part);
+          }
+        }
+
+        if (tmpString !== '') {
+          result.push({t:tmpString});
+          tmpString = '';
+        }
+
+        this.newSentence = result;
       }
     }
   });

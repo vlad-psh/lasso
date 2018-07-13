@@ -69,8 +69,8 @@ h1 .word {
   margin: 0 2px;
 }
 .answering {
-  background-color: #00aaff;
-  color: white;
+  background-color: #00aaff !important;
+  color: white !important;
 }
 .answered-correctly {
   background-color: #79bd9a;
@@ -79,4 +79,15 @@ h1 .word {
 .answered-incorrectly {
   background-color: red;
   color: white;
+}
+textarea {
+  font-size: 1.2em;
+  width: 100%;
+  max-width: 40em;
+  height: 5em;
+  padding: 0.4em 0.8em;
+}
+.new-sentence {
+  font-size: 2em;
+  margin-top: 0.5em;
 }
