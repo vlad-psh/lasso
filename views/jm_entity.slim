@@ -1,0 +1,15 @@
+ul
+  - @elements.each do |e|
+    li = e.title
+
+- @meanings.each do |m|
+  h2 English
+  div
+    - m.en.each do |m2|
+      ' &#x1f4cc;
+      = m2.join(', ')
+  h2 Russian
+  div
+    - m.ru.each do |m2|
+      ' &#x1f4cc;
+      = m2.join(', ')

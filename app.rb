@@ -37,7 +37,8 @@ paths index: '/',
     login: '/login', # GET: login form; POST: log in
     logout: '/logout', # DELETE: logout
     settings: '/settings',
-    stats: '/stats'
+    stats: '/stats',
+    jm_entity: '/jme/:id'
 
 configure do
   puts '---> init <---'
@@ -307,4 +308,11 @@ get :stats do
   protect!
 
   slim :stats
+end
+
+get :jm_entity do
+  @elements = JmElement.where(ent_seq: params[:id])
+  @meanings = JmMeaning.where(ent_seq: params[:id])
+
+  slim :jm_entity
 end
