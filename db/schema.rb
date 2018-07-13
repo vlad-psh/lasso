@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_13_162733) do
+ActiveRecord::Schema.define(version: 2018_07_13_195845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,8 @@ ActiveRecord::Schema.define(version: 2018_07_13_162733) do
     t.integer "spec"
     t.integer "gai"
     t.integer "nf"
+    t.index ["ent_seq"], name: "index_jm_elements_on_ent_seq"
+    t.index ["title"], name: "index_jm_elements_on_title"
   end
 
   create_table "jm_meanings", force: :cascade do |t|
@@ -53,6 +55,7 @@ ActiveRecord::Schema.define(version: 2018_07_13_162733) do
     t.jsonb "en"
     t.jsonb "ru"
     t.jsonb "pos"
+    t.index ["ent_seq"], name: "index_jm_meanings_on_ent_seq"
   end
 
   create_table "notes", force: :cascade do |t|
