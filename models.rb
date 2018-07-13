@@ -437,3 +437,11 @@ end
 class RussianWord < ActiveRecord::Base
 
 end
+
+class JmElement < ActiveRecord::Base
+
+end
+
+class JmMeaning < ActiveRecord::Base
+
+end

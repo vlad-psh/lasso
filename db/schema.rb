@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_15_211658) do
+ActiveRecord::Schema.define(version: 2018_07_13_162733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -35,6 +35,24 @@ ActiveRecord::Schema.define(version: 2018_05_15_211658) do
     t.bigint "card_id"
     t.integer "relation_id", null: false
     t.index ["card_id"], name: "index_cards_relations_on_card_id"
+  end
+
+  create_table "jm_elements", force: :cascade do |t|
+    t.integer "ent_seq"
+    t.string "title"
+    t.boolean "is_kanji", default: false
+    t.integer "news"
+    t.integer "ichi"
+    t.integer "spec"
+    t.integer "gai"
+    t.integer "nf"
+  end
+
+  create_table "jm_meanings", force: :cascade do |t|
+    t.integer "ent_seq"
+    t.jsonb "en"
+    t.jsonb "ru"
+    t.jsonb "pos"
   end
 
   create_table "notes", force: :cascade do |t|
