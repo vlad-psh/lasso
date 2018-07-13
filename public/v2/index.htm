@@ -17,25 +17,23 @@
     <hr>
 
     <h1>
-      <span v-for="word in question" :class="word.w !== undefined ? `card-${words[word.w].l}` : ''">{{word.d}}</span>
+      <span v-for="(word, wordIndex) of question">
+        <span v-if="word.w !== undefined" class="question-word" :id="`word-${wordIndex}`" @click="checkAnswer(wordIndex)" :class="word.a ? `answered-${word.a}ly` : ''">{{word.d}}</span>
+        <span v-else style="font-weight: normal">{{word.d}}</span>
+      </span>
     </h1>
 
-    <h2>Answer</h2>
-    <table>
-      <tr v-for="(word, wordIndex) of question.filter(i => i.w !== undefined).slice(0, answers.length + 1)">
-        <td>{{word.d}}</td>
-        <td v-if="answers[wordIndex] === undefined">
-          <input type="button" value="NO" @click="answers.push(false)">
-          <input type="button" value="YES" @click="answers.push(true)">
-        </td>
-        <td v-else style="font-size: x-small">
-          {{answers[wordIndex]}}
-        </td>
-      </tr>
-    </table>
+    <div v-if="answering !== null">
+        Answer:<br>
+        <b>Reading:</b> {{words[question[answering].w].r}}<br>
+        <b>Meaning:</b> {{words[question[answering].w].e}}<br>
+        Correct?
+        <input type="button" value="YES" @click="answerCorrect">
+        <input type="button" value="NO" @click="answerIncorrect">
+    </div>
 
-    <div v-if="question.filter(i => i.w !== undefined).length === answers.length">
-      <input type="button" value="Submit answers">
+    <div v-if="question.filter(i=>i.w!==undefined).filter(i=>i.a===undefined).length === 0">
+      <input type="button" value="SUBMIT">
     </div>
   </div>
 
@@ -44,15 +42,15 @@
     el: '#app',
     data: {
       words: {
-        '金':{l:2,e:'gold'},
-        '色':{l:3,e:'color'},
-        '仏像':{l:0,e:'statue of buddha'},
-        '古い':{l:3,e:'old'},
-        '石':{l:4,e:'stone'},
-        '使う':{l:2,e:'to use'},
-        '国宝':{l:1,e:'national treasure'},
-        '螺髪':{l:-1,e:'spiral'},
-        '頭髪':{l:-1,e:'hair on head'}
+        '金':{l:2,e:'gold',r:'きん'},
+        '色':{l:3,e:'color',r:'いろ'},
+        '仏像':{l:0,e:'statue of buddha',r:'ぶつぞう'},
+        '古い':{l:3,e:'old',r:'ふるい'},
+        '石':{l:4,e:'stone',r:'いし'},
+        '使う':{l:2,e:'to use',r:'つかう'},
+        '国宝':{l:1,e:'national treasure',r:'こくほう'},
+        '螺髪':{l:-1,e:'spiral',r:'らほつ'},
+        '頭髪':{l:-1,e:'hair on head',r:'とうはつ'}
       },
       sentences: [
         {jp: "金色の仏像", en: "A gold coloured image of Buddha", words: '金 色 仏像'.split(' ')},
@@ -62,7 +60,35 @@
         {jp: "螺髪という,仏像の頭髪", en: "The hair of an image of Buddha, called 'spiral'", words: "螺髪 頭髪".split(' ')}
       ],
       question: [{d:'石',w:'石'},{d:'で'},{d:'使った',w:'使う'},{d:'仏像',w:'仏像'}],
-      answers: []
+      answering: null
+    },
+    methods: {
+      hideAnswering() {
+        var word = document.querySelectorAll(`#word-${this.answering}`)[0];
+        word.classList.remove('answering');
+        this.answering = null;
+      },
+      checkAnswer(wordIndex) {
+        if (this.answering === wordIndex) {
+            this.hideAnswering();
+        } else {
+            if (this.answering !== null) this.hideAnswering();
+
+            var word = document.querySelectorAll(`#word-${wordIndex}`)[0];
+            word.classList.add('answering');
+            this.answering = wordIndex;
+        }
+      },
+      answerCorrect() {
+        var word = document.querySelectorAll(`#word-${this.answering}`)[0];
+        this.$set(this.question[this.answering], 'a', 'correct');
+        this.hideAnswering();
+      },
+      answerIncorrect() {
+        var word = document.querySelectorAll(`#word-${this.answering}`)[0];
+        this.$set(this.question[this.answering], 'a', 'incorrect');
+        this.hideAnswering();
+      }
     }
   });
 </script>

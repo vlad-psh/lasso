@@ -61,3 +61,22 @@ h1 .word {
   color: #79bd9a;
   background-color: #0b486b;
 }
+.question-word {
+  cursor: pointer;
+  background-color: #ddd;
+  color: #333;
+  padding: 0.2em;
+  margin: 0 2px;
+}
+.answering {
+  background-color: #00aaff;
+  color: white;
+}
+.answered-correctly {
+  background-color: #79bd9a;
+  color: #0b486b;
+}
+.answered-incorrectly {
+  background-color: red;
+  color: white;
+}
