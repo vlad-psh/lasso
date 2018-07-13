@@ -13,6 +13,7 @@
 }
 body {
   font-family: myfont_jp2;
+  margin-bottom: 10em;
 }
 h1 rt {
   font-weight: normal;
@@ -80,14 +81,19 @@ h1 .word {
   background-color: red;
   color: white;
 }
-textarea {
+input.jpsentence,
+input.ensentence {
   font-size: 1.2em;
   width: 100%;
   max-width: 40em;
-  height: 5em;
-  padding: 0.4em 0.8em;
+  padding: 0.2em 0.4em;
+  border: none;
+  border-bottom: 2px solid #ddd;
 }
 .new-sentence {
   font-size: 2em;
   margin-top: 0.5em;
+}
+.new-sentence rtc {
+  font-size: xx-small;
 }

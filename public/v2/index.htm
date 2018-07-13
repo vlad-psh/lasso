@@ -17,38 +17,39 @@
     </table>
 
     <hr>
+    <h2>New sentence</h2>
+      
+    &#x1f1ef;&#x1f1f5; <input class="jpsentence" type="text" @select="newSentencePartSelected" @input="newSentenceChanged" value="石で使った仏像" v-model="jpsentence"><br>
+    &#x1f1ec;&#x1f1e7; <input class="ensentence" type="text" value="A stone Buddhist statue" v-model="ensentence">
+    <div class='new-sentence' @select="console.log('select')">
+      <ruby v-for="(substr, sIdx) of newSentence" :class="substr.c ? 'question-word' : ''" @click="newSentenceResetPart(sIdx)"><rb>{{substr.t}}<rb><rt v-if="substr.c && words[substr.t]">{{words[substr.t].r}}</rt><rtc v-if="substr.c && words[substr.t]">{{words[substr.t].e}}</rtc></ruby>
+    </div>
+    <br>
+    <hr>
 
     <h2>Quiz</h2>
 
     <h1>
-      <span v-for="(word, wordIndex) of question">
-        <span v-if="word.w !== undefined" class="question-word" :id="`word-${wordIndex}`" @click="checkAnswer(wordIndex)" :class="word.a ? `answered-${word.a}ly` : ''">{{word.d}}</span>
-        <span v-else style="font-weight: normal">{{word.d}}</span>
+      <span v-for="(word, wordIndex) of newSentence">
+        <span v-if="word.c === true" class="question-word" :id="`word-${wordIndex}`" @click="checkAnswer(wordIndex)" :class="word.a ? `answered-${word.a}ly` : ''">{{word.t}}</span>
+        <span v-else style="font-weight: normal">{{word.t}}</span>
       </span>
     </h1>
 
     <div v-if="answering !== null">
         Answer:<br>
-        <b>Reading:</b> {{words[question[answering].w].r}}<br>
-        <b>Meaning:</b> {{words[question[answering].w].e}}<br>
+        <b>Reading:</b> {{words[newSentence[answering].t].r}}<br>
+        <b>Meaning:</b> {{words[newSentence[answering].t].e}}<br>
         Correct?
         <input type="button" value="YES" @click="answerCorrect">
         <input type="button" value="NO" @click="answerIncorrect">
     </div>
 
-    <div v-if="question.filter(i=>i.w!==undefined).filter(i=>i.a===undefined).length === 0">
+    <div v-if="newSentence.filter(i=>i.c===true).filter(i=>i.a===undefined).length === 0">
+      <b>Translation:</b> {{ensentence}}<br><br>
       <input type="button" value="SUBMIT">
     </div>
 
-    <hr>
-    <h2>New sentence</h2>
-
-    <textarea @select="newSentencePartSelected">石で使った仏像
-A stone Buddhist statue</textarea>
-    <div class='new-sentence' @select="console.log('select')">
-      <ruby v-for="(substr, sIdx) of newSentence" :class="substr.c ? 'question-word' : ''" @click="newSentenceResetPart(sIdx)"><rb>{{substr.t}}<rb><rt v-if="substr.c && words[substr.t]">{{words[substr.t].r}}</rt><rtc v-if="substr.c && words[substr.t]">{{words[substr.t].e}}</rtc></ruby>
-    </div>
-    <p>{{JSON.stringify(newSentence.map(i=>i.t))}}</p>
   </div>
 
 <script>
@@ -75,9 +76,10 @@ A stone Buddhist statue</textarea>
         {jp: "この仏像は国宝です", en: "This Buddha statue is a national treasure", words: "仏像 国宝".split(' ')},
         {jp: "螺髪という,仏像の頭髪", en: "The hair of an image of Buddha, called 'spiral'", words: "螺髪 頭髪".split(' ')}
       ],
-      question: [{d:'石',w:'石'},{d:'で'},{d:'使った',w:'使う'},{d:'仏像',w:'仏像'}],
       answering: null,
-      newSentence: [{t:'石で使った仏像'}]
+      newSentence: [],
+      jpsentence: '石で使った仏像',
+      ensentence: 'A stone Buddhist statue'
     },
     methods: {
       hideAnswering() {
@@ -98,16 +100,16 @@ A stone Buddhist statue</textarea>
       },
       answerCorrect() {
         var word = document.querySelectorAll(`#word-${this.answering}`)[0];
-        this.$set(this.question[this.answering], 'a', 'correct');
+        this.$set(this.newSentence[this.answering], 'a', 'correct');
         this.hideAnswering();
       },
       answerIncorrect() {
         var word = document.querySelectorAll(`#word-${this.answering}`)[0];
-        this.$set(this.question[this.answering], 'a', 'incorrect');
+        this.$set(this.newSentence[this.answering], 'a', 'incorrect');
         this.hideAnswering();
       },
       newSentencePartSelected() {
-        var textarea = document.querySelectorAll('textarea')[0];
+        var textarea = document.querySelectorAll('.jpsentence')[0];
         var start = textarea.selectionStart;
         var finish = textarea.selectionEnd;
         if (start === finish) return;
@@ -149,7 +151,13 @@ A stone Buddhist statue</textarea>
         }
 
         this.newSentence = result;
+      },
+      newSentenceChanged() {
+        this.newSentence = [{t: this.jpsentence}];
       }
+    },
+    beforeMount() {
+      this.newSentenceChanged();
     }
   });
 </script>
