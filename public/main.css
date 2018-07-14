@@ -368,6 +368,10 @@ body.black .unlocked .description {
 .elements-list-separate.elements-list-compact .burned {
   border-width: 0 1px 1px 0; 
 }
+.element-empty-ent-seq .description {
+  background-color: #555 !important;
+  color: #ccc !important;
+}
 /* ==============================
    LEVEL ELEMENTS LIST
    ============================== */
