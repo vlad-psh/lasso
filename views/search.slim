@@ -2,6 +2,15 @@ ruby:
   counters = {'r' => 0, 'k' => 0, 'w' => 0}
   @elements.each {|e| counters[e.element_type] += 1}
 
+- if @jmelements.length > 0
+  div.hr-title: span style="padding: 1em" JMdict
+  div.search-results
+    - @jmelements.each do |e|
+      div.search-result
+        div.search-result-title: a href=path_to(:jm_entity).with(e.ent_seq) == e.jm_elements.select{|i| i.is_kanji}.map{|i| i.title}.join("; ")
+        div == e.jm_elements.select{|i| !i.is_kanji}.map{|i| i.title}.join("; ")
+        div == e.en[0].join('; ')
+
 - if counters['w'] > 0
   div.hr-title: span style="padding: 1em" Words
   div.search-results

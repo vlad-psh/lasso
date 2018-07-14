@@ -208,23 +208,28 @@ get :search do
 
   @elements = Card.none
   @russian_words = RussianWord.none
+  @jmelements = []
   q = params['query'].strip
 
   if q.present?
     qj = q.downcase.hiragana
+
     if q.length > 1
       @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
       @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
     else
       @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
     end
+
+    ent_seqs = JmElement.where(title: [q, qj]).pluck(:ent_seq).uniq
+    @jmelements = JmMeaning.includes(:jm_elements).where(ent_seq: ent_seqs)   
   end
 
-  if @elements.count == 1
-    redirect path_to(:card).with(@elements.first.id)
-  else
+#  if @elements.count == 1
+#    redirect path_to(:card).with(@elements.first.id)
+#  else
     slim :search
-  end
+#  end
 end
 
 post :toggle_compact do
