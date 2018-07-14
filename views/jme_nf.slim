@@ -1,0 +1,13 @@
+div class="elements-list-wrapper elements-list-separate elements-list-words"
+  - @elements.each do |e|
+    ruby:
+      kanjis = e.jm_elements.select{|i| i.is_kanji}
+      readings = e.jm_elements.select{|i| !i.is_kanji}
+      meaning = e.en[0][0]
+      meaning = meaning.split[0..2].join(' ') + '...' if meaning.length > 20
+
+    div.elements-list-item
+      div class="element-block locked"
+        a href=path_to(:jme).with(e.ent_seq)
+          div.element: span.japanese = kanjis.length > 0 ? kanjis[0].title : readings[0].title
+          div.description = meaning

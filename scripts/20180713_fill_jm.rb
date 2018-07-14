@@ -78,3 +78,16 @@ xml.locate('JMdict/entry').each do |entry| # проходим по каждой 
 
 end; nil
 
+
+offset = 0
+while (jmes = JmElement.where.not(nf: nil).order(:ent_seq).offset(offset).limit(100)).length > 0
+  jmes.each do |jme|
+    jmm = JmMeaning.find_by(ent_seq: jme.ent_seq)
+    if (jmm.nf == nil || jmm.nf > jme.nf)
+      jmm.nf = jme.nf
+      jmm.save
+    end
+  end
+  offset += 100
+end; nil
+

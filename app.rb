@@ -38,7 +38,8 @@ paths index: '/',
     logout: '/logout', # DELETE: logout
     settings: '/settings',
     stats: '/stats',
-    jm_entity: '/jme/:id'
+    jme: '/jme/:id',
+    jme_nf: '/jme/nf/:nf'
 
 configure do
   puts '---> init <---'
@@ -315,9 +316,14 @@ get :stats do
   slim :stats
 end
 
-get :jm_entity do
-  @elements = JmElement.where(ent_seq: params[:id])
-  @meanings = JmMeaning.where(ent_seq: params[:id])
+get :jme do
+  @meaning = JmMeaning.eager_load(:jm_elements).find_by(ent_seq: params[:id])
 
-  slim :jm_entity
+  slim :jme
+end
+
+get :jme_nf do
+  @elements = JmMeaning.includes(:jm_elements).where(nf: params[:nf])
+
+  slim :jme_nf
 end
