@@ -14,6 +14,7 @@ class Card < ActiveRecord::Base
   # high-level:
   has_many :relations, through: :cards_relations
   has_many :inverse_relations, through: :inverse_cards_relations, source: :card
+  belongs_to :word, primary_key: :seq, foreign_key: :seq
 
   attr_accessor :uinfo # used to store user info (UserCard)
 
@@ -439,7 +440,7 @@ class RussianWord < ActiveRecord::Base
 end
 
 class Word < ActiveRecord::Base
-
+  belongs_to :card
 end
 
 class WordTitle < ActiveRecord::Base

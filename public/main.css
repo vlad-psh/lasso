@@ -749,14 +749,20 @@ form.add-note-form {
 .word-kreb-title {
   font-size: 2em;
 }
-.word-kreb-frequency span {
+.word-tag,
+.word-tag a {
   font-family: sans-serif;
-  font-size: 0.7em;
   background-color: #257a40;
   color: #def7e6;
   margin: 0 0.2em 0 0;
   padding: 0 0.3em;
   border-radius: 2px;
+}
+.word-tag {
+  font-size: 0.7em;
+}
+.word-tag a {
+  text-decoration: underline;
 }
 /* ==============================
    MOBILE
