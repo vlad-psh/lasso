@@ -714,12 +714,15 @@ form.add-note-form {
   text-align: left;
   font-size: 0.9em;
 }
-.search-result div {
-  display: inline-block;
-  padding: 0.3em 0.5em;
+.search-result {
+  padding: 0.2em;
 }
-.search-result div a {
+.search-result a {
+  font-size: small;
   text-decoration: none;
+}
+.search-result a:hover {
+  text-decoration: underline;
 }
 .search-results .search-result:nth-child(odd) {
   background: rgba(128,128,128,0.2);

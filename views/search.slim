@@ -2,14 +2,23 @@ ruby:
   counters = {'r' => 0, 'k' => 0, 'w' => 0}
   @elements.each {|e| counters[e.element_type] += 1}
 
+  def words_to_string(words)
+    return '' if words.blank? || words.length == 0
+    return words[0] if words.length == 1
+    return "#{words[0]}〈#{words[1..-1].join('・')}〉" if words.length > 1
+  end
+
 - if @words.length > 0
   div.hr-title: span style="padding: 1em" JMdict
   div.search-results
     - @words.each do |w|
       div.search-result
-        div.search-result-title: a href=path_to(:word).with(w.seq) == highlight(w.keb.try(:keys).try(:join, '; '), params['query'])
-        div == highlight(w.reb.try(:keys).try(:join, '; '), params['query'])
-        div: a href=path_to(:word).with(w.seq) == w.en[0].join('; ')
+        - if w.keb && w.keb.keys.length > 0
+          == highlight(words_to_string(w.keb.try(:keys)), params['query']) + '　'
+        - if w.reb && w.reb.keys.length > 0
+          == highlight(words_to_string(w.reb.try(:keys)), params['query']) + ' '
+        == w.en[0].join('; ')
+        a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
 
 - if counters['w'] > 0
   div.hr-title: span style="padding: 1em" Words
@@ -17,9 +26,9 @@ ruby:
     - @elements.each do |e|
       - next unless e.word?
       div.search-result
-        div.search-result-title: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
-        div == highlight(e.detailsb['readings'].join('; '), params['query'])
-        div == highlight(e.detailsb['en'].join('; '), params['query'])
+        a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
+        == '　' + highlight(e.detailsb['readings'].join('; '), params['query']) + ' '
+        == highlight(e.detailsb['en'].join('; '), params['query'])
 
 - if counters['k'] > 0
   div.hr-title: span style="padding: 1em" Kanji
@@ -27,8 +36,8 @@ ruby:
     - @elements.each do |e|
       - next unless e.kanji?
       div.search-result
-        div.search-result-title: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
-        div == highlight(e.detailsb['en'].join('; '), params['query'])
+        a> href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
+        == highlight(e.detailsb['en'].join('; '), params['query'])
 
 - if counters['r'] > 0
   div.hr-title: span style="padding: 1em" Radicals
@@ -36,8 +45,8 @@ ruby:
     - @elements.each do |e|
       - next unless e.radical?
       div.search-result
-        div.search-result-title: a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
-        div == highlight(e.detailsb['en'].join('; '), params['query'])
+        a> href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
+        == highlight(e.detailsb['en'].join('; '), params['query'])
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""
