@@ -1,0 +1,11 @@
+// locals: pg = {current: 'Level 2', prev: {href: 'http://...', title: 'Level 1'}, next: ...}
+// next and prev are optional
+
+div.levels-header
+  div.left
+    - if pg[:prev]
+      a href=pg[:prev][:href] == pg[:prev][:title]
+  div: span<> style="font-size: 2em" == pg[:current]
+  div.right
+    - if pg[:next]
+      a href=pg[:next][:href] == pg[:next][:title]
