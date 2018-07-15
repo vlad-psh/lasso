@@ -438,10 +438,6 @@ class RussianWord < ActiveRecord::Base
 
 end
 
-class JmElement < ActiveRecord::Base
+class Word < ActiveRecord::Base
 
-end
-
-class JmMeaning < ActiveRecord::Base
-  has_many :jm_elements, primary_key: :ent_seq, foreign_key: :ent_seq
 end

@@ -2,14 +2,14 @@ ruby:
   counters = {'r' => 0, 'k' => 0, 'w' => 0}
   @elements.each {|e| counters[e.element_type] += 1}
 
-- if @jmelements.length > 0
+- if @words.length > 0
   div.hr-title: span style="padding: 1em" JMdict
   div.search-results
-    - @jmelements.each do |e|
+    - @words.each do |w|
       div.search-result
-        div.search-result-title: a href=path_to(:jme).with(e.ent_seq) == e.jm_elements.select{|i| i.is_kanji}.map{|i| i.title}.join("; ")
-        div == e.jm_elements.select{|i| !i.is_kanji}.map{|i| i.title}.join("; ")
-        div == e.en[0].join('; ')
+        div.search-result-title: a href=path_to(:word).with(w.ent_seq) == w.keb.try(:keys).try(:join, '; ')
+        div == w.reb.try(:keys).try(:join, '; ')
+        div: a href=path_to(:word).with(w.ent_seq) == w.en[0].join('; ')
 
 - if counters['w'] > 0
   div.hr-title: span style="padding: 1em" Words

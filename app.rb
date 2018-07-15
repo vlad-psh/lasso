@@ -38,8 +38,8 @@ paths index: '/',
     logout: '/logout', # DELETE: logout
     settings: '/settings',
     stats: '/stats',
-    jme: '/jme/:id',
-    jme_nf: '/jme/nf/:nf'
+    word: '/word/:id',
+    words_nf: '/words/:nf'
 
 configure do
   puts '---> init <---'
@@ -222,8 +222,8 @@ get :search do
       @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
     end
 
-    ent_seqs = JmElement.where(title: [q, qj]).pluck(:ent_seq).uniq
-    @jmelements = JmMeaning.includes(:jm_elements).where(ent_seq: ent_seqs)   
+    @words = Word.where("keb ?| array[:query1, :query2, :query3] OR reb ?| array[:query1, :query2, :query3]",
+                         query1: q, query2: qj, query3: q.downcase.katakana)
   end
 
 #  if @elements.count == 1
@@ -316,14 +316,14 @@ get :stats do
   slim :stats
 end
 
-get :jme do
-  @meaning = JmMeaning.eager_load(:jm_elements).find_by(ent_seq: params[:id])
+get :word do
+  @word = Word.find_by(ent_seq: params[:id])
 
-  slim :jme
+  slim :word
 end
 
-get :jme_nf do
-  @elements = JmMeaning.includes(:jm_elements).where(nf: params[:nf])
+get :words_nf do
+  @words = Word.where(nf: params[:nf])
 
-  slim :jme_nf
+  slim :words
 end

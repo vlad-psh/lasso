@@ -1,0 +1,14 @@
+ul
+  - [*@word.keb.try(:keys), *@word.reb.try(:keys)].compact.each do |e|
+    li = e
+
+h2 English
+div
+  - @word.en.each do |m2|
+    ' &#x1f4cc;
+    = m2.join(', ')
+h2 Russian
+div
+  - @word.ru.each do |m2|
+    ' &#x1f4cc;
+    = m2.join(', ')

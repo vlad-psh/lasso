@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_14_161450) do
+ActiveRecord::Schema.define(version: 2018_07_15_064455) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,28 +36,6 @@ ActiveRecord::Schema.define(version: 2018_07_14_161450) do
     t.bigint "card_id"
     t.integer "relation_id", null: false
     t.index ["card_id"], name: "index_cards_relations_on_card_id"
-  end
-
-  create_table "jm_elements", force: :cascade do |t|
-    t.integer "ent_seq"
-    t.string "title"
-    t.boolean "is_kanji", default: false
-    t.integer "news"
-    t.integer "ichi"
-    t.integer "spec"
-    t.integer "gai"
-    t.integer "nf"
-    t.index ["ent_seq"], name: "index_jm_elements_on_ent_seq"
-    t.index ["title"], name: "index_jm_elements_on_title"
-  end
-
-  create_table "jm_meanings", force: :cascade do |t|
-    t.integer "ent_seq"
-    t.jsonb "en"
-    t.jsonb "ru"
-    t.jsonb "pos"
-    t.integer "nf"
-    t.index ["ent_seq"], name: "index_jm_meanings_on_ent_seq"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -96,6 +74,17 @@ ActiveRecord::Schema.define(version: 2018_07_14_161450) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
+  end
+
+  create_table "words", force: :cascade do |t|
+    t.integer "ent_seq"
+    t.jsonb "en"
+    t.jsonb "ru"
+    t.jsonb "pos"
+    t.integer "nf"
+    t.jsonb "keb"
+    t.jsonb "reb"
+    t.index ["ent_seq"], name: "index_words_on_ent_seq"
   end
 
 end
