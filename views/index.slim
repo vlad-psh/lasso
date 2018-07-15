@@ -5,16 +5,15 @@ ruby:
         expired: {title: 'Expired', color: :yellow}}
   tt = {r: :radicals, k: :kanjis, w: :words}
   clevel = @view_user.present? ? @view_user.current_level : 1
-  uc_arel = UserCard.arel_table
-  clevel_cards = Card.where(level: clevel).with_uinfo(@view_user)
+  clevel_cards = Card.where(level: clevel).with_progress(@view_user)
   cstat = {}
   %w(r k w total).each {|k|cstat[k] = {unlocked: 0, locked: 0, learned: 0, total: 0}}
   clevel_cards.each do |cc|
-    _t = if cc.uinfo.blank? || (cc.uinfo.unlocked == false && cc.uinfo.learned == false)
+    _t = if cc.progress.blank? || (cc.progress.unlocked == false && cc.progress.learned == false)
         :locked
-    elsif cc.uinfo.unlocked == true && cc.uinfo.learned == false
+    elsif cc.progress.unlocked == true && cc.progress.learned == false
         :unlocked
-    elsif cc.uinfo.unlocked == true && cc.uinfo.learned == true
+    elsif cc.progress.unlocked == true && cc.progress.learned == true
         :learned
     end
     cstat[cc.element_type][_t]        += 1

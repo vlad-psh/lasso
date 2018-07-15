@@ -1,11 +1,11 @@
 ruby:
   stats = {
     kanji: {
-      learned: Card.kanjis.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count,
+      learned: Card.kanjis.joins(:progresses).merge( Progress.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count,
       total: {'5' => 103, '4' => 181, '3' => 367, '2' => 400, '1' => 1207}
     },
     words: {
-      learned: Card.words.joins(:user_cards).merge( UserCard.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count,
+      learned: Card.words.joins(:progresses).merge( Progress.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count,
       total: {'5' => 438, '4' => 416, '3' => 964, '2' => 531, '1' => 681} # has in db + 3284 of unknown level
       # {'5' => 602, '4' => 595, '3' => 2165, '2' => 3249, '1' => 2708} # real life total counts
     }

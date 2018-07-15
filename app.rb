@@ -62,7 +62,7 @@ get :index do
   @view_user = current_user || User.first
   @counters = {}
   [:just_unlocked, :just_learned, :failed, :expired, :any_learned].each do |g|
-    @counters[g] = Card.joins(:user_cards).merge( UserCard.public_send(g).where(user: @view_user) ).group(:element_type).count
+    @counters[g] = Card.joins(:progresses).merge( Progress.public_send(g).where(user: @view_user) ).group(:element_type).count
   end
 
   slim :index
@@ -82,7 +82,7 @@ post :cards do
           }
         )
 
-  uc = UserCard.find_or_initialize_by(card: c, user: current_user)
+  uc = Progress.find_or_initialize_by(card: c, user: current_user)
   uc.unlocked = true
   uc.deck = 0
   uc.save
@@ -103,7 +103,7 @@ get :card do
   protect!
 
   @element = Card.find(params[:id])
-  @element.uinfo = UserCard.find_by(card_id: params[:id], user_id: current_user.id)
+  @element.progress = Progress.find_by(card_id: params[:id], user_id: current_user.id)
 
   slim :element
 end
@@ -128,7 +128,7 @@ get :level do
   @view_user = current_user || User.first
   @radicals, @kanjis, @words = [], [], []
 
-  cards = Card.where(level: params[:level]).order(id: :asc).with_uinfo(@view_user)
+  cards = Card.where(level: params[:level]).order(id: :asc).with_progress(@view_user)
 
   cards.each do |c|
     @radicals << c if c.radical?
@@ -146,7 +146,7 @@ get :term do
   @view_user = current_user || User.first
   stype = safe_type(params[:class])
   d = params[:term].to_i
-  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc).with_uinfo(@view_user)
+  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc).with_progress(@view_user)
   @title = DEGREES[d]
   @separate_list = true
   slim :elements_list
@@ -159,7 +159,7 @@ post :cardinfo do
   allowed_props = {my_meaning: :m, my_reading: :r, my_en: :t}
   throw StandardError.new("Unknown property: #{sprop}") unless allowed_props.keys.include?(sprop)
 
-  e = UserCard.find_or_initialize_by(card_id: params[:id], user_id: current_user.id)
+  e = Progress.find_or_initialize_by(card_id: params[:id], user_id: current_user.id)
   e.details ||= {}
   e.details[allowed_props[sprop]] = params[:content]
   e.save
@@ -179,12 +179,12 @@ end
 get :study do
   protect!
 
-  ucards = UserCard.public_send(safe_group(params[:group])).where(user: current_user)
-  elements = Card.public_send(safe_type(params[:class])).joins(:user_cards).merge(ucards)
+  progresses = Progress.public_send(safe_group(params[:group])).where(user: current_user)
+  elements = Card.public_send(safe_type(params[:class])).joins(:progresses).merge(progresses)
   @element = elements.order('RANDOM()').first
 
   if @element.present?
-    @element.uinfo = UserCard.find_by(card: @element, user: current_user)
+    @element.progress = Progress.find_by(card: @element, user: current_user)
     @count = elements.count
     slim :study
   else

@@ -7,7 +7,7 @@ SRS_RANGES = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 
 
 class Card < ActiveRecord::Base
   has_many :actions
-  has_many :user_cards
+  has_many :progresses
   # low-level:
   has_many :cards_relations
   has_many :inverse_cards_relations, class_name: 'CardsRelation', foreign_key: :relation_id
@@ -16,12 +16,12 @@ class Card < ActiveRecord::Base
   has_many :inverse_relations, through: :inverse_cards_relations, source: :card
   belongs_to :word, primary_key: :seq, foreign_key: :seq
 
-  attr_accessor :uinfo # used to store user info (UserCard)
+  attr_accessor :progress
 
-  def self.with_uinfo(user)
-    user_cards = UserCard.joins(:card).merge( all.unscope(:select) ).where(user: user).hash_me
+  def self.with_progress(user)
+    progresses = Progress.joins(:card).merge( all.unscope(:select) ).where(user: user).hash_me
     all.each do |c|
-      c.uinfo = user_cards[c.id] if user_cards[c.id].present?
+      c.progress = progresses[c.id] if progresses[c.id].present?
     end
   end
 
@@ -103,23 +103,23 @@ class Card < ActiveRecord::Base
   end
 
   def unlock_by!(user)
-    uinfo = UserCard.find_or_create_by(card: self, user: user)
+    progress = Progress.find_or_create_by(card: self, user: user)
 
-    unless uinfo.unlocked
-      uinfo.unlocked = true
-      uinfo.save
+    unless progress.unlocked
+      progress.unlocked = true
+      progress.save
       Action.create(card: self, user: user, action_type: 'unlocked')
     end
   end
 
   def learn_by!(user)
-    uinfo = UserCard.find_by(card: self, user: user)
-    throw StandardError.new("Card info not found") unless uinfo.present?
-    throw StandardError.new("Already learned") if uinfo.learned
+    progress = Progress.find_by(card: self, user: user)
+    throw StandardError.new("Card info not found") unless progress.present?
+    throw StandardError.new("Already learned") if progress.learned
 
-    uinfo.learned = true
-    uinfo.deck = 0
-    uinfo.save
+    progress.learned = true
+    progress.deck = 0
+    progress.save
 
     Action.create(card: self, user: user, action_type: 'learned')
 
@@ -133,7 +133,7 @@ class Card < ActiveRecord::Base
       self.kanjis.each do |k|
         begin
           # check if all radicals are already unlocked
-          k.radicals.with_uinfo(user).each {|r| throw StandardError.new('Will not be unlocked') unless r.uinfo.learned }
+          k.radicals.with_progress(user).each {|r| throw StandardError.new('Will not be unlocked') unless r.progress.learned }
           k.unlock_by!(user)
           new_elements << k
         rescue
@@ -143,7 +143,7 @@ class Card < ActiveRecord::Base
     elsif self.kanji?
       self.words.each do |w|
         begin
-          w.kanjis.with_uinfo(user).each {|k| throw StandardError.new('Will not be unlocked') unless k.uinfo.learned }
+          w.kanjis.with_progress(user).each {|k| throw StandardError.new('Will not be unlocked') unless k.progress.learned }
           w.unlock_by!(user)
           new_elements << w
         rescue
@@ -155,8 +155,8 @@ class Card < ActiveRecord::Base
     # Unlock radicals for next level if there was last learned card in current level
     new_current_level = user.current_level
     if (self.level < new_current_level)
-      Card.radicals.where(level: new_current_level).with_uinfo(user).each do |r|
-        unless (r.uinfo && r.uinfo.unlocked)
+      Card.radicals.where(level: new_current_level).with_progress(user).each do |r|
+        unless (r.progress && r.progress.unlocked)
           r.unlock_by!(user)
           new_elements << r
         end
@@ -172,21 +172,21 @@ class Card < ActiveRecord::Base
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
-    uinfo = UserCard.find_by(card: self, user: user)
-    throw StandardError.new("Card info not found") unless uinfo.present?
+    progress = Progress.find_by(card: self, user: user)
+    throw StandardError.new("Card info not found") unless progress.present?
 
     throw StandardError.new("Unknown answer: #{a}") unless [:yes, :no, :soso, :burn].include?(a)
 
     if a == :yes
-      move_to_deck_by!(uinfo.deck + 1, user)
+      move_to_deck_by!(progress.deck + 1, user)
       Action.create(card: self, user: user, action_type: 'correct')
     elsif a == :no
-      move_to_deck_by!(uinfo.deck - 1, user, choose_schedule_day_by(uinfo.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
+      move_to_deck_by!(progress.deck - 1, user, choose_schedule_day_by(progress.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
       Action.create(card: self, user: user, action_type: 'incorrect')
     elsif a == :soso
       # leave in the same deck
-      move_to_deck_by!(uinfo.deck, user)
-      Action.create(card: self, user: user, action_type: 'soso') if uinfo.deck != 0
+      move_to_deck_by!(progress.deck, user)
+      Action.create(card: self, user: user, action_type: 'soso') if progress.deck != 0
     elsif a == :burn
       move_to_deck_by!(7, user)
       Action.create(card: self, user: user, action_type: 'burn')
@@ -194,27 +194,27 @@ class Card < ActiveRecord::Base
   end
 
   def move_to_deck_by!(deck, user, scheduled = nil)
-    uinfo = UserCard.find_by(card: self, user: user)
-    throw StandardError.new("Card info not found") unless uinfo.present?
+    progress = Progress.find_by(card: self, user: user)
+    throw StandardError.new("Card info not found") unless progress.present?
 
-    if uinfo.failed == true
+    if progress.failed == true
 # TODO: made logic clearer/simplier
       # no:   failed  update_deck
       # yes:  -       -
       # soso: failed  -
       # burn: -       update_deck
-      uinfo.failed = false if deck > uinfo.deck # answer is correct or burn
-      uinfo.deck = deck unless (uinfo.deck == deck) || (uinfo.deck + 1 == deck) # answer is no or burn
+      progress.failed = false if deck > progress.deck # answer is correct or burn
+      progress.deck = deck unless (progress.deck == deck) || (progress.deck + 1 == deck) # answer is no or burn
     else
-      uinfo.failed = true if deck < uinfo.deck # when answer is incorrect
-      uinfo.deck = deck
+      progress.failed = true if deck < progress.deck # when answer is incorrect
+      progress.deck = deck
     end
 
-    uinfo.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(uinfo.deck, user)
-    uinfo.save
+    progress.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(progress.deck, user)
+    progress.save
 
-    if uinfo.deck != 0
-      stats = Statistic.find_or_initialize_by(user: user, date: uinfo.scheduled)
+    if progress.deck != 0
+      stats = Statistic.find_or_initialize_by(user: user, date: progress.scheduled)
       stats.scheduled[self.element_type] += 1
       stats.save
     end
@@ -237,7 +237,7 @@ class Card < ActiveRecord::Base
     # make 'day: cards count' hash
     day_cards = {}
     (from_date + r[0]..from_date + r[2]).each {|d| day_cards[d] = 0}
-    counts = UserCard.where(user: user, scheduled: (from_date + r[0])..(from_date + r[2])).group(:scheduled).order('count_all').count
+    counts = Progress.where(user: user, scheduled: (from_date + r[0])..(from_date + r[2])).group(:scheduled).order('count_all').count
     counts.each {|d,c| day_cards[d] += c}
 
     # transpose hash to 'cards count: [days]'
@@ -334,15 +334,16 @@ class User < ActiveRecord::Base
   end
 
   def current_level
-    Card.joins(:user_cards).merge(UserCard.where(learned: false, unlocked: true, user_id: self.id)).order(level: :asc).first.level || 1
 #    self.not_learned.order(level: :asc).first.level
+#    Card.joins(:progresses).merge(Progress.where(learned: false, unlocked: true, user_id: self.id)).order(level: :asc).first.level || 1
+    Action.where(user: self, action_type: :levelup).count + 1
   end
 
   def comeback!(maxcards = 100)
     just_learned_count = self.user_cards.just_learned.count
     start_date = Date.today
     while true
-      break if UserCard.where(UserCard.arel_table[:scheduled].lteq(start_date)).where(user: self).count + just_learned_count <= maxcards
+      break if Progress.where(Progress.arel_table[:scheduled].lteq(start_date)).where(user: self).count + just_learned_count <= maxcards
       start_date -= 1
     end
     date_diff = Date.today - start_date
@@ -352,13 +353,13 @@ class User < ActiveRecord::Base
       # we should shift everything after that date
       start_date += 1
 
-      dates = UserCard.where( UserCard.arel_table[:scheduled].gteq(start_date)
+      dates = Progress.where( Progress.arel_table[:scheduled].gteq(start_date)
               ).where(user: self).group(:scheduled).order(scheduled: :desc).pluck(:scheduled)
       dates.each do |d|
         print "#{d} "
         stat1 = Statistic.find_or_create_by(user: self, date: d)
         stat2 = Statistic.find_or_create_by(user: self, date: (d + date_diff))
-        UserCard.eager_load(:card).where(user: self, scheduled: d).each do |c|
+        Progress.eager_load(:card).where(user: self, scheduled: d).each do |c|
           c.update(scheduled: d + date_diff)
           stat1.scheduled[c.card.element_type] -= 1
           stat2.scheduled[c.card.element_type] += 1
@@ -400,7 +401,7 @@ class User < ActiveRecord::Base
   end
 end
 
-class UserCard < ActiveRecord::Base
+class Progress < ActiveRecord::Base
   belongs_to :user
   belongs_to :card
 

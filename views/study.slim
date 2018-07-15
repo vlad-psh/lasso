@@ -3,7 +3,7 @@ div.study-card
   h1.show-answer-button class=@element.element_type = @element.title
   div.answer
     div.answer-buttons
-      - ed = @element.uinfo.deck
+      - ed = @element.progress.deck
       div.answer-button.incorrect-answer-button.red data-value="no"
         ' NO
         div.answer-details = "#{ed} → #{ed>0 ? ed-1 : 0} (~#{SRS_RANGES[1][1]} days)"

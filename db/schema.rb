@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_15_113035) do
+ActiveRecord::Schema.define(version: 2018_07_15_134646) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,19 @@ ActiveRecord::Schema.define(version: 2018_07_15_113035) do
     t.integer "user_id"
   end
 
+  create_table "progresses", force: :cascade do |t|
+    t.bigint "card_id"
+    t.bigint "user_id"
+    t.boolean "unlocked", default: false
+    t.boolean "learned", default: false
+    t.integer "deck"
+    t.date "scheduled"
+    t.jsonb "details"
+    t.boolean "failed", default: false
+    t.index ["card_id"], name: "index_progresses_on_card_id"
+    t.index ["user_id"], name: "index_progresses_on_user_id"
+  end
+
   create_table "russian_words", force: :cascade do |t|
     t.string "title"
   end
@@ -54,19 +67,6 @@ ActiveRecord::Schema.define(version: 2018_07_15_113035) do
     t.jsonb "learned", default: {"k"=>0, "r"=>0, "w"=>0}
     t.jsonb "scheduled", default: {"k"=>0, "r"=>0, "w"=>0}
     t.integer "user_id"
-  end
-
-  create_table "user_cards", force: :cascade do |t|
-    t.bigint "card_id"
-    t.bigint "user_id"
-    t.boolean "unlocked", default: false
-    t.boolean "learned", default: false
-    t.integer "deck"
-    t.date "scheduled"
-    t.jsonb "details"
-    t.boolean "failed", default: false
-    t.index ["card_id"], name: "index_user_cards_on_card_id"
-    t.index ["user_id"], name: "index_user_cards_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|

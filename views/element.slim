@@ -27,7 +27,7 @@ div.element-card
         div.top-info-content
           - e.detailsb['pos'].try(:split, ', ').try(:each) do |pos|
             div = pos
-    - if e.uinfo.try(:learned)
+    - if e.progress.try(:learned)
       div.top-info-block
         div.hr-title: span Progress
         div.top-info-content
@@ -49,8 +49,8 @@ div.element-card
             - if e.seq
               br
               a href=path_to(:word).with(e.seq) = "Entity #{e.seq}"
-    - if current_user.present? && !e.uinfo.try(:learned)
-      - if e.uinfo.try(:unlocked)
+    - if current_user.present? && !e.progress.try(:learned)
+      - if e.progress.try(:unlocked)
         div.top-info-block
           div.hr-title: span Actions
           div.top-info-content
@@ -84,18 +84,18 @@ div.element-card
     - if e.detailsb['similar'].length > 0
       div.hr-title: span Similar kanji
       div.relative-elements-list
-        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar']).with_uinfo(current_user), title: 'Similar kanji'}
+        == slim :elements_list, locals: {elements: Card.where(element_type: 'k', title: e.detailsb['similar']).with_progress(current_user), title: 'Similar kanji'}
 
     div.hr-title: span Radicals
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.radicals.order(level: :asc).with_uinfo(current_user), title: 'Radicals'}
+      == slim :elements_list, locals: {elements: e.radicals.order(level: :asc).with_progress(current_user), title: 'Radicals'}
 
     div.hr-title: span Vocabulary
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.words.order(level: :asc).with_uinfo(current_user), title: 'Vocabulary'}
+      == slim :elements_list, locals: {elements: e.words.order(level: :asc).with_progress(current_user), title: 'Vocabulary'}
 
   - else
     div.hr-title: span Kanji
     div.relative-elements-list
-      == slim :elements_list, locals: {elements: e.kanjis.order(level: :asc).with_uinfo(current_user)}
+      == slim :elements_list, locals: {elements: e.kanjis.order(level: :asc).with_progress(current_user)}
 

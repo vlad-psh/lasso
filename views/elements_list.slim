@@ -11,7 +11,7 @@ div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''
         - cl = e.level
         div.level-wrapper
           div.level = cl
-      div class="element-block #{wk_level(e.uinfo)} #{'element-empty-ent-seq' if (e.word? && e.seq == nil)}"
+      div class="element-block #{wk_level(e.progress)} #{'element-empty-ent-seq' if (e.word? && e.seq == nil)}"
         a href=path_to(:card).with(e.id)
           div.element: span.japanese = e.title
           div.description = e.description
