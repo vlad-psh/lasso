@@ -323,7 +323,8 @@ get :word do
 end
 
 get :words_nf do
-  @words = Word.where(nf: params[:nf])
+  @view_user = current_user || User.first
+  @words = Word.where(nf: params[:nf]).with_progress(@view_user)
 
   slim :words
 end

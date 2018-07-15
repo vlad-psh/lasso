@@ -15,7 +15,7 @@ div class="elements-list-wrapper elements-list-separate elements-list-words"
       meaning = meaning.split[0..2].join(' ') + '...' if meaning.length > 20
 
     div.elements-list-item
-      div class="element-block #{e.card_id ? 'unlocked' : 'locked'}"
+      div class="element-block #{wk_level(e.progress)}"
         a href=path_to(:word).with(e.seq)
           div.element: span.japanese = kanjis.length > 0 ? kanjis[0] : readings[0]
           div.description = meaning

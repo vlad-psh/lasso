@@ -16,13 +16,20 @@ class Card < ActiveRecord::Base
   has_many :inverse_relations, through: :inverse_cards_relations, source: :card
   belongs_to :word, primary_key: :seq, foreign_key: :seq
 
-  attr_accessor :progress
-
   def self.with_progress(user)
     progresses = Progress.joins(:card).merge( all.unscope(:select) ).where(user: user).hash_me
     all.each do |c|
-      c.progress = progresses[c.id] if progresses[c.id].present?
+      c.progress = progresses[c.id]
     end
+  end
+
+  def progress=(value)
+    @_progress = value
+  end
+
+  def progress
+    return @_progress if defined?(@_progress)
+    throw StandardError.new("'progress' property can be accessed only when elements have been selected with 'with_progress' method")
   end
 
 # =====================================
@@ -404,6 +411,7 @@ end
 class Progress < ActiveRecord::Base
   belongs_to :user
   belongs_to :card
+  belongs_to :word, primary_key: :card_id, foreign_key: :card_id
 
 #               unlocked  learned  scheduled
 #locked         -         -        -
@@ -442,6 +450,23 @@ end
 
 class Word < ActiveRecord::Base
   belongs_to :card
+  has_many :progresses, primary_key: :card_id, foreign_key: :card_id
+
+  def self.with_progress(user)
+    progresses = Progress.joins(:word).merge( all.unscope(:select) ).where(user: user).hash_me
+    all.each do |c|
+      c.progress = progresses[c.card_id]
+    end
+  end
+
+  def progress=(value)
+    @_progress = value
+  end
+
+  def progress
+    return @_progress if defined?(@_progress)
+    throw StandardError.new("'progress' property can be accessed only when elements have been selected with 'with_progress' method")
+  end
 end
 
 class WordTitle < ActiveRecord::Base
