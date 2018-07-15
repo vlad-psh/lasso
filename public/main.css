@@ -732,6 +732,33 @@ form.add-note-form {
   color: #333;
 }
 /* ==============================
+   WORD CARD
+   ============================== */
+.word-card {
+  max-width: 50em;
+  margin: 0 auto;
+  text-align: left;
+}
+.word-krebs {
+  margin: 1em 0 1.6em 0;
+}
+.word-kreb {
+  display: inline-block;
+  margin: 0 1em 0 0;
+}
+.word-kreb-title {
+  font-size: 2em;
+}
+.word-kreb-frequency span {
+  font-family: sans-serif;
+  font-size: 0.7em;
+  background-color: #257a40;
+  color: #def7e6;
+  margin: 0 0.2em 0 0;
+  padding: 0 0.3em;
+  border-radius: 2px;
+}
+/* ==============================
    MOBILE
    default window width: 980
    with meta:

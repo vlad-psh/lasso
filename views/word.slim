@@ -1,14 +1,33 @@
-ul
-  - [*@word.keb.try(:keys), *@word.reb.try(:keys)].compact.each do |e|
-    li = e
+div.word-card
+  ruby:
+    kreb = {}
+    @word.keb.each{|k,v| kreb[k] = v}
+    @word.reb.each{|k,v| kreb[k] = v}
+  
+  div.word-krebs
+    - kreb.each do |title,freqs|
+      div.word-kreb
+        div.word-kreb-title = title
+        div.word-kreb-frequency
+          - freqs.each do |k,v|
+            span = "#{k}:#{v}"
 
-h2 English
-div
-  - @word.en.each do |m2|
-    ' &#x1f4cc;
-    = m2.join(', ')
-h2 Russian
-div
-  - @word.ru.each do |m2|
-    ' &#x1f4cc;
-    = m2.join(', ')
+  - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
+
+  div
+    span style="font-size: x-large" &#x1f1ec;&#x1f1e7;
+    - if @word.en.length > 1
+      - @word.en.each_with_index do |m2,i|
+        = " #{bullets[i]} "
+        = m2.join(', ')
+    - elsif @word.en.length == 1
+      = ' ' + @word.en[0].join(', ')
+
+  div
+    span style="font-size: x-large" &#x1f1f7;&#x1f1fa;
+    - if @word.ru.length > 1
+      - @word.ru.each_with_index do |m2,i|
+        = " #{bullets[i]} "
+        = m2.join(', ')
+    - elsif @word.ru.length == 1
+      = ' ' + @word.ru[0].join(', ')

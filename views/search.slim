@@ -3,7 +3,7 @@ ruby:
   @elements.each {|e| counters[e.element_type] += 1}
 
 - if @words.length > 0
-  div.hr-title: span style="padding: 1em" JMdict
+  div.hr-title: span style="padding: 1em" JMdict (exact matches only!)
   div.search-results
     - @words.each do |w|
       div.search-result

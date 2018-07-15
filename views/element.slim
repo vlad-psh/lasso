@@ -48,7 +48,7 @@ div.element-card
               a href="http://nippon.temerov.org/kandzi_view.php?kandzi=#{e.title}" temerov
             - if e.ent_seq
               br
-              a href=path_to(:jme).with(e.ent_seq) = "Entity #{e.ent_seq}"
+              a href=path_to(:word).with(e.ent_seq) = "Entity #{e.ent_seq}"
     - if current_user.present? && !e.uinfo.try(:learned)
       - if e.uinfo.try(:unlocked)
         div.top-info-block
