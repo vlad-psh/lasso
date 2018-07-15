@@ -8,6 +8,6 @@ div class="elements-list-wrapper elements-list-separate elements-list-words"
 
     div.elements-list-item
       div class="element-block locked"
-        a href=path_to(:word).with(e.ent_seq)
+        a href=path_to(:word).with(e.seq)
           div.element: span.japanese = kanjis.length > 0 ? kanjis[0] : readings[0]
           div.description = meaning

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_15_093149) do
+ActiveRecord::Schema.define(version: 2018_07_15_094028) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2018_07_15_093149) do
     t.integer "level"
     t.string "title"
     t.jsonb "detailsb"
-    t.integer "ent_seq"
+    t.integer "seq"
   end
 
   create_table "cards_relations", force: :cascade do |t|
@@ -76,8 +76,13 @@ ActiveRecord::Schema.define(version: 2018_07_15_093149) do
     t.jsonb "settings", default: {}
   end
 
+  create_table "word_titles", force: :cascade do |t|
+    t.integer "seq"
+    t.string "title"
+  end
+
   create_table "words", force: :cascade do |t|
-    t.integer "ent_seq"
+    t.integer "seq"
     t.jsonb "en"
     t.jsonb "ru"
     t.jsonb "pos"
@@ -85,7 +90,7 @@ ActiveRecord::Schema.define(version: 2018_07_15_093149) do
     t.jsonb "keb"
     t.jsonb "reb"
     t.string "kanji"
-    t.index ["ent_seq"], name: "index_words_on_ent_seq"
+    t.index ["seq"], name: "index_words_on_seq"
   end
 
 end

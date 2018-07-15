@@ -222,8 +222,8 @@ get :search do
       @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
     end
 
-    @words = Word.where("keb ?| array[:query1, :query2, :query3] OR reb ?| array[:query1, :query2, :query3]",
-                         query1: q, query2: qj, query3: q.downcase.katakana)
+    seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").pluck(:seq).uniq
+    @words = Word.where(seq: seqs)
   end
 
 #  if @elements.count == 1
@@ -317,7 +317,7 @@ get :stats do
 end
 
 get :word do
-  @word = Word.find_by(ent_seq: params[:id])
+  @word = Word.find_by(seq: params[:id])
 
   slim :word
 end

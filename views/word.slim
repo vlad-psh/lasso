@@ -1,8 +1,8 @@
 div.word-card
   ruby:
     kreb = {}
-    @word.keb.each{|k,v| kreb[k] = v}
-    @word.reb.each{|k,v| kreb[k] = v}
+    @word.keb.each{|k,v| kreb[k] = v} if @word.keb
+    @word.reb.each{|k,v| kreb[k] = v} if @word.reb
   
   div.word-krebs
     - kreb.each do |title,freqs|

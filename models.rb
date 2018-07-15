@@ -441,3 +441,7 @@ end
 class Word < ActiveRecord::Base
 
 end
+
+class WordTitle < ActiveRecord::Base
+
+end

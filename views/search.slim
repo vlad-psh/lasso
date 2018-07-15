@@ -7,9 +7,9 @@ ruby:
   div.search-results
     - @words.each do |w|
       div.search-result
-        div.search-result-title: a href=path_to(:word).with(w.ent_seq) == w.keb.try(:keys).try(:join, '; ')
+        div.search-result-title: a href=path_to(:word).with(w.seq) == w.keb.try(:keys).try(:join, '; ')
         div == w.reb.try(:keys).try(:join, '; ')
-        div: a href=path_to(:word).with(w.ent_seq) == w.en[0].join('; ')
+        div: a href=path_to(:word).with(w.seq) == w.en[0].join('; ')
 
 - if counters['w'] > 0
   div.hr-title: span style="padding: 1em" Words
