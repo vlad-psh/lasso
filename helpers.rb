@@ -42,19 +42,12 @@ module WakameHelpers
   end
 
   def highlight(text, term)
-    return text unless term.present?
+    return text unless text.present? && term.present?
 
     termj = term.downcase.hiragana
-    hhash = highlight_find(text, term)
-    if termj.japanese?
-      hhash2 = []
-      hhash.each do |h|
-        hhash2 << (h[:h] == true ? h : highlight_find(h[:t], termj))
-      end
-      return highlight_html(hhash2.flatten)
-    else
-      return highlight_html(hhash)
-    end
+    terms = termj.japanese? ? [term, termj, term.downcase.katakana] : [term]
+    hhash = highlight_find(text, terms)
+    return highlight_html(hhash)
   end
 
   def highlight_html(hhash)
@@ -65,14 +58,20 @@ module WakameHelpers
     return result
   end
 
-  def highlight_find(text, term)
-    i = text.index(Regexp.new(term, Regexp::IGNORECASE))
+  def highlight_find(text, terms)
+    i, term = nil, nil
+    terms.each do |t|
+      next unless i.blank?
+      i = text.index(Regexp.new(t, Regexp::IGNORECASE))
+      term = t if i.present?
+    end
+
     result = []
     if i != nil
       result << {t: text[0...i], h: false} if i > 0
       result << {t: text[i...(i+term.length)], h: true}
       if i + term.length < text.length
-        result << highlight_find(text[(i+term.length)..-1], term)
+        result << highlight_find(text[(i+term.length)..-1], terms)
       end
     else
       result << {t: text, h: false}

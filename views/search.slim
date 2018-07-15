@@ -3,12 +3,12 @@ ruby:
   @elements.each {|e| counters[e.element_type] += 1}
 
 - if @words.length > 0
-  div.hr-title: span style="padding: 1em" JMdict (exact matches only!)
+  div.hr-title: span style="padding: 1em" JMdict
   div.search-results
     - @words.each do |w|
       div.search-result
-        div.search-result-title: a href=path_to(:word).with(w.seq) == w.keb.try(:keys).try(:join, '; ')
-        div == w.reb.try(:keys).try(:join, '; ')
+        div.search-result-title: a href=path_to(:word).with(w.seq) == highlight(w.keb.try(:keys).try(:join, '; '), params['query'])
+        div == highlight(w.reb.try(:keys).try(:join, '; '), params['query'])
         div: a href=path_to(:word).with(w.seq) == w.en[0].join('; ')
 
 - if counters['w'] > 0
