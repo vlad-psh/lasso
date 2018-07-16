@@ -772,6 +772,34 @@ form.add-note-form {
   text-decoration: underline;
 }
 /* ==============================
+   SENTENCE FORM
+   ============================== */
+input.jpsentence,
+input.ensentence {
+  font-size: 1.2em;
+  width: 100%;
+  max-width: 40em;
+  padding: 0.2em 0.4em;
+  border: none;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+  background: none;
+}
+.new-sentence {
+  font-size: 2em;
+  margin-top: 0.5em;
+}
+.new-sentence rtc {
+  font-size: xx-small;
+  ruby-position: under;
+}
+.question-word {
+  cursor: pointer;
+  background-color: rgba(0,0,0,0.07);
+  color: #333;
+  padding: 0.2em;
+  margin: 0 2px;
+}
+/* ==============================
    MOBILE
    default window width: 980
    with meta:

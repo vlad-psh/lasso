@@ -35,3 +35,6 @@ div.word-card
         = m2.join(', ')
     - elsif @word.ru.length == 1
       = ' ' + @word.ru[0].join(', ')
+
+div style="background-color: #f7f2d2"
+  == slim :sentence_form
