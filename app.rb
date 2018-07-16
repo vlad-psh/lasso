@@ -12,11 +12,11 @@ require 'nokogiri'
 require 'mojinizer'
 require 'open-uri'
 
-require_relative './models.rb'
 require_relative './helpers.rb'
+Dir.glob('./models/*.rb').each {|model| require_relative model}
 
-also_reload './models.rb'
 also_reload './helpers.rb'
+also_reload './models/*.rb'
 
 helpers WakameHelpers
 
@@ -56,6 +56,12 @@ configure do
   use Rack::Flash
 
   DEGREES = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
+  INFODIC = {
+    :r => {singular: :radical, plural: :radicals, japanese: '部首'},
+    :k => {singular: :kanji, plural: :kanjis, japanese: '漢字'},
+    :w => {singular: :word, plural: :words, japanese: '言葉'}
+  }
+  SRS_RANGES = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
 end
 
 get :index do
