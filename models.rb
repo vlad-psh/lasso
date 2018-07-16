@@ -450,6 +450,7 @@ end
 
 class Word < ActiveRecord::Base
   belongs_to :card
+  has_and_belongs_to_many :sentences
   has_many :progresses, primary_key: :card_id, foreign_key: :card_id
 
   def self.with_progress(user)
@@ -471,4 +472,8 @@ end
 
 class WordTitle < ActiveRecord::Base
 
+end
+
+class Sentence < ActiveRecord::Base
+  has_and_belongs_to_many :words
 end
