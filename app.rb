@@ -182,6 +182,7 @@ get :study do
   progresses = Progress.public_send(safe_group(params[:group])).where(user: current_user)
   elements = Card.public_send(safe_type(params[:class])).joins(:progresses).merge(progresses)
   @element = elements.order('RANDOM()').first
+  @title = "🚥 #{@element.title}"
 
   if @element.present?
     @element.progress = Progress.find_by(card: @element, user: current_user)
@@ -211,6 +212,7 @@ get :search do
   @russian_words = RussianWord.none
   @jmelements = []
   q = params['query'].strip
+  @title = "🔎 #{q}"
 
   if q.present?
     qj = q.downcase.hiragana
@@ -245,6 +247,7 @@ end
 
 get :notes do
   protect!
+  @title = "📘"
 
   @notes = current_user.notes.order(created_at: :desc)
   slim :notes

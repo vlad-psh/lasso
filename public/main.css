@@ -524,6 +524,10 @@ body.black .srs-progress td {
 .study-card .show-answer-button {
   cursor: pointer;
 }
+.black .show-answer-button.w {
+  background: #151515;
+  border: none;
+}
 .study-card .answer {
   display: none;
 }
