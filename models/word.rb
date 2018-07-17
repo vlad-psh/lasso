@@ -18,5 +18,9 @@ class Word < ActiveRecord::Base
     return @_progress if defined?(@_progress)
     throw StandardError.new("'progress' property can be accessed only when elements have been selected with 'with_progress' method")
   end
+
+  def krebs # All keb's and reb's
+    return [*keb.try(:keys), *reb.try(:keys)].compact
+  end
 end
 

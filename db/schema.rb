@@ -63,7 +63,11 @@ ActiveRecord::Schema.define(version: 2018_07_16_160402) do
   end
 
   create_table "sentences", force: :cascade do |t|
-    t.json "value"
+    t.string "japanese"
+    t.string "english"
+    t.string "russian"
+    t.json "structure"
+    t.json "details"
   end
 
   create_table "sentences_words", force: :cascade do |t|

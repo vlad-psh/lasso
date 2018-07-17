@@ -36,5 +36,12 @@ div.word-card
     - elsif @word.ru.length == 1
       = ' ' + @word.ru[0].join(', ')
 
+h2 Sentences
+
+div style="text-align: left; max-width: 40em; margin: 0 auto;"
+  - @sentences.each do |s|
+    div = s.japanese
+    div style="font-size: small; margin-bottom: 1em;" = s.english
+
 div style="background-color: #f7f2d2"
   == slim :sentence_form
