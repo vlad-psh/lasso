@@ -1,12 +1,12 @@
 div.word-card
 
   div.word-krebs
-    - @word.kele.each do |kele|
+    - [*@word.kele, *@word.rele].each do |ele|
       div.word-kreb
-        div.word-kreb-title = kele['keb']
-        - if kele['pri']
+        div.word-kreb-title = ele['keb'] || ele['reb']
+        - if ele['pri']
           div.word-tags
-          - kele['pri'].each do |k,v|
+          - ele['pri'].each do |k,v|
             span.word-tag = "#{k}:#{v}"
 
   - if @word.card_id.present?
