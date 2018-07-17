@@ -41,7 +41,8 @@ paths index: '/',
     stats: '/stats',
     word: '/word/:id',
     words_nf: '/words/:nf',
-    mecab: '/mecab'
+    mecab: '/mecab',
+    sentences: '/sentences'
 
 configure do
   puts '---> init <---'
@@ -232,8 +233,9 @@ get :search do
       @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
     end
 
-    seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").pluck(:seq).uniq
-    @words = Word.where(seq: seqs)
+    seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").order("char_length(title)").pluck(:seq).uniq
+    words = Word.where(seq: seqs)
+    @words = words.sort{|a,b| seqs.index(a.seq) <=> seqs.index(b.seq)}
   end
 
 #  if @elements.count == 1
@@ -390,3 +392,6 @@ post :mecab do
   return mecab_parse(params[:sentence]).to_json
 end
 
+post :sentences do
+  
+end

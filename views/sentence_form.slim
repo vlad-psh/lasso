@@ -19,6 +19,7 @@ div id="sentence-app"
         rtc v-if="substr.gloss" {{substr.gloss}}
 
     input type="button" value="cancel" @click="clearProcessedSentence"
+    input type="button" value="save" @click="saveProcessedSentence"
 
 javascript:
   var app = new Vue({
@@ -101,6 +102,18 @@ javascript:
       clearProcessedSentence() {
         this.jpSentence = null;
         this.enSentence = null;
+      },
+      saveProcessedSentence() {
+        $.ajax({
+          url: "#{{path_to(:sentences)}}",
+          method: 'POST',
+          data: {
+            japanese: this.jpSentence,
+            english: this.enSentence,
+            structure: this.newSentence}
+        }).done(data => {
+          this.newSentence = JSON.parse(data);
+        });
       }
     }
   });

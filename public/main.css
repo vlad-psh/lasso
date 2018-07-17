@@ -725,6 +725,11 @@ form.add-note-form {
   page-break-inside: avoid;           /* Theoretically FF 20+ */
   display: inline-block;              /* Actually FF 20+ */
   width: calc(100% - 0.4em); /* minus column-gap */
+  border-bottom: 1px dotted #d2edf7;
+}
+.search-result-common {
+  background-color: #d2edf7;
+  border-bottom: 1px dotted #fff;
 }
 .search-result a {
   font-size: small;
@@ -733,9 +738,9 @@ form.add-note-form {
 .search-result a:hover {
   text-decoration: underline;
 }
-.search-results .search-result:nth-child(odd) {
+/*.search-results .search-result:nth-child(odd) {
   background: rgba(128,128,128,0.2);
-}
+}*/
 .search-result .search-result-title {
   font-size: 1.3em;
 }
