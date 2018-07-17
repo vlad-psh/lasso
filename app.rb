@@ -349,7 +349,7 @@ def mecab_parse(sentence)
     feature = e.feature.split(',')
     result << {
       text: e.surface,
-      reading: feature[7].hiragana,
+      reading: feature[7].try(:hiragana),
       base: feature[6]
     }
   end
@@ -364,13 +364,13 @@ def mecab_parse(sentence)
   result.each do |e|
     seqs = word_titles_hash[e[:base]]
 
-    if seqs.length > 1
+    if seqs.present? && seqs.length > 1
       # More than one results found (eg.: 石)
       # Find one with correct reading
       seqs = WordTitle.where(title: e[:reading], seq: seqs).pluck(:seq).uniq
     end
 
-    if seqs.length != 1 # Skip if length STILL > 1 (or == 0)
+    if seqs.blank? || seqs.length != 1 # Skip if length STILL > 1 (or == 0)
       e.delete(:reading)
       e.delete(:base)
       next

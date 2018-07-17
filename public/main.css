@@ -788,6 +788,10 @@ input.ensentence {
   font-size: 2em;
   margin-top: 0.5em;
 }
+.new-sentence rt,
+.new-sentence rtc {
+  ruby-align: center;
+}
 .new-sentence rtc {
   font-size: xx-small;
   ruby-position: under;

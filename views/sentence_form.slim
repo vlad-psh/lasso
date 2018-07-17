@@ -7,10 +7,10 @@ div id="sentence-app"
     input type="button" value="process" @click="processRawSentence"
   div v-else=''
     ' &#x1f1ef;&#x1f1f5;
-    input class="jpsentence" type="text" @select="newSentencePartSelected" @input="newSentenceChanged" v-model="jpSentence"
+    input class="jpsentence" type="text" @select="newSentencePartSelected" v-model="jpSentence" readonly=true
     br
     ' &#x1f1ec;&#x1f1e7;
-    input class="ensentence" type="text" v-model="enSentence"
+    input class="ensentence" type="text" v-model="enSentence" readonly=true
 
     div class='new-sentence' @select="console.log('select')"
       ruby v-for="(substr, sIdx) of newSentence" :class="substr.seq ? 'question-word' : ''" @click="newSentenceResetPart(sIdx)"
