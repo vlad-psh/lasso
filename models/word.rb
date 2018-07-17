@@ -20,7 +20,9 @@ class Word < ActiveRecord::Base
   end
 
   def krebs # All keb's and reb's
-    return [*keb.try(:keys), *reb.try(:keys)].compact
+    kebs = kele ? kele.map{|i| i['keb']} : []
+    rebs = rele ? rele.map{|i| i['reb']} : []
+    return [*kebs, *rebs].compact
   end
 end
 

@@ -378,7 +378,7 @@ def mecab_parse(sentence)
     end
 
     w = Word.find_by(seq: seqs.first)
-    gloss = w.en[0][0]
+    gloss = w.en[0]['gloss'][0]
     e[:gloss] = gloss.length > 25 ? gloss[0..20] + '...' : gloss
     e[:seq] = w.seq
   end

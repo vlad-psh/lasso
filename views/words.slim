@@ -9,13 +9,11 @@ ruby:
 div class="elements-list-wrapper elements-list-separate elements-list-words"
   - @words.each do |e|
     ruby:
-      kanjis = e.keb.try(:keys) || []
-      readings = e.reb.try(:keys) || []
-      meaning = e.en[0][0]
-      meaning = meaning.split[0..2].join(' ') + '...' if meaning.length > 20
+      meaning = e.en[0]['gloss'][0]
+      meaning = meaning[0..20] + '...' if meaning.length > 25
 
     div.elements-list-item
       div class="element-block #{wk_level(e.progress)}"
         a href=path_to(:word).with(e.seq)
-          div.element: span.japanese = kanjis.length > 0 ? kanjis[0] : readings[0]
+          div.element: span.japanese = e.kele ? e.kele[0]['keb'] : e.rele[0]['reb']
           div.description = meaning

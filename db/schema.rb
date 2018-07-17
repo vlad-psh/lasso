@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_16_160402) do
+ActiveRecord::Schema.define(version: 2018_07_17_143055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,14 +98,13 @@ ActiveRecord::Schema.define(version: 2018_07_16_160402) do
 
   create_table "words", force: :cascade do |t|
     t.integer "seq"
-    t.jsonb "en"
-    t.jsonb "ru"
-    t.jsonb "pos"
     t.integer "nf"
-    t.jsonb "keb"
-    t.jsonb "reb"
     t.string "kanji"
     t.integer "card_id"
+    t.json "en"
+    t.json "ru"
+    t.json "kele"
+    t.json "rele"
     t.index ["seq"], name: "index_words_on_seq"
   end
 

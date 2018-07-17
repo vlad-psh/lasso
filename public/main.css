@@ -715,11 +715,16 @@ form.add-note-form {
    ============================== */
 .search-results {
   column-width: 300px;
+  column-gap: 0.4em;
   text-align: left;
   font-size: 0.9em;
 }
 .search-result {
   padding: 0.2em;
+  -webkit-column-break-inside: avoid; /* Chrome, Safari */
+  page-break-inside: avoid;           /* Theoretically FF 20+ */
+  display: inline-block;              /* Actually FF 20+ */
+  width: calc(100% - 0.4em); /* minus column-gap */
 }
 .search-result a {
   font-size: small;
