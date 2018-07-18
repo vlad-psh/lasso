@@ -389,9 +389,32 @@ def mecab_parse(sentence)
 end
 
 post :mecab do
-  return mecab_parse(params[:sentence]).to_json
+  wt = WordTitle.where(title: params[:sentence]).pluck(:seq).uniq
+
+  if wt.length == 1 # found exact word
+    w = Word.find_by(seq: wt[0])
+    return [{
+        text: params[:sentence],
+        reading: w.rele[0]['reb'],
+        base: params[:sentence],
+        gloss: w.en[0]['gloss'][0],
+        seq: wt[0]
+    }].to_json
+  else
+    return mecab_parse(params[:sentence]).to_json
+  end
 end
 
 post :sentences do
-  
+  s = Sentence.new({
+    japanese: params['japanese'],
+    english: params['english'],
+#    russian: params[''],
+    structure: params['structure'].map{|k,v| v}
+  })
+  s.save
+
+  s.words = Word.where(seq: s.structure.map{|i| i['seq']}.compact.uniq)
+
+  return 'OK'
 end

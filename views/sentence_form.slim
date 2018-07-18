@@ -112,7 +112,11 @@ javascript:
             english: this.enSentence,
             structure: this.newSentence}
         }).done(data => {
-          this.newSentence = JSON.parse(data);
+          alert(data);
+          //this.newSentence = JSON.parse(data);
+          this.jpSentence = null;
+          this.enSentence = null;
+          this.newSentence = [];
         });
       }
     }

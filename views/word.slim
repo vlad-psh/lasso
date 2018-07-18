@@ -36,6 +36,11 @@ div.word-card
 
 h2 Sentences
 
+div style="background: #f7f2d2"
+  - @word.sentences.each do |s|
+    div = s.japanese
+    div style="font-size: small; margin-bottom: 1em;" = s.english
+
 div style="text-align: left; max-width: 40em; margin: 0 auto;"
   - @sentences.each do |s|
     div = s.japanese
