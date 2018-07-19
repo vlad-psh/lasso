@@ -1,4 +1,5 @@
 class Sentence < ActiveRecord::Base
-  has_and_belongs_to_many :words
+  has_many :sentences_words
+  has_many :words, through: :sentences_words
 end
 
