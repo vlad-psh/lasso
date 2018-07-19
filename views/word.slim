@@ -1,3 +1,4 @@
+script src="/js/jquery-ui.min.js"
 div.word-card
 
   div.word-krebs
@@ -34,25 +35,25 @@ div.word-card
       - elsif @word.ru.length == 1
         = ' ' + @word.ru[0]['gloss'].join(', ')
 
-  - if @word.short_words.length > 0
-    ' Contains:
-    - @word.short_words.each do |w|
-      a> href=path_to(:word).with(w.seq) = w.krebs[0]
-  - if @word.long_words.length > 0
-    ' Contained in:
-    - @word.long_words.each do |w|
-      a> href=path_to(:word).with(w.seq) = w.krebs[0]
+  table.connected-words-table
+    tr
+      td Contains:
+      td Contained in:
+    tr
+      td: a> class="connected-word" v-for="sw of shortWords" :href="sw.href" {{sw.title}}
+      td: a> class="connected-word" v-for="sw of longWords" :href="sw.href" {{sw.title}}
+    tr
+      td: input id="sub-word-autocomplete" type="text"
+      td: input id="super-word-autocomplete" type="text"
+    
+  h2 Sentences
 
-h2 Sentences
-
-div style="background: #f7f2d2;"
-  div style="max-width: 48em; margin: 0 auto; text-align: justify"
+  div style="background: #f7f2d2; padding: 0.4em 0.6em; text-align: justify;"
     - @word.sentences.each_with_index do |s,idx|
       span> = bullets[idx] || "(#{idx})"
       span> = s.japanese
       span> style="font-size: small" = "《#{s.english}》"
 
-div style="max-width: 48em; margin: 0 auto; text-align: justify"
   - @sentences.each_with_index do |s,idx|
     span> = bullets[idx] || "(#{idx})"
     span> = s.japanese
@@ -60,3 +61,55 @@ div style="max-width: 48em; margin: 0 auto; text-align: justify"
 
 div style="background-color: #f7f2d2"
   == slim :sentence_form
+
+javascript:
+  $(function(){
+    $('#sub-word-autocomplete').autocomplete({
+      source: "#{{path_to(:autocomplete_word)}}",
+      minLength: 1,
+      select: function(event,ui) {
+        $.ajax({
+          url: "#{{path_to(:word_connect)}}",
+          method: 'POST',
+          data: {
+            long: #{{@word.seq}},
+            short: ui.item.id
+          }
+        }).done(data => {
+          app.shortWords.push({seq: ui.item.id, title: ui.item.title, href: ui.item.href});
+        });
+
+        return false;
+      }
+    });
+
+    $('#super-word-autocomplete').autocomplete({
+      source: "#{{path_to(:autocomplete_word)}}",
+      minLength: 1,
+      select: function(event,ui) {
+        $.ajax({
+          url: "#{{path_to(:word_connect)}}",
+          method: 'POST',
+          data: {
+            long: ui.item.id,
+            short: #{{@word.seq}}
+          }
+        }).done(data => {
+          app.longWords.push({seq: ui.item.id, title: ui.item.title, href: ui.item.href});
+        });
+
+        return false;
+      }
+    });
+  });
+
+  var app = new Vue({
+    el: '.word-card',
+    data: {
+      shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
+      longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }}
+    },
+    methods: {
+
+    }
+  });

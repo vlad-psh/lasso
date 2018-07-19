@@ -42,7 +42,9 @@ paths index: '/',
     word: '/word/:id',
     words_nf: '/words/:nf',
     mecab: '/mecab',
-    sentences: '/sentences'
+    sentences: '/sentences',
+    autocomplete_word: '/autocomplete/word',
+    word_connect: '/word/connect'
 
 configure do
   puts '---> init <---'
@@ -417,4 +419,24 @@ post :sentences do
   s.words = Word.where(seq: s.structure.map{|i| i['seq']}.compact.uniq)
 
   return 'OK'
+end
+
+get :autocomplete_word do
+  ww = Word.where(seq: WordTitle.where(title: params['term']).pluck(:seq)).map{|i|
+        {
+            id: i.seq,
+            value: "#{i.krebs[0]}: #{i.en[0]['gloss'][0]}",
+            title: i.krebs[0],
+            href: path_to(:word).with(i.seq)
+        }
+  }
+  return ww.to_json
+end
+
+post :word_connect do
+  long = Word.find_by(seq: params[:long])
+  short = Word.find_by(seq: params[:short])
+  long.short_words << short
+
+  return 'ok'
 end
