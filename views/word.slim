@@ -37,24 +37,24 @@ div.word-card
 
   table.connected-words-table
     tr
-      td Contains:
-      td Contained in:
+      th Contains:
+      th Contained in:
     tr
       td: div class="connected-word" v-for="(sw, swIndex) of shortWords"
         a> :href="sw.href" {{sw.title}}
         span.action-buttons
           | [
-          a @click="deleteShortWord(swIndex)" 消す
+          a @click="deleteConnectedWord('short', swIndex)" 消す
           | ]
       td: div class="connected-word" v-for="(sw, swIndex) of longWords"
         a> :href="sw.href" {{sw.title}}
         span.action-buttons
           | [
-          a @click="deleteLongWord(swIndex)" 消す
+          a @click="deleteConnectedWord('long', swIndex)" 消す
           | ]
     tr
-      td: input id="sub-word-autocomplete" type="text"
-      td: input id="super-word-autocomplete" type="text"
+      td: input class="word-connection-autocomplete" type="text" data-word-type="short"
+      td: input class="word-connection-autocomplete" type="text" data-word-type="long"
     
   h2 Sentences
 
@@ -64,7 +64,7 @@ div.word-card
       span< style="font-size: small" 《{{s.en}}》
       span.action-buttons
         | [
-        a.remove-sentence-button @click="removeSentence(sIndex)" 消す
+        a.remove-sentence-button @click="removeSentence(sIndex, false)" 消す
         | ] 
 
   div style="padding: 0.4em 0.6em; text-align: justify;"
@@ -73,7 +73,7 @@ div.word-card
       span< style="font-size: small" 《{{s.en}}》
       span.action-buttons
         | [
-        a.remove-sentence-button @click="removeRawSentence(sIndex)" 消す
+        a.remove-sentence-button @click="removeSentence(sIndex, true)" 消す
         | ] 
 
 div style="background-color: #f7f2d2"
@@ -81,38 +81,22 @@ div style="background-color: #f7f2d2"
 
 javascript:
   $(function(){
-    $('#sub-word-autocomplete').autocomplete({
+    $('.word-connection-autocomplete').autocomplete({
       source: "#{{path_to(:autocomplete_word)}}",
       minLength: 1,
       select: function(event,ui) {
+        var wordType = $(this).data('word-type');
+        var postData = {};
+        postData[wordType] = ui.item.id;
+        postData[wordType === 'short' ? 'long' : 'short'] = #{{@word.seq}};
+
         $.ajax({
           url: "#{{path_to(:word_connect)}}",
           method: 'POST',
-          data: {
-            long: #{{@word.seq}},
-            short: ui.item.id
-          }
+          data: postData
         }).done(data => {
-          app.shortWords.push({seq: ui.item.id, title: ui.item.title, href: ui.item.href});
-        });
-
-        return false;
-      }
-    });
-
-    $('#super-word-autocomplete').autocomplete({
-      source: "#{{path_to(:autocomplete_word)}}",
-      minLength: 1,
-      select: function(event,ui) {
-        $.ajax({
-          url: "#{{path_to(:word_connect)}}",
-          method: 'POST',
-          data: {
-            long: ui.item.id,
-            short: #{{@word.seq}}
-          }
-        }).done(data => {
-          app.longWords.push({seq: ui.item.id, title: ui.item.title, href: ui.item.href});
+          app.addConnectedWord(wordType, {seq: ui.item.id, title: ui.item.title, href: ui.item.href});
+          $(this).val('');
         });
 
         return false;
@@ -130,59 +114,47 @@ javascript:
       sentences: #{{@word.sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}}
     },
     methods: {
-      deleteShortWord(idx) {
-        var ask = confirm("Are you sure?");
-        var removedSeq = this.shortWords[idx].seq;
+      addConnectedWord(wordType, word) {
+        if (wordType === 'short') {
+          this.shortWords.push(word);
+        } else {
+          this.longWords.push(word);
+        }
+      },
+      deleteConnectedWord(wordType, wordIndex) {
+        var word = wordType === 'short' ? this.shortWords[wordIndex] : this.longWords[wordIndex];
+        var postData = {};
+        postData[wordType] = word.seq;
+        postData[wordType === 'short' ? 'long' : 'short'] = #{{@word.seq}};
+
+        var ask = confirm(`Are you sure you want to delete ${word.title}?`);
         if (ask) {
           $.ajax({
             url: "#{{path_to(:word_connect)}}",
             method: "DELETE",
-            data: {
-              long: #{{@word.seq}},
-              short: removedSeq
-            }
+            data: postData
           }).done(data => {
-            this.shortWords = this.shortWords.filter(i => i.seq != removedSeq);
-          });
-        };
-      },
-      deleteLongWord(idx) {
-        var ask = confirm("Are you sure?");
-        var removedSeq = this.longWords[idx].seq;
-        if (ask) {
-          $.ajax({
-            url: "#{{path_to(:word_connect)}}",
-            method: "DELETE",
-            data: {
-              long: removedSeq,
-              short: #{{@word.seq}}
+            if (wordType === 'short') {
+              this.shortWords = this.shortWords.filter(i => i.seq != word.seq);
+            } else {
+              this.longWords = this.longWords.filter(i => i.seq != word.seq);
             }
-          }).done(data => {
-            this.longWords = this.longWords.filter(i => i.seq != removedSeq);
           });
-        };
+        }
       },
-      removeRawSentence(idx) {
+      removeSentence(idx, isRawSentence) {
         var ask = confirm("Are you sure?");
-        var sentenceUrl = this.rawSentences[idx].href;
+        var sentenceUrl = isRawSentence ? this.rawSentences[idx].href : this.sentences[idx].href;
         if (ask) {
           $.ajax({
             url: sentenceUrl,
             method: "DELETE"
           }).done(data => {
-            this.rawSentences = this.rawSentences.filter(i => i.href != sentenceUrl);
-          });
-        };
-      },
-      removeSentence(idx) {
-        var ask = confirm("Are you sure?");
-        var sentenceUrl = this.sentences[idx].href;
-        if (ask) {
-          $.ajax({
-            url: sentenceUrl,
-            method: "DELETE"
-          }).done(data => {
-            this.sentences = this.sentences.filter(i => i.href != sentenceUrl);
+            if (isRawSentence) {
+              this.rawSentences = this.rawSentences.filter(i => i.href != sentenceUrl);
+            } else {
+              this.sentences = this.sentences.filter(i => i.href != sentenceUrl);
+            }
           });
         };
       }

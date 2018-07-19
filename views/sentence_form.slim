@@ -2,7 +2,7 @@ h2 New sentence
 
 div id="sentence-app"
   div v-if="jpSentence === null"
-    textarea class="raw-sentence" v-model="rawSentence" style="width: 35em; height: 8em;"
+    textarea class="raw-sentence" v-model="rawSentence" style="max-width: 95%; width: 35em; height: 8em;"
     br
     input type="button" value="process" @click="processRawSentence"
   div v-else=''
