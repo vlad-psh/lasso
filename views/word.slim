@@ -34,6 +34,15 @@ div.word-card
       - elsif @word.ru.length == 1
         = ' ' + @word.ru[0]['gloss'].join(', ')
 
+  - if @word.short_words.length > 0
+    ' Contains:
+    - @word.short_words.each do |w|
+      a> href=path_to(:word).with(w.seq) = w.krebs[0]
+  - if @word.long_words.length > 0
+    ' Contained in:
+    - @word.long_words.each do |w|
+      a> href=path_to(:word).with(w.seq) = w.krebs[0]
+
 h2 Sentences
 
 div style="background: #f7f2d2;"
