@@ -33,11 +33,15 @@ class Word < ActiveRecord::Base
   end
 
   def kanji_objects
-    return Card.kanjis.where(title: self.kanji.split('')).map{|i| [i.title, i]}.to_h
+    Card.kanjis.where(title: self.kanji.split('')).map{|i| [i.title, i]}.to_h
   end
 
   def kanji_objects_with_progress(user)
-    return Card.kanjis.where(title: self.kanji.split('')).with_progress(user).map{|i| [i.title, i]}.to_h
+    Card.kanjis.where(title: self.kanji.split('')).with_progress(user).map{|i| [i.title, i]}.to_h
+  end
+
+  def all_sentences
+    Sentence.joins(:sentences_words).merge(SentencesWord.where(word_seq: [seq, *long_words.pluck(:seq)]))
   end
 end
 

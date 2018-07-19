@@ -111,7 +111,7 @@ javascript:
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      sentences: #{{@word.sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}}
+      sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}}
     },
     methods: {
       addConnectedWord(wordType, word) {
