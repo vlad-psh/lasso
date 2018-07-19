@@ -43,6 +43,7 @@ paths index: '/',
     words_nf: '/words/:nf',
     mecab: '/mecab',
     sentences: '/sentences',
+    sentence: '/sentence/:id',
     autocomplete_word: '/autocomplete/word',
     word_connect: '/word/connect'
 
@@ -419,6 +420,13 @@ post :sentences do
   s.words = Word.where(seq: s.structure.map{|i| i['seq']}.compact.uniq)
 
   return 'OK'
+end
+
+delete :sentence do
+  s = Sentence.find(params[:id])
+  s.destroy
+
+  return 'ok'
 end
 
 get :autocomplete_word do

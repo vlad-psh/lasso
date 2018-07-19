@@ -39,6 +39,12 @@ body.myfont_jp2 .japanese {
   font-family: myfont_jp2, serif;
   font-size: 1.2em;
 }
+a {
+  color: #008ace;
+}
+a:hover {
+  color: #c00;
+}
 .japanese {
   font-size: 1.4em;
   font-style: normal !important;
@@ -785,8 +791,18 @@ form.add-note-form {
   display: block;
 }
 .connected-word a {
-  cursor: pointer;
   text-decoration: none;
+}
+.action-buttons {
+  opacity: 0.4;
+  font-size: 0.8em;
+  margin: 0 0.5em;
+}
+.action-buttons:hover {
+  opacity: 1;
+}
+.action-buttons a {
+  cursor: pointer;
 }
 /* ==============================
    SENTENCE FORM

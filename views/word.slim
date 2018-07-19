@@ -42,14 +42,16 @@ div.word-card
     tr
       td: div class="connected-word" v-for="(sw, swIndex) of shortWords"
         a> :href="sw.href" {{sw.title}}
-        | [
-        a @click="deleteShortWord(swIndex)" 消す
-        | ]
+        span.action-buttons
+          | [
+          a @click="deleteShortWord(swIndex)" 消す
+          | ]
       td: div class="connected-word" v-for="(sw, swIndex) of longWords"
         a> :href="sw.href" {{sw.title}}
-        | [
-        a @click="deleteLongWord(swIndex)" 消す
-        | ]
+        span.action-buttons
+          | [
+          a @click="deleteLongWord(swIndex)" 消す
+          | ]
     tr
       td: input id="sub-word-autocomplete" type="text"
       td: input id="super-word-autocomplete" type="text"
@@ -57,15 +59,22 @@ div.word-card
   h2 Sentences
 
   div style="background: #f7f2d2; padding: 0.4em 0.6em; text-align: justify;"
-    - @word.sentences.each_with_index do |s,idx|
-      span> = bullets[idx] || "(#{idx})"
-      span> = s.japanese
-      span> style="font-size: small" = "《#{s.english}》"
+    span v-for="(s, sIndex) of sentences"
+      | {{bullets[sIndex]}} {{s.jp}}
+      span< style="font-size: small" 《{{s.en}}》
+      span.action-buttons
+        | [
+        a.remove-sentence-button @click="removeSentence(sIndex)" 消す
+        | ] 
 
-  - @sentences.each_with_index do |s,idx|
-    span> = bullets[idx] || "(#{idx})"
-    span> = s.japanese
-    span> style="font-size: small" = s.english
+  div style="padding: 0.4em 0.6em; text-align: justify;"
+    span v-for="(s, sIndex) of rawSentences"
+      | {{bullets[sIndex]}} {{s.jp}}
+      span< style="font-size: small" 《{{s.en}}》
+      span.action-buttons
+        | [
+        a.remove-sentence-button @click="removeRawSentence(sIndex)" 消す
+        | ] 
 
 div style="background-color: #f7f2d2"
   == slim :sentence_form
@@ -114,8 +123,11 @@ javascript:
   var app = new Vue({
     el: '.word-card',
     data: {
+      bullets: #{{bullets.to_json}},
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
-      longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }}
+      longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
+      rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
+      sentences: #{{@word.sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}}
     },
     methods: {
       deleteShortWord(idx) {
@@ -147,6 +159,30 @@ javascript:
             }
           }).done(data => {
             this.longWords = this.longWords.filter(i => i.seq != removedSeq);
+          });
+        };
+      },
+      removeRawSentence(idx) {
+        var ask = confirm("Are you sure?");
+        var sentenceUrl = this.rawSentences[idx].href;
+        if (ask) {
+          $.ajax({
+            url: sentenceUrl,
+            method: "DELETE"
+          }).done(data => {
+            this.rawSentences = this.rawSentences.filter(i => i.href != sentenceUrl);
+          });
+        };
+      },
+      removeSentence(idx) {
+        var ask = confirm("Are you sure?");
+        var sentenceUrl = this.sentences[idx].href;
+        if (ask) {
+          $.ajax({
+            url: sentenceUrl,
+            method: "DELETE"
+          }).done(data => {
+            this.sentences = this.sentences.filter(i => i.href != sentenceUrl);
           });
         };
       }
