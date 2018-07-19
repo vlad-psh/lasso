@@ -787,8 +787,14 @@ form.add-note-form {
 .word-tag a {
   text-decoration: underline;
 }
-.connected-words-table .connected-word {
-  display: block;
+.connected-word,
+.connected-word-none {
+  display: inline-block;
+  margin: 0 0.5em;
+}
+.connected-word-none {
+  font-style: italic;
+  opacity: 0.5;
 }
 .connected-word a {
   text-decoration: none;
@@ -796,7 +802,6 @@ form.add-note-form {
 .action-buttons {
   opacity: 0.4;
   font-size: 0.8em;
-  margin: 0 0.5em;
 }
 .action-buttons:hover {
   opacity: 1;

@@ -35,27 +35,26 @@ div.word-card
       - elsif @word.ru.length == 1
         = ' ' + @word.ru[0]['gloss'].join(', ')
 
-  table.connected-words-table
-    tr
-      th Contains:
-      th Contained in:
-    tr
-      td: div class="connected-word" v-for="(sw, swIndex) of shortWords"
-        a> :href="sw.href" {{sw.title}}
-        span.action-buttons
-          | [
-          a @click="deleteConnectedWord('short', swIndex)" 消す
-          | ]
-      td: div class="connected-word" v-for="(sw, swIndex) of longWords"
-        a> :href="sw.href" {{sw.title}}
-        span.action-buttons
-          | [
-          a @click="deleteConnectedWord('long', swIndex)" 消す
-          | ]
-    tr
-      td: input class="word-connection-autocomplete" type="text" data-word-type="short"
-      td: input class="word-connection-autocomplete" type="text" data-word-type="long"
-    
+  div style="margin: 0.8em 0;"
+    span> style="font-weight: bold" Contains:
+    div class="connected-word" v-for="(sw, swIndex) of shortWords"
+      a> :href="sw.href" {{sw.title}}
+      span.action-buttons
+        | [
+        a @click="deleteConnectedWord('short', swIndex)" 消す
+        | ]
+    div class="connected-word-none" v-if="!shortWords.length" none
+    input<> class="word-connection-autocomplete" type="text" data-word-type="short" placeholder="Add short"
+
+    span> style="font-weight: bold" Belongs to:
+    div class="connected-word" v-for="(sw, swIndex) of longWords"
+      a> :href="sw.href" {{sw.title}}
+      span.action-buttons
+        | [
+        a @click="deleteConnectedWord('long', swIndex)" 消す
+        | ]
+    input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long"
+
   h2 Sentences
 
   div style="background: #f7f2d2; padding: 0.4em 0.6em; text-align: justify;"
