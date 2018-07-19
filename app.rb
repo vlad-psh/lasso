@@ -331,7 +331,7 @@ end
 
 get :word do
   @word = Word.find_by(seq: params[:id])
-  @sentences = Sentence.where('japanese ~ ?', @word.krebs.join('|'))
+  @sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
 
   slim :word
 end

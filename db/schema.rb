@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_17_143055) do
+ActiveRecord::Schema.define(version: 2018_07_19_061604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,6 +89,13 @@ ActiveRecord::Schema.define(version: 2018_07_17_143055) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
+  end
+
+  create_table "word_connections", id: false, force: :cascade do |t|
+    t.integer "long_seq", null: false
+    t.integer "short_seq", null: false
+    t.index ["long_seq"], name: "index_word_connections_on_long_seq"
+    t.index ["short_seq"], name: "index_word_connections_on_short_seq"
   end
 
   create_table "word_titles", force: :cascade do |t|

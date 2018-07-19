@@ -82,7 +82,8 @@ xml.locate('JMdict/entry').each do |entry| # проходим по каждой 
   end
 
   kanjis = []
-  word.kele.map{|i| i['keb']}.join('').split('').each do |i|
+  # It still uses SYMBOL (:keb) as key because it has not saved yet
+  word.kele.map{|i| i[:keb]}.join('').split('').each do |i|
     kanjis << i if i.kanji?
   end if word.kele
   kanjis.uniq!

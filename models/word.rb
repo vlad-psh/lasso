@@ -3,6 +3,11 @@ class Word < ActiveRecord::Base
   has_and_belongs_to_many :sentences
   has_many :progresses, primary_key: :card_id, foreign_key: :card_id
 
+  has_many :short2long_connections, class_name: 'WordConnection', primary_key: :seq, foreign_key: :short_seq
+  has_many :long2short_connections, class_name: 'WordConnection', primary_key: :seq, foreign_key: :long_seq
+  has_many :long_words,  through: :short2long_connections
+  has_many :short_words, through: :long2short_connections
+
   def self.with_progress(user)
     progresses = Progress.joins(:word).merge( all.unscope(:select) ).where(user: user).hash_me
     all.each do |c|
@@ -23,6 +28,14 @@ class Word < ActiveRecord::Base
     kebs = kele ? kele.map{|i| i['keb']} : []
     rebs = rele ? rele.map{|i| i['reb']} : []
     return [*kebs, *rebs].compact
+  end
+
+  def kanji_objects
+    return Card.kanjis.where(title: self.kanji.split('')).map{|i| [i.title, i]}.to_h
+  end
+
+  def kanji_objects_with_progress(user)
+    return Card.kanjis.where(title: self.kanji.split('')).with_progress(user).map{|i| [i.title, i]}.to_h
   end
 end
 
