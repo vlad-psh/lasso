@@ -784,6 +784,10 @@ form.add-note-form {
 .connected-words-table .connected-word {
   display: block;
 }
+.connected-word a {
+  cursor: pointer;
+  text-decoration: none;
+}
 /* ==============================
    SENTENCE FORM
    ============================== */

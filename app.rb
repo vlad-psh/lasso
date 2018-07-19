@@ -440,3 +440,11 @@ post :word_connect do
 
   return 'ok'
 end
+
+delete :word_connect do
+  long = Word.find_by(seq: params[:long])
+  short = Word.find_by(seq: params[:short])
+  long.short_words.delete(short)
+
+  return 'ok'
+end

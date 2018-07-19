@@ -40,8 +40,16 @@ div.word-card
       td Contains:
       td Contained in:
     tr
-      td: a> class="connected-word" v-for="sw of shortWords" :href="sw.href" {{sw.title}}
-      td: a> class="connected-word" v-for="sw of longWords" :href="sw.href" {{sw.title}}
+      td: div class="connected-word" v-for="(sw, swIndex) of shortWords"
+        a> :href="sw.href" {{sw.title}}
+        | [
+        a @click="deleteShortWord(swIndex)" 消す
+        | ]
+      td: div class="connected-word" v-for="(sw, swIndex) of longWords"
+        a> :href="sw.href" {{sw.title}}
+        | [
+        a @click="deleteLongWord(swIndex)" 消す
+        | ]
     tr
       td: input id="sub-word-autocomplete" type="text"
       td: input id="super-word-autocomplete" type="text"
@@ -110,6 +118,37 @@ javascript:
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }}
     },
     methods: {
-
+      deleteShortWord(idx) {
+        var ask = confirm("Are you sure?");
+        var removedSeq = this.shortWords[idx].seq;
+        if (ask) {
+          $.ajax({
+            url: "#{{path_to(:word_connect)}}",
+            method: "DELETE",
+            data: {
+              long: #{{@word.seq}},
+              short: removedSeq
+            }
+          }).done(data => {
+            this.shortWords = this.shortWords.filter(i => i.seq != removedSeq);
+          });
+        };
+      },
+      deleteLongWord(idx) {
+        var ask = confirm("Are you sure?");
+        var removedSeq = this.longWords[idx].seq;
+        if (ask) {
+          $.ajax({
+            url: "#{{path_to(:word_connect)}}",
+            method: "DELETE",
+            data: {
+              long: removedSeq,
+              short: #{{@word.seq}}
+            }
+          }).done(data => {
+            this.longWords = this.longWords.filter(i => i.seq != removedSeq);
+          });
+        };
+      }
     }
   });
