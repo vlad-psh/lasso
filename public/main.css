@@ -767,11 +767,27 @@ form.add-note-form {
 }
 .word-kreb {
   display: inline-block;
-  margin: 0 0.6em 0 0;
-  font-size: 2em;
+  padding: 0 0.3em;
+  margin: 0 0.6em 0 -0.3em; /* -0.3em to compensate padding */
+  font-size: 1.4em;
+}
+.word-kebs .word-kreb-common:nth-child(1),
+.word-rebs .word-kreb-common:nth-child(1) {
+  background-color: #ffec83;
 }
 .word-kreb-common {
   border-bottom: 2px dotted green;
+}
+.word-glosses {
+  text-align: justify;
+  line-height: 1.6em;
+  margin-top: 0.4em;
+}
+.word-gloss-flag {
+  display: inline-block;
+  font-size: 1.4em;
+  vertical-align: middle;
+  margin-right: 0.3em;
 }
 .word-gloss-pos {
   color: green;
@@ -877,6 +893,9 @@ input.ensentence {
 /* precise value to fit onto iphone (vertical) screen without margins :) */
   .elements-list-compact .elements-list-item {
     font-size: 1.006em !important;
+  }
+  .word-card {
+    font-size: 0.8em;
   }
 }
 
