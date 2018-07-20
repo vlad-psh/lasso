@@ -109,4 +109,12 @@ module WakameHelpers
     return m
   end
 
+  def kr_common?(kreb)
+    return false unless kreb && kreb['pri']
+    kreb['pri'].each do |k,v|
+      return true if %w(news ichi spec gai).include?(k) && v == 1
+      return true if k == 'spec' && v == 2
+    end
+    return false
+  end
 end

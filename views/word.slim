@@ -1,18 +1,13 @@
 script src="/js/jquery-ui.min.js"
-div.word-card
+div.word-card#word-card-app
 
+  - freq_name = {'ichi'=>'i', 'news'=>'N', 'spec'=>'s', 'gai'=>'G', 'nf'=>'F'}
   div.word-krebs
     - [*@word.kele, *@word.rele].each do |ele|
-      div.word-kreb
-        div.word-kreb-title = ele['keb'] || ele['reb']
-        - if ele['pri']
-          div.word-tags
-          - ele['pri'].each do |k,v|
-            span.word-tag = "#{k}:#{v}"
+      div.word-kreb class=('word-kreb-common' if kr_common?(ele)) title=(ele['pri'].map{|k,v| "#{k}:#{v}"}.join(', ') if ele['pri']) = ele['keb'] || ele['reb']
 
   - if @word.card_id.present?
-    div.word-tags
-      span.word-tag: a href=path_to(:card).with(@word.card_id) = "wk:#{@word.card.level}"
+    div style="font-size: 0.8em": a href=path_to(:card).with(@word.card_id) = "WK ##{@word.card_id} (lvl:#{@word.card.level})"
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -21,6 +16,8 @@ div.word-card
     - if @word.en.length > 1
       - @word.en.each_with_index do |m2,i|
         = " #{bullets[i]} "
+        - if m2['pos'].present?
+          span> class="word-gloss-pos" = m2['pos'].map{|i| i[1..-2]}.join(', ')
         = m2['gloss'].join(', ')
     - elsif @word.en.length == 1
       = ' ' + @word.en[0]['gloss'].join(', ')
@@ -53,11 +50,14 @@ div.word-card
         | [
         a @click="deleteConnectedWord('long', swIndex)" 消す
         | ]
+    div class="connected-word-none" v-if="!longWords.length" none
     input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long"
+
+  div style="opacity: 0.5; font-size: 0.6em; text-align: justify" &#x2139;&#xfe0f; Use only those words, which doesn't add new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)
 
   h2 Sentences
 
-  div style="background: #f7f2d2; padding: 0.4em 0.6em; text-align: justify;"
+  div.word-sentences.word-sentences-structured
     span v-for="(s, sIndex) of sentences"
       | {{bullets[sIndex]}} {{s.jp}}
       span< style="font-size: small" 《{{s.en}}》
@@ -66,7 +66,7 @@ div.word-card
         a.remove-sentence-button @click="removeSentence(sIndex, false)" 消す
         | ] 
 
-  div style="padding: 0.4em 0.6em; text-align: justify;"
+  div.word-sentences
     span v-for="(s, sIndex) of rawSentences"
       | {{bullets[sIndex]}} {{s.jp}}
       span< style="font-size: small" 《{{s.en}}》
@@ -75,7 +75,7 @@ div.word-card
         a.remove-sentence-button @click="removeSentence(sIndex, true)" 消す
         | ] 
 
-div style="background-color: #f7f2d2"
+div.word-sentences.word-sentences-structured style="text-align: center;"
   == slim :sentence_form
 
 javascript:
@@ -103,8 +103,8 @@ javascript:
     });
   });
 
-  var app = new Vue({
-    el: '.word-card',
+  var wordApp = new Vue({
+    el: '#word-card-app',
     data: {
       bullets: #{{bullets.to_json}},
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},

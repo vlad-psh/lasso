@@ -1,6 +1,4 @@
 - if flash[:error]
-  div.flash-error
-    = flash[:error]
+  div.flash-container: div.flash-error = flash[:error]
 - if flash[:notice]
-  div.flash-notice
-    = flash[:notice]
+  div.flash-container: div.flash-notice = flash[:notice]

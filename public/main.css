@@ -50,16 +50,16 @@ a:hover {
   font-style: normal !important;
 }
 #container {
+  margin: 0 auto;
+}
+.flash-container {
+  width: 100%;
   text-align: center;
-/*  margin: 0.5em;*/
-  margin: 0;
 }
 .flash-notice,
 .flash-error {
   color: white;
-  display: inline-block;
   padding: 0.2em 0.5em;
-  margin: 0.5em 0;
 }
 .flash-notice {background-color: #4caf50;}
 .flash-error  {background-color: #e51c23;}
@@ -760,32 +760,23 @@ form.add-note-form {
 .word-card {
   max-width: 50em;
   margin: 0 auto;
-  text-align: left;
+  padding: 0.6em;
 }
 .word-krebs {
-  margin: 1em 0 1.6em 0;
+  margin-bottom: 0.6em;
 }
 .word-kreb {
   display: inline-block;
-  margin: 0 1em 0 0;
-}
-.word-kreb-title {
+  margin: 0 0.6em 0 0;
   font-size: 2em;
 }
-.word-tag,
-.word-tag a {
-  font-family: sans-serif;
-  background-color: #257a40;
-  color: #def7e6;
-  margin: 0 0.2em 0 0;
-  padding: 0 0.3em;
-  border-radius: 2px;
+.word-kreb-common {
+  border-bottom: 2px dotted green;
 }
-.word-tag {
-  font-size: 0.7em;
-}
-.word-tag a {
-  text-decoration: underline;
+.word-gloss-pos {
+  color: green;
+  font-style: italic;
+  font-size: 0.9em;
 }
 .connected-word,
 .connected-word-none {
@@ -808,6 +799,14 @@ form.add-note-form {
 }
 .action-buttons a {
   cursor: pointer;
+}
+.word-sentences {
+  padding: 0.4em 0.6em;
+  margin: 0 -0.6em; /* compensate parent's paddings */
+  text-align: justify;
+}
+.word-sentences-structured {
+  background: #f7f2d2;
 }
 /* ==============================
    SENTENCE FORM
