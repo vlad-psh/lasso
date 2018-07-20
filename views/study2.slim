@@ -1,0 +1,17 @@
+div#sentence-quiz
+  div.sentence-question
+    span v-for="(word, wordIndex) of sentence" :class="word.seq ? 'word-question' : ''" = "{{word.text}}"
+  p = "{{english}}"
+
+
+javascript:
+  var sentenceQuizApp = new Vue({
+    el: '#sentence-quiz',
+    data: {
+      sentence: #{{@sentence.structure.to_json}},
+      english: "#{{@sentence.english}}"
+    },
+    methods: {
+
+    }
+  });

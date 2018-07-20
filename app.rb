@@ -45,7 +45,8 @@ paths index: '/',
     sentences: '/sentences',
     sentence: '/sentence/:id',
     autocomplete_word: '/autocomplete/word',
-    word_connect: '/word/connect'
+    word_connect: '/word/connect',
+    study2: '/study2'
 
 configure do
   puts '---> init <---'
@@ -455,4 +456,9 @@ delete :word_connect do
   long.short_words.delete(short)
 
   return 'ok'
+end
+
+get :study2 do
+  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
+  slim :study2
 end

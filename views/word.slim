@@ -4,6 +4,7 @@ div.word-card#word-card-app
   - freq_name = {'ichi'=>'i', 'news'=>'N', 'spec'=>'s', 'gai'=>'G', 'nf'=>'F'}
   div.word-krebs
     - {kebs: @word.kele, rebs: @word.rele}.each do |kr_type, ele_array|
+      - next unless ele_array
       span class="word-#{kr_type}"
         - ele_array.each do |ele|
           div.word-kreb class=('word-kreb-common' if kr_common?(ele)) title=(ele['pri'].map{|k,v| "#{k}:#{v}"}.join(', ') if ele['pri']) = ele['keb'] || ele['reb']
@@ -13,26 +14,18 @@ div.word-card#word-card-app
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
-  div.word-glosses
-    div.word-gloss-flag &#x1f1ec;&#x1f1e7;
-    - if @word.en.length > 1
-      - @word.en.each_with_index do |m2,i|
-        = "#{bullets[i]} "
-        - if m2['pos'].present?
-          span> class="word-gloss-pos" = m2['pos'].map{|i| i[1..-2]}.join(', ')
-        = m2['gloss'].join(', ') + ' '
-    - elsif @word.en.length == 1
-      = @word.en[0]['gloss'].join(', ')
-
-  - if @word.ru
+  - [{glosses: @word.en, flag: "&#x1f1ec;&#x1f1e7;"}, {glosses: @word.ru, flag: "&#x1f1f7;&#x1f1fa;"}].each do |lang|
+    - next unless lang[:glosses]
     div.word-glosses
-      div.word-gloss-flag &#x1f1f7;&#x1f1fa;
-      - if @word.ru.length > 1
-        - @word.ru.each_with_index do |m2,i|
+      div.word-gloss-flag == lang[:flag]
+      - if lang[:glosses].length > 1
+        - lang[:glosses].each_with_index do |m2,i|
           = "#{bullets[i]} "
+          - if m2['pos'].present?
+            span> class="word-gloss-pos" = m2['pos'].map{|i| i[1..-2]}.join(', ')
           = m2['gloss'].join(', ') + ' '
-      - elsif @word.ru.length == 1
-        = @word.ru[0]['gloss'].join(', ')
+      - elsif lang[:glosses].length == 1
+        = lang[:glosses][0]['gloss'].join(', ')
 
   div style="margin: 0.8em 0;"
     span> style="font-weight: bold" Contains:
@@ -97,7 +90,7 @@ javascript:
           method: 'POST',
           data: postData
         }).done(data => {
-          app.addConnectedWord(wordType, {seq: ui.item.id, title: ui.item.title, href: ui.item.href});
+          wordApp.addConnectedWord(wordType, {seq: ui.item.id, title: ui.item.title, href: ui.item.href});
           $(this).val('');
         });
 

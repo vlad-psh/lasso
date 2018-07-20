@@ -857,6 +857,21 @@ input.ensentence {
   margin: 0 2px;
 }
 /* ==============================
+   SENTENCE QUIZ
+   ============================== */
+#sentence-quiz {
+  max-width: 45em;
+  margin: 0 auto;
+  text-align: center;
+}
+.sentence-question {
+  font-size: 2em;
+}
+.sentence-question .word-question {
+  background: orange;
+  margin: 0 1px;
+}
+/* ==============================
    MOBILE
    default window width: 980
    with meta:
