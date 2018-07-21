@@ -237,8 +237,8 @@ get :search do
       @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
     end
 
-    seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").order("char_length(title)").pluck(:seq).uniq
-    words = Word.where(seq: seqs)
+    seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").order("char_length(title), seq").pluck(:seq).uniq
+    words = Word.where(seq: seqs).with_progress(current_user)
     @words = words.sort{|a,b| seqs.index(a.seq) <=> seqs.index(b.seq)}
   end
 

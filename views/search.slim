@@ -8,17 +8,18 @@ ruby:
     return "#{words[0]}〈#{words[1..-1].join('・')}〉" if words.length > 1
   end
 
-- if @words.length > 0
-  div.hr-title: span style="padding: 1em" JMdict
-  div.search-results
-    - @words.each do |w|
-      div.search-result class=(w.is_common ? 'search-result-common' : '')
-        - if w.kele && w.kele.length > 0
-          == highlight(words_to_string(w.kele.map{|i|i['keb']}), params['query']) + '　'
-        - if w.rele && w.rele.length > 0
-          == highlight(words_to_string(w.rele.map{|i|i['reb']}), params['query']) + ' '
-        == w.en[0]['gloss'].join('; ')
-        a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
+- {'JMdict common words' => @words.select{|i| i.is_common}, 'JMdict' => @words.select{|i| !i.is_common}}.each do |title, words|
+  - if words.length > 0
+    div.hr-title: span style="padding: 1em" = "#{title} (#{words.length})"
+    div.search-results
+      - words.each do |w|
+        div.search-result class=wk_level(w.progress)
+          - if w.kele && w.kele.length > 0
+            == highlight(words_to_string(w.kele.map{|i|i['keb']}), params['query']) + '　'
+          - if w.rele && w.rele.length > 0
+            == highlight(words_to_string(w.rele.map{|i|i['reb']}), params['query']) + ' '
+          == w.en[0]['gloss'].join('; ')
+          a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
 
 - if counters['w'] > 0
   div.hr-title: span style="padding: 1em" Words

@@ -1,6 +1,6 @@
 class Word < ActiveRecord::Base
   belongs_to :card
-  has_many :progresses, primary_key: :card_id, foreign_key: :card_id
+  has_many :progresses, primary_key: :seq, foreign_key: :seq
 
   has_many :sentences_words, primary_key: :seq, foreign_key: :word_seq
   has_many :sentences, through: :sentences_words

@@ -721,7 +721,7 @@ form.add-note-form {
    ============================== */
 .search-results {
   column-width: 300px;
-  column-gap: 0.4em;
+  column-gap: 0; /*0.4em;*/
   text-align: left;
   font-size: 0.9em;
 }
@@ -730,8 +730,26 @@ form.add-note-form {
   -webkit-column-break-inside: avoid; /* Chrome, Safari */
   page-break-inside: avoid;           /* Theoretically FF 20+ */
   display: inline-block;              /* Actually FF 20+ */
-  width: calc(100% - 0.4em); /* minus column-gap */
-  border-bottom: 1px dotted #d2edf7;
+  width: calc(100% - 0.4em - 1px); /* minus padding minus right border */
+/*  border-bottom: 1px dotted #d2edf7;*/
+}
+.search-result.locked,
+.search-result.unlocked,
+.search-result.apprentice,
+.search-result.guru,
+.search-result.master,
+.search-result.enlightened,
+.search-result.burned {
+  border-bottom-style: dotted;
+  border-right-style: dotted;
+}
+.search-result.locked {
+  background-color: none;
+  color: black;
+}
+.search-result.unlocked {
+  background-color: #efeb9e;
+  color: black;
 }
 .search-result-common {
   background-color: #d2edf7;
