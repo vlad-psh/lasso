@@ -109,7 +109,7 @@ class Card < ActiveRecord::Base
       progress.unlocked = true
       progress.unlocked_at = DateTime.now
       progress.save
-      Action.create(card: self, user: user, action_type: 'unlocked')
+      Action.create(card: self, progress: progress, ueser: user, action_type: 'unlocked')
     end
   end
 
@@ -123,7 +123,7 @@ class Card < ActiveRecord::Base
     progress.deck = 0
     progress.save
 
-    Action.create(card: self, user: user, action_type: 'learned')
+    Action.create(card: self, progress: progress, user: user, action_type: 'learned')
 
     stats = Statistic.find_or_initialize_by(user: user, date: Date.today)
     stats.learned[self.element_type] += 1
@@ -181,17 +181,17 @@ class Card < ActiveRecord::Base
 
     if a == :yes
       move_to_deck_by!(progress.deck + 1, user)
-      Action.create(card: self, user: user, action_type: 'correct')
+      Action.create(card: self, progress: progress, user: user, action_type: 'correct')
     elsif a == :no
       move_to_deck_by!(progress.deck - 1, user, choose_schedule_day_by(progress.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
-      Action.create(card: self, user: user, action_type: 'incorrect')
+      Action.create(card: self, progress: progress, user: user, action_type: 'incorrect')
     elsif a == :soso
       # leave in the same deck
       move_to_deck_by!(progress.deck, user)
-      Action.create(card: self, user: user, action_type: 'soso') if progress.deck != 0
+      Action.create(card: self, progress: progress, user: user, action_type: 'soso') if progress.deck != 0
     elsif a == :burn
       move_to_deck_by!(7, user)
-      Action.create(card: self, user: user, action_type: 'burn')
+      Action.create(card: self, progress: progress, user: user, action_type: 'burn')
     end
   end
 

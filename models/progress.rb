@@ -33,5 +33,9 @@ class Progress < ActiveRecord::Base
     Hash[*all.map{|p| [p.card_id, p]}.flatten]
   end
 
+  def self.hash2_me
+    Hash[*all.map{|p| [p.seq, p]}.flatten]
+  end
+
 end
 

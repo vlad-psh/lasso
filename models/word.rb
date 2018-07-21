@@ -11,9 +11,9 @@ class Word < ActiveRecord::Base
   has_many :short_words, through: :long2short_connections
 
   def self.with_progress(user)
-    progresses = Progress.joins(:word).merge( all.unscope(:select) ).where(user: user).hash_me
-    all.each do |c|
-      c.progress = progresses[c.card_id]
+    progresses = Progress.joins(:word).merge( all.unscope(:select) ).where(user: user).hash2_me
+    all.each do |w|
+      w.progress = progresses[w.seq]
     end
   end
 
@@ -48,6 +48,7 @@ class Word < ActiveRecord::Base
     progress = Progress.find_or_create_by(seq: self.seq, user: user)
     throw StandardError.new("Already learned") if progress.learned
 
+    progress.unlocked = true
     progress.learned = true
     progress.learned_at = DateTime.now
     progress.deck = 0
