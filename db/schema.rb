@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_21_141254) do
+ActiveRecord::Schema.define(version: 2018_07_21_141713) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 2018_07_21_141254) do
     t.jsonb "details"
     t.boolean "failed", default: false
     t.integer "seq"
+    t.datetime "unlocked_at"
+    t.datetime "learned_at"
     t.index ["card_id"], name: "index_progresses_on_card_id"
     t.index ["seq"], name: "index_progresses_on_seq"
     t.index ["user_id"], name: "index_progresses_on_user_id"
