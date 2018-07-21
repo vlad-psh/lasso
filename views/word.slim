@@ -9,8 +9,12 @@ div.word-card#word-card-app
         - ele_array.each do |ele|
           div.word-kreb class=('word-kreb-common' if kr_common?(ele)) title=(ele['pri'].map{|k,v| "#{k}:#{v}"}.join(', ') if ele['pri']) = ele['keb'] || ele['reb']
 
-  - if @word.card_id.present?
-    div style="font-size: 0.8em": a href=path_to(:card).with(@word.card_id) = "WK ##{@word.card_id} (lvl:#{@word.card.level})"
+  div style="font-size: 0.8em"
+    - if @word.card_id.present?
+      a> href=path_to(:card).with(@word.card_id) = "WK ##{@word.card_id} (lvl:#{@word.card.level})"
+    span v-if="progress && progress.learned" Learned
+    span v-else="true"
+      a @click="learnWord" Learn!
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -103,6 +107,8 @@ javascript:
     el: '#word-card-app',
     data: {
       bullets: #{{bullets.to_json}},
+      word: #{{@word.to_json}},
+      progress: #{{@word.progress.try(:to_json) || 'null'}},
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
@@ -152,6 +158,14 @@ javascript:
             }
           });
         };
+      },
+      learnWord() {
+        $.ajax({
+          url: "#{{path_to(:learn_word).with(@word.seq)}}",
+          method: "POST"
+        }).done(data => {
+          this.progress = JSON.parse(data);
+        });
       }
     }
   });

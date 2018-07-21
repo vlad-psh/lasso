@@ -1,6 +1,7 @@
 class Action < ActiveRecord::Base
   belongs_to :card
   belongs_to :user
+  belongs_to :progress
 
   enum action_type: {
         unlocked:  1,

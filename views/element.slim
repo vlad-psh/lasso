@@ -50,7 +50,7 @@ div.element-card
               br
               a href=path_to(:word).with(e.seq) = "Entity #{e.seq}"
     - if current_user.present? && !e.progress.try(:learned)
-      - if e.progress.try(:unlocked)
+      - if e.progress.try(:unlocked) && !e.word? # words should be learned from new word's page
         div.top-info-block
           div.hr-title: span Actions
           div.top-info-content

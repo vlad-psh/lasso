@@ -107,6 +107,7 @@ class Card < ActiveRecord::Base
 
     unless progress.unlocked
       progress.unlocked = true
+      progress.unlocked_at = DateTime.now
       progress.save
       Action.create(card: self, user: user, action_type: 'unlocked')
     end
@@ -118,6 +119,7 @@ class Card < ActiveRecord::Base
     throw StandardError.new("Already learned") if progress.learned
 
     progress.learned = true
+    progress.learned_at = DateTime.now
     progress.deck = 0
     progress.save
 

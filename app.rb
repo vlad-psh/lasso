@@ -40,6 +40,7 @@ paths index: '/',
     settings: '/settings',
     stats: '/stats',
     word: '/word/:id',
+    learn_word: '/word/learn/:seq', # POST
     words_nf: '/words/:nf',
     mecab: '/mecab',
     sentences: '/sentences',
@@ -334,13 +335,24 @@ get :stats do
 end
 
 get :word do
-  @word = Word.includes(:short_words, :long_words).find_by(seq: params[:id])
+  protect!
+
+  @word = Word.includes(:short_words, :long_words).where(seq: params[:id]).with_progress(current_user)[0]
   @sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
 
   slim :word
 end
 
+post :learn_word do
+  protect!
+  @word = Word.find_by(seq: params[:seq])
+  @word.learn_by!(current_user)
+  return Progress.find_by(seq: params[:seq]).to_json
+end
+
 get :words_nf do
+  protect!
+
   @view_user = current_user || User.first
   @words = Word.where(nf: params[:nf]).with_progress(@view_user)
 
@@ -393,6 +405,8 @@ def mecab_parse(sentence)
 end
 
 post :mecab do
+  protect!
+
   wt = WordTitle.where(title: params[:sentence]).pluck(:seq).uniq
 
   if wt.length == 1 # found exact word
@@ -410,6 +424,8 @@ post :mecab do
 end
 
 post :sentences do
+  protect!
+
   s = Sentence.new({
     japanese: params['japanese'],
     english: params['english'],
@@ -424,6 +440,8 @@ post :sentences do
 end
 
 delete :sentence do
+  protect!
+
   s = Sentence.find(params[:id])
   s.destroy
 
@@ -431,6 +449,8 @@ delete :sentence do
 end
 
 get :autocomplete_word do
+  protect!
+
   ww = Word.where(seq: WordTitle.where(title: params['term']).pluck(:seq)).map{|i|
         {
             id: i.seq,
@@ -443,6 +463,8 @@ get :autocomplete_word do
 end
 
 post :word_connect do
+  protect!
+
   long = Word.find_by(seq: params[:long])
   short = Word.find_by(seq: params[:short])
   long.short_words << short
@@ -451,6 +473,8 @@ post :word_connect do
 end
 
 delete :word_connect do
+  protect!
+
   long = Word.find_by(seq: params[:long])
   short = Word.find_by(seq: params[:short])
   long.short_words.delete(short)

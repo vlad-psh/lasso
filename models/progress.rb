@@ -1,7 +1,8 @@
 class Progress < ActiveRecord::Base
   belongs_to :user
   belongs_to :card
-  belongs_to :word, primary_key: :card_id, foreign_key: :card_id
+  belongs_to :word, primary_key: :seq, foreign_key: :seq
+  has_many :actions
 
 #               unlocked  learned  scheduled
 #locked         -         -        -

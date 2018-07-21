@@ -43,5 +43,23 @@ class Word < ActiveRecord::Base
   def all_sentences
     Sentence.joins(:sentences_words).merge(SentencesWord.where(word_seq: [seq, *long_words.pluck(:seq)]))
   end
+
+  def learn_by!(user)
+    progress = Progress.find_or_create_by(seq: self.seq, user: user)
+    throw StandardError.new("Already learned") if progress.learned
+
+    progress.learned = true
+    progress.learned_at = DateTime.now
+    progress.deck = 0
+    progress.save
+
+    Action.create(user: user, progress: progress, action_type: :learned)
+
+    stats = Statistic.find_or_initialize_by(user: user, date: Date.today)
+    stats.learned['w'] += 1
+    stats.save
+
+    return true
+  end
 end
 
