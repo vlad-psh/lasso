@@ -40,7 +40,8 @@ paths index: '/',
     settings: '/settings',
     stats: '/stats',
     word: '/word/:id',
-    learn_word: '/word/learn/:seq', # POST
+    word_learn: '/word/learn/:seq', # POST
+    word_burn: '/word/burn/:seq', # POST
     words_nf: '/words/:nf',
     mecab: '/mecab',
     sentences: '/sentences',
@@ -343,10 +344,17 @@ get :word do
   slim :word
 end
 
-post :learn_word do
+post :word_learn do
   protect!
   @word = Word.find_by(seq: params[:seq])
   @word.learn_by!(current_user)
+  return Progress.find_by(seq: params[:seq]).to_json
+end
+
+post :word_burn do
+  protect!
+  @word = Word.find_by(seq: params[:seq])
+  @word.burn_by!(current_user)
   return Progress.find_by(seq: params[:seq]).to_json
 end
 

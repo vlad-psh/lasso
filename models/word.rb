@@ -62,5 +62,17 @@ class Word < ActiveRecord::Base
 
     return true
   end
+
+  def burn_by!(user)
+    progress = Progress.find_or_create_by(seq: self.seq, user: user)
+    throw StandardError.new("Already burned") if progress.burned_at
+
+    progress.burned_at = DateTime.now
+    progress.save
+
+    Action.create(user: user, progress: progress, action_type: :burn)
+
+    return true
+  end
 end
 
