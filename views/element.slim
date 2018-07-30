@@ -56,6 +56,17 @@ div.element-card
           div.top-info-content
             form method="POST" action=path_to(:learn).with(e.id)
               input type="submit" value='Learn!'
+    - if e.word? && e.seq.blank?
+      form method="POST" action=path_to(:link_word_to_card)
+        input type="hidden" name="card_id" value=e.id
+        input type="text" name="word_id"
+        input type="submit" value="link!"
+    - if e.word? && !e.is_disabled
+      form method="POST" action=path_to(:disable_card)
+        input type="hidden" name="card_id" value=e.id
+        input type="submit" value="disable"
+    - else
+      ' disabled
 
   - if e.detailsb['mynotes']
     div == e.detailsb["mynotes"]

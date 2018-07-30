@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_22_060751) do
+ActiveRecord::Schema.define(version: 2018_07_25_102130) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema.define(version: 2018_07_22_060751) do
     t.string "title"
     t.jsonb "detailsb"
     t.integer "seq"
+    t.boolean "is_disabled", default: false
   end
 
   create_table "cards_relations", force: :cascade do |t|

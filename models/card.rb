@@ -104,6 +104,7 @@ class Card < ActiveRecord::Base
 
   def unlock_by!(user)
     progress = Progress.find_or_create_by(card: self, user: user)
+    progress.update_attribute(:seq, self.seq)
 
     unless progress.unlocked
       progress.unlocked = true
@@ -121,6 +122,7 @@ class Card < ActiveRecord::Base
     progress.learned = true
     progress.learned_at = DateTime.now
     progress.deck = 0
+    progress.seq = self.seq
     progress.save
 
     Action.create(card: self, progress: progress, user: user, action_type: 'learned')

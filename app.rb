@@ -48,6 +48,8 @@ paths index: '/',
     sentence: '/sentence/:id',
     autocomplete_word: '/autocomplete/word',
     word_connect: '/word/connect',
+    link_word_to_card: '/linkw2c',
+    disable_card: '/disable_card',
     study2: '/study2'
 
 configure do
@@ -493,4 +495,27 @@ end
 get :study2 do
   @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
   slim :study2
+end
+
+post :link_word_to_card do
+  card = Card.find(params[:card_id])
+  word = Word.find_by(seq: params[:word_id])
+  card.update_attribute(:seq, word.seq)
+  word.update_attribute(:card_id, card.id)
+
+  card.progresses.each do |p|
+    p.update_attribute(:seq, word.seq)
+  end
+
+  redirect path_to(:card).with(card.id)
+end
+
+post :disable_card do
+  c = Card.find(params['card_id'])
+  c.update_attribute(:is_disabled, true)
+  c.progresses.each do |p|
+    p.update_attribute(:burned_at, DateTime.now)
+  end
+
+  redirect path_to(:card).with(c.id)
 end

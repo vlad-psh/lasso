@@ -378,6 +378,10 @@ body.black .unlocked .description {
   background-color: #555 !important;
   color: #ccc !important;
 }
+.element-disabled .description {
+  background-color: black !important;
+  color: #999 !important;
+}
 /* ==============================
    LEVEL ELEMENTS LIST
    ============================== */
