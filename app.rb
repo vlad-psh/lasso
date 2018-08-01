@@ -48,6 +48,7 @@ paths index: '/',
     sentence: '/sentence/:id',
     autocomplete_word: '/autocomplete/word',
     word_connect: '/word/connect',
+    word_set_comments: '/word/:id/comments',
     link_word_to_card: '/linkw2c',
     disable_card: '/disable_card',
     study2: '/study2'
@@ -493,11 +494,15 @@ delete :word_connect do
 end
 
 get :study2 do
+  protect!
+
   @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
   slim :study2
 end
 
 post :link_word_to_card do
+  protect!
+
   card = Card.find(params[:card_id])
   word = Word.find_by(seq: params[:word_id])
   card.update_attribute(:seq, word.seq)
@@ -511,6 +516,8 @@ post :link_word_to_card do
 end
 
 post :disable_card do
+  protect!
+
   c = Card.find(params['card_id'])
   c.update_attribute(:is_disabled, true)
   c.progresses.each do |p|
@@ -518,4 +525,13 @@ post :disable_card do
   end
 
   redirect path_to(:card).with(c.id)
+end
+
+post :word_set_comments do
+  protect!
+
+  p = Progress.find_or_create_by(user_id: current_user.id, seq: params[:id])
+  p.update_attribute(:comments, params[:comments])
+
+  return 'ok'
 end

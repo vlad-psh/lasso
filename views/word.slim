@@ -34,6 +34,13 @@ div.word-card#word-card-app
       - elsif lang[:glosses].length == 1
         = lang[:glosses][0]['gloss'].join(', ')
 
+  div.word-comments-form
+    div v-if="forms.comments"
+      textarea id="word-comments-textarea" v-model="comments"
+      input type="button" value="Save" @click="saveComments"
+    div.editable-text v-else-if="comments" @click="showCommentsForm" = "{{comments}}"
+    div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentsForm" Add comment
+
   div style="margin: 0.8em 0;"
     span> style="font-weight: bold" Contains:
     div class="connected-word" v-for="(sw, swIndex) of shortWords"
@@ -109,13 +116,15 @@ javascript:
   var wordApp = new Vue({
     el: '#word-card-app',
     data: {
+      forms: {comments: false},
       bullets: #{{bullets.to_json}},
       word: #{{@word.to_json}},
       progress: #{{@word.progress.try(:to_json) || 'null'}},
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}}
+      sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
+      comments: "#{{@word.progress.try(:comments) || ''}}"
     },
     methods: {
       addConnectedWord(wordType, word) {
@@ -173,6 +182,18 @@ javascript:
           url: "#{{path_to(:word_burn).with(@word.seq)}}",
           method: "POST"
         }).done(data => this.progress = JSON.parse(data));
+      },
+      saveComments() {
+        $.ajax({
+          url: "#{{path_to(:word_set_comments).with(@word.seq)}}",
+          data: {comments: this.comments},
+          method: "POST"
+        }).done(data => {
+          this.forms.comments = false;
+        });
+      },
+      showCommentsForm() {
+        this.forms.comments = true;
       }
     }
   });
