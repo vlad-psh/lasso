@@ -40,8 +40,8 @@ paths index: '/',
     settings: '/settings',
     stats: '/stats',
     word: '/word/:id',
-    word_learn: '/word/learn/:seq', # POST
-    word_burn: '/word/burn/:seq', # POST
+    word_learn: '/word/learn', # POST
+    word_burn: '/word/burn', # POST
     words_nf: '/words/:nf',
     mecab: '/mecab',
     sentences: '/sentences',
@@ -243,7 +243,7 @@ get :search do
     end
 
     seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").order("char_length(title), seq").pluck(:seq).uniq
-    words = Word.where(seq: seqs).with_progress(current_user)
+    words = Word.where(seq: seqs).with_progresses(current_user)
     @words = words.sort{|a,b| seqs.index(a.seq) <=> seqs.index(b.seq)}
   end
 
@@ -341,7 +341,7 @@ end
 get :word do
   protect!
 
-  @word = Word.includes(:short_words, :long_words).where(seq: params[:id]).with_progress(current_user)[0]
+  @word = Word.includes(:short_words, :long_words).where(seq: params[:id]).with_progresses(current_user)[0]
   @sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
 
   slim :word
@@ -349,23 +349,45 @@ end
 
 post :word_learn do
   protect!
-  @word = Word.find_by(seq: params[:seq])
-  @word.learn_by!(current_user)
-  return Progress.find_by(seq: params[:seq]).to_json
+
+  progress = Progress.find_or_create_by(seq: params[:seq], title: params[:kreb], user: current_user)
+  throw StandardError.new("Already learned") if progress.learned
+
+  unless progress.unlocked
+    progress.unlocked = true
+    progress.unlocked_at = DateTime.now
+  end
+
+  progress.learned = true
+  progress.learned_at = DateTime.now
+  progress.deck = 0
+  progress.save
+
+  Action.create(user: current_user, progress: progress, action_type: :learned)
+
+  stats = Statistic.find_or_initialize_by(user: current_user, date: Date.today)
+  stats.learned['w'] += 1
+  stats.save
+
+  return progress.to_json
 end
 
 post :word_burn do
   protect!
-  @word = Word.find_by(seq: params[:seq])
-  @word.burn_by!(current_user)
-  return Progress.find_by(seq: params[:seq]).to_json
+
+  progress = Progress.find_by(id: params[:progress_id], user: current_user)
+  progress.update_attribute(:burned_at, DateTime.now)
+
+  Action.create(user: current_user, progress: progress, action_type: :burn)
+
+  return progress.to_json
 end
 
 get :words_nf do
   protect!
 
   @view_user = current_user || User.first
-  @words = Word.where(nf: params[:nf]).with_progress(@view_user)
+  @words = Word.where(nf: params[:nf]).with_progresses(@view_user)
 
   slim :words
 end

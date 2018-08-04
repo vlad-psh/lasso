@@ -80,8 +80,10 @@ module WakameHelpers
   end
 
   def wk_level(e)
-    # Shuffle for testing purposes
-    #return %w(locked unlocked apprentice guru master enlightened burned).shuffle[0]
+    if e.kind_of?(Array)
+      e = e.sort{|a,b| a.deck <=> b.deck}.last
+    end
+
     if e.present? && e.try(:unlocked)
       return 'unlocked'    unless e.learned
       return 'apprentice'  if e.deck <= 1

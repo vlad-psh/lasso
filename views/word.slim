@@ -1,23 +1,17 @@
 script src="/js/jquery-ui.min.js"
 div.word-card#word-card-app
 
-  - freq_name = {'ichi'=>'i', 'news'=>'N', 'spec'=>'s', 'gai'=>'G', 'nf'=>'F'}
   div.word-krebs
-    - {kebs: @word.kele, rebs: @word.rele}.each do |kr_type, ele_array|
-      - next unless ele_array
-      span class="word-#{kr_type}"
-        - ele_array.each do |ele|
-          div.word-kreb class=('word-kreb-common' if kr_common?(ele)) title=(ele['pri'].map{|k,v| "#{k}:#{v}"}.join(', ') if ele['pri']) = ele['keb'] || ele['reb']
-
-  div.action-buttons style="font-size: 0.8em"
-    - if @word.card_id.present?
-      a> href=path_to(:card).with(@word.card_id) = "WK ##{@word.card_id} (lvl:#{@word.card.level})"
-    span v-if="progress && progress.learned"
-      ' Learned
-      a v-if="!progress.burned_at" @click="burnWord" Burn!
-      span v-else="true" Burned
-    span v-else="true"
-      a @click="learnWord" Learn!
+    span v-for="(kreb, krebIndex) of krebs"
+      div.word-kreb :class="kreb.classes" @click="openKrebForm(krebIndex)" = "{{kreb.title}}"
+      span v-if="krebIndex === forms.kreb" class="word-kreb-form"
+        span v-if="kreb.progress"
+          = "{{kreb.progress.learned_at ? 'learned ' : ''}}"
+          span v-if="kreb.progress.burned_at" burned
+          span v-else="true"
+            a @click="burnWord(kreb.progress.id)" burn!
+        span v-else="true"
+          a @click="learnWord(kreb)" learn!
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -33,6 +27,12 @@ div.word-card#word-card-app
           = m2['gloss'].join(', ') + ' '
       - elsif lang[:glosses].length == 1
         = lang[:glosses][0]['gloss'].join(', ')
+
+  - if @word.cards.length > 0
+    div.word-glosses
+      div.word-gloss-flag &#x1f980;
+      - @word.cards.sort{|a,b| a.level <=> b.level}.each do |card|
+        a> href=path_to(:card).with(card.id) = "#{card.title} (#{card.level})"
 
   div.word-comments-form
     div v-if="forms.comments"
@@ -116,15 +116,57 @@ javascript:
   var wordApp = new Vue({
     el: '#word-card-app',
     data: {
-      forms: {comments: false},
+      forms: {comments: false, kreb: null},
       bullets: #{{bullets.to_json}},
       word: #{{@word.to_json}},
-      progress: #{{@word.progress.try(:to_json) || 'null'}},
+      progresses: #{{@word.user_progresses ? Hash[*@word.user_progresses.map{|i| [i.title, i]}.flatten].to_json : '{}'}},
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
       sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      comments: "#{{@word.progress.try(:comments) || ''}}"
+      comments: "#{{@word.user_progresses.try(:[], 0).try(:comments) || ''}}"
+    },
+    computed: {
+      krebs: function() {
+        var krebs = [];
+        for (krtype of ['kele', 'rele']) {
+          for (i in this.word[krtype]) {
+            var e = this.word[krtype][i];
+            var kreb = {title: (e.keb ? e.keb : e.reb), krtype: krtype, classes: []};
+            if (e.pri) {
+              kreb.common = e.pri.news === 1 || e.pri.ichi === 1 || e.pri.gai === 1 || e.pri.spec ? true : false;
+              kreb.pri = Object.keys(e.pri ? e.pri : []).reduce(
+                    (acc,j) => {
+                        acc.push(`${j}${e.pri[j]}`);
+                        return acc
+                    }, []).join(', ');
+            } else {
+              kreb.common = false
+            }
+
+            if (kreb.common) kreb.classes.push('word-kreb-common');
+
+            if (this.progresses[kreb.title]) kreb.progress = this.progresses[kreb.title];
+
+            if (kreb.progress && kreb.progress.unlocked_at) {
+              kreb.wkLevel = function(){
+                if (!kreb.progress.learned_at) return 'unlocked';
+                if (kreb.progress.deck <= 1)   return 'apprentice';
+                if (kreb.progress.deck == 2)   return 'guru';
+                if (kreb.progress.deck == 3)   return 'master';
+                if (kreb.progress.deck >= 4 && kreb.progress.deck <= 5) return 'enlightened';
+                if (kreb.progress.deck >= 6)   return 'burned';
+              }();
+            } else {
+              kreb.wkLevel = 'locked';
+            }
+            kreb.classes.push(kreb.wkLevel);
+
+            krebs.push(kreb);
+          }
+        }
+        return krebs;
+      }
     },
     methods: {
       addConnectedWord(wordType, word) {
@@ -171,17 +213,27 @@ javascript:
           });
         };
       },
-      learnWord() {
+      learnWord(kreb) {
         $.ajax({
-          url: "#{{path_to(:word_learn).with(@word.seq)}}",
-          method: "POST"
-        }).done(data => this.progress = JSON.parse(data));
+          url: "#{{path_to(:word_learn)}}",
+          method: "POST",
+          data: {seq: this.word.seq, kreb: kreb.title}
+        }).done(data => {
+          var newProgress = JSON.parse(data);
+          var _progresses = Object.assign({}, this.progresses);
+          _progresses[newProgress.title] = newProgress;
+          this.progresses = _progresses;
+        });
       },
-      burnWord() {
+      burnWord(progressId) {
         $.ajax({
-          url: "#{{path_to(:word_burn).with(@word.seq)}}",
-          method: "POST"
-        }).done(data => this.progress = JSON.parse(data));
+          url: "#{{path_to(:word_burn)}}",
+          method: "POST",
+          data: {progress_id: progressId}
+        }).done(data => {
+          var progress = JSON.parse(data);
+          this.progresses[progress.title].burned_at = progress.burned_at;
+        });
       },
       saveComments() {
         $.ajax({
@@ -194,6 +246,13 @@ javascript:
       },
       showCommentsForm() {
         this.forms.comments = true;
+      },
+      openKrebForm(krebIndex) {
+        if (this.forms.kreb === krebIndex) {
+          this.forms.kreb = null;
+        } else {
+          this.forms.kreb = krebIndex;
+        }
       }
     }
   });

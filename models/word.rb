@@ -1,5 +1,5 @@
 class Word < ActiveRecord::Base
-  belongs_to :card
+  has_many :cards, primary_key: :seq, foreign_key: :seq
   has_many :progresses, primary_key: :seq, foreign_key: :seq
 
   has_many :sentences_words, primary_key: :seq, foreign_key: :word_seq
@@ -10,20 +10,20 @@ class Word < ActiveRecord::Base
   has_many :long_words,  through: :short2long_connections
   has_many :short_words, through: :long2short_connections
 
-  def self.with_progress(user)
+  def self.with_progresses(user)
     progresses = Progress.joins(:word).merge( all.unscope(:select) ).where(user: user).hash2_me
     all.each do |w|
-      w.progress = progresses[w.seq]
+      w.user_progresses = progresses[w.seq]
     end
   end
 
-  def progress=(value)
-    @_progress = value
+  def user_progresses=(value)
+    @_user_progresses = value
   end
 
-  def progress
-    return @_progress if defined?(@_progress)
-    throw StandardError.new("'progress' property can be accessed only when elements have been selected with 'with_progress' method")
+  def user_progresses
+    return @_user_progresses if defined?(@_user_progresses)
+    throw StandardError.new("'user_progresses' property can be accessed only when elements have been selected with 'with_progresses' method")
   end
 
   def krebs # All keb's and reb's
@@ -42,25 +42,6 @@ class Word < ActiveRecord::Base
 
   def all_sentences
     Sentence.joins(:sentences_words).merge(SentencesWord.where(word_seq: [seq, *long_words.pluck(:seq)]))
-  end
-
-  def learn_by!(user)
-    progress = Progress.find_or_create_by(seq: self.seq, user: user)
-    throw StandardError.new("Already learned") if progress.learned
-
-    progress.unlocked = true
-    progress.learned = true
-    progress.learned_at = DateTime.now
-    progress.deck = 0
-    progress.save
-
-    Action.create(user: user, progress: progress, action_type: :learned)
-
-    stats = Statistic.find_or_initialize_by(user: user, date: Date.today)
-    stats.learned['w'] += 1
-    stats.save
-
-    return true
   end
 
   def burn_by!(user)

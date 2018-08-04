@@ -34,7 +34,12 @@ class Progress < ActiveRecord::Base
   end
 
   def self.hash2_me
-    Hash[*all.map{|p| [p.seq, p]}.flatten]
+    result = {}
+    all.each do |p|
+      result[p.seq] ||= []
+      result[p.seq] << p
+    end
+    return result
   end
 
 end

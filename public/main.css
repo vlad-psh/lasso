@@ -747,11 +747,13 @@ form.add-note-form {
   border-bottom-style: dotted;
   border-right-style: dotted;
 }
-.search-result.locked {
-  background-color: none;
-  color: black;
+.search-result.locked,
+.word-kreb.locked {
+  background: none !important;
+  color: black !important;
 }
-.search-result.unlocked {
+.search-result.unlocked,
+.word-kreb.unlocked {
   background-color: #efeb9e;
   color: black;
 }
@@ -792,13 +794,30 @@ form.add-note-form {
   padding: 0 0.3em;
   margin: 0 0.6em 0 -0.3em; /* -0.3em to compensate padding */
   font-size: 1.4em;
+  cursor: pointer;
+  border: none;
 }
+
 .word-kebs .word-kreb-common:nth-child(1),
 .word-rebs .word-kreb-common:nth-child(1) {
   background-color: #ffec83;
 }
 .word-kreb-common {
   border-bottom: 2px dotted green;
+}
+.word-kreb-common.guru,
+.word-kreb-common.master,
+.word-kreb-common.enlightened,
+.word-kreb-common.burned {
+  border-color: white;
+}
+.word-kreb-form {
+  background-color: #6ac4ef;
+  color: white;
+  padding: 0.1em 0.6em;
+  border-radius: 3px;
+  margin: 0 0.6em 0 -0.3em;
+  font-size: 0.8em;
 }
 .word-glosses {
   text-align: justify;
