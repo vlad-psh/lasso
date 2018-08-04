@@ -861,7 +861,7 @@ form.add-note-form {
   background-color: rgba(128,128,128,0.2);
   cursor: pointer;
 }
-.word-comments-form textarea {
+.word-comment-form textarea {
   width: 100%;
   height: 8em;
 }

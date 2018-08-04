@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_04_121510) do
+ActiveRecord::Schema.define(version: 2018_08_04_184212) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,7 +60,6 @@ ActiveRecord::Schema.define(version: 2018_08_04_121510) do
     t.datetime "unlocked_at"
     t.datetime "learned_at"
     t.datetime "burned_at"
-    t.string "comments"
     t.string "title"
     t.index ["card_id"], name: "index_progresses_on_card_id"
     t.index ["seq"], name: "index_progresses_on_seq"
@@ -107,6 +106,12 @@ ActiveRecord::Schema.define(version: 2018_08_04_121510) do
     t.datetime "created_at"
     t.index ["long_seq"], name: "index_word_connections_on_long_seq"
     t.index ["short_seq"], name: "index_word_connections_on_short_seq"
+  end
+
+  create_table "word_details", force: :cascade do |t|
+    t.integer "seq"
+    t.integer "user_id"
+    t.string "comment"
   end
 
   create_table "word_titles", force: :cascade do |t|

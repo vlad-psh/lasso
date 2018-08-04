@@ -34,12 +34,12 @@ div.word-card#word-card-app
       - @word.cards.sort{|a,b| a.level <=> b.level}.each do |card|
         a> href=path_to(:card).with(card.id) = "#{card.title} (#{card.level})"
 
-  div.word-comments-form
-    div v-if="forms.comments"
-      textarea id="word-comments-textarea" v-model="comments"
-      input type="button" value="Save" @click="saveComments"
-    div.editable-text v-else-if="comments" @click="showCommentsForm" = "{{comments}}"
-    div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentsForm" Add comment
+  div.word-comment-form
+    div v-if="forms.comment"
+      textarea id="word-comment-textarea" v-model="comment"
+      input type="button" value="Save" @click="saveComment"
+    div.editable-text v-else-if="comment" @click="showCommentForm" = "{{comment}}"
+    div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm" Add comment
 
   div style="margin: 0.8em 0;"
     span> style="font-weight: bold" Contains:
@@ -116,7 +116,7 @@ javascript:
   var wordApp = new Vue({
     el: '#word-card-app',
     data: {
-      forms: {comments: false, kreb: null},
+      forms: {comment: false, kreb: null},
       bullets: #{{bullets.to_json}},
       word: #{{@word.to_json}},
       progresses: #{{@word.user_progresses ? Hash[*@word.user_progresses.map{|i| [i.title, i]}.flatten].to_json : '{}'}},
@@ -124,7 +124,7 @@ javascript:
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
       sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      comments: "#{{@word.user_progresses.try(:[], 0).try(:comments) || ''}}"
+      comment: "#{{@word_details.try(:comment) || ''}}"
     },
     computed: {
       krebs: function() {
@@ -235,17 +235,17 @@ javascript:
           this.progresses[progress.title].burned_at = progress.burned_at;
         });
       },
-      saveComments() {
+      saveComment() {
         $.ajax({
-          url: "#{{path_to(:word_set_comments).with(@word.seq)}}",
-          data: {comments: this.comments},
+          url: "#{{path_to(:word_set_comment).with(@word.seq)}}",
+          data: {comment: this.comment},
           method: "POST"
         }).done(data => {
-          this.forms.comments = false;
+          this.forms.comment = false;
         });
       },
-      showCommentsForm() {
-        this.forms.comments = true;
+      showCommentForm() {
+        this.forms.comment = true;
       },
       openKrebForm(krebIndex) {
         if (this.forms.kreb === krebIndex) {

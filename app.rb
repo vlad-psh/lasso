@@ -48,7 +48,7 @@ paths index: '/',
     sentence: '/sentence/:id',
     autocomplete_word: '/autocomplete/word',
     word_connect: '/word/connect',
-    word_set_comments: '/word/:id/comments',
+    word_set_comment: '/word/:id/comment',
     link_word_to_card: '/linkw2c',
     disable_card: '/disable_card',
     study2: '/study2'
@@ -342,6 +342,7 @@ get :word do
   protect!
 
   @word = Word.includes(:short_words, :long_words).where(seq: params[:id]).with_progresses(current_user)[0]
+  @word_details = @word.word_details.where(user: current_user).take
   @sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
 
   slim :word
@@ -549,11 +550,11 @@ post :disable_card do
   redirect path_to(:card).with(c.id)
 end
 
-post :word_set_comments do
+post :word_set_comment do
   protect!
 
-  p = Progress.find_or_create_by(user_id: current_user.id, seq: params[:id])
-  p.update_attribute(:comments, params[:comments])
+  wd = WordDetail.find_or_create_by(user: current_user, seq: params[:id])
+  wd.update_attribute(:comment, params[:comment])
 
   return 'ok'
 end
