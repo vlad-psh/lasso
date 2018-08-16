@@ -857,6 +857,10 @@ form.add-note-form {
 .action-buttons a {
   cursor: pointer;
 }
+.word-comment-form .editable-text p {
+  margin: 0.4em 0;
+  text-align: justify;
+}
 .editable-text:hover {
   background-color: rgba(128,128,128,0.2);
   cursor: pointer;

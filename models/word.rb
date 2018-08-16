@@ -1,5 +1,6 @@
 class Word < ActiveRecord::Base
   has_many :cards, primary_key: :seq, foreign_key: :seq
+  has_many :word_titles, primary_key: :seq, foreign_key: :seq
   has_many :progresses, primary_key: :seq, foreign_key: :seq
   has_many :word_details, primary_key: :seq, foreign_key: :seq
 
@@ -28,8 +29,6 @@ class Word < ActiveRecord::Base
   end
 
   def krebs # All keb's and reb's
-    kebs = kele ? kele.map{|i| i['keb']} : []
-    rebs = rele ? rele.map{|i| i['reb']} : []
     return [*kebs, *rebs].compact
   end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_04_184212) do
+ActiveRecord::Schema.define(version: 2018_08_16_143200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,14 @@ ActiveRecord::Schema.define(version: 2018_08_04_184212) do
   create_table "word_titles", force: :cascade do |t|
     t.integer "seq"
     t.string "title"
+    t.boolean "is_kanji", default: true
+    t.integer "order"
+    t.integer "news"
+    t.integer "ichi"
+    t.integer "spec"
+    t.integer "gai"
+    t.integer "nf"
+    t.boolean "is_common", default: false
   end
 
   create_table "words", force: :cascade do |t|
@@ -125,9 +133,9 @@ ActiveRecord::Schema.define(version: 2018_08_04_184212) do
     t.string "kanji"
     t.json "en"
     t.json "ru"
-    t.json "kele"
-    t.json "rele"
     t.boolean "is_common"
+    t.jsonb "kebs"
+    t.jsonb "rebs"
     t.index ["seq"], name: "index_words_on_seq"
   end
 

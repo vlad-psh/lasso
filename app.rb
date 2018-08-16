@@ -447,7 +447,7 @@ post :mecab do
     w = Word.find_by(seq: wt[0])
     return [{
         text: params[:sentence],
-        reading: w.rele[0]['reb'],
+        reading: w.rebs[0],
         base: params[:sentence],
         gloss: w.en[0]['gloss'][0],
         seq: wt[0]

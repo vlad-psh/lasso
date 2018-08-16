@@ -36,9 +36,10 @@ div.word-card#word-card-app
 
   div.word-comment-form
     div v-if="forms.comment"
-      textarea id="word-comment-textarea" v-model="comment"
+      textarea id="word-comment-textarea" v-model="comment" @keyup.esc="hideCommentForm"
       input type="button" value="Save" @click="saveComment"
-    div.editable-text v-else-if="comment" @click="showCommentForm" = "{{comment}}"
+    div.editable-text v-else-if="comment" @click="showCommentForm"
+      p v-for="commentLine of comment.split('\n')" = '{{commentLine}}'
     div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm" Add comment
 
   div style="margin: 0.8em 0;"
@@ -119,51 +120,39 @@ javascript:
       forms: {comment: false, kreb: null},
       bullets: #{{bullets.to_json}},
       word: #{{@word.to_json}},
+      wordTitles: #{{@word.word_titles.to_json}},
       progresses: #{{@word.user_progresses ? Hash[*@word.user_progresses.map{|i| [i.title, i]}.flatten].to_json : '{}'}},
       shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
       rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
       sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      comment: "#{{@word_details.try(:comment) || ''}}"
+      comment: "#{{@word_details.try(:comment).try(:gsub, /"/, '\"').try(:gsub, /\n/, '\\n') || ""}}"
     },
     computed: {
       krebs: function() {
         var krebs = [];
-        for (krtype of ['kele', 'rele']) {
-          for (i in this.word[krtype]) {
-            var e = this.word[krtype][i];
-            var kreb = {title: (e.keb ? e.keb : e.reb), krtype: krtype, classes: []};
-            if (e.pri) {
-              kreb.common = e.pri.news === 1 || e.pri.ichi === 1 || e.pri.gai === 1 || e.pri.spec ? true : false;
-              kreb.pri = Object.keys(e.pri ? e.pri : []).reduce(
-                    (acc,j) => {
-                        acc.push(`${j}${e.pri[j]}`);
-                        return acc
-                    }, []).join(', ');
-            } else {
-              kreb.common = false
-            }
+        for (kreb of this.wordTitles) {
+          var kreb = Object.create(kreb);
+          kreb.classes = [];
 
-            if (kreb.common) kreb.classes.push('word-kreb-common');
+          if (kreb.is_common) kreb.classes.push('word-kreb-common');
+          if (this.progresses[kreb.title]) kreb.progress = this.progresses[kreb.title];
 
-            if (this.progresses[kreb.title]) kreb.progress = this.progresses[kreb.title];
-
-            if (kreb.progress && kreb.progress.unlocked_at) {
-              kreb.wkLevel = function(){
-                if (!kreb.progress.learned_at) return 'unlocked';
-                if (kreb.progress.deck <= 1)   return 'apprentice';
-                if (kreb.progress.deck == 2)   return 'guru';
-                if (kreb.progress.deck == 3)   return 'master';
-                if (kreb.progress.deck >= 4 && kreb.progress.deck <= 5) return 'enlightened';
-                if (kreb.progress.deck >= 6)   return 'burned';
-              }();
-            } else {
-              kreb.wkLevel = 'locked';
-            }
-            kreb.classes.push(kreb.wkLevel);
-
-            krebs.push(kreb);
+          if (kreb.progress && kreb.progress.unlocked_at) {
+            kreb.wkLevel = function(){
+              if (!kreb.progress.learned_at) return 'unlocked';
+              if (kreb.progress.deck <= 1)   return 'apprentice';
+              if (kreb.progress.deck == 2)   return 'guru';
+              if (kreb.progress.deck == 3)   return 'master';
+              if (kreb.progress.deck >= 4 && kreb.progress.deck <= 5) return 'enlightened';
+              if (kreb.progress.deck >= 6)   return 'burned';
+            }();
+          } else {
+            kreb.wkLevel = 'locked';
           }
+          kreb.classes.push(kreb.wkLevel);
+
+          krebs.push(kreb);
         }
         return krebs;
       }
@@ -246,6 +235,9 @@ javascript:
       },
       showCommentForm() {
         this.forms.comment = true;
+      },
+      hideCommentForm() {
+        this.forms.comment = false;
       },
       openKrebForm(krebIndex) {
         if (this.forms.kreb === krebIndex) {

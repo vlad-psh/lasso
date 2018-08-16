@@ -81,7 +81,7 @@ module WakameHelpers
 
   def wk_level(e)
     if e.kind_of?(Array)
-      e = e.sort{|a,b| a.deck <=> b.deck}.last
+      e = e.sort{|a,b| (a.deck || 0) <=> (b.deck || 0)}.last
     end
 
     if e.present? && e.try(:unlocked)
