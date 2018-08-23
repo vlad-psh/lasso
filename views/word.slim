@@ -114,49 +114,13 @@ javascript:
     });
   });
 
+  var wordData = #{{@word_data.to_json}};
+  wordData.forms = {comment: false, kreb: null};
+  wordData.bullets = #{{bullets.to_json}};
+
   var wordApp = new Vue({
     el: '#word-card-app',
-    data: {
-      forms: {comment: false, kreb: null},
-      bullets: #{{bullets.to_json}},
-      word: #{{@word.to_json}},
-      wordTitles: #{{@word.word_titles.to_json}},
-      progresses: #{{@word.user_progresses ? Hash[*@word.user_progresses.map{|i| [i.title, i]}.flatten].to_json : '{}'}},
-      shortWords: #{{@word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
-      longWords: #{{@word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}}.to_json }},
-      rawSentences: #{{@sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      sentences: #{{@word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}.to_json}},
-      comment: "#{{@word_details.try(:comment).try(:gsub, /"/, '\"').try(:gsub, /\n/, '\\n') || ""}}"
-    },
-    computed: {
-      krebs: function() {
-        var krebs = [];
-        for (kreb of this.wordTitles) {
-          var kreb = Object.create(kreb);
-          kreb.classes = [];
-
-          if (kreb.is_common) kreb.classes.push('word-kreb-common');
-          if (this.progresses[kreb.title]) kreb.progress = this.progresses[kreb.title];
-
-          if (kreb.progress && kreb.progress.unlocked_at) {
-            kreb.wkLevel = function(){
-              if (!kreb.progress.learned_at) return 'unlocked';
-              if (kreb.progress.deck <= 1)   return 'apprentice';
-              if (kreb.progress.deck == 2)   return 'guru';
-              if (kreb.progress.deck == 3)   return 'master';
-              if (kreb.progress.deck >= 4 && kreb.progress.deck <= 5) return 'enlightened';
-              if (kreb.progress.deck >= 6)   return 'burned';
-            }();
-          } else {
-            kreb.wkLevel = 'locked';
-          }
-          kreb.classes.push(kreb.wkLevel);
-
-          krebs.push(kreb);
-        }
-        return krebs;
-      }
-    },
+    data: wordData,
     methods: {
       addConnectedWord(wordType, word) {
         if (wordType === 'short') {

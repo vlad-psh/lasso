@@ -342,8 +342,33 @@ get :word do
   protect!
 
   @word = Word.includes(:short_words, :long_words).where(seq: params[:id]).with_progresses(current_user)[0]
-  @word_details = @word.word_details.where(user: current_user).take
-  @sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
+  word_details = @word.word_details.where(user: current_user).take
+  sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
+  progresses = @word.user_progresses ? Hash[*@word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
+
+  krebs = @word.word_titles.map do |t|
+    _prog = progresses[t.title]
+    _wkl = wk_level(_prog)
+
+    {
+      title: t.title,
+      classes: [t.is_common ? 'word-kreb-common' : nil, _prog ? _wkl : nil].compact,
+      progress: _prog,
+      wkLevel: _wkl
+    }
+  end
+
+  @word_data = {
+    word: @word,
+    wordTitles: @word.word_titles,
+    progresses: progresses,
+    shortWords: @word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
+    longWords:  @word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
+    rawSentences: sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
+    sentences: @word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
+    comment: word_details.try(:comment) || '',
+    krebs: krebs
+  }
 
   slim :word
 end
