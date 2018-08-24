@@ -109,7 +109,7 @@ svg .w {fill: #a0f !important;}
   padding: 0 0.3em;
 }
 .stat-table-block td {
-  padding: 0.2em 0;
+  padding: 3px 0;
 }
 a.study-button {
   display: inline-block;
@@ -797,21 +797,34 @@ form.add-note-form {
 /* ==============================
    WORD CARD
    ============================== */
-.word-card {
-  max-width: 50em;
+.center-block {
+  max-width: 800px;
   margin: 0 auto;
-  padding: 0.6em;
+  padding: 0 0.6em;
+}
+.word-card {
+  padding: 0.6em 0;
 }
 .word-krebs {
-  margin-bottom: 0.6em;
+  line-height: 0.5em;
+}
+.word-kreb-container {
+  display: inline-block;
+  text-align: center;
+  margin: 0 0.6em 0 -0.3em;
+  font-size: 1.4em;
+  line-height: 0;
+  text-align: center;
+  vertical-align: top;
 }
 .word-kreb {
   display: inline-block;
-  padding: 0 0.3em;
-  margin: 0 0.6em 0 -0.3em; /* -0.3em to compensate padding */
-  font-size: 1.4em;
   cursor: pointer;
   border: none;
+  padding: 0 0.3em;
+  line-height: 1.3em;
+  /* transparent border; so that height is equal with common words with visible border*/
+  border-bottom: 2px solid rgba(255,255,255,0);
 }
 
 .word-kebs .word-kreb-common:nth-child(1),
@@ -827,13 +840,23 @@ form.add-note-form {
 .word-kreb-common.burned {
   border-color: white;
 }
+.word-kreb-form-arrow {
+  margin: 0; padding: 0;
+  display: inline-block;
+
+  box-sizing:border-box;
+  height:5px;
+  width:5px;
+  bottom:-10px;
+  margin:0 0 0 -5px;
+  content:" ";
+  border:5px solid transparent;
+  border-bottom-color: #a8dba8;
+}
 .word-kreb-form {
-  background-color: #6ac4ef;
+  background-color: #a8dba8;
   color: white;
-  padding: 0.1em 0.6em;
-  border-radius: 3px;
-  margin: 0 0.6em 0 -0.3em;
-  font-size: 0.8em;
+  padding: 0.3em 0;
 }
 .word-glosses {
   text-align: justify;
@@ -887,7 +910,6 @@ form.add-note-form {
 }
 .word-sentences {
   padding: 0.4em 0.6em;
-  margin: 0 -0.6em; /* compensate parent's paddings */
   text-align: justify;
 }
 .word-sentences-structured {
@@ -981,9 +1003,10 @@ input.ensentence {
   .word-card {
     font-size: 0.8em;
   }
+  /* Transpose table */
   .stat-table-block table {display: flex}
   .stat-table-block table tbody {display: flex}
-  .stat-table-block table td {display: block; margin: 1px 1px; height: 1.4em;}
+  .stat-table-block table td {display: block; margin: 1px 1px; height: 22px;}
 }
 
 /* jQuery-UI Autocomplete */

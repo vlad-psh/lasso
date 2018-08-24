@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_16_143200) do
+ActiveRecord::Schema.define(version: 2018_08_24_141817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2018_08_16_143200) do
     t.integer "seq"
     t.integer "user_id"
     t.string "comment"
+    t.boolean "flagged", default: false
   end
 
   create_table "word_titles", force: :cascade do |t|

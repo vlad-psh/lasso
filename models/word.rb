@@ -30,7 +30,7 @@ class Word < ActiveRecord::Base
 
   def best_user_progress
     return nil unless @_user_progresses.present?
-    @_user_progresses.sort{|a,b| a.deck <=> b.deck}.last
+    @_user_progresses.sort{|a,b| (a.deck||0) <=> (b.deck||0)}.last
   end
 
   def krebs # All keb's and reb's

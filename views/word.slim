@@ -1,23 +1,27 @@
 script src="/js/jquery-ui.min.js"
 div.word-card#word-card-app
 
-  div.word-krebs
-    span v-for="(kreb, krebIndex) of krebs"
-      div.word-kreb :class="kreb.classes" @click="openKrebForm(krebIndex)" = "{{kreb.title}}"
-      span v-if="krebIndex === forms.kreb" class="word-kreb-form"
-        span v-if="kreb.progress"
-          = "{{kreb.progress.learned_at ? 'learned ' : ''}}"
-          span v-if="kreb.progress.burned_at" burned
-          span v-else="true"
-            a @click="burnWord(kreb.progress.id)" burn!
+  div.word-krebs.center-block
+    div.word-kreb-container v-for="(kreb, krebIndex) of krebs"
+      div
+        div.word-kreb :class="kreb.classes" @click="openKrebForm(krebIndex)" = "{{kreb.title}}"
+      div.word-kreb-form-arrow v-if="krebIndex === forms.kreb"
+
+  div.word-kreb-form v-if="forms.kreb !== null"
+    div.center-block
+      span v-if="krebs[forms.kreb].progress"
+        = "{{krebs[forms.kreb].progress.learned_at ? 'learned ' : ''}}"
+        span v-if="krebs[forms.kreb].progress.burned_at" burned
         span v-else="true"
-          a @click="learnWord(kreb)" learn!
+          a @click="burnWord(krebs[forms.kreb].progress.id)" burn!
+      span v-else="true"
+        a @click="learnWord(krebs[forms.kreb])" learn!
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
   - [{glosses: @word.en, flag: "&#x1f1ec;&#x1f1e7;"}, {glosses: @word.ru, flag: "&#x1f1f7;&#x1f1fa;"}].each do |lang|
     - next unless lang[:glosses]
-    div.word-glosses
+    div.word-glosses.center-block
       div.word-gloss-flag == lang[:flag]
       - if lang[:glosses].length > 1
         - lang[:glosses].each_with_index do |m2,i|
@@ -29,12 +33,12 @@ div.word-card#word-card-app
         = lang[:glosses][0]['gloss'].join(', ')
 
   - if @word.cards.length > 0
-    div.word-glosses
+    div.word-glosses.center-block
       div.word-gloss-flag &#x1f980;
       - @word.cards.sort{|a,b| a.level <=> b.level}.each do |card|
         a> href=path_to(:card).with(card.id) = "#{card.title} (#{card.level})"
 
-  div.word-comment-form
+  div.word-comment-form.center-block
     div v-if="forms.comment"
       textarea id="word-comment-textarea" v-model="comment" @keyup.esc="hideCommentForm"
       input type="button" value="Save" @click="saveComment"
@@ -42,7 +46,7 @@ div.word-card#word-card-app
       p v-for="commentLine of comment.split('\n')" = '{{commentLine}}'
     div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm" Add comment
 
-  div style="margin: 0.8em 0;"
+  div.center-block style="margin-top: 0.8em; margin-bottom: 0.8em"
     span> style="font-weight: bold" Contains:
     div class="connected-word" v-for="(sw, swIndex) of shortWords"
       a> :href="sw.href" {{sw.title}}
@@ -63,11 +67,12 @@ div.word-card#word-card-app
     div class="connected-word-none" v-if="!longWords.length" none
     input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long"
 
-  div style="opacity: 0.5; font-size: 0.6em; text-align: justify" &#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)
+  div.center-block
+    div style="opacity: 0.5; font-size: 0.6em; text-align: justify" &#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)
 
-  div.hr-title: span style="margin: 1em 0" Sentences
+  div.hr-title.center-block: span style="margin: 1em 0" Sentences
 
-  div.word-sentences.word-sentences-structured
+  div.word-sentences.word-sentences-structured.center-block
     span v-for="(s, sIndex) of sentences"
       | {{bullets[sIndex]}} {{s.jp}}
       span< style="font-size: small" 《{{s.en}}》
@@ -76,7 +81,7 @@ div.word-card#word-card-app
         a.remove-sentence-button @click="removeSentence(sIndex, false)" 消す
         | ] 
 
-  div.word-sentences
+  div.word-sentences.center-block
     span v-for="(s, sIndex) of rawSentences"
       | {{bullets[sIndex]}} {{s.jp}}
       span< style="font-size: small" 《{{s.en}}》
