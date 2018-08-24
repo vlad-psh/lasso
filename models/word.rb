@@ -28,6 +28,11 @@ class Word < ActiveRecord::Base
     throw StandardError.new("'user_progresses' property can be accessed only when elements have been selected with 'with_progresses' method")
   end
 
+  def best_user_progress
+    return nil unless @_user_progresses.present?
+    @_user_progresses.sort{|a,b| a.deck <=> b.deck}.last
+  end
+
   def krebs # All keb's and reb's
     return [*kebs, *rebs].compact
   end

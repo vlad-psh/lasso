@@ -13,7 +13,7 @@ ruby:
     div.hr-title: span style="padding: 1em" = "#{title} (#{words.length})"
     div.search-results
       - words.each do |w|
-        div.search-result class=wk_level(w.user_progresses)
+        div.search-result class=wk_level(w.best_user_progress)
           - if w.kebs && w.kebs.length > 0
             == highlight(words_to_string(w.kebs), params['query']) + '　'
           - if w.rebs && w.rebs.length > 0

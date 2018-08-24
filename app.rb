@@ -360,7 +360,6 @@ get :word do
 
   @word_data = {
     word: @word,
-    wordTitles: @word.word_titles,
     progresses: progresses,
     shortWords: @word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
     longWords:  @word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},

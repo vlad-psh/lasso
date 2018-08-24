@@ -1,48 +1,8 @@
 ruby:
   groups = {
         just_learned: {title: 'New', color: :blue},
-        failed: {title: 'Failed', color: :red},
         expired: {title: 'Expired', color: :yellow}}
   tt = {r: :radicals, k: :kanjis, w: :words}
-  clevel = @view_user.present? ? @view_user.current_level : 1
-  clevel_cards = Card.where(level: clevel).with_progress(@view_user)
-  cstat = {}
-  %w(r k w total).each {|k|cstat[k] = {unlocked: 0, locked: 0, learned: 0, total: 0}}
-  clevel_cards.each do |cc|
-    _t = if cc.progress.blank? || (cc.progress.unlocked == false && cc.progress.learned == false)
-        :locked
-    elsif cc.progress.unlocked == true && cc.progress.learned == false
-        :unlocked
-    elsif cc.progress.unlocked == true && cc.progress.learned == true
-        :learned
-    end
-    cstat[cc.element_type][_t]        += 1
-    cstat[cc.element_type][:total]    += 1
-    cstat['total'][_t]     += 1
-    cstat['total'][:total] += 1
-  end
-
-div.stat-table-block style="margin-top: 1em;"
-  div.hr-title: span = "#{DEGREES[(clevel-1)/10]}: Level #{clevel}"
-  table
-    tr
-      td
-      td title="Locked" 🔒
-      td title="Unlocked" 🔰
-      td title="Learned" 🎓
-      td Learned %
-    - %w(r k w).each do |k|
-      tr
-        td class=k = INFODIC[k.to_sym][:japanese]
-        td = cstat[k][:locked]
-        td: a.study-button.green = cstat[k][:unlocked]
-        td = cstat[k][:learned]
-        td = "#{(cstat[k][:learned].to_f / cstat[k][:total] * 100).round(1)}%"
-    tr
-      td total
-      td colspan='2' = cstat['total'][:locked] + cstat['total'][:unlocked]
-      td = cstat['total'][:learned]
-      td = "#{(cstat['total'][:learned].to_f / cstat['total'][:total] * 100).round(1)}%"
 
 div.stat-table-block
   div.hr-title: span SRS
@@ -50,7 +10,6 @@ div.stat-table-block
     tr
       td
       td New
-      td Failed
       td Expired
       td title="Total Learned" 🎓
     - %w(r k w).each do |k|
@@ -64,21 +23,6 @@ div.stat-table-block
             - else
               ' -
         td = @counters[:any_learned][k]
-
-/ruby:
-/  gdata = [[_w_sched, _k_sched, _r_sched]]
-/  gdesc = [Date.today.strftime("%d")]
-/
-/  ss = Statistic.where(date: (Date.today + 1)..(Date.today + days_in_graph - 1))
-/  sh = {}
-/  ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
-/
-/  d = Date.today + 1
-/  while d < Date.today + days_in_graph
-/    gdata << (sh[d] || [0,0,0])
-/    gdesc << d.strftime("%d")
-/    d += 1
-/  end
 
 ruby:
   days_in_graph = 21
