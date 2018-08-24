@@ -38,7 +38,6 @@ paths index: '/',
     login: '/login', # GET: login form; POST: log in
     logout: '/logout', # DELETE: logout
     settings: '/settings',
-    stats: '/stats',
     word: '/word/:id',
     word_learn: '/word/learn', # POST
     word_burn: '/word/burn', # POST
@@ -78,9 +77,34 @@ end
 
 get :index do
   @view_user = current_user || User.first
+
   @counters = {}
-  [:just_unlocked, :just_learned, :failed, :expired, :any_learned].each do |g|
+
+  [:just_learned, :expired, :any_learned].each do |g|
     @counters[g] = Card.joins(:progresses).merge( Progress.public_send(g).where(user: @view_user) ).group(:element_type).count
+  end
+
+  k_jlpt = Card.kanjis.joins(:progresses).merge( Progress.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+  # {"5"=>103, "4"=>181, "3"=>367, "2"=>400, "1"=>1207} # non-cumulative
+  # {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258} # cumulative
+  k_total = {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258}
+  cumulative = 0
+  %w(5 4 3 2 1).each do |lvl|
+    cumulative += k_jlpt[lvl] || 0
+    @counters["n#{lvl}".to_sym] = {'k' => (100.0*cumulative/k_total[lvl]).round}
+  end
+
+  w_jlpt = Card.words.joins(:progresses).merge( Progress.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+  # {"5"=>438, "4"=>416, "3"=>964, "2"=>531, "1"=>681} # word cards in db + 3284 of unknown level
+  # {"5"=>438, "4"=>854, "3"=>1818, "2"=>2349, "1"=>3030} # same as above but cumulative
+  # {"5"=>602, "4"=>595, "3"=>2165, "2"=>3249, "1"=>2708} # real life total counts
+  # {"5"=>602, "4"=>1197, "3"=>3362, "2"=>6611, "1"=>9319} # same as above but cumulative
+  w_total = {"5"=>438, "4"=>854, "3"=>1818, "2"=>2349, "1"=>3030}
+  cumulative = 0
+  %w(5 4 3 2 1).each do |lvl|
+    cumulative += w_jlpt[lvl] || 0
+    @counters["n#{lvl}".to_sym] ||= {}
+    @counters["n#{lvl}".to_sym]['w'] = (100.0*cumulative/w_total[lvl]).round
   end
 
   slim :index
@@ -332,12 +356,6 @@ post :settings do
   'ok'
 end
 
-get :stats do
-  protect!
-
-  slim :stats
-end
-
 get :word do
   protect!
 
@@ -412,7 +430,7 @@ get :words_nf do
   protect!
 
   @view_user = current_user || User.first
-  @words = Word.where(nf: params[:nf]).with_progresses(@view_user)
+  @words = Word.where(nf: params[:nf]).order(:seq).with_progresses(@view_user)
 
   slim :words
 end

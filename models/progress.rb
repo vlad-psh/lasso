@@ -23,7 +23,7 @@ class Progress < ActiveRecord::Base
   scope :studied,       ->{where.not(scheduled: nil)}
   scope :not_studied,   ->{where(scheduled: nil)} # SHOULD INCLUDE CARDS WITH locked == false
 
-  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
+#  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
   scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
   # Cards in current level which are not learned yet:
   scope :to_learn, ->{not_learned.where(level: Card.current_level)}

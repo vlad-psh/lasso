@@ -1,94 +1,103 @@
 ruby:
   groups = {
-        just_learned: {title: 'New', color: :blue},
-        expired: {title: 'Expired', color: :yellow}}
+        just_learned: {title: 'New', class: :blue, url: true},
+        expired: {title: 'Expired', class: :yellow, url: true},
+        any_learned: {title: '🎓', tip: 'Total Learned'},
+        n5: {title: 'N5', unit: '%', class: 'jlpt-counter'},
+        n4: {title: 'N4', unit: '%', class: 'jlpt-counter'},
+        n3: {title: 'N3', unit: '%', class: 'jlpt-counter'},
+        n2: {title: 'N2', unit: '%', class: 'jlpt-counter'},
+        n1: {title: 'N1', unit: '%', class: 'jlpt-counter'},
+  }
   tt = {r: :radicals, k: :kanjis, w: :words}
 
-div.stat-table-block
-  div.hr-title: span SRS
-  table
-    tr
-      td
-      td New
-      td Expired
-      td title="Total Learned" 🎓
-    - %w(r k w).each do |k|
+div.index-page-container
+
+  div.stat-table-block
+    table
       tr
-        td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
+        td
         - groups.each do |gk,gv|
-          - i = @counters[gk][k] || 0
-          td
-            - if i > 0
-              a class="study-button #{gv[:color]}" href=path_to(:study).with(tt[k.to_sym], gk) = i
-            - else
-              ' -
-        td = @counters[:any_learned][k]
+          td title=(gv[:tip]) = gv[:title]
+      - %w(r k w).each do |k|
+        tr
+          td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
+          - groups.each do |gk,gv|
+            - i = @counters[gk].try(:[], k) || 0
+            td class=gv[:class]
+              - if i > 0
+                - if gv[:url] == true
+                  a class="study-button" href=path_to(:study).with(tt[k.to_sym], gk) = "#{i}#{gv[:unit]}"
+                - else
+                  = "#{i}#{gv[:unit]}"
+              - else
+                ' -
 
-ruby:
-  days_in_graph = 21
+  ruby:
+    days_in_graph = 21
 
-  # First day's data:
-  gdata = [[
-    (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0) + (@counters[:failed]['w']||0),
-    (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0) + (@counters[:failed]['k']||0),
-    (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0) + (@counters[:failed]['r']||0)
-  ]]
-  gdesc = [Date.today.strftime("%d")]
+    # First day's data:
+    gdata = [[
+      (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0),
+      (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0),
+      (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0)
+    ]]
+    gdesc = [Date.today.strftime("%d")]
 
-  ss = Statistic.where(user: @view_user, date: (Date.today + 1)..(Date.today + days_in_graph - 1))
-  sh = {}
-  ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
+    ss = Statistic.where(user: @view_user, date: (Date.today + 1)..(Date.today + days_in_graph - 1))
+    sh = {}
+    ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
 
-  d = Date.today + 1
-  while d < Date.today + days_in_graph
-    gdata << (sh[d] || [0,0,0])
-    gdesc << d.strftime("%d")
-    d += 1
-  end
-
-div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
-' Scheduled (for upcoming 3 weeks):
-br
-== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
-
-ruby:
-  ss = Statistic.where(user: @view_user, date: (Date.today - days_in_graph + 1)..(Date.today))
-  sh = {}
-  ss.each {|i| sh[i.date] = [i.learned['w'], i.learned['k'], i.learned['r']]}
-
-  gdata = []
-  gdesc = []
-  d = Date.today - days_in_graph + 1
-  while d <= Date.today
-    gdata << (sh[d] || [0,0,0])
-    gdesc << d.strftime("%d")
-    d += 1
-  end
-
-br
-' Learning history (past 3 weeks):
-br
-== slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
-
-ruby:
-  level_duration = {}
-  first_action = Action.where(user: @view_user, action_type: 'learned').order(created_at: :asc).first
-  if first_action.present?
-    levelups = Action.where(user: @view_user, action_type: 'levelup').order(created_at: :asc)
-    level_index = 1
-    levelups.each do |lup|
-      sec = lup.created_at - (level_index == 1 ? first_action : levelups[level_index - 2]).created_at
-      level_duration[level_index] = (sec / 86400).round(1)
-      level_index += 1
+    d = Date.today + 1
+    while d < Date.today + days_in_graph
+      gdata << (sh[d] || [0,0,0])
+      gdesc << d.strftime("%d")
+      d += 1
     end
-    # Add current level duration:
-    level_duration[level_index] = ((Time.now - (levelups.last || first_action).created_at) / 86400).round(1)
-  end
 
-br
-' Levels duration
-br
-== slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
+  div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
+  ' Scheduled (for upcoming 3 weeks):
+  br
+  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
+
+  ruby:
+    ss = Statistic.where(user: @view_user, date: (Date.today - days_in_graph + 1)..(Date.today))
+    sh = {}
+    ss.each {|i| sh[i.date] = [i.learned['w'], i.learned['k'], i.learned['r']]}
+
+    gdata = []
+    gdesc = []
+    d = Date.today - days_in_graph + 1
+    while d <= Date.today
+      gdata << (sh[d] || [0,0,0])
+      gdesc << d.strftime("%d")
+      d += 1
+    end
+
+  br
+  ' Learning history (past 3 weeks):
+  br
+  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
+
+  ruby:
+    level_duration = {}
+    first_action = Action.where(user: @view_user, action_type: 'learned').order(created_at: :asc).first
+    if first_action.present?
+      levelups = Action.where(user: @view_user, action_type: 'levelup').order(created_at: :asc)
+      level_index = 1
+      levelups.each do |lup|
+        sec = lup.created_at - (level_index == 1 ? first_action : levelups[level_index - 2]).created_at
+        level_duration[level_index] = (sec / 86400).round(1)
+        level_index += 1
+      end
+      # Add current level duration:
+      level_duration[level_index] = ((Time.now - (levelups.last || first_action).created_at) / 86400).round(1)
+    end
+
+  br
+  ' Levels duration
+  br
+  == slim :svg_graph, locals: {gdata: level_duration.values.map{|i|[i]}, gdesc: level_duration.keys, classes: [:r]}
 
 /ruby:
 /  t = Card.arel_table

@@ -100,15 +100,29 @@ body.black .pink   {background-color: #89005b; border: 1px solid #ff00aa;}
 svg .r {fill: #0af !important;}
 svg .k {fill: #f0a !important;}
 svg .w {fill: #a0f !important;}
+.index-page-container {
+  text-align: center;
+  margin-top: 1em;
+}
 .stat-table-block {
   display: inline-block;
   padding: 0 0.3em;
 }
+.stat-table-block td {
+  padding: 0.2em 0;
+}
 a.study-button {
-  text-align: center;
   display: inline-block;
   width: 4.3em;
-  padding: 0.2em 0;
+}
+.stat-table-block a {
+  color: white;
+}
+.stat-table-block .jlpt-counter {
+  color: #999;
+  font-size: 0.8em;
+  padding-left: 0.4em;
+  padding-right: 0.4em;
 }
 /* ==============================
    TOP MENU
@@ -392,6 +406,7 @@ body.black .unlocked .description {
   flex-flow: row wrap;
   width: 100%;
   align-items: center;
+  text-align: center;
 }
 .levels-header>div {
   flex: auto;
@@ -966,6 +981,9 @@ input.ensentence {
   .word-card {
     font-size: 0.8em;
   }
+  .stat-table-block table {display: flex}
+  .stat-table-block table tbody {display: flex}
+  .stat-table-block table td {display: block; margin: 1px 1px; height: 1.4em;}
 }
 
 /* jQuery-UI Autocomplete */

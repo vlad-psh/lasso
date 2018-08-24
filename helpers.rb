@@ -85,6 +85,7 @@ module WakameHelpers
     end
 
     if e.present? && e.try(:unlocked)
+      return 'burned'      if e.burned_at
       return 'unlocked'    unless e.learned
       return 'apprentice'  if e.deck <= 1
       return 'guru'        if e.deck == 2
