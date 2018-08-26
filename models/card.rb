@@ -172,58 +172,6 @@ class Card < ActiveRecord::Base
     return new_elements
   end
 
-  def answer_by!(a, user)
-    # answer should be 'yes', 'no' or 'soso'
-    a = a.to_sym
-
-    progress = Progress.find_by(card: self, user: user)
-    throw StandardError.new("Card info not found") unless progress.present?
-
-    throw StandardError.new("Unknown answer: #{a}") unless [:yes, :no, :soso, :burn].include?(a)
-
-    if a == :yes
-      move_to_deck_by!(progress.deck + 1, user)
-      Action.create(card: self, progress: progress, user: user, action_type: 'correct')
-    elsif a == :no
-      move_to_deck_by!(progress.deck - 1, user, choose_schedule_day_by(progress.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
-      Action.create(card: self, progress: progress, user: user, action_type: 'incorrect')
-    elsif a == :soso
-      # leave in the same deck
-      move_to_deck_by!(progress.deck, user)
-      Action.create(card: self, progress: progress, user: user, action_type: 'soso') if progress.deck != 0
-    elsif a == :burn
-      move_to_deck_by!(7, user)
-      Action.create(card: self, progress: progress, user: user, action_type: 'burn')
-    end
-  end
-
-  def move_to_deck_by!(deck, user, scheduled = nil)
-    progress = Progress.find_by(card: self, user: user)
-    throw StandardError.new("Card info not found") unless progress.present?
-
-    if progress.failed == true
-# TODO: made logic clearer/simplier
-      # no:   failed  update_deck
-      # yes:  -       -
-      # soso: failed  -
-      # burn: -       update_deck
-      progress.failed = false if deck > progress.deck # answer is correct or burn
-      progress.deck = deck unless (progress.deck == deck) || (progress.deck + 1 == deck) # answer is no or burn
-    else
-      progress.failed = true if deck < progress.deck # when answer is incorrect
-      progress.deck = deck
-    end
-
-    progress.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(progress.deck, user)
-    progress.save
-
-    if progress.deck != 0
-      stats = Statistic.find_or_initialize_by(user: user, date: progress.scheduled)
-      stats.scheduled[self.element_type] += 1
-      stats.save
-    end
-  end
-
   def download_audio!
     until try_download("http://speech.fc:53000/?v=VW%20Show&t=#{URI::encode(self.title)}", "public/audio/#{self.id}.mp3") do true end
     self.detailsb['sentences'].each_with_index do |sentence, i|
@@ -232,43 +180,6 @@ class Card < ActiveRecord::Base
   end
 
   private
-  def choose_schedule_day_by(new_deck, user, from_date = Date.today)
-    return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
-
-    r = SRS_RANGES[new_deck > 7 ? 7 : new_deck]
-    date_range = [from_date + r[0], from_date + r[2]]
-
-    # make 'day: cards count' hash
-    day_cards = {}
-    (from_date + r[0]..from_date + r[2]).each {|d| day_cards[d] = 0}
-    counts = Progress.where(user: user, scheduled: (from_date + r[0])..(from_date + r[2])).group(:scheduled).order('count_all').count
-    counts.each {|d,c| day_cards[d] += c}
-
-    # transpose hash to 'cards count: [days]'
-    cards_days = {}
-    day_cards.each do |k,v|
-      if cards_days[v]
-        cards_days[v] << k
-      else
-        cards_days[v] = [k]
-      end
-    end
-
-    # select days with minimal cards count
-    vacant_days = cards_days[cards_days.keys.min]
-    optimal_day = from_date + r[1]
-    selected_day = vacant_days[0]
-    vacant_days.each do |d|
-      if (d - optimal_day).abs < (selected_day - optimal_day).abs
-        selected_day = d
-      end
-    end
-
-    puts "### SELECTED #{selected_day} OPTIMAL #{optimal_day} ALL DAYS #{day_cards}"
-    return selected_day
-  end
-
-
   def try_download(url, path)
     begin
       puts "Downloading #{url}"

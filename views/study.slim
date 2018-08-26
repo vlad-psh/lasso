@@ -1,9 +1,9 @@
 div.study-card
   div.counter-info = "もう#{@count}つ"
-  h1.show-answer-button class=@element.element_type = @element.title
+  h1.show-answer-button = @progress.title
   div.answer
     div.answer-buttons
-      - ed = @element.progress.deck
+      - ed = @progress.deck
       div.answer-button.incorrect-answer-button.red data-value="no"
         ' NO
         div.answer-details = "#{ed} → #{ed>0 ? ed-1 : 0} (~#{SRS_RANGES[1][1]} days)"
@@ -20,19 +20,19 @@ div.study-card
       div.answer-button.correct-answer-button.green data-value="yes"
         ' YES
         div.answer-details = "#{ed} → #{ed+1} (~#{SRS_RANGES[ed+1>7 ? 7 : ed+1][1]} days)"
-  div.answer-block
-    div style="display: inline-block;"
-      div Meaning
-    - unless @element.radical?
-      div< style="display: inline-block;"
-        div + Reading
-        - if @element.kanji?
-          div.reading-answer
-            == slim :reading, locals: {e: @element}
+  //div.answer-block
+  //  div style="display: inline-block;"
+  //    div Meaning
+  //  - unless @element.radical?
+  //    div< style="display: inline-block;"
+  //      div + Reading
+  //      - if @element.kanji?
+  //        div.reading-answer
+  //          == slim :reading, locals: {e: @element}
   div.answer
-    == slim :element
+    == slim :word
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
-    input type="hidden" name="element_id" value=@element.id
+    input type="hidden" name="id" value=@progress.id
     input type="hidden" name="answer" value=''
 
 javascript:
@@ -40,8 +40,9 @@ javascript:
   var answer_submitted = false;
 
   $(document).on('click', '.show-answer-button', function(){
-    $(".answer").removeClass('answer');
-    $(".answer-block").hide();
+    $('.answer').addClass('answer-revealed');
+    $('.answer').removeClass('answer');
+    $('.answer-block').hide();
     is_answered = true;
   });
 
