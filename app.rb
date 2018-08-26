@@ -384,7 +384,16 @@ get :word do
     rawSentences: sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
     sentences: @word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
     comment: word_details.try(:comment) || '',
-    krebs: krebs
+    krebs: krebs,
+    cards: @word.cards.sort{|a,b| a.level <=> b.level}.map{|c|
+      {
+        title: c.title,
+        level: c.level,
+        mexp: c.detailsb['mexp'],
+        rexp: c.detailsb['rexp'],
+        href: path_to(:card).with(c.id)
+      }
+    }
   }
 
   slim :word

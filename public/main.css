@@ -808,14 +808,46 @@ form.add-note-form {
 .word-krebs {
   line-height: 0.5em;
 }
-.word-kreb-container {
+.expandable-list-item {
   display: inline-block;
   text-align: center;
-  margin: 0 0.6em 0 -0.3em;
-  font-size: 1.4em;
   line-height: 0;
   text-align: center;
   vertical-align: top;
+}
+.expandable-list-arrow {
+  margin: 0; padding: 0;
+  display: inline-block;
+
+  box-sizing:border-box;
+  height:5px;
+  width:5px;
+  bottom:-10px;
+  margin:0 0 0 -5px;
+  content:" ";
+  border:5px solid transparent;
+  border-bottom-color: #a8dba8;
+}
+.expandable-list-container {
+  background-color: #a8dba8;
+  color: #357878;
+  padding: 0.5em 0;
+}
+.expandable-list-container a {
+  cursor: pointer;
+  background-color: #0b486b;
+  color: white;
+  padding: 0 0.3em;
+  border-radius: 2px;
+}
+.expandable-list-container a:hover {
+  background-color: #ffec83;
+  color: #333;
+}
+
+.word-krebs .expandable-list-item {
+  margin: 0 0.6em 0 -0.3em;
+  font-size: 1.4em;
 }
 .word-kreb {
   display: inline-block;
@@ -826,7 +858,6 @@ form.add-note-form {
   /* transparent border; so that height is equal with common words with visible border*/
   border-bottom: 2px solid rgba(255,255,255,0);
 }
-
 .word-kebs .word-kreb-common:nth-child(1),
 .word-rebs .word-kreb-common:nth-child(1) {
   background-color: #ffec83;
@@ -840,35 +871,7 @@ form.add-note-form {
 .word-kreb-common.burned {
   border-color: white;
 }
-.word-kreb-form-arrow {
-  margin: 0; padding: 0;
-  display: inline-block;
 
-  box-sizing:border-box;
-  height:5px;
-  width:5px;
-  bottom:-10px;
-  margin:0 0 0 -5px;
-  content:" ";
-  border:5px solid transparent;
-  border-bottom-color: #a8dba8;
-}
-.word-kreb-form {
-  background-color: #a8dba8;
-  color: #357878;
-  padding: 0.5em 0;
-}
-.word-kreb-form a {
-  cursor: pointer;
-  background-color: #0b486b;
-  color: white;
-  padding: 0 0.3em;
-  border-radius: 2px;
-}
-.word-kreb-form a:hover {
-  background-color: #ffec83;
-  color: #333;
-}
 .word-glosses {
   text-align: justify;
   line-height: 1.6em;
@@ -884,6 +887,23 @@ form.add-note-form {
   color: green;
   font-style: italic;
   font-size: 0.9em;
+}
+.word-gloss {
+  padding: 0.8em 0;
+  margin-right: 1em;
+  cursor: pointer;
+  border-bottom: 1px dashed #008ace;
+  color: #008ace;
+}
+.word-gloss:hover {
+  color: #c00;
+}
+.word-gloss-expanded {
+  text-align: justify;
+  font-size: 0.9em;
+}
+.word-gloss-expanded .hr-title {
+  color: rgba(0,0,0,0.3);
 }
 .connected-word,
 .connected-word-none {

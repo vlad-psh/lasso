@@ -1,13 +1,13 @@
 script src="/js/jquery-ui.min.js"
 div.word-card#word-card-app
 
-  div.word-krebs.center-block
-    div.word-kreb-container v-for="(kreb, krebIndex) of krebs"
+  div.word-krebs.center-block.expandable-list
+    div.expandable-list-item v-for="(kreb, krebIndex) of krebs"
       div
         div.word-kreb :class="kreb.classes" @click="openKrebForm(krebIndex)" = "{{kreb.title}}"
-      div.word-kreb-form-arrow v-if="krebIndex === forms.kreb"
+      div.expandable-list-arrow v-if="krebIndex === forms.kreb"
 
-  div.word-kreb-form v-if="forms.kreb !== null"
+  div.expandable-list-container v-if="forms.kreb !== null"
     div.center-block
       span v-if="krebs[forms.kreb].progress"
         = "{{krebs[forms.kreb].progress.learned_at ? 'learned ' : ''}}"
@@ -32,11 +32,20 @@ div.word-card#word-card-app
       - elsif lang[:glosses].length == 1
         = lang[:glosses][0]['gloss'].join(', ')
 
-  - if @word.cards.length > 0
-    div.word-glosses.center-block
-      div.word-gloss-flag &#x1f980;
-      - @word.cards.sort{|a,b| a.level <=> b.level}.each do |card|
-        a> href=path_to(:card).with(card.id) = "#{card.title} (#{card.level})"
+  div.word-glosses.center-block v-if="cards.length > 0"
+    div.word-gloss-flag &#x1f980;
+    div.expandable-list style="display: inline-block"
+      div.expandable-list-item v-for="(card, cardIndex) of cards"
+        div.word-gloss @click="openCardForm(cardIndex)" = '{{card.title}} ({{card.level}})'
+        div.expandable-list-arrow v-if="cardIndex === forms.card"
+
+  div.expandable-list-container.word-gloss-expanded v-if="forms.card !== null"
+    div.center-block
+      a :href="selectedCard.href" Link
+      div.hr-title: span style="margin: 1em 0" Meaning
+      div = "{{selectedCard.mexp}}"
+      div.hr-title: span style="margin: 1em 0" Reading
+      div = "{{selectedCard.rexp}}"
 
   div.word-comment-form.center-block
     div v-if="forms.comment"
@@ -120,12 +129,21 @@ javascript:
   });
 
   var wordData = #{{@word_data.to_json}};
-  wordData.forms = {comment: false, kreb: null};
+  wordData.forms = {comment: false, kreb: null, card: null};
   wordData.bullets = #{{bullets.to_json}};
 
   var wordApp = new Vue({
     el: '#word-card-app',
     data: wordData,
+    computed: {
+      selectedCard: function() {
+        if (this.forms.card !== null) {
+          return this.cards[this.forms.card];
+        } else {
+          return {};
+        }
+      }
+    },
     methods: {
       addConnectedWord(wordType, word) {
         if (wordType === 'short') {
@@ -213,6 +231,13 @@ javascript:
           this.forms.kreb = null;
         } else {
           this.forms.kreb = krebIndex;
+        }
+      },
+      openCardForm(cardIndex) {
+        if (this.forms.card === cardIndex) {
+          this.forms.card = null;
+        } else {
+          this.forms.card = cardIndex;
         }
       }
     }
