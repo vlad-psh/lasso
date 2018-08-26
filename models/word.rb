@@ -13,8 +13,9 @@ class Word < ActiveRecord::Base
   has_many :short_words, through: :long2short_connections
 
   def self.with_progresses(user)
-    progresses = Progress.joins(:word).merge( all.unscope(:select) ).where(user: user).hash2_me
-    all.each do |w|
+    ww = all
+    progresses = Progress.where(user: user, seq: ww.map{|w|w.seq}).hash2_me
+    ww.each do |w|
       w.user_progresses = progresses[w.seq]
     end
   end

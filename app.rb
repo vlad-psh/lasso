@@ -359,7 +359,7 @@ end
 get :word do
   protect!
 
-  @word = Word.includes(:short_words, :long_words).where(seq: params[:id]).with_progresses(current_user)[0]
+  @word = Word.includes(:short_words, :long_words, :cards, :word_titles).where(seq: params[:id]).with_progresses(current_user)[0]
   word_details = @word.word_details.where(user: current_user).take
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', @word.krebs.join('|')) # possible sentences
   progresses = @word.user_progresses ? Hash[*@word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
