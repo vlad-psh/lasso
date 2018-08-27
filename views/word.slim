@@ -4,7 +4,7 @@ ruby:
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
   progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
 
-  krebs = word.word_titles.map do |t|
+  krebs = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
     _prog = progresses[t.title]
     _wkl = wk_level(_prog)
 
@@ -29,9 +29,11 @@ ruby:
       {
         title: c.title,
         level: c.level,
-        mexp: c.detailsb['mexp'],
-        rexp: c.detailsb['rexp'],
-        href: path_to(:card).with(c.id)
+        en:    c.detailsb['en'].join(', '),
+        pos:   c.detailsb['pos'],
+        mexp:  c.detailsb['mexp'],
+        rexp:  c.detailsb['rexp'],
+        href:  path_to(:card).with(c.id)
       }
     }
   }
@@ -80,6 +82,8 @@ div.word-card#word-card-app
 
   div.expandable-list-container.word-gloss-expanded v-if="forms.card !== null"
     div.center-block
+      span style="font-weight: bold" = '{{selectedCard.en}} '
+      span> style="font-style: italic" = '({{selectedCard.pos}})'
       a :href="selectedCard.href" Link
       div.hr-title: span Meaning
       div = "{{selectedCard.mexp}}"
@@ -118,9 +122,10 @@ div.word-card#word-card-app
   div.center-block
     div style="opacity: 0.5; font-size: 0.6em; text-align: justify" &#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)
 
-  div.hr-title.center-block: span style="margin: 1em 0" Sentences
+  div.hr-title.center-block v-if="sentences.length > 0 || rawSentences.length > 0"
+    span style="margin: 1em 0" Sentences
 
-  div.word-sentences.word-sentences-structured.center-block
+  div.word-sentences.word-sentences-structured.center-block v-if="sentences.length > 0"
     span v-for="(s, sIndex) of sentences"
       | {{bullets[sIndex]}} {{s.jp}}
       span< style="font-size: small" 《{{s.en}}》
@@ -129,7 +134,7 @@ div.word-card#word-card-app
         a.remove-sentence-button @click="removeSentence(sIndex, false)" 消す
         | ] 
 
-  div.word-sentences.center-block
+  div.word-sentences.center-block v-if="rawSentences.length > 0"
     span v-for="(s, sIndex) of rawSentences"
       | {{bullets[sIndex]}} {{s.jp}}
       span< style="font-size: small" 《{{s.en}}》

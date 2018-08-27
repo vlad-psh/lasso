@@ -84,7 +84,7 @@ get :index do
     @counters[g] = Card.joins(:progresses).merge( Progress.public_send(g).where(user: @view_user) ).group(:element_type).count
   end
 
-  k_jlpt = Card.kanjis.joins(:progresses).merge( Progress.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+  k_jlpt = Card.kanjis.joins(:progresses).merge( Progress.where(user: @view_user, learned: true) ).group("detailsb->>'jlpt'").count
   # {"5"=>103, "4"=>181, "3"=>367, "2"=>400, "1"=>1207} # non-cumulative
   # {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258} # cumulative
   k_total = {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258}
@@ -94,7 +94,7 @@ get :index do
     @counters["n#{lvl}".to_sym] = {'k' => (100.0*cumulative/k_total[lvl]).round}
   end
 
-  w_jlpt = Card.words.joins(:progresses).merge( Progress.where(user: current_user, learned: true) ).group("detailsb->>'jlpt'").count
+  w_jlpt = Card.words.joins(:progresses).merge( Progress.where(user: @view_user, learned: true) ).group("detailsb->>'jlpt'").count
   # {"5"=>438, "4"=>416, "3"=>964, "2"=>531, "1"=>681} # word cards in db + 3284 of unknown level
   # {"5"=>438, "4"=>854, "3"=>1818, "2"=>2349, "1"=>3030} # same as above but cumulative
   # {"5"=>602, "4"=>595, "3"=>2165, "2"=>3249, "1"=>2708} # real life total counts
