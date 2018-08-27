@@ -2,29 +2,23 @@ ruby:
   word = Word.includes(:short_words, :long_words, :cards, :word_titles).where(seq: @word_seq).with_progresses(current_user)[0]
   word_details = word.word_details.where(user: current_user).take
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
-  progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
 
-  krebs = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
-    _prog = progresses[t.title]
-    _wkl = wk_level(_prog)
-
-    {
-      title: t.title,
-      classes: [t.is_common ? 'word-kreb-common' : nil, _prog ? _wkl : nil].compact,
-      progress: _prog,
-      wkLevel: _wkl
-    }
+  found_progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
+  sorted_word_titles = word.word_titles.sort{|a,b| a.id <=> b.id}.map{|t| {title: t.title, is_common: t.is_common}}
+  progresses = {}
+  sorted_word_titles.each do |t|
+    progresses[t[:title]] = found_progresses[t[:title]] || {}
   end
 
   word_data = {
     word: word,
+    krebs: sorted_word_titles,
     progresses: progresses,
     shortWords: word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
     longWords:  word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
     rawSentences: sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
     sentences: word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
     comment: word_details.try(:comment) || '',
-    krebs: krebs,
     cards: word.cards.sort{|a,b| a.level <=> b.level}.map{|c|
       {
         title: c.title,
@@ -44,21 +38,21 @@ script src="/js/jquery-ui.min.js"
 div.word-card#word-card-app
 
   div.word-krebs.center-block.expandable-list
-    div.expandable-list-item v-for="(kreb, krebIndex) of krebs"
+    div.expandable-list-item v-for="kreb of krebs"
       div
-        div.word-kreb :class="kreb.classes" @click="openKrebForm(krebIndex)" = "{{kreb.title}}"
-      div.expandable-list-arrow v-if="krebIndex === forms.kreb"
+        div.word-kreb :class="krebClasses[kreb.title]" @click="openKrebForm(kreb.title)" = "{{kreb.title}}"
+      div.expandable-list-arrow v-if="kreb.title === forms.kreb"
 
   div.expandable-list-container v-if="forms.kreb !== null"
     div.center-block
-      span v-if="selectedKreb.progress && selectedKreb.progress.learned_at !== null"
-        = "{{selectedKreb.progress.learned_at ? 'learned ' : ''}}"
-        span v-if="selectedKreb.progress.burned_at" burned
+      span v-if="selectedKrebProgress.learned_at"
+        = "{{selectedKrebProgress.learned_at ? 'learned ' : ''}}"
+        span v-if="selectedKrebProgress.burned_at" burned
         span v-else="true"
-          a @click="burnWord(selectedKreb.progress.id)" burn!
+          a @click="burnWord(forms.kreb, selectedKrebProgress.id)" burn!
       span v-else="true"
-        a v-if="selectedKreb.progress === null || selectedKreb.progress.flagged === false" @click="flagWord(selectedKreb)" flag!
-        a @click="learnWord(selectedKreb)" learn!
+        a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)" flag!
+        a @click="learnWord(forms.kreb)" learn!
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -193,12 +187,39 @@ javascript:
           return {};
         }
       },
-      selectedKreb: function() {
+      selectedKrebProgress: function() {
         if (this.forms.kreb !== null) {
-          return this.krebs[this.forms.kreb];
+          return this.progresses[this.forms.kreb];
         } else {
           return {};
         }
+      },
+      krebClasses: function() {
+        var result = {};
+        for (kreb of this.krebs) {
+          var classes = [];
+          var progress = this.progresses[kreb.title];
+
+          if (kreb.is_common) classes.push('word-kreb-common')
+
+          if (progress) {
+            if (progress.burned_at) {
+              classes.push('burned');
+            } else if (progress.learned_at) {
+              if (progress.deck <= 1) classes.push('apprentice');
+              else if (progress.deck == 2) classes.push('guru');
+              else if (progress.deck == 3) classes.push('master');
+              else if (progress.deck >= 6) classes.push('burned');
+              else classes.push('enlightened');
+            } else if (progress.flagged === true) {
+              classes.push('unlocked');
+            }
+          }
+
+          result[kreb.title] = classes;
+        }
+
+        return result;
       }
     },
     methods: {
@@ -250,7 +271,7 @@ javascript:
         $.ajax({
           url: "#{{path_to(:word_learn)}}",
           method: "POST",
-          data: {seq: this.word.seq, kreb: kreb.title}
+          data: {seq: this.word.seq, kreb: kreb}
         }).done(data => {
           var newProgress = JSON.parse(data);
           var _progresses = Object.assign({}, this.progresses);
@@ -258,21 +279,21 @@ javascript:
           this.progresses = _progresses;
         });
       },
-      burnWord(progressId) {
+      burnWord(kreb, progressId) {
         $.ajax({
           url: "#{{path_to(:word_burn)}}",
           method: "POST",
           data: {progress_id: progressId}
         }).done(data => {
-          var progress = JSON.parse(data);
-          this.progresses[progress.title].burned_at = progress.burned_at;
+          //var newProgress = JSON.parse(data);
+          this.progresses[kreb].burned_at = new Date();
         });
       },
       flagWord(kreb) {
         $.ajax({
           url: "#{{path_to(:word_flag)}}",
           method: "POST",
-          data: {seq: this.word.seq, kreb: kreb.title}
+          data: {seq: this.word.seq, kreb: kreb}
         }).done(data => {
           var newProgress = JSON.parse(data);
           var _progresses = Object.assign({}, this.progresses);
@@ -295,11 +316,11 @@ javascript:
       hideCommentForm() {
         this.forms.comment = false;
       },
-      openKrebForm(krebIndex) {
-        if (this.forms.kreb === krebIndex) {
+      openKrebForm(kreb) {
+        if (this.forms.kreb === kreb) {
           this.forms.kreb = null;
         } else {
-          this.forms.kreb = krebIndex;
+          this.forms.kreb = kreb;
         }
       },
       openCardForm(cardIndex) {
