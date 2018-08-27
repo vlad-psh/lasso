@@ -850,6 +850,7 @@ form.add-note-form {
   background-color: #0b486b;
   color: white;
   padding: 0 0.3em;
+  margin: 0 0.3em 0 0;
   border-radius: 2px;
 }
 .expandable-list-container a:hover {

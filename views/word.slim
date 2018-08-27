@@ -51,13 +51,14 @@ div.word-card#word-card-app
 
   div.expandable-list-container v-if="forms.kreb !== null"
     div.center-block
-      span v-if="krebs[forms.kreb].progress && krebs[forms.kreb].progress.learned_at != null"
-        = "{{krebs[forms.kreb].progress.learned_at ? 'learned ' : ''}}"
-        span v-if="krebs[forms.kreb].progress.burned_at" burned
+      span v-if="selectedKreb.progress && selectedKreb.progress.learned_at !== null"
+        = "{{selectedKreb.progress.learned_at ? 'learned ' : ''}}"
+        span v-if="selectedKreb.progress.burned_at" burned
         span v-else="true"
-          a @click="burnWord(krebs[forms.kreb].progress.id)" burn!
+          a @click="burnWord(selectedKreb.progress.id)" burn!
       span v-else="true"
-        a @click="learnWord(krebs[forms.kreb])" learn!
+        a v-if="selectedKreb.progress === null || selectedKreb.progress.flagged === false" @click="flagWord(selectedKreb)" flag!
+        a @click="learnWord(selectedKreb)" learn!
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -191,6 +192,13 @@ javascript:
         } else {
           return {};
         }
+      },
+      selectedKreb: function() {
+        if (this.forms.kreb !== null) {
+          return this.krebs[this.forms.kreb];
+        } else {
+          return {};
+        }
       }
     },
     methods: {
@@ -258,6 +266,18 @@ javascript:
         }).done(data => {
           var progress = JSON.parse(data);
           this.progresses[progress.title].burned_at = progress.burned_at;
+        });
+      },
+      flagWord(kreb) {
+        $.ajax({
+          url: "#{{path_to(:word_flag)}}",
+          method: "POST",
+          data: {seq: this.word.seq, kreb: kreb.title}
+        }).done(data => {
+          var newProgress = JSON.parse(data);
+          var _progresses = Object.assign({}, this.progresses);
+          _progresses[newProgress.title] = newProgress;
+          this.progresses = _progresses;
         });
       },
       saveComment() {

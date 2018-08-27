@@ -38,16 +38,20 @@ paths index: '/',
     login: '/login', # GET: login form; POST: log in
     logout: '/logout', # DELETE: logout
     settings: '/settings',
+    words_nf: '/words/:nf',
     word: '/word/:id',
+# Change word properties
     word_learn: '/word/learn', # POST
     word_burn: '/word/burn', # POST
-    words_nf: '/words/:nf',
-    mecab: '/mecab',
-    sentences: '/sentences',
-    sentence: '/sentence/:id',
-    autocomplete_word: '/autocomplete/word',
     word_connect: '/word/connect',
     word_set_comment: '/word/:id/comment',
+    word_flag: '/word/flag',
+# Other API
+    mecab: '/mecab',
+    sentences: '/sentences', # POST
+    sentence: '/sentence/:id', # DELETE
+    autocomplete_word: '/autocomplete/word',
+# Temporary API (should be deleted soon)
     link_word_to_card: '/linkw2c',
     disable_card: '/disable_card',
     study2: '/study2'
@@ -363,6 +367,15 @@ get :word do
   @word_seq = params[:id]
 
   slim :word
+end
+
+post :word_flag do
+  protect!
+
+  progress = Progress.find_or_create_by(seq: params[:seq], title: params[:kreb], user: current_user)
+  progress.update_attribute(:flagged, true)
+
+  return progress.to_json
 end
 
 post :word_learn do

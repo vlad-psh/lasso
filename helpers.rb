@@ -93,6 +93,9 @@ module WakameHelpers
       return 'enlightened' if e.deck == 4 || e.deck == 5
       return 'burned'      if e.deck >= 6
     else
+# TODO: locked/unlocked statuses should be removed (or not?)
+# Chain can be like this: [no tags] -> [flagged] -> learned -> apprentice/guru/etc
+      return 'unlocked' if e.try(:flagged)
       return 'locked'
     end
   end
