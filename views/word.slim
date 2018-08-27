@@ -29,6 +29,7 @@ ruby:
       {
         title: c.title,
         level: c.level,
+        readings: c.detailsb['readings'].join(', '),
         en:    c.detailsb['en'].join(', '),
         pos:   c.detailsb['pos'],
         mexp:  c.detailsb['mexp'],
@@ -50,7 +51,7 @@ div.word-card#word-card-app
 
   div.expandable-list-container v-if="forms.kreb !== null"
     div.center-block
-      span v-if="krebs[forms.kreb].progress"
+      span v-if="krebs[forms.kreb].progress && krebs[forms.kreb].progress.learned_at != null"
         = "{{krebs[forms.kreb].progress.learned_at ? 'learned ' : ''}}"
         span v-if="krebs[forms.kreb].progress.burned_at" burned
         span v-else="true"
@@ -77,14 +78,18 @@ div.word-card#word-card-app
     div.word-gloss-flag &#x1f980;
     div.expandable-list style="display: inline-block"
       div.expandable-list-item v-for="(card, cardIndex) of cards"
-        div.word-gloss @click="openCardForm(cardIndex)" = '{{card.title}} ({{card.level}})'
+        div.word-gloss @click="openCardForm(cardIndex)"
+          div.level-wrapper = '{{card.level}}'
+          = '{{card.title}} ({{card.en}})'
         div.expandable-list-arrow v-if="cardIndex === forms.card"
 
   div.expandable-list-container.word-gloss-expanded v-if="forms.card !== null"
     div.center-block
-      span style="font-weight: bold" = '{{selectedCard.en}} '
+      span = '{{selectedCard.title}} · '
+      span style="font-weight: bold" = '{{selectedCard.readings}} '
+      span = '· {{selectedCard.en}} '
       span> style="font-style: italic" = '({{selectedCard.pos}})'
-      a :href="selectedCard.href" Link
+      a :href="selectedCard.href" target="_blank" Show ⮭
       div.hr-title: span Meaning
       div = "{{selectedCard.mexp}}"
       div.hr-title: span Reading

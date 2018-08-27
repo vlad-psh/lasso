@@ -349,8 +349,12 @@ body.black .unlocked .description {
 .elements-list-item .description {
   font-size: 0.8em;
 }
-.level-wrapper {
+.elements-list-item .level-wrapper {
   position: absolute;
+  margin: -0.8em 0 0 -0.8em;
+}
+.level-wrapper {
+  display: block;
   background-color: #ffbc11;
   color: #99700a;
   border-radius: 1em;
@@ -358,9 +362,9 @@ body.black .unlocked .description {
   line-height: 1.6em;
   width: 1.6em;
   height: 1.6em;
-  margin: -0.8em 0 0 -0.8em;
   -moz-user-select: none;
   -webkit-user-select: none;
+  text-align: center;
 }
 /* COMPACT STYLE */
 .elements-list-separate.elements-list-compact .elements-list-item {
@@ -898,10 +902,16 @@ form.add-note-form {
 }
 .word-gloss {
   padding: 0.8em 0;
+  padding-left: 1.3em;
   margin-right: 1em;
   cursor: pointer;
   border-bottom: 1px dashed #008ace;
   color: #008ace;
+}
+.word-gloss .level-wrapper {
+  position: absolute;
+  font-size: 0.6em;
+  margin: -0.8em 0 0 -2em;
 }
 .word-gloss:hover {
   color: #c00;
@@ -909,6 +919,9 @@ form.add-note-form {
 .word-gloss-expanded {
   text-align: justify;
   font-size: 0.9em;
+}
+.word-gloss-expanded a {
+  text-decoration: none;
 }
 .word-gloss-expanded .hr-title {
   color: rgba(0,0,0,0.3);
