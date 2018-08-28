@@ -4,6 +4,12 @@ class Progress < ActiveRecord::Base
   belongs_to :word, primary_key: :seq, foreign_key: :seq
   has_many :actions
 
+  enum kind: {
+    word: 1,
+    kanji: 2,
+    radical: 3
+  }
+
 #               unlocked  learned  scheduled
 #locked         -         -        -
 #unlocked       true      ANY      ANY
@@ -17,16 +23,16 @@ class Progress < ActiveRecord::Base
   scope :locked,        ->{where(unlocked: false)} # THIS WILL ALWAYS BE EMPTY
   scope :unlocked,      ->{where(unlocked: true)}
   scope :just_unlocked, ->{where(learned: false, unlocked: true)}
-  scope :just_learned,  ->{where(learned: true, scheduled: nil)}
+  scope :just_learned,  ->{where(learned: true, scheduled: nil, burned_at: nil)}
   scope :any_learned,   ->{where(learned: true)}
   scope :not_learned,   ->{where(learned: false)} # SHOULD INCLUDE CARDS WITH locked == false
   scope :studied,       ->{where.not(scheduled: nil)}
   scope :not_studied,   ->{where(scheduled: nil)} # SHOULD INCLUDE CARDS WITH locked == false
 
 #  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
-  scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
+  scope :expired,  ->{where(scheduled: Date.new..Date.today, burned_at: nil).where.not(deck: 0)}
   # Cards in current level which are not learned yet:
-  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
+#  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
 
 
   def self.hash_me
