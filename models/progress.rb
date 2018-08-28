@@ -4,11 +4,11 @@ class Progress < ActiveRecord::Base
   belongs_to :word, primary_key: :seq, foreign_key: :seq
   has_many :actions
 
-  enum kind: {
-    word: 1,
-    kanji: 2,
-    radical: 3
-  }
+  enum kind: {w: 1, k: 2, r: 3}
+
+  scope :words,    ->{where(kind: :w)}
+  scope :kanjis,   ->{where(kind: :k)}
+  scope :radicals, ->{where(kind: :r)}
 
 #               unlocked  learned  scheduled
 #locked         -         -        -
@@ -22,12 +22,12 @@ class Progress < ActiveRecord::Base
 
   scope :locked,        ->{where(unlocked: false)} # THIS WILL ALWAYS BE EMPTY
   scope :unlocked,      ->{where(unlocked: true)}
-  scope :just_unlocked, ->{where(learned: false, unlocked: true)}
-  scope :just_learned,  ->{where(learned: true, scheduled: nil, burned_at: nil)}
-  scope :any_learned,   ->{where(learned: true)}
-  scope :not_learned,   ->{where(learned: false)} # SHOULD INCLUDE CARDS WITH locked == false
-  scope :studied,       ->{where.not(scheduled: nil)}
-  scope :not_studied,   ->{where(scheduled: nil)} # SHOULD INCLUDE CARDS WITH locked == false
+  scope :just_unlocked, ->{where(learned_at: nil, unlocked: true)}
+  scope :just_learned,  ->{where(scheduled: nil, burned_at: nil).where.not(learned_at: nil)}
+  scope :any_learned,   ->{where.not(learned_at: nil)}
+#  scope :not_learned,   ->{where(learned_at: nil)} # SHOULD INCLUDE CARDS WITH locked == false
+#  scope :studied,       ->{where.not(scheduled: nil)}
+#  scope :not_studied,   ->{where(scheduled: nil)} # SHOULD INCLUDE CARDS WITH locked == false
 
 #  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
   scope :expired,  ->{where(scheduled: Date.new..Date.today, burned_at: nil).where.not(deck: 0)}
@@ -46,11 +46,6 @@ class Progress < ActiveRecord::Base
       result[p.seq] << p
     end
     return result
-  end
-
-# TODO:
-  def element_type
-    return 'w'
   end
 
   def answer_by!(a, user)
@@ -94,7 +89,7 @@ class Progress < ActiveRecord::Base
 
     if self.deck != 0
       stats = Statistic.find_or_initialize_by(user: user, date: self.scheduled)
-      stats.scheduled[self.element_type] += 1
+      stats.scheduled[self.kind] += 1
       stats.save
     end
   end

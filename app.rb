@@ -85,10 +85,10 @@ get :index do
   @counters = {}
 
   [:just_learned, :expired, :any_learned].each do |g|
-    @counters[g] = Card.joins(:progresses).merge( Progress.public_send(g).where(user: @view_user) ).group(:element_type).count
+    @counters[g] = Progress.public_send(g).where(user: @view_user).group(:kind).count
   end
 
-  k_jlpt = Card.kanjis.joins(:progresses).merge( Progress.where(user: @view_user, learned: true) ).group("detailsb->>'jlpt'").count
+  k_jlpt = Card.kanjis.joins(:progresses).merge( Progress.where(user: @view_user).where.not(learned_at: nil) ).group("detailsb->>'jlpt'").count
   # {"5"=>103, "4"=>181, "3"=>367, "2"=>400, "1"=>1207} # non-cumulative
   # {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258} # cumulative
   k_total = {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258}
@@ -98,7 +98,7 @@ get :index do
     @counters["n#{lvl}".to_sym] = {'k' => (100.0*cumulative/k_total[lvl]).round}
   end
 
-  w_jlpt = Card.words.joins(:progresses).merge( Progress.where(user: @view_user, learned: true) ).group("detailsb->>'jlpt'").count
+  w_jlpt = Card.words.joins(:progresses).merge( Progress.where(user: @view_user).where.not(learned_at: nil) ).group("detailsb->>'jlpt'").count
   # {"5"=>438, "4"=>416, "3"=>964, "2"=>531, "1"=>681} # word cards in db + 3284 of unknown level
   # {"5"=>438, "4"=>854, "3"=>1818, "2"=>2349, "1"=>3030} # same as above but cumulative
   # {"5"=>602, "4"=>595, "3"=>2165, "2"=>3249, "1"=>2708} # real life total counts
@@ -225,8 +225,9 @@ end
 get :study do
   protect!
 
-# TODO: right now it selects only words! kanji/radicals is broken
-  progresses = Progress.public_send(safe_group(params[:group])).where(user: current_user).where.not(seq: nil)
+  progresses = Progress.public_send(safe_group(params[:group])).
+                        public_send(safe_type(params[:class])).
+                        where(user: current_user)
   @count = progresses.count
   @progress = progresses.order('RANDOM()').first
 

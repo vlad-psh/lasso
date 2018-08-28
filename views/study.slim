@@ -30,7 +30,10 @@ div.study-card
   //        div.reading-answer
   //          == slim :reading, locals: {e: @element}
   div.answer
-    == slim :word
+    - if @progress.kind == 'w'
+      == slim :word
+    - else
+      | TODO: CARD TEMPLATE SHOULD BE HERE
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
     input type="hidden" name="id" value=@progress.id
     input type="hidden" name="answer" value=''
