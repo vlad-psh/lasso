@@ -1,5 +1,6 @@
 ruby:
   word = Word.includes(:short_words, :long_words, :cards, :word_titles).where(seq: @word_seq).with_progresses(current_user)[0]
+  @title = word.word_titles.first.title
   word_details = word.word_details.where(user: current_user).take
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
 
