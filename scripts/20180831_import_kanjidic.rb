@@ -70,3 +70,22 @@ File.readlines('../wakame_data/edrdg/kanjidic_utf8').each do |line|
   end
 end; nil
 
+
+j = JSON.parse(File.read('../wakame_data/jlpt_kanji.json'))
+[1,2,3,4,5].each do |i|
+  j["N#{i}"].each do |t|
+    k = Kanji.find_by(title: t)
+    k.update_attribute(:jlptn, i) 
+  end
+end; nil
+
+
+Card.kanjis.select(:id, :title, :level).each do |c|
+  k = Kanji.find_by(title: c.title)
+  next unless k # 々 is not included in kanjidic
+  k.update_attributes({
+    card_id: c.id,
+    wk: c.level
+  })
+end; nil
+
