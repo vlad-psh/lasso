@@ -232,7 +232,6 @@ get :study do
   @progress = progresses.order('RANDOM()').first
 
   if @progress.present?
-    @word_seq = @progress.seq
     @title = @progress.title
     slim :study
   else

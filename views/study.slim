@@ -31,9 +31,11 @@ div.study-card
   //          == slim :reading, locals: {e: @element}
   div.answer
     - if @progress.kind == 'w'
+      - @word_seq = @progress.seq
       == slim :word
     - else
-      | TODO: CARD TEMPLATE SHOULD BE HERE
+      - @element = Card.where(id: @progress.card_id).with_progress(current_user).first
+      == slim :element
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
     input type="hidden" name="id" value=@progress.id
     input type="hidden" name="answer" value=''
