@@ -80,7 +80,8 @@ div.element-card
       - unless mne_title == :reading && e.radical?
         - if current_user.present?
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
-          == slim :ajax_form, locals: {e: e, property_name: mne_title, buttons: true}
+          - if e.progress.try(:details).try(:[], mne_title)
+            div.custom-note == bb_textile(e.progress.details[mne_title])
 
   - if e.word? && e.detailsb['sentences'] && e.detailsb['sentences'].length > 0
    div.mnemonics

@@ -28,7 +28,6 @@ paths index: '/',
     level: '/level/:level',
     cards: '/cards',
     card: '/card/:id',
-    cardinfo: '/cardinfo/:id', # post
     learn: '/learn/:id', # post
     study: '/study/:class/:group', # get, post
     search: '/search', # post
@@ -196,21 +195,6 @@ get :term do
   @title = DEGREES[d]
   @separate_list = true
   slim :elements_list
-end
-
-post :cardinfo do
-  protect!
-
-  sprop = params[:property_name].to_sym
-  allowed_props = {my_meaning: :m, my_reading: :r, my_en: :t}
-  throw StandardError.new("Unknown property: #{sprop}") unless allowed_props.keys.include?(sprop)
-
-  e = Progress.find_or_initialize_by(card_id: params[:id], user_id: current_user.id)
-  e.details ||= {}
-  e.details[allowed_props[sprop]] = params[:content]
-  e.save
-
-  return bb_textile(e.details[allowed_props[sprop].to_s])
 end
 
 post :learn do
