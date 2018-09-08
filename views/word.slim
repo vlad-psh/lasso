@@ -1,6 +1,7 @@
 ruby:
   word = Word.includes(:short_words, :long_words, :cards, :word_titles).where(seq: @word_seq).with_progresses(current_user)[0]
   @title = word.word_titles.first.title
+  kanji = Kanji.where(title: word.kanji.split('')).order(:grade)
   word_details = word.word_details.where(user: current_user).take
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
 
@@ -31,7 +32,8 @@ ruby:
         rexp:  c.detailsb['rexp'],
         href:  path_to(:card).with(c.id)
       }
-    }
+    },
+    kanji: kanji
   }
 
 
@@ -54,6 +56,13 @@ div.word-card#word-card-app
       span v-else="true"
         a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)" flag!
         a @click="learnWord(forms.kreb)" learn!
+
+  div.center-block
+    span v-for="k of kanji"
+      ' {{k.title}}
+      span v-if="k.jlptn" style="font-size: 0.7em" = 'JLPT N{{k.jlptn}} '
+      span v-if="k.wk" style="font-size: 0.7em" = 'WK#{{k.wk}} '
+      span v-if="k.grade" style="font-size: 0.7em" = 'grade_{{k.grade}} '
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
