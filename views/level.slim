@@ -2,7 +2,7 @@ ruby:
   lvl = params[:level].to_i
   pagination = {current: "Level&nbsp;#{lvl}"}
   pagination[:prev] = {href: path_to(:level).with(lvl - 1), title: "Level&nbsp;#{lvl - 1}"} if lvl > 1
-  pagination[:next] = {href: path_to(:level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"}
+  pagination[:next] = {href: path_to(:level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
 
 == slim :pagination, locals: {pg: pagination}
 

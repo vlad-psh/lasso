@@ -59,17 +59,4 @@ ruby:
 - if @elements.length == 0 && @russian_words.length == 0
   p Sorry, nothing found
 
-div.hr-title: span style="padding: 1em" Create new vocabulary card
-form method="POST" action=path_to(:cards)
-  input type="hidden" name="search" value=params['query']
-  ' Word:
-  input> type="text" name="title"
-  ' Reading:
-  input> type="text" name="reading"
-  ' Meaning:
-  input> type="text" name="en"
-  select> name="type"
-    option value="burned" selected="selected" Burned
-    option value="learned" Learned
-    option value="unlocked" Unlocked
-  input type="submit" value="Save"
+br

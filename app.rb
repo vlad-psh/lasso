@@ -113,37 +113,6 @@ get :index do
   slim :index
 end
 
-post :cards do
-  protect!
-
-  c = Card.create(
-        element_type: :w,
-        title: params['title'],
-        level: (params['type'] == 'burned' ? 100 : 99),
-        detailsb: {
-            en: [params['en']],
-            readings: [params['reading']],
-            user_id: current_user.id # author
-          }
-        )
-
-  uc = Progress.find_or_initialize_by(card: c, user: current_user)
-  uc.unlocked = true
-  uc.deck = 0
-  uc.save
-
-  if params['type'] == 'burned'
-    uc.update(learned: true)
-    c.move_to_deck_by!(100, current_user)
-  elsif params['type'] == 'learned'
-    c.learn_by!(current_user)
-#  elsif params['type'] == 'unlocked'
-#    c.level = 99
-  end
-
-  redirect "#{path_to(:search)}?query=#{params['search']}"
-end
-
 get :card do
   protect!
 
@@ -542,7 +511,6 @@ post :link_word_to_card do
   card = Card.find(params[:card_id])
   word = Word.find_by(seq: params[:word_id])
   card.update_attribute(:seq, word.seq)
-  word.update_attribute(:card_id, card.id)
 
   card.progresses.each do |p|
     p.update_attribute(:seq, word.seq)
