@@ -365,15 +365,14 @@ end
 post :word_learn do
   protect!
 
-  progress = Progress.find_or_create_by(seq: params[:seq], title: params[:kreb], user: current_user)
-  throw StandardError.new("Already learned") if progress.learned
+  progress = Progress.find_or_initialize_by(seq: params[:seq], title: params[:kreb], user: current_user)
+  throw StandardError.new("Already learned") if progress.learned_at.present?
 
   unless progress.unlocked
     progress.unlocked = true
     progress.unlocked_at = DateTime.now
   end
 
-  progress.learned = true
   progress.learned_at = DateTime.now
   progress.deck = 0
   progress.save

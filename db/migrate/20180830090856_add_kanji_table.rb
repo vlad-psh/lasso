@@ -6,7 +6,7 @@ class AddKanjiTable < ActiveRecord::Migration[5.2]
       t.integer :jlptn
       t.integer :grade
       t.integer :heisig
-      t.integer :strokes
+      t.integer :strokes, array: true # can have many variants
     end
 
     create_table :kanji_properties do |t|

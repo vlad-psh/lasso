@@ -1,72 +1,49 @@
 require 'mojinizer'
+require 'ox'
 
-File.readlines('../wakame_data/edrdg/kanjidic_utf8').each do |line|
-  words = line.split
+# For some reason, OX throws an error:
+# Ox::ParseError (invalid format, dectype not terminated at line 516337, column 6 [parse.c:336])
+# Easy way to avoid this is to remove (manually) all <!DOCTYPE>/<!ELEMENT>/<!ATTLIST> tags in header
+xml = Ox.parse(File.read("../wakame_data/edrdg/kanjidic2.xml2")); nil
 
-  # skip first record with copyright info
-  next if words[0] == '#'
 
-  kanji = words.shift
-  jis_code = words.shift
-
-  values = {}
-  while !words[0].contains_japanese?
-    # leading capital letters are remembered as 'k'
-    # everything else is 'v'
-    w = words.shift
-    m = w.match(/(?<k>[A-Z]*)(?<v>.*)/)
-    throw StandardError.new("Unable to parse #{w}") unless m
-
-    if %w(DA O Q S V W XDR XH XJ XN Y ZBP ZPP ZRP ZSP).include?(m[:k])
-      # those keys can have multiple values (array)
-      values[m[:k]] ||= []
-      values[m[:k]] << m[:v]
-    else
-      # single value keys
-      throw StandardError.new("Key is already defined: #{m[:k]} in line: #{line}") if values[m[:k]]
-      values[m[:k]] = m[:v]
-    end
-  end
-
-  readings = {on: [], kun: [], nanori: [], english: []}
-  while words[0].contains_japanese?
-    w = words.shift
-    readings[ w[0].katakana? ? :on : :kun ] << w
-  end
-
-  while words[0][0] == 'T' # T1 T2 etc
-    # next are nanori readings
-    words.shift
-    while words[0].contains_japanese?
-      readings[:nanori] << words.shift
-    end
-  end
-
-  words = words.join(' ').strip
-  throw StandardError.new("Unexpected format of english words in <<#{line}>>") if words[0] != '{' || words[-1] != '}'
-  words = words[1..-2].split('} {')
-  while words.length > 0
-    readings[:english] << words.shift
-  end
-
-  puts "#{kanji} #{readings.inspect}"
-
-  _k = Kanji.create(
-        title: kanji,
-        jlpt: values['J'].try(:to_i),
-        grade: values['G'].try(:to_i),
-        heisig: values['L'].try(:to_i)
-# TODO: strokes (it is not a simple number, but array of numbers)
+xml.locate('kanjidic2/character').each do |char|
+  k = Kanji.new(
+    title: char.locate('literal')[0].text, # literal: 1 (count of elements)
+    grade: char.locate('misc/grade')[0].try(:text).try(:to_i), # misc/grade: none or 1
+    jlpt: char.locate('misc/jlpt')[0].try(:text).try(:to_i), # misc/jlpt: none or 1
   )
+  char.locate('dic_number/dic_ref').each do |dic_ref|
+    k.heisig = dic_ref.text.to_i if dic_ref.dr_type == 'heisig'
+  end
+  char.locate('misc/stroke_count').each do |stroke_count|
+    k.strokes ||= []
+    k.strokes << stroke_count.text.to_i
+## Select kanji with more than 2 different stroke_counts
+# Kanji.where('array_length(strokes, 1) > 2').pluck(:title, :strokes)
+## Select kanji with 7 strokes
+# Kanji.where('? = ANY(strokes)', 7)
+  end
 
-  [:on, :kun, :nanori, :english].each do |k|
-    readings[k].each do |v|
-      KanjiProperty.create(
-        kanji: _k,
-        title: v,
-        kind: k
-      )
-    end
+  k.save
+end; nil
+
+
+xml.locate('kanjidic2/character').each do |char|
+  k = Kanji.find_by(title: char.locate('literal')[0].text)
+
+  char.locate('reading_meaning/rmgroup/reading').each do |reading|
+    next unless ['ja_on', 'ja_kun'].include?(reading.r_type)
+    KanjiProperty.create(kanji: k, title: reading.text, kind: reading.r_type == 'ja_on' ? :on : :kun)
+  end
+
+  char.locate('reading_meaning/rmgroup/meaning').each do |meaning|
+    next if meaning.attributes.has_key?(:m_lang) # english meanings doesn't have any 'm_lang' attributes
+    KanjiProperty.create(kanji: k, title: meaning.text, kind: :english)
+  end
+
+  char.locate('reading_meaning/nanori').each do |nanori|
+    KanjiProperty.create(kanji: k, title: nanori.text, kind: :nanori)
   end
 end; nil
 
@@ -75,17 +52,6 @@ j = JSON.parse(File.read('../wakame_data/jlpt_kanji.json'))
 [1,2,3,4,5].each do |i|
   j["N#{i}"].each do |t|
     k = Kanji.find_by(title: t)
-    k.update_attribute(:jlptn, i) 
+    k.update_attribute(:jlptn, i)
   end
 end; nil
-
-
-Card.kanjis.select(:id, :title, :level).each do |c|
-  k = Kanji.find_by(title: c.title)
-  next unless k # 々 is not included in kanjidic
-  k.update_attributes({
-    card_id: c.id,
-    wk: c.level
-  })
-end; nil
-
