@@ -51,8 +51,6 @@ paths index: '/',
     sentence: '/sentence/:id', # DELETE
     autocomplete_word: '/autocomplete/word',
 # Temporary API (should be deleted soon)
-    link_word_to_card: '/linkw2c',
-    disable_card: '/disable_card',
     study2: '/study2'
 
 configure do
@@ -503,32 +501,6 @@ get :study2 do
 
   @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
   slim :study2
-end
-
-post :link_word_to_card do
-  protect!
-
-  card = Card.find(params[:card_id])
-  word = Word.find_by(seq: params[:word_id])
-  card.update_attribute(:seq, word.seq)
-
-  card.progresses.each do |p|
-    p.update_attribute(:seq, word.seq)
-  end
-
-  redirect path_to(:card).with(card.id)
-end
-
-post :disable_card do
-  protect!
-
-  c = Card.find(params['card_id'])
-  c.update_attribute(:is_disabled, true)
-  c.progresses.each do |p|
-    p.update_attribute(:burned_at, DateTime.now)
-  end
-
-  redirect path_to(:card).with(c.id)
 end
 
 post :word_set_comment do
