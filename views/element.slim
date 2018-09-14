@@ -49,7 +49,7 @@ div.element-card
             - if e.seq
               br
               a href=path_to(:word).with(e.seq) = "Entity #{e.seq}"
-    - if current_user.present? && !e.progress.try(:learned)
+    - if current_user.present? && e.progress && !e.progress.learned_at.present?
       - if e.progress.try(:unlocked) && !e.word? # words should be learned from new word's page
         div.top-info-block
           div.hr-title: span Actions
@@ -65,7 +65,7 @@ div.element-card
       form method="POST" action=path_to(:disable_card)
         input type="hidden" name="card_id" value=e.id
         input type="submit" value="disable"
-    - else
+    - elsif e.word? && e.is_disabled
       ' disabled
 
   - if e.detailsb['mynotes']
@@ -80,8 +80,8 @@ div.element-card
       - unless mne_title == :reading && e.radical?
         - if current_user.present?
           div.hr-title: span = "My #{mne_title.to_s.capitalize} Description"
-          - if e.progress.try(:details).try(:[], mne_title)
-            div.custom-note == bb_textile(e.progress.details[mne_title])
+          - if e.progress.try(:details).try(:[], mne_title.to_s[0])
+            div == bb_textile(e.progress.details[mne_title.to_s[0]])
 
   - if e.word? && e.detailsb['sentences'] && e.detailsb['sentences'].length > 0
    div.mnemonics

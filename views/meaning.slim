@@ -6,5 +6,5 @@
   span.secondary
     - e.detailsb['en'].each do |en|
       = ", #{en}"
-- if e.progress.try(:details).try(:[], :en)
-  div.custom-note == bb_textile(e.progress.details[:en])
+- if e.progress.try(:details).try(:[], 't')
+  div == bb_textile(e.progress.details['t'])

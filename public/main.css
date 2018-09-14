@@ -454,9 +454,6 @@ body.black .element-card {
   margin-top: 0.4em;
   max-width: 15em;
 }
-.element-card .top-info .top-info-block .custom-note p {
-  margin: 0;
-}
 .element-card .element-title {
   font-size: 4em;
   display: inline-block;
@@ -674,29 +671,6 @@ svg.graph text {
 }
 body.black svg.graph text {
   fill: #fff;
-}
-/* ==============================
-   AJAX FORM
-   ============================== */
-.custom-note {
-  cursor: pointer;
-}
-.custom-note:hover {
-  background-color: rgba(100,100,100,0.1);
-}
-.add-note-show-link {
-  color: #bbb;
-  cursor: pointer;
-}
-.add-note-show-link:hover {
-  color: #777;
-}
-form.add-note-form {
-  display: none;
-}
-.mnemonics form.add-note-form textarea {
-  width: 100%;
-  height: 10em;
 }
 /* ==============================
    NOTES
@@ -1034,6 +1008,12 @@ input.ensentence {
      ipad:   vertical 768/horizontal 1024
    ============================== */
 @media (max-width: 568px) {
+  input[type="text"]:focus,
+  input[type="text"]:hover,
+  textarea:hover,
+  textarea:focus {
+    font-size: 16px; /* Adding 16px on focus will prevent page zoom */
+  }
   .element-card {
     padding: 0.5em !important;
   }
