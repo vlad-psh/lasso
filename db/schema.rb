@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_30_090856) do
+ActiveRecord::Schema.define(version: 2018_09_15_192409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,6 +116,39 @@ ActiveRecord::Schema.define(version: 2018_08_30_090856) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
+  end
+
+  create_table "wk_kanji", force: :cascade do |t|
+    t.integer "level"
+    t.string "title"
+    t.jsonb "details"
+  end
+
+  create_table "wk_kanji_radicals", id: false, force: :cascade do |t|
+    t.bigint "wk_kanji_id"
+    t.bigint "wk_radical_id"
+    t.index ["wk_kanji_id"], name: "index_wk_kanji_radicals_on_wk_kanji_id"
+    t.index ["wk_radical_id"], name: "index_wk_kanji_radicals_on_wk_radical_id"
+  end
+
+  create_table "wk_kanji_words", id: false, force: :cascade do |t|
+    t.bigint "wk_kanji_id"
+    t.bigint "wk_word_id"
+    t.index ["wk_kanji_id"], name: "index_wk_kanji_words_on_wk_kanji_id"
+    t.index ["wk_word_id"], name: "index_wk_kanji_words_on_wk_word_id"
+  end
+
+  create_table "wk_radicals", force: :cascade do |t|
+    t.integer "level"
+    t.string "title"
+    t.jsonb "details"
+  end
+
+  create_table "wk_words", force: :cascade do |t|
+    t.integer "level"
+    t.string "title"
+    t.jsonb "details"
+    t.integer "seq"
   end
 
   create_table "word_connections", id: false, force: :cascade do |t|
