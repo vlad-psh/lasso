@@ -1,9 +1,21 @@
 ruby:
   word = Word.includes(:short_words, :long_words, :cards, :word_titles).where(seq: @word_seq).with_progresses(current_user)[0]
   @title = word.word_titles.first.title
-  kanji = Kanji.where(title: word.kanji.split('')).order(:grade)
   word_details = word.word_details.where(user: current_user).take
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
+
+  kanji = Hash[ Kanji.eager_load(:kanji_properties).where(title: word.kanji.split('')).map do |k|
+    [
+      k.title,
+      {
+        info: k,
+        english: k.kanji_properties.select{|p|p.kind == 'english'}.pluck(:title),
+        on:      k.kanji_properties.select{|p|p.kind == 'on'     }.pluck(:title),
+        kun:     k.kanji_properties.select{|p|p.kind == 'kun'    }.pluck(:title),
+        nanori:  k.kanji_properties.select{|p|p.kind == 'nanori' }.pluck(:title)
+      }
+    ]
+  end]
 
   found_progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
   sorted_word_titles = word.word_titles.sort{|a,b| a.id <=> b.id}.map{|t| {title: t.title, is_common: t.is_common}}
@@ -56,6 +68,16 @@ div.word-card#word-card-app
       span v-else="true"
         a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)" flag!
         a @click="learnWord(forms.kreb)" learn!
+      div v-for="krebChar of forms.kreb.split('')" v-if="kanji[krebChar]"
+        div.hr-title: span = '{{krebChar}}'
+        span = '{{krebChar}}'
+        span v-if="kanji[krebChar].info.jlptn" = ' · JLPT N{{kanji[krebChar].info.jlptn}}'
+        span v-if="kanji[krebChar].info.wk"    = ' · WK #{{kanji[krebChar].info.wk}}'
+        span v-if="kanji[krebChar].english.length > 0" = '：{{kanji[krebChar].english.join("; ")}}'
+        div
+          span v-if="kanji[krebChar].on.length  > 0" = '【音読み】{{ kanji[krebChar].on.join(" · ") }} '
+          span v-if="kanji[krebChar].kun.length > 0" = '【訓読み】{{ kanji[krebChar].kun.join(" · ") }} '
+          //span v-if="kanji[krebChar].nanori.length > 0" = '【名乗り】{{ kanji[krebChar].nanori.join(" · ") }} '
 
   div.center-block
     span v-for="k of kanji"

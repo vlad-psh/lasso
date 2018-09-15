@@ -898,10 +898,10 @@ body.black svg.graph text {
 .word-gloss-expanded a {
   text-decoration: none;
 }
-.word-gloss-expanded .hr-title {
+.expandable-list-container .hr-title {
   color: rgba(0,0,0,0.3);
 }
-.word-gloss-expanded .hr-title span {
+.expandable-list-container .hr-title span {
   margin: 0.4em 0;
 }
 .connected-word,
