@@ -1,7 +1,4 @@
 ruby:
-  counters = {'r' => 0, 'k' => 0, 'w' => 0}
-  @elements.each {|e| counters[e.element_type] += 1}
-
   def words_to_string(words)
     return '' if words.blank? || words.length == 0
     return words[0] if words.length == 1
@@ -21,33 +18,16 @@ ruby:
           == w.en[0]['gloss'].join('; ')
           a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
 
-- if counters['w'] > 0
+- if @wk_words.length > 0
   div.hr-title: span style="padding: 1em" Words
   div.search-results
-    - @elements.each do |e|
-      - next unless e.word?
+    - @wk_words.each do |e|
       div.search-result
-        a href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
-        == '　' + highlight(e.detailsb['readings'].join('; '), params['query']) + ' '
-        == highlight(e.detailsb['en'].join('; '), params['query'])
+        a href=path_to(:wk_word).with(e.id) == highlight(e.title, params['query'])
+        == '　' + highlight(e.details['readings'].join('; '), params['query']) + ' '
+        == highlight(e.details['en'].join('; '), params['query'])
 
-- if counters['k'] > 0
-  div.hr-title: span style="padding: 1em" Kanji
-  div.search-results
-    - @elements.each do |e|
-      - next unless e.kanji?
-      div.search-result
-        a> href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
-        == highlight(e.detailsb['en'].join('; '), params['query'])
-
-- if counters['r'] > 0
-  div.hr-title: span style="padding: 1em" Radicals
-  div.search-results
-    - @elements.each do |e|
-      - next unless e.radical?
-      div.search-result
-        a> href=path_to(:card).with(e.id) == highlight(e.title, params['query'])
-        == highlight(e.detailsb['en'].join('; '), params['query'])
+// TODO: Search results for kanji/radicals/etc
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""
@@ -56,7 +36,7 @@ ruby:
       div.search-result
         div == highlight(w.title, params['query'])
 
-- if @elements.length == 0 && @russian_words.length == 0
+- if @words.length == 0 && @wk_words.length == 0 && @russian_words.length == 0
   p Sorry, nothing found
 
 br

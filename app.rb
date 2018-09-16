@@ -27,7 +27,6 @@ paths index: '/',
     term: '/term/:term/:class',
     level: '/level/:level',
     cards: '/cards',
-    card: '/card/:id',
     learn: '/learn/:id', # post
     study: '/study/:class/:group', # get, post
     search: '/search', # post
@@ -51,7 +50,10 @@ paths index: '/',
     sentence: '/sentence/:id', # DELETE
     autocomplete_word: '/autocomplete/word',
 # Temporary API (should be deleted soon)
-    study2: '/study2'
+    study2: '/study2',
+    wk_word: '/wk_word/:id',
+    wk_kanji: '/wk_kanji/:id',
+    wk_radical: '/wk_radical/:id'
 
 configure do
   puts '---> init <---'
@@ -109,15 +111,6 @@ get :index do
   end
 
   slim :index
-end
-
-get :card do
-  protect!
-
-  @element = Card.find(params[:id])
-  @element.progress = Progress.find_by(card_id: params[:id], user_id: current_user.id)
-
-  slim :element
 end
 
 get :list do
@@ -206,9 +199,10 @@ end
 get :search do
   protect!
 
-  @elements = Card.none
+  @words = Word.none
+  @wk_words = WkWord.none
+# TODO: Search by kanji/radicals/etc
   @russian_words = RussianWord.none
-  @jmelements = []
   q = params['query'].strip
   @title = "🔎 #{q}"
 
@@ -216,10 +210,10 @@ get :search do
     qj = q.downcase.hiragana
 
     if q.length > 1
-      @elements = Card.where("title ILIKE ? OR detailsb->>'en' ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
+      @wk_words = WkWord.where("title ILIKE ? OR details->>'en' ILIKE ? OR details->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
       @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
     else
-      @elements = qj.japanese? ? Card.where("title ILIKE ? OR detailsb->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : Card.none
+      @wk_words = qj.japanese? ? WkWord.where("title ILIKE ? OR details->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : WkWord.none
     end
 
     seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").order("char_length(title), seq").pluck(:seq).uniq
@@ -227,11 +221,7 @@ get :search do
     @words = words.sort{|a,b| seqs.index(a.seq) <=> seqs.index(b.seq)}
   end
 
-#  if @elements.count == 1
-#    redirect path_to(:card).with(@elements.first.id)
-#  else
-    slim :search
-#  end
+  slim :search
 end
 
 post :toggle_compact do
@@ -519,4 +509,19 @@ post :word_set_comment do
   wd.update_attribute(:comment, params[:comment].strip.present? ? params[:comment] : nil)
 
   return 'ok'
+end
+
+get :wk_word do
+  @element = WkWord.find(params[:id])
+  slim :wk_element
+end
+
+get :wk_kanji do
+  @element = WkKanji.find(params[:id])
+  slim :wk_element
+end
+
+get :wk_radical do
+  @element = WkRadical.find(params[:id])
+  slim :wk_element
 end
