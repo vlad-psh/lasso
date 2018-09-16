@@ -1008,10 +1008,8 @@ input.ensentence {
      ipad:   vertical 768/horizontal 1024
    ============================== */
 @media (max-width: 568px) {
-  input[type="text"]:focus,
-  input[type="text"]:hover,
-  textarea:hover,
-  textarea:focus {
+  /*input[type="text"]:focus,input[type="text"]:hover,textarea:hover,textarea:focus*/
+  textarea {
     font-size: 16px; /* Adding 16px on focus will prevent page zoom */
   }
   .element-card {

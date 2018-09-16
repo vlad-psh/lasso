@@ -1,5 +1,5 @@
 class Word < ActiveRecord::Base
-  has_many :cards, primary_key: :seq, foreign_key: :seq
+  has_many :wk_words, primary_key: :seq, foreign_key: :seq
   has_many :word_titles, primary_key: :seq, foreign_key: :seq
   has_many :progresses, primary_key: :seq, foreign_key: :seq
   has_many :word_details, primary_key: :seq, foreign_key: :seq

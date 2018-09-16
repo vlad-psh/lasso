@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_15_192409) do
+ActiveRecord::Schema.define(version: 2018_09_16_053035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,8 @@ ActiveRecord::Schema.define(version: 2018_09_15_192409) do
     t.string "title"
     t.boolean "flagged", default: false
     t.integer "kind"
+    t.integer "kanji_id"
+    t.integer "wk_radical_id"
     t.index ["card_id"], name: "index_progresses_on_card_id"
     t.index ["seq"], name: "index_progresses_on_seq"
     t.index ["user_id"], name: "index_progresses_on_user_id"

@@ -85,17 +85,17 @@ get :index do
     @counters[g] = Progress.public_send(g).where(user: @view_user).group(:kind).count
   end
 
-  k_jlpt = Card.kanjis.joins(:progresses).merge( Progress.where(user: @view_user).where.not(learned_at: nil) ).group("detailsb->>'jlpt'").count
+  k_jlpt = Kanji.joins(:progresses).merge( Progress.any_learned.where(user_id: @view_user, kind: :k) ).group(:jlptn).count
   # {"5"=>103, "4"=>181, "3"=>367, "2"=>400, "1"=>1207} # non-cumulative
   # {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258} # cumulative
   k_total = {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258}
   cumulative = 0
   %w(5 4 3 2 1).each do |lvl|
-    cumulative += k_jlpt[lvl] || 0
+    cumulative += k_jlpt[lvl.to_i] || 0
     @counters["n#{lvl}".to_sym] = {'k' => (100.0*cumulative/k_total[lvl]).round}
   end
 
-  w_jlpt = Card.words.joins(:progresses).merge( Progress.where(user: @view_user).where.not(learned_at: nil) ).group("detailsb->>'jlpt'").count
+  w_jlpt = {} # TODO: Fill JLPT levels for words
   # {"5"=>438, "4"=>416, "3"=>964, "2"=>531, "1"=>681} # word cards in db + 3284 of unknown level
   # {"5"=>438, "4"=>854, "3"=>1818, "2"=>2349, "1"=>3030} # same as above but cumulative
   # {"5"=>602, "4"=>595, "3"=>2165, "2"=>3249, "1"=>2708} # real life total counts
@@ -323,8 +323,13 @@ end
 post :word_flag do
   protect!
 
-  progress = Progress.find_or_create_by(seq: params[:seq], title: params[:kreb], user: current_user)
-  progress.update_attribute(:flagged, true)
+  progress = Progress.find_or_initialize_by(
+        seq: params[:seq],
+        title: params[:kreb],
+        user: current_user,
+        kind: :w)
+  progress.flagged = true
+  progress.save
 
   return progress.to_json
 end
@@ -332,7 +337,11 @@ end
 post :word_learn do
   protect!
 
-  progress = Progress.find_or_initialize_by(seq: params[:seq], title: params[:kreb], user: current_user)
+  progress = Progress.find_or_initialize_by(
+        seq: params[:seq],
+        title: params[:kreb],
+        user: current_user,
+        kind: :w)
   throw StandardError.new("Already learned") if progress.learned_at.present?
 
   unless progress.unlocked
