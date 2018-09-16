@@ -211,11 +211,6 @@ a.study-button {
   left: 0;
   cursor: pointer;
 }
-#overlay-menu .type-title {
-  display: inline-block;
-  font-size: 2em;
-  padding: 0.1em 0.5em;
-}
 #overlay-menu a {
   display: inline-block;
   padding: 0.3em 0.3em;
@@ -423,55 +418,6 @@ body.black .unlocked .description {
   text-align: right;
   margin-right: 0.5em;
 }
-/* ==============================
-   ELEMENT
-   ============================== */
-.element-card {
-/*  background-color: #f5f5f5;*/
-  padding: 4px 16px;
-  margin: 12px 0;
-  text-align: center;
-  max-width: 1100px;
-  display: inline-block;
-  font-size: 0.9em;
-}
-body.black .element-card {
-/*  background-color: #171717;*/
-}
-.element-card .top-info {
-  margin: 1em auto;
-  text-align: center;
-}
-.element-card .top-info .top-info-block {
-  display: inline-block;
-  vertical-align: top;
-  margin: 0 16px;
-}
-.element-card .top-info .top-info-block .hr-title {
-  margin: 0 -16px;
-}
-.element-card .top-info .top-info-block .top-info-content {
-  margin-top: 0.4em;
-  max-width: 15em;
-}
-.element-card .element-title {
-  font-size: 4em;
-  display: inline-block;
-}
-.element-card .mnemonics {
-  display: inline-block;
-  margin: 0 1em;
-  font-style: italic;
-  max-width: 500px;
-  vertical-align: top;
-  text-align: left;
-}
-.element-card .mnemonics-hint {
-  color: #777;
-}
-.element-card .pitch-accent {
-  opacity: 0.5;
-}
 /* --------------------------
    title with horizontal line */
 .hr-title {
@@ -505,34 +451,6 @@ body.black .element-card {
 }
 /* end of title with horizontal line
    --------------------------------- */
-.relative-elements-list {
-  margin: 0.5em 0 0.5em 0;
-}
-.bb-format-link {
-  cursor: pointer;
-}
-.srs-progress {
-  font-size: 0.8em;
-}
-.srs-progress table {
-  border-collapse: collapse;
-}
-.srs-progress td {
-  padding: 0 0.3em;
-  color: white;
-  line-height: 1.2em;
-  border-right: 1px solid rgba(255,255,255,0.3);
-}
-body.black .srs-progress td {
-  border-right: 1px solid black;
-}
-.srs-progress .srs-deck {background: rgba(128,128,128,0.4); color: black}
-.srs-progress .srs-pass {background: #4caf50}
-.srs-progress .srs-fail {background: #e51c32}
-.srs-progress .srs-soso {background: #00aaff}
-.speech-link {
-  cursor: pointer;
-}
 /* ==============================
    STUDY CARD
    ============================== */

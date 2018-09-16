@@ -41,15 +41,6 @@ html
           //input type="submit" value="Search"
     div#overlay-menu
       div.close-button: a onclick='$("#overlay-menu").hide();' Close
-      - INFODIC.each do |k,v|
-        div class="type-block #{k}"
-          div class="type-title" = v[:japanese]
-          div class="type-links"
-            /a href=path_to(:list).with(v[:plural]) 全部
-            /a href=path_to(:current).with(v[:plural]) 現行
-            /br
-            - (0..5).each do |i|
-              a href=path_to(:term).with(i, v[:plural]) = "#{i*10+1}-#{i*10+10}"
       div.settings
         input.black-theme-checkbox type="checkbox" checked=('checked' if current_user.try(:settings).try(:[], 'theme') == 'black') autocomplete="off" Black theme (beta)
     == slim :flashes

@@ -24,7 +24,6 @@ helpers WakameHelpers
 paths index: '/',
     list: '/list/:class',
     current: '/current', # get(redirection)
-    term: '/term/:term/:class',
     level: '/level/:level',
     cards: '/cards',
     learn: '/learn/:id', # post
@@ -145,16 +144,6 @@ get :level do
   @separate_list = true
 
   slim :level
-end
-
-get :term do
-  @view_user = current_user || User.first
-  stype = safe_type(params[:class])
-  d = params[:term].to_i
-  @elements = Card.public_send(stype).where(level: (d*10+1)..(d*10+10)).order(level: :asc, id: :asc).with_progress(@view_user)
-  @title = DEGREES[d]
-  @separate_list = true
-  slim :elements_list
 end
 
 post :learn do
