@@ -10,7 +10,7 @@ div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''
         - cl = e.level
         div.level-wrapper
           div.level = cl
-      div class="element-block #{wk_level(e.user_progresses)} #{'element-empty-ent-seq' if (e.kind_of?(WkWord) && e.seq == nil)}"
+      div class="element-block #{e.user_progresses.try(:[], 0).try(:title) == e.title ? wk_level(e.user_progresses) : 'locked'} #{'element-empty-ent-seq' if (e.kind_of?(WkWord) && e.seq == nil)}"
         a href=wk_path(e)
           div.element: span.japanese = e.title
           div.description = e.description

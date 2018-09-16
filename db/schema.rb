@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_16_053035) do
+ActiveRecord::Schema.define(version: 2018_09_16_152857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,6 +189,7 @@ ActiveRecord::Schema.define(version: 2018_09_16_053035) do
     t.boolean "is_common"
     t.jsonb "kebs"
     t.jsonb "rebs"
+    t.integer "jlptn"
     t.index ["seq"], name: "index_words_on_seq"
   end
 
