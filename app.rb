@@ -22,9 +22,10 @@ also_reload './models/*.rb'
 helpers WakameHelpers
 
 paths index: '/',
-    list: '/list/:class',
+    index_level: '/level/:level',
+    index_nf: '/words/:nf',
+
     current: '/current', # get(redirection)
-    level: '/level/:level',
     cards: '/cards',
     learn: '/learn/:id', # post
     study: '/study/:class/:group', # get, post
@@ -35,7 +36,6 @@ paths index: '/',
     login: '/login', # GET: login form; POST: log in
     logout: '/logout', # DELETE: logout
     settings: '/settings',
-    words_nf: '/words/:nf',
     word: '/word/:id',
 # Change word properties
     word_learn: '/word/learn', # POST
@@ -112,38 +112,21 @@ get :index do
   slim :index
 end
 
-get :list do
-  stype = safe_type(params[:class])
-  @elements = Card.public_send(stype).order(level: :asc, id: :asc)
-  @title = case stype
-    when :radicals then "部首"
-    when :kanjis then "漢字"
-    when :words then "言葉"
-  end
-  @separate_list = true
-  slim :elements_list
-end
-
 get :current do
-  redirect path_to(:level).with(current_user.present? ? current_user.current_level : 1)
+  redirect path_to(:index_level).with(current_user.present? ? current_user.current_level : 1)
 end
 
-get :level do
+get :index_level do
   @view_user = current_user || User.first
-  @radicals, @kanjis, @words = [], [], []
 
-  cards = Card.where(level: params[:level]).order(id: :asc).with_progress(@view_user)
-
-  cards.each do |c|
-    @radicals << c if c.radical?
-    @kanjis   << c if c.kanji?
-    @words    << c if c.word?
-  end
+  @words = WkWord.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
+  @kanji = WkKanji.none
+  @radicals = WkRadical.none
 
   @title = "L.#{params[:level]}"
   @separate_list = true
 
-  slim :level
+  slim :index_level
 end
 
 post :learn do
@@ -352,13 +335,13 @@ post :word_burn do
   return progress.to_json
 end
 
-get :words_nf do
+get :index_nf do
   protect!
 
   @view_user = current_user || User.first
   @words = Word.where(nf: params[:nf]).order(:seq).with_progresses(@view_user)
 
-  slim :words
+  slim :index_nf
 end
 
 def mecab_parse(sentence)

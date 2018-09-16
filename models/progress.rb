@@ -36,16 +36,11 @@ class Progress < ActiveRecord::Base
   # Cards in current level which are not learned yet:
 #  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
 
-
-  def self.hash_me
-    Hash[*all.map{|p| [p.card_id, p]}.flatten]
-  end
-
-  def self.hash2_me
+  def self.hash_me(_method)
     result = {}
     all.each do |p|
-      result[p.seq] ||= []
-      result[p.seq] << p
+      result[p.send(_method)] ||= []
+      result[p.send(_method)] << p
     end
     return result
   end

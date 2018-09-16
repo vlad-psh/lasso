@@ -18,16 +18,6 @@ module WakameHelpers
     return @current_level
   end
 
-  def level_started_at(level)
-    return nil unless level && current_user
-
-    if level == 1
-      return Action.joins(:card).merge(Card.where(level: 1)).where(action_type: 2, user: current_user).order(created_at: :asc).first.created_at
-    else
-      return Action.joins(:card).merge(Card.where(level: level-1)).where(action_type: 2, user: current_user).order(created_at: :desc).first.created_at
-    end
-  end
-
   def bb_expand(text)
     text = text.gsub(/\[kanji\]([^\[]*)\[\/kanji\]/, "[%(k)\\1%]")
     text = text.gsub(/\[radical\]([^\[]*)\[\/radical\]/, "[%(r)\\1%]")
@@ -77,6 +67,18 @@ module WakameHelpers
       result << {t: text, h: false}
     end
     return result.flatten
+  end
+
+  def wk_path(e)
+    if e.kind_of?(WkWord)
+      path_to(:wk_word).with(e.id)
+    elsif e.kind_of?(WkKanji)
+      path_to(:wk_kanji).with(e.id)
+    elsif e.kind_of?(WkRadical)
+      path_to(:wk_radical).with(e.id)
+    else
+      raise StandardError.new("Unknown WkElement kind: #{e}")
+    end
   end
 
   def wk_level(e)
