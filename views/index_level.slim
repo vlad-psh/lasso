@@ -1,14 +1,14 @@
 ruby:
   lvl = params[:level].to_i
   pagination = {current: "Level&nbsp;#{lvl}"}
-  pagination[:prev] = {href: path_to(:level).with(lvl - 1), title: "Level&nbsp;#{lvl - 1}"} if lvl > 1
-  pagination[:next] = {href: path_to(:level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
+  pagination[:prev] = {href: path_to(:index_level).with(lvl - 1), title: "Level&nbsp;#{lvl - 1}"} if lvl > 1
+  pagination[:next] = {href: path_to(:index_level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
 
 == slim :pagination, locals: {pg: pagination}
 
 div.hr-title: span style="margin: 0.4em 0 0.6em 0" Radicals
 == slim :elements_list, locals: {elements: @radicals}
 div.hr-title: span style="margin: 0.4em 0 0.6em 0" Kanji
-== slim :elements_list, locals: {elements: @kanjis}
+== slim :elements_list, locals: {elements: @kanji}
 div.hr-title: span style="margin: 0.4em 0 0.6em 0" Vocabulary
 == slim :elements_list, locals: {elements: @words}

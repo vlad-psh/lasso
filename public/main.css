@@ -310,12 +310,7 @@ body.black .unlocked .description {
 /* ==============================
    ELEMENTS LIST
    ============================== */
-/*.elements-list-separate.elements-list-words,
-.elements-list-separate.elements-list-kanjis:not(.elements-list-compact),
-.elements-list-separate.elements-list-radicals:not(.elements-list-compact) {*/
-.elements-list-separate.elements-list-words,
-.elements-list-separate.elements-list-kanjis,
-.elements-list-separate.elements-list-radicals {
+.elements-list-separate {
   display: flex;
   flex-flow: row wrap;
   width: 100%;
@@ -361,40 +356,9 @@ body.black .unlocked .description {
   -webkit-user-select: none;
   text-align: center;
 }
-/* COMPACT STYLE */
-.elements-list-separate.elements-list-compact .elements-list-item {
-  min-width: 0;
-  margin: 0;
-}
-.elements-list-separate.elements-list-compact .elements-list-item .level-wrapper {
-  display: none;
-}
-.elements-list-separate.elements-list-compact .elements-list-item .element-block {
-  padding: 0.2em 0.3em;
-}
-.elements-list-separate.elements-list-compact .elements-list-item .element {
-  font-size: 1em;
-}
-.elements-list-separate.elements-list-compact .elements-list-item .description {
-  display: none;
-}
-.elements-list-separate.elements-list-compact .locked,
-.elements-list-separate.elements-list-compact .unlocked,
-.elements-list-separate.elements-list-compact .apprentice,
-.elements-list-separate.elements-list-compact .guru,
-.elements-list-separate.elements-list-compact .master,
-.elements-list-separate.elements-list-compact .enlightened,
-.elements-list-separate.elements-list-compact .burned {
-  border-width: 0 1px 1px 0; 
-}
 .element-empty-ent-seq .description {
   border-bottom: 2px solid black;
   margin-bottom: -2px;
-}
-.element-disabled .description {
-  border: 2px solid black;
-  margin: -2px 0;
-  border-radius: 2px;
 }
 /* ==============================
    LEVEL ELEMENTS LIST
@@ -960,10 +924,6 @@ input.ensentence {
   .stat-table-block table td {display: block; margin: 1px 1px; height: 22px;}
 }
 @media (max-width: 320px) {
-/* precise value to fit onto iphone (vertical) screen without margins :) */
-  .elements-list-compact .elements-list-item {
-    font-size: 1.006em !important;
-  }
   .word-card {
     font-size: 0.8em;
   }

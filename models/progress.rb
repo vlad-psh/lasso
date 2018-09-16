@@ -3,6 +3,7 @@ class Progress < ActiveRecord::Base
   belongs_to :card
   belongs_to :word, primary_key: :seq, foreign_key: :seq
   belongs_to :kanji
+  has_many :wk_words, primary_key: :seq, foreign_key: :seq
   belongs_to :wk_radical
   has_many :actions
 

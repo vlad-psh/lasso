@@ -2,16 +2,15 @@ ruby:
   cl = 0
   elements = @elements unless elements
   separate_list = @separate_list || false
-  etype = elements[0] ? elements[0].tplural : nil
 
-div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''} elements-list-#{etype} #{session[:compact] ? "elements-list-compact" : nil}"
+div class="elements-list-wrapper #{separate_list ? 'elements-list-separate' : ''}"
   - elements.each do |e|
     div.elements-list-item
       - if cl != e.level
         - cl = e.level
         div.level-wrapper
           div.level = cl
-      div class="element-block #{wk_level(e.progress)} #{'element-empty-ent-seq' if (e.word? && e.seq == nil)} #{'element-disabled' if e.is_disabled == true}"
-        a href=path_to(:card).with(e.id)
+      div class="element-block #{wk_level(e.user_progresses)} #{'element-empty-ent-seq' if (e.kind_of?(WkWord) && e.seq == nil)}"
+        a href=wk_path(e)
           div.element: span.japanese = e.title
           div.description = e.description

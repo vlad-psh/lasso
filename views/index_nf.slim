@@ -1,8 +1,8 @@
 ruby:
   page = params[:nf].to_i
   pagination = {current: "NF##{page}"}
-  pagination[:prev] = {href: path_to(:words_nf).with(page - 1), title: "NF##{page - 1}"} if page > 1
-  pagination[:next] = {href: path_to(:words_nf).with(page + 1), title: "NF##{page + 1}"}
+  pagination[:prev] = {href: path_to(:index_nf).with(page - 1), title: "NF##{page - 1}"} if page > 1
+  pagination[:next] = {href: path_to(:index_nf).with(page + 1), title: "NF##{page + 1}"}
 
 == slim :pagination, locals: {pg: pagination}
 
