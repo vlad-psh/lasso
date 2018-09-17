@@ -24,6 +24,8 @@ helpers WakameHelpers
 paths index: '/',
     index_level: '/level/:level',
     index_nf: '/words/:nf',
+    index_jlpt_words: '/words/jlpt/:level',
+    index_jlpt_kanji: '/kanji/jlpt/:level',
 
     current: '/current', # get(redirection)
     cards: '/cards',
@@ -37,6 +39,7 @@ paths index: '/',
     logout: '/logout', # DELETE: logout
     settings: '/settings',
     word: '/word/:id',
+    kanji: '/kanji/:id',
 # Change word properties
     word_learn: '/word/learn', # POST
     word_burn: '/word/burn', # POST
@@ -71,7 +74,7 @@ configure do
   DEGREES = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
   INFODIC = {
     :r => {singular: :radical, plural: :radicals, japanese: '部首'},
-    :k => {singular: :kanji, plural: :kanjis, japanese: '漢字'},
+    :k => {singular: :kanji, plural: :kanji, japanese: '漢字'},
     :w => {singular: :word, plural: :words, japanese: '言葉'}
   }
   SRS_RANGES = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
@@ -500,4 +503,21 @@ end
 get :wk_radical do
   @element = WkRadical.find(params[:id])
   slim :wk_element
+end
+
+get :kanji do
+  @kanji = Kanji.find(params[:id])
+  slim :kanji
+end
+
+get :index_jlpt_words do
+  @view_user = current_user || User.first
+  @words = Word.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
+  slim :index_jlpt_words
+end
+
+get :index_jlpt_kanji do
+  @view_user = current_user || User.first
+  @kanji = Kanji.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
+  slim :index_jlpt_kanji
 end

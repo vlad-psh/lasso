@@ -1,7 +1,7 @@
 ruby:
   groups = {
-        just_learned: {title: 'New', class: :blue, url: true},
-        expired: {title: 'Expired', class: :yellow, url: true},
+        just_learned: {title: 'New', class: :blue},
+        expired: {title: 'Expired', class: :yellow},
         any_learned: {title: '🎓', tip: 'Total Learned'},
         n5: {title: 'N5', unit: '%', class: 'jlpt-counter'},
         n4: {title: 'N4', unit: '%', class: 'jlpt-counter'},
@@ -16,22 +16,20 @@ div.index-page-container
   div.stat-table-block
     table
       tr
-        td
-        - groups.each do |gk,gv|
-          td title=(gv[:tip]) = gv[:title]
+        - ['', 'New', 'Expired', '🎓', 'N5', 'N4', 'N3', 'N2', 'N1'].each do |header|
+          td == header
       - %w(r k w).each do |k|
         tr
-          td class=k = k == 'total' ? k : INFODIC[k.to_sym][:japanese]
+          td class=k = INFODIC[k.to_sym][:japanese]
           - groups.each do |gk,gv|
             - i = @counters[gk].try(:[], k) || 0
+            - url = path_to(:study).with(tt[k.to_sym], gk) if [:just_learned, :expired].include?(gk) && i > 0
+            - url = path_to("index_jlpt_#{INFODIC[k.to_sym][:plural]}".to_sym).with(gk[1].to_i) if [:n1,:n2,:n3,:n4,:n5].include?(gk) && i > 0
             td class=gv[:class]
-              - if i > 0
-                - if gv[:url] == true
-                  a class="study-button" href=path_to(:study).with(tt[k.to_sym], gk) = "#{i}#{gv[:unit]}"
-                - else
-                  = "#{i}#{gv[:unit]}"
+              - if url
+                a class="study-button" href=url = "#{i}#{gv[:unit]}"
               - else
-                ' -
+                = i > 0 ? "#{i}#{gv[:unit]}" : '-'
 
   ruby:
     days_in_graph = 21

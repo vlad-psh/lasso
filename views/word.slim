@@ -4,7 +4,7 @@ ruby:
   word_details = word.word_details.where(user: current_user).take
   sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
 
-  kanji = Hash[ Kanji.eager_load(:kanji_properties).where(title: word.kanji.split('')).map do |k|
+  kanji = word.kanji.present? ? Hash[ Kanji.eager_load(:kanji_properties).where(title: word.kanji.split('')).map do |k|
     [
       k.title,
       {
@@ -15,7 +15,7 @@ ruby:
         nanori:  k.kanji_properties.select{|p|p.kind == 'nanori' }.pluck(:title)
       }
     ]
-  end]
+  end] : {}
 
   found_progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
   sorted_word_titles = word.word_titles.sort{|a,b| a.id <=> b.id}.map{|t| {title: t.title, is_common: t.is_common}}

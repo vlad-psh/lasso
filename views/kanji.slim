@@ -1,0 +1,19 @@
+- d = @kanji.wk_kanji.details
+- emph = d['yomi']['emph']
+
+table
+  tr
+    td
+      ul
+        li
+          ' &#x1f1ec;&#x1f1e7;
+          = d['en'].join('; ')
+        li style=('background-color: yellow' if emph == 'on') = "ON: #{d['yomi']['on']}"
+        li style=('background-color: yellow' if emph == 'kun') = "KUN: #{d['yomi']['kun']}"
+    td
+      ul
+        li = "JLPT N#{@kanji.jlptn}"
+        li = "Grade #{@kanji.grade}"
+        li = "WK #{@kanji.wk_kanji.level}"
+
+= @kanji.wk_kanji.details.inspect

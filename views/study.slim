@@ -33,6 +33,9 @@ div.study-card
     - if @progress.kind == 'w'
       - @word_seq = @progress.seq
       == slim :word
+    - elsif @progress.kind == 'k'
+      - @kanji = @progress.kanji
+      == slim :kanji
     - else
       - @element = Card.where(id: @progress.card_id).with_progress(current_user).first
       == slim :element

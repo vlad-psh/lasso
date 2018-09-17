@@ -115,11 +115,17 @@ a.study-button {
   display: inline-block;
   width: 4.3em;
 }
+.jlpt-counter a.study-button {
+  width: auto;
+}
 .stat-table-block a {
   color: white;
 }
-.stat-table-block .jlpt-counter {
+.stat-table-block .jlpt-counter,
+.stat-table-block .jlpt-counter a.study-button {
   color: #999;
+}
+.stat-table-block .jlpt-counter {
   font-size: 0.8em;
   padding-left: 0.4em;
   padding-right: 0.4em;
