@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_18_035917) do
+ActiveRecord::Schema.define(version: 2018_09_18_040947) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,14 +51,6 @@ ActiveRecord::Schema.define(version: 2018_09_18_035917) do
     t.string "on", array: true
     t.string "kun", array: true
     t.string "nanori", array: true
-  end
-
-  create_table "kanji_properties", force: :cascade do |t|
-    t.bigint "kanji_id"
-    t.string "title"
-    t.string "extra"
-    t.integer "kind"
-    t.index ["kanji_id"], name: "index_kanji_properties_on_kanji_id"
   end
 
   create_table "notes", force: :cascade do |t|
