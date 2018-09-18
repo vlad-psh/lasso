@@ -22,10 +22,10 @@ also_reload './models/*.rb'
 helpers WakameHelpers
 
 paths index: '/',
-    index_level: '/level/:level',
-    index_nf: '/words/:nf',
-    index_jlpt_words: '/words/jlpt/:level',
-    index_jlpt_kanji: '/kanji/jlpt/:level',
+    list_level: '/level/:level',
+    list_nf: '/words/:nf',
+    list_jlpt_words: '/words/jlpt/:level',
+    list_jlpt_kanji: '/kanji/jlpt/:level',
 
     current: '/current', # get(redirection)
     cards: '/cards',
@@ -119,11 +119,16 @@ get :index do
 end
 
 get :current do
-  redirect path_to(:index_level).with(current_user.present? ? current_user.current_level : 1)
+  redirect path_to(:list_level).with(current_user.present? ? current_user.current_level : 1)
 end
 
-get :index_level do
+get :list_level do
   @view_user = current_user || User.first
+
+  lvl = params[:level].to_i
+  @pagination = {current: "Level&nbsp;#{lvl}"}
+  @pagination[:prev] = {href: path_to(:list_level).with(lvl - 1), title: "Level&nbsp;#{lvl - 1}"} if lvl > 1
+  @pagination[:next] = {href: path_to(:list_level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
 
   @words = WkWord.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
   @kanji = WkKanji.none
@@ -132,7 +137,7 @@ get :index_level do
   @title = "L.#{params[:level]}"
   @separate_list = true
 
-  slim :index_level
+  slim :list_level
 end
 
 post :learn do
@@ -331,13 +336,17 @@ post :word_burn do
   return progress.to_json
 end
 
-get :index_nf do
+get :list_nf do
   protect!
 
-  @view_user = current_user || User.first
-  @words = Word.where(nf: params[:nf]).order(:seq).with_progresses(@view_user)
+  lvl = params[:nf].to_i
+  @pagination = {current: "NF&nbsp;##{lvl}"}
+  @pagination[:prev] = {href: path_to(:list_nf).with(lvl - 1), title: "NF&nbsp;##{lvl - 1}"} if lvl > 1
+  @pagination[:next] = {href: path_to(:list_nf).with(lvl + 1), title: "NF&nbsp;##{lvl + 1}"} if lvl < 48
 
-  slim :index_nf
+  @elements = Word.where(nf: params[:nf]).order(:seq).with_progresses(current_user)
+
+  slim :list
 end
 
 def mecab_parse(sentence)
@@ -503,14 +512,26 @@ get :kanji do
   slim :kanji
 end
 
-get :index_jlpt_words do
+get :list_jlpt_words do
   @view_user = current_user || User.first
-  @words = Word.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
-  slim :index_jlpt_words
+
+  lvl = params[:level].to_i
+  @pagination = {current: "JLPT&nbsp;N#{lvl}"}
+  @pagination[:prev] = {href: path_to(:list_jlpt_words).with(lvl + 1), title: "JLPT&nbsp;N#{lvl + 1}"} if lvl < 5
+  @pagination[:next] = {href: path_to(:list_jlpt_words).with(lvl - 1), title: "JLPT&nbsp;N#{lvl - 1}"} if lvl > 1
+
+  @elements = Word.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
+  slim :list
 end
 
-get :index_jlpt_kanji do
+get :list_jlpt_kanji do
   @view_user = current_user || User.first
-  @kanji = Kanji.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
-  slim :index_jlpt_kanji
+
+  lvl = params[:level].to_i
+  @pagination = {current: "JLPT&nbsp;N#{lvl}"}
+  @pagination[:prev] = {href: path_to(:list_jlpt_kanji).with(lvl + 1), title: "JLPT&nbsp;N#{lvl + 1}"} if lvl < 5
+  @pagination[:next] = {href: path_to(:list_jlpt_kanji).with(lvl - 1), title: "JLPT&nbsp;N#{lvl - 1}"} if lvl > 1
+
+  @elements = Kanji.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
+  slim :list
 end

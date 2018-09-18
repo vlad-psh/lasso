@@ -28,7 +28,7 @@ html
           a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
         div.main-menu-item
           - level = current_user.present? ? current_user.current_level : (@view_user.present? ? @view_user.current_level : 1)
-          a href=path_to(:index_level).with(level) = "Level #{level}"
+          a href=path_to(:list_level).with(level) = "Level #{level}"
           //br
           //div.main-menu-item-details = "#{((Time.now - (level_started_at(level) || DateTime.now)) / (60*60*24)).round(1)} days"
         - if current_user.present?

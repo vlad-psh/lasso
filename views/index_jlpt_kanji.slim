@@ -1,7 +1,0 @@
-div class="elements-list-wrapper elements-list-separate elements-list-words"
-  - @kanji.each do |e|
-    div.elements-list-item
-      div class="element-block #{wk_level(e.user_progresses.try(:first))}"
-        a href=path_to(:kanji).with(e.id)
-          div.element: span.japanese = e.title
-          div.description = '-'

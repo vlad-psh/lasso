@@ -19,5 +19,13 @@ class Kanji < ActiveRecord::Base
     return @_user_progresses if defined?(@_user_progresses)
     throw StandardError.new("'user_progresses' property can be accessed only when elements have been selected with 'with_progresses' method")
   end
+
+  def list_title
+    self.title
+  end
+
+  def list_desc
+    self.english ? self.english[0] : '?'
+  end
 end
 

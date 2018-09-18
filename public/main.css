@@ -316,12 +316,12 @@ body.black .unlocked .description {
 /* ==============================
    ELEMENTS LIST
    ============================== */
-.elements-list-separate {
+.elements-list {
   display: flex;
   flex-flow: row wrap;
   width: 100%;
 }
-.elements-list-separate::after {
+.elements-list::after {
   content: '';
   flex-grow: 1000000000;
 }
@@ -332,7 +332,7 @@ body.black .unlocked .description {
   font-size: 0.7em;
   font-weight: 100;
 }
-.elements-list-separate .elements-list-item {
+.elements-list .elements-list-item {
   flex: auto;
 }
 .elements-list-item .element-block {

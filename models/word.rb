@@ -61,5 +61,14 @@ class Word < ActiveRecord::Base
 
     return true
   end
+
+  def list_title
+    self.kebs ? self.kebs[0] : self.rebs[0]
+  end
+
+  def list_desc
+    meaning = self.en[0]['gloss'][0]
+    meaning.length > 25 ? meaning = meaning[0..20] + '...' : meaning
+  end
 end
 

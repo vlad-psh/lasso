@@ -20,7 +20,11 @@ class WkWord < ActiveRecord::Base
     throw StandardError.new("'user_progresses' property can be accessed only when elements have been selected with 'with_progresses' method")
   end
 
-  def description
+  def list_title
+    self.title
+  end
+
+  def list_desc
     details['en'].first
   end
 end
