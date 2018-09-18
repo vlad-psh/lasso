@@ -32,7 +32,6 @@ paths index: '/',
     learn: '/learn/:id', # post
     study: '/study/:class/:group', # get, post
     search: '/search', # post
-    toggle_compact: '/toggle_compact', # post
     notes: '/notes',
     note: '/note/:id',
     login: '/login', # GET: login form; POST: log in
@@ -201,16 +200,6 @@ get :search do
   end
 
   slim :search
-end
-
-post :toggle_compact do
-  if params["compact"]
-    request.session["compact"] = true
-    return 200, '{"compact": true}'
-  else
-    request.session["compact"] = false
-    return 200, '{"compact": false}'
-  end
 end
 
 get :notes do
@@ -491,21 +480,25 @@ post :word_set_comment do
 end
 
 get :wk_word do
+  protect!
   @element = WkWord.find(params[:id])
   slim :wk_element
 end
 
 get :wk_kanji do
+  protect!
   @element = WkKanji.find(params[:id])
   slim :wk_element
 end
 
 get :wk_radical do
+  protect!
   @element = WkRadical.find(params[:id])
   slim :wk_element
 end
 
 get :kanji do
+  protect!
   @kanji = Kanji.find(params[:id])
   slim :kanji
 end
