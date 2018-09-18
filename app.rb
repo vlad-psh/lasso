@@ -131,7 +131,7 @@ get :list_level do
   @pagination[:next] = {href: path_to(:list_level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
 
   @words = WkWord.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
-  @kanji = WkKanji.none
+  @kanji = WkKanji.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
   @radicals = WkRadical.none
 
   @title = "L.#{params[:level]}"

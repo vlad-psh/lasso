@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_18_040947) do
+ActiveRecord::Schema.define(version: 2018_09_18_055053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,6 +120,7 @@ ActiveRecord::Schema.define(version: 2018_09_18_040947) do
     t.integer "level"
     t.string "title"
     t.jsonb "details"
+    t.bigint "kanji_id"
   end
 
   create_table "wk_kanji_radicals", id: false, force: :cascade do |t|

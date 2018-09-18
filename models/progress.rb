@@ -4,6 +4,7 @@ class Progress < ActiveRecord::Base
   belongs_to :word, primary_key: :seq, foreign_key: :seq
   belongs_to :kanji
   has_many :wk_words, primary_key: :seq, foreign_key: :seq
+  has_many :wk_kanji, primary_key: :kanji_id, foreign_key: :kanji_id
   belongs_to :wk_radical
   has_many :actions
 

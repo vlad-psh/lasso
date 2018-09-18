@@ -1,7 +1,7 @@
 class Kanji < ActiveRecord::Base
   self.table_name = 'kanji'
   has_many :progresses
-  has_one :wk_kanji, primary_key: :title, foreign_key: :title
+  has_one :wk_kanji
 
   def self.with_progresses(user)
     elements = all
