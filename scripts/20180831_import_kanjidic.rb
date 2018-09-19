@@ -25,26 +25,28 @@ xml.locate('kanjidic2/character').each do |char|
 # Kanji.where('? = ANY(strokes)', 7)
   end
 
-  k.save
-end; nil
-
-
-xml.locate('kanjidic2/character').each do |char|
-  k = Kanji.find_by(title: char.locate('literal')[0].text)
-
   char.locate('reading_meaning/rmgroup/reading').each do |reading|
-    next unless ['ja_on', 'ja_kun'].include?(reading.r_type)
-    KanjiProperty.create(kanji: k, title: reading.text, kind: reading.r_type == 'ja_on' ? :on : :kun)
+    if reading.r_type == 'ja_on'
+      k.on ||= []
+      k.on << reading.text
+    elsif reading.r_type == 'ja_kun'
+      k.kun ||= []
+      k.kun << reading.text
+    end
   end
 
   char.locate('reading_meaning/rmgroup/meaning').each do |meaning|
     next if meaning.attributes.has_key?(:m_lang) # english meanings doesn't have any 'm_lang' attributes
-    KanjiProperty.create(kanji: k, title: meaning.text, kind: :english)
+    k.english ||= []
+    k.english << meaning.text
   end
 
   char.locate('reading_meaning/nanori').each do |nanori|
-    KanjiProperty.create(kanji: k, title: nanori.text, kind: :nanori)
+    k.nanori ||= []
+    k.nanori << nanori.text
   end
+
+  k.save
 end; nil
 
 
