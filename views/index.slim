@@ -24,7 +24,7 @@ div.index-page-container
           - groups.each do |gk,gv|
             - i = @counters[gk].try(:[], k) || 0
             - url = path_to(:study).with(tt[k.to_sym], gk) if [:just_learned, :expired].include?(gk) && i > 0
-            - url = path_to("index_jlpt_#{INFODIC[k.to_sym][:plural]}".to_sym).with(gk[1].to_i) if [:n1,:n2,:n3,:n4,:n5].include?(gk) && i > 0
+            - url = path_to("list_jlpt_#{INFODIC[k.to_sym][:plural]}".to_sym).with(gk[1].to_i) if [:n1,:n2,:n3,:n4,:n5].include?(gk) && i > 0
             td class=gv[:class]
               - if url
                 a class="study-button" href=url = "#{i}#{gv[:unit]}"
