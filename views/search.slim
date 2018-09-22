@@ -18,16 +18,14 @@ ruby:
           == w.en[0]['gloss'].join('; ')
           a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
 
-- if @wk_words.length > 0
-  div.hr-title: span style="padding: 1em" Words
+- if @kanji.length > 0
+  div.hr-title: span style="padding: 1em" Kanji
   div.search-results
-    - @wk_words.each do |e|
-      div.search-result
-        a href=path_to(:wk_word).with(e.id) == highlight(e.title, params['query'])
-        == '　' + highlight(e.details['readings'].join('; '), params['query']) + ' '
-        == highlight(e.details['en'].join('; '), params['query'])
-
-// TODO: Search results for kanji/radicals/etc
+    - @kanji.each do |e|
+      div.search-result class=wk_level(e.user_progresses)
+        a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
+        - if e.english
+          == " " + highlight(e.english.join(', '), params['query'])
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""
@@ -36,7 +34,7 @@ ruby:
       div.search-result
         div == highlight(w.title, params['query'])
 
-- if @words.length == 0 && @wk_words.length == 0 && @russian_words.length == 0
+- if @words.length == 0 && @kanji.length == 0 && @russian_words.length == 0
   p Sorry, nothing found
 
 br

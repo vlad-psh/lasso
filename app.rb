@@ -183,26 +183,21 @@ end
 get :search do
   protect!
 
-  @words = Word.none
-  @wk_words = WkWord.none
-# TODO: Search by kanji/radicals/etc
+  @words = []
+  @kanji = []
   @russian_words = RussianWord.none
   q = params['query'].strip
   @title = "🔎 #{q}"
 
   if q.present?
-    qj = q.downcase.hiragana
+    q_hiragana = q.downcase.hiragana
 
     if q.length > 1
-      @wk_words = WkWord.where("title ILIKE ? OR details->>'en' ILIKE ? OR details->>'readings' LIKE ?", "%#{q}%", "%#{q}%", "%#{qj}%").order(level: :asc)
       @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
-    else
-      @wk_words = qj.japanese? ? WkWord.where("title ILIKE ? OR details->>'readings' LIKE ?", "%#{qj}%", "%#{qj}%").order(level: :asc) : WkWord.none
     end
 
-    seqs = WordTitle.where('title LIKE ? OR title LIKE ? OR title LIKE ?', "%#{q}%", "%#{qj}%", "%#{q.downcase.katakana}%").order("char_length(title), seq").pluck(:seq).uniq
-    words = Word.where(seq: seqs).with_progresses(current_user)
-    @words = words.sort{|a,b| seqs.index(a.seq) <=> seqs.index(b.seq)}
+    @words = Word.where('searchable LIKE ? OR searchable LIKE ?', "%#{q}%", "%#{q_hiragana}%").order(:is_common, :id).with_progresses(current_user).sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
+    @kanji = Kanji.where('searchable LIKE ? OR searchable LIKE ?', "%#{q}%", "%#{q_hiragana}%").order(:grade).with_progresses(current_user)
   end
 
   slim :search

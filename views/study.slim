@@ -36,9 +36,9 @@ div.study-card
     - elsif @progress.kind == 'k'
       - @kanji = @progress.kanji
       == slim :kanji
-    - else
-      - @element = Card.where(id: @progress.card_id).with_progress(current_user).first
-      == slim :element
+    - elsif @progress.kind == 'r'
+      - @radical = @progress.wk_radical
+      == slim :wk_radical
   form id="answer-form" method="POST" action=path_to(:study).with(params[:class], params[:group])
     input type="hidden" name="id" value=@progress.id
     input type="hidden" name="answer" value=''

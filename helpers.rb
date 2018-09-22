@@ -125,4 +125,19 @@ module WakameHelpers
     end
     return false
   end
+
+  def jp_grade(grade)
+    grade = grade.to_i
+    if grade <= 3
+      return "小#{grade}"
+    elsif grade <= 6
+      return "中#{grade-3}"
+    elsif grade == 8
+      return "高校"
+    elsif grade == 9
+      return "人名用"
+    else
+      return "Grade #{grade}"
+    end
+  end
 end

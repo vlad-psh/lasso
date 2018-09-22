@@ -13,7 +13,7 @@ table
     td
       ul
         li = "JLPT N#{@kanji.jlptn}"
-        li = "Grade #{@kanji.grade}"
+        li = "#{jp_grade(@kanji.grade)}"
         li = "WK #{@kanji.wk_kanji.level}"
 
 = @kanji.wk_kanji.details.inspect

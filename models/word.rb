@@ -70,5 +70,9 @@ class Word < ActiveRecord::Base
     meaning = self.en[0]['gloss'][0]
     meaning.length > 25 ? meaning = meaning[0..20] + '...' : meaning
   end
+
+  def kreb_min_length
+    rebs.present? ? rebs.map{|i|i.length}.min : 100
+  end
 end
 
