@@ -1,45 +1,9 @@
 ruby:
-  word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).where(seq: @word_seq).with_progresses(current_user)[0]
-  @title = word.word_titles.first.title
-  word_details = word.word_details.where(user: current_user).take
-  sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
-
-  kanji = word.kanji.present? ? Hash[ Kanji.where(title: word.kanji.split('')).map {|k| [k.title, k]} ] : {}
-
-  found_progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
-  sorted_word_titles = word.word_titles.sort{|a,b| a.id <=> b.id}.map{|t| {title: t.title, is_common: t.is_common}}
-  progresses = {}
-  sorted_word_titles.each do |t|
-    progresses[t[:title]] = found_progresses[t[:title]] || {}
-  end
-
-  word_data = {
-    word: word,
-    krebs: sorted_word_titles,
-    progresses: progresses,
-    shortWords: word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
-    longWords:  word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
-    rawSentences: sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
-    sentences: word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
-    comment: word_details.try(:comment) || '',
-    cards: word.wk_words.sort{|a,b| a.level <=> b.level}.map{|c|
-      {
-        title: c.title,
-        level: c.level,
-        readings: c.details['readings'].join(', '),
-        en:    c.details['en'].join(', '),
-        pos:   c.details['pos'],
-        mexp:  c.details['mexp'],
-        rexp:  c.details['rexp'],
-        href:  path_to(:wk_word).with(c.id)
-      }
-    },
-    kanji: kanji
-  }
-
+  wordEmptyData = {word: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
+         rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil, forms: nil}
 
 script src="/js/jquery-ui.min.js"
-div.word-card#word-card-app
+div.word-card#word-card-app v-if="word"
 
   div.word-krebs.center-block.expandable-list
     div.expandable-list-item v-for="kreb of krebs"
@@ -70,18 +34,18 @@ div.word-card#word-card-app
 
   - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
-  - [{glosses: word.en, flag: "&#x1f1ec;&#x1f1e7;"}, {glosses: word.ru, flag: "&#x1f1f7;&#x1f1fa;"}].each do |lang|
-    - next unless lang[:glosses]
-    div.word-glosses.center-block
-      div.word-gloss-flag == lang[:flag]
-      - if lang[:glosses].length > 1
-        - lang[:glosses].each_with_index do |m2,i|
-          = "#{bullets[i]} "
-          - if m2['pos'].present?
-            span> class="word-gloss-pos" = m2['pos'].map{|i| i[1..-2]}.join(', ')
-          = m2['gloss'].join(', ') + ' '
-      - elsif lang[:glosses].length == 1
-        = lang[:glosses][0]['gloss'].join(', ')
+  div.word-glosses.center-block
+    div.word-gloss-flag &#x1f1ec;&#x1f1e7;
+    span v-for="(gloss, glossIndex) of word.en"
+      span v-if="word.en.length > 1" = "{{bullets[glossIndex]}} "
+      span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
+      = "{{gloss.gloss.join(', ')}} "
+  div.word-glosses.center-block
+    div.word-gloss-flag &#x1f1f7;&#x1f1fa;
+    span v-for="(gloss, glossIndex) of word.ru"
+      span v-if="word.ru.length > 1" = "{{bullets[glossIndex]}} "
+      span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
+      = "{{gloss.gloss.join(', ')}} "
 
   div.word-glosses.center-block v-if="cards.length > 0"
     div.word-gloss-flag &#x1f980;
@@ -162,37 +126,9 @@ div style="text-align: center; background: #f7f2d2;"
 br
 
 javascript:
-  $(function(){
-    $('.word-connection-autocomplete').autocomplete({
-      source: "#{{path_to(:autocomplete_word)}}",
-      minLength: 1,
-      select: function(event,ui) {
-        var wordType = $(this).data('word-type');
-        var postData = {};
-        postData[wordType] = ui.item.id;
-        postData[wordType === 'short' ? 'long' : 'short'] = #{{word.seq}};
-
-        $.ajax({
-          url: "#{{path_to(:word_connect)}}",
-          method: 'POST',
-          data: postData
-        }).done(data => {
-          wordApp.addConnectedWord(wordType, {seq: ui.item.id, title: ui.item.title, href: ui.item.href});
-          $(this).val('');
-        });
-
-        return false;
-      }
-    });
-  });
-
-  var wordData = #{{word_data.to_json}};
-  wordData.forms = {comment: false, kreb: null, card: null};
-  wordData.bullets = #{{bullets.to_json}};
-
   var wordApp = new Vue({
     el: '#word-card-app',
-    data: wordData,
+    data: #{{wordEmptyData.to_json}},
     computed: {
       selectedCard: function() {
         if (this.forms.card !== null) {
@@ -248,12 +184,12 @@ javascript:
         var word = wordType === 'short' ? this.shortWords[wordIndex] : this.longWords[wordIndex];
         var postData = {};
         postData[wordType] = word.seq;
-        postData[wordType === 'short' ? 'long' : 'short'] = #{{word.seq}};
+        postData[wordType === 'short' ? 'long' : 'short'] = this.word.seq;
 
         var ask = confirm(`Are you sure you want to delete ${word.title}?`);
         if (ask) {
           $.ajax({
-            url: "#{{path_to(:word_connect)}}",
+            url: this.paths.connect,
             method: "DELETE",
             data: postData
           }).done(data => {
@@ -283,7 +219,7 @@ javascript:
       },
       learnWord(kreb) {
         $.ajax({
-          url: "#{{path_to(:word_learn)}}",
+          url: this.paths.learn,
           method: "POST",
           data: {seq: this.word.seq, kreb: kreb}
         }).done(data => {
@@ -295,7 +231,7 @@ javascript:
       },
       burnWord(kreb, progressId) {
         $.ajax({
-          url: "#{{path_to(:word_burn)}}",
+          url: this.paths.burn,
           method: "POST",
           data: {progress_id: progressId}
         }).done(data => {
@@ -305,7 +241,7 @@ javascript:
       },
       flagWord(kreb) {
         $.ajax({
-          url: "#{{path_to(:word_flag)}}",
+          url: this.paths.flag,
           method: "POST",
           data: {seq: this.word.seq, kreb: kreb}
         }).done(data => {
@@ -317,7 +253,7 @@ javascript:
       },
       saveComment() {
         $.ajax({
-          url: "#{{path_to(:word_set_comment).with(word.seq)}}",
+          url: this.paths.comment,
           data: {comment: this.comment},
           method: "POST"
         }).done(data => {
@@ -344,5 +280,44 @@ javascript:
           this.forms.card = cardIndex;
         }
       }
+    },
+    mounted() {
+      $.ajax({
+        url: '/api/word/1589780',
+        method: "GET"
+      }).done(data => {
+        var _wData = JSON.parse(data);
+        for (k in _wData) {
+          this[k] = _wData[k];
+        }
+        this.forms = {comment: false, kreb: null, card: null};
+        this.bullets = #{{bullets.to_json}};
+      });
+    },
+    updated() {
+
+        $('.word-connection-autocomplete').autocomplete({
+          source: this.paths.autocomplete,
+          minLength: 1,
+          select: wordConnectionAutocompleteSelect
+        });
+
     }
   });
+  function wordConnectionAutocompleteSelect(event, ui) {
+    var wordType = $(this).data('word-type');
+    var postData = {};
+    postData[wordType] = ui.item.id;
+    postData[wordType === 'short' ? 'long' : 'short'] = wordApp.word.seq;
+
+    $.ajax({
+      url: wordApp.paths.connect,
+      method: 'POST',
+      data: postData
+    }).done(data => {
+      wordApp.addConnectedWord(wordType, {seq: ui.item.id, title: ui.item.title, href: ui.item.href});
+      $(this).val('');
+    });
+
+    return false;
+  }

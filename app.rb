@@ -40,6 +40,7 @@ paths index: '/',
     word: '/word/:id',
     kanji: '/kanji/:id',
 # Change word properties
+    api_word: '/api/word/:id',
     word_learn: '/word/learn', # POST
     word_burn: '/word/burn', # POST
     word_connect: '/word/connect',
@@ -55,6 +56,8 @@ paths index: '/',
     wk_word: '/wk_word/:id',
     wk_kanji: '/wk_kanji/:id',
     wk_radical: '/wk_radical/:id'
+
+require_relative './api.rb'
 
 configure do
   puts '---> init <---'
