@@ -1,125 +1,132 @@
 ruby:
-  wordEmptyData = {word: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
+  word_empty_data = {word: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
          rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil, forms: nil}
+  word_seq = params[:id]
 
 script src="/js/jquery-ui.min.js"
-div.word-card#word-card-app v-if="word"
+div.word-card#word-card-app
 
-  div.word-krebs.center-block.expandable-list
-    div.expandable-list-item v-for="kreb of krebs"
-      div
-        div.word-kreb :class="krebClasses[kreb.title]" @click="openKrebForm(kreb.title)" = "{{kreb.title}}"
-      div.expandable-list-arrow v-if="kreb.title === forms.kreb"
-
-  div.expandable-list-container v-if="forms.kreb !== null"
+  div v-if="!word" style="opacity: 0.4"
     div.center-block
-      span v-if="selectedKrebProgress.learned_at"
-        = "{{selectedKrebProgress.learned_at ? 'learned ' : ''}}"
-        span v-if="selectedKrebProgress.burned_at" burned
-        span v-else="true"
-          a @click="burnWord(forms.kreb, selectedKrebProgress.id)" burn!
-      span v-else="true"
-        a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)" flag!
-        a @click="learnWord(forms.kreb)" learn!
-      div v-for="krebChar of forms.kreb.split('')" v-if="kanji[krebChar]"
-        div.hr-title: span = '{{krebChar}}'
-        span = '{{krebChar}}'
-        span v-if="kanji[krebChar].jlptn" = ' · JLPT N{{kanji[krebChar].jlptn}}'
-        span v-if="kanji[krebChar].wk"    = ' · WK #{{kanji[krebChar].wk}}'
-        span v-if="kanji[krebChar].english" = '：{{kanji[krebChar].english.join("; ")}}'
+      div Loading word data...
+      div style="font-size: 0.8em" JavaScript should be enabled.
+
+  div v-else="true"
+    div.word-krebs.center-block.expandable-list
+      div.expandable-list-item v-for="kreb of krebs"
         div
-          span v-if="kanji[krebChar].on" = '【音読み】{{ kanji[krebChar].on.join(" · ") }} '
-          span v-if="kanji[krebChar].kun" = '【訓読み】{{ kanji[krebChar].kun.join(" · ") }} '
-          //span v-if="kanji[krebChar].nanori" = '【名乗り】{{ kanji[krebChar].nanori.join(" · ") }} '
+          div.word-kreb :class="krebClasses[kreb.title]" @click="openKrebForm(kreb.title)" = "{{kreb.title}}"
+        div.expandable-list-arrow v-if="kreb.title === forms.kreb"
 
-  - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
+    div.expandable-list-container v-if="forms.kreb !== null"
+      div.center-block
+        span v-if="selectedKrebProgress.learned_at"
+          = "{{selectedKrebProgress.learned_at ? 'learned ' : ''}}"
+          span v-if="selectedKrebProgress.burned_at" burned
+          span v-else="true"
+            a @click="burnWord(forms.kreb, selectedKrebProgress.id)" burn!
+        span v-else="true"
+          a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)" flag!
+          a @click="learnWord(forms.kreb)" learn!
+        div v-for="krebChar of forms.kreb.split('')" v-if="kanji[krebChar]"
+          div.hr-title: span = '{{krebChar}}'
+          span = '{{krebChar}}'
+          span v-if="kanji[krebChar].jlptn" = ' · JLPT N{{kanji[krebChar].jlptn}}'
+          span v-if="kanji[krebChar].wk"    = ' · WK #{{kanji[krebChar].wk}}'
+          span v-if="kanji[krebChar].english" = '：{{kanji[krebChar].english.join("; ")}}'
+          div
+            span v-if="kanji[krebChar].on" = '【音読み】{{ kanji[krebChar].on.join(" · ") }} '
+            span v-if="kanji[krebChar].kun" = '【訓読み】{{ kanji[krebChar].kun.join(" · ") }} '
+            //span v-if="kanji[krebChar].nanori" = '【名乗り】{{ kanji[krebChar].nanori.join(" · ") }} '
 
-  div.word-glosses.center-block
-    div.word-gloss-flag &#x1f1ec;&#x1f1e7;
-    span v-for="(gloss, glossIndex) of word.en"
-      span v-if="word.en.length > 1" = "{{bullets[glossIndex]}} "
-      span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
-      = "{{gloss.gloss.join(', ')}} "
-  div.word-glosses.center-block
-    div.word-gloss-flag &#x1f1f7;&#x1f1fa;
-    span v-for="(gloss, glossIndex) of word.ru"
-      span v-if="word.ru.length > 1" = "{{bullets[glossIndex]}} "
-      span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
-      = "{{gloss.gloss.join(', ')}} "
+    - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
-  div.word-glosses.center-block v-if="cards.length > 0"
-    div.word-gloss-flag &#x1f980;
-    div.expandable-list style="display: inline-block"
-      div.expandable-list-item v-for="(card, cardIndex) of cards"
-        div.word-gloss @click="openCardForm(cardIndex)"
-          div.level-wrapper = '{{card.level}}'
-          = '{{card.title}} ({{card.en}})'
-        div.expandable-list-arrow v-if="cardIndex === forms.card"
+    div.word-glosses.center-block
+      div.word-gloss-flag &#x1f1ec;&#x1f1e7;
+      span v-for="(gloss, glossIndex) of word.en"
+        span v-if="word.en.length > 1" = "{{bullets[glossIndex]}} "
+        span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
+        = "{{gloss.gloss.join(', ')}} "
+    div.word-glosses.center-block v-if="word.ru && word.ru.length > 0"
+      div.word-gloss-flag &#x1f1f7;&#x1f1fa;
+      span v-for="(gloss, glossIndex) of word.ru"
+        span v-if="word.ru.length > 1" = "{{bullets[glossIndex]}} "
+        span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
+        = "{{gloss.gloss.join(', ')}} "
 
-  div.expandable-list-container.word-gloss-expanded v-if="forms.card !== null"
+    div.word-glosses.center-block v-if="cards.length > 0"
+      div.word-gloss-flag &#x1f980;
+      div.expandable-list style="display: inline-block"
+        div.expandable-list-item v-for="(card, cardIndex) of cards"
+          div.word-gloss @click="openCardForm(cardIndex)"
+            div.level-wrapper = '{{card.level}}'
+            = '{{card.title}} ({{card.en}})'
+          div.expandable-list-arrow v-if="cardIndex === forms.card"
+
+    div.expandable-list-container.word-gloss-expanded v-if="forms.card !== null"
+      div.center-block
+        span = '{{selectedCard.title}} · '
+        span style="font-weight: bold" = '{{selectedCard.readings}} '
+        span = '· {{selectedCard.en}} '
+        span> style="font-style: italic" = '({{selectedCard.pos}})'
+        a :href="selectedCard.href" target="_blank" Show ⮭
+        div.hr-title: span Meaning
+        div = "{{selectedCard.mexp}}"
+        div.hr-title: span Reading
+        div = "{{selectedCard.rexp}}"
+
+    div.word-comment-form.center-block
+      div v-if="forms.comment"
+        textarea id="word-comment-textarea" v-model="comment" @keyup.esc="hideCommentForm"
+        input type="button" value="Save" @click="saveComment"
+      div.editable-text v-else-if="comment" @click="showCommentForm"
+        p v-for="commentLine of comment.split('\n')" = '{{commentLine}}'
+      div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm" Add comment
+
+    div.center-block style="margin-top: 0.8em; margin-bottom: 0.8em"
+      span> style="font-weight: bold" Contains:
+      div class="connected-word" v-for="(sw, swIndex) of shortWords"
+        a> :href="sw.href" {{sw.title}}
+        span.action-buttons
+          | [
+          a @click="deleteConnectedWord('short', swIndex)" 消す
+          | ]
+      div class="connected-word-none" v-if="!shortWords.length" none
+      input<> class="word-connection-autocomplete" type="text" data-word-type="short" placeholder="Add short"
+
+      span> style="font-weight: bold" Belongs to:
+      div class="connected-word" v-for="(sw, swIndex) of longWords"
+        a> :href="sw.href" {{sw.title}}
+        span.action-buttons
+          | [
+          a @click="deleteConnectedWord('long', swIndex)" 消す
+          | ]
+      div class="connected-word-none" v-if="!longWords.length" none
+      input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long"
+
     div.center-block
-      span = '{{selectedCard.title}} · '
-      span style="font-weight: bold" = '{{selectedCard.readings}} '
-      span = '· {{selectedCard.en}} '
-      span> style="font-style: italic" = '({{selectedCard.pos}})'
-      a :href="selectedCard.href" target="_blank" Show ⮭
-      div.hr-title: span Meaning
-      div = "{{selectedCard.mexp}}"
-      div.hr-title: span Reading
-      div = "{{selectedCard.rexp}}"
+      div style="opacity: 0.5; font-size: 0.6em; text-align: justify" &#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)
 
-  div.word-comment-form.center-block
-    div v-if="forms.comment"
-      textarea id="word-comment-textarea" v-model="comment" @keyup.esc="hideCommentForm"
-      input type="button" value="Save" @click="saveComment"
-    div.editable-text v-else-if="comment" @click="showCommentForm"
-      p v-for="commentLine of comment.split('\n')" = '{{commentLine}}'
-    div.editable-text v-else="true" style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm" Add comment
+    div.hr-title.center-block v-if="sentences.length > 0 || rawSentences.length > 0"
+      span style="margin: 1em 0" Sentences
 
-  div.center-block style="margin-top: 0.8em; margin-bottom: 0.8em"
-    span> style="font-weight: bold" Contains:
-    div class="connected-word" v-for="(sw, swIndex) of shortWords"
-      a> :href="sw.href" {{sw.title}}
-      span.action-buttons
-        | [
-        a @click="deleteConnectedWord('short', swIndex)" 消す
-        | ]
-    div class="connected-word-none" v-if="!shortWords.length" none
-    input<> class="word-connection-autocomplete" type="text" data-word-type="short" placeholder="Add short"
+    div.word-sentences.word-sentences-structured.center-block v-if="sentences.length > 0"
+      span v-for="(s, sIndex) of sentences"
+        | {{bullets[sIndex]}} {{s.jp}}
+        span< style="font-size: small" 《{{s.en}}》
+        span.action-buttons
+          | [
+          a.remove-sentence-button @click="removeSentence(sIndex, false)" 消す
+          | ] 
 
-    span> style="font-weight: bold" Belongs to:
-    div class="connected-word" v-for="(sw, swIndex) of longWords"
-      a> :href="sw.href" {{sw.title}}
-      span.action-buttons
-        | [
-        a @click="deleteConnectedWord('long', swIndex)" 消す
-        | ]
-    div class="connected-word-none" v-if="!longWords.length" none
-    input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long"
-
-  div.center-block
-    div style="opacity: 0.5; font-size: 0.6em; text-align: justify" &#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)
-
-  div.hr-title.center-block v-if="sentences.length > 0 || rawSentences.length > 0"
-    span style="margin: 1em 0" Sentences
-
-  div.word-sentences.word-sentences-structured.center-block v-if="sentences.length > 0"
-    span v-for="(s, sIndex) of sentences"
-      | {{bullets[sIndex]}} {{s.jp}}
-      span< style="font-size: small" 《{{s.en}}》
-      span.action-buttons
-        | [
-        a.remove-sentence-button @click="removeSentence(sIndex, false)" 消す
-        | ] 
-
-  div.word-sentences.center-block v-if="rawSentences.length > 0"
-    span v-for="(s, sIndex) of rawSentences"
-      | {{bullets[sIndex]}} {{s.jp}}
-      span< style="font-size: small" 《{{s.en}}》
-      span.action-buttons
-        | [
-        a.remove-sentence-button @click="removeSentence(sIndex, true)" 消す
-        | ] 
+    div.word-sentences.center-block v-if="rawSentences.length > 0"
+      span v-for="(s, sIndex) of rawSentences"
+        | {{bullets[sIndex]}} {{s.jp}}
+        span< style="font-size: small" 《{{s.en}}》
+        span.action-buttons
+          | [
+          a.remove-sentence-button @click="removeSentence(sIndex, true)" 消す
+          | ] 
 
 div style="text-align: center; background: #f7f2d2;"
   == slim :sentence_form
@@ -128,7 +135,7 @@ br
 javascript:
   var wordApp = new Vue({
     el: '#word-card-app',
-    data: #{{wordEmptyData.to_json}},
+    data: #{{word_empty_data.to_json}},
     computed: {
       selectedCard: function() {
         if (this.forms.card !== null) {
@@ -173,6 +180,24 @@ javascript:
       }
     },
     methods: {
+      resetWordData() {
+        var _wData = #{{word_empty_data.to_json}};
+        for (k in _wData) this[k] = _wData[k];
+        this.forms = {comment: false, kreb: null, card: null};
+        this.bullets = #{{bullets.to_json}};
+      },
+      getWordData(seq) {
+        $.ajax({
+          url: `/api/word/${seq}`,
+          method: "GET"
+        }).done(data => {
+          var _wData = JSON.parse(data);
+          this.resetWordData();
+          for (k in _wData) {
+            this[k] = _wData[k];
+          }
+        });
+      },
       addConnectedWord(wordType, word) {
         if (wordType === 'short') {
           this.shortWords.push(word);
@@ -282,17 +307,8 @@ javascript:
       }
     },
     mounted() {
-      $.ajax({
-        url: '/api/word/1589780',
-        method: "GET"
-      }).done(data => {
-        var _wData = JSON.parse(data);
-        for (k in _wData) {
-          this[k] = _wData[k];
-        }
-        this.forms = {comment: false, kreb: null, card: null};
-        this.bullets = #{{bullets.to_json}};
-      });
+      var _wordSeq = #{{word_seq}};
+      if (_wordSeq) this.getWordData(_wordSeq);
     },
     updated() {
 

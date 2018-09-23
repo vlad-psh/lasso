@@ -277,8 +277,6 @@ end
 get :word do
   protect!
 
-  @word_seq = params[:id]
-
   slim :word
 end
 
