@@ -1,8 +1,12 @@
+ruby:
+  words = Word.where(seq: @sentence.structure.map{|i|i['seq']}.compact).with_progresses(current_user)
+
 div#sentence-quiz
   div.sentence-question
-    span v-for="(word, wordIndex) of sentence" :class="word.seq ? 'word-question' : ''" = "{{word.text}}"
+    span v-for="(word, wordIndex) of sentence" :class="word.seq ? 'word-question' : ''" @click="selectWord(word.seq)" = "{{word.text}}"
   p = "{{english}}"
 
+== slim :word
 
 javascript:
   var sentenceQuizApp = new Vue({
@@ -12,6 +16,8 @@ javascript:
       english: "#{{@sentence.english}}"
     },
     methods: {
-
+      selectWord(seq){
+        wordApp.getWordData(seq);
+      }
     }
   });

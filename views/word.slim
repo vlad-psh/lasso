@@ -1,7 +1,7 @@
 ruby:
   word_empty_data = {word: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
          rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil, forms: nil}
-  word_seq = params[:id]
+  word_seq = params[:id] || @word_seq
 
 script src="/js/jquery-ui.min.js"
 div.word-card#word-card-app
@@ -307,7 +307,7 @@ javascript:
       }
     },
     mounted() {
-      var _wordSeq = #{{word_seq}};
+      var _wordSeq = #{{word_seq.to_i}};
       if (_wordSeq) this.getWordData(_wordSeq);
     },
     updated() {
