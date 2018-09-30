@@ -1,17 +1,18 @@
 ruby:
   word_empty_data = {word: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
-         rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil, forms: nil}
+         rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil,
+         forms: {nowLoading: false, comment: false, kreb: nil, card: nil} }
   word_seq = params[:id] || @word_seq
 
 script src="/js/jquery-ui.min.js"
 div.word-card#word-card-app
 
-  div v-if="!word" style="opacity: 0.4"
+  div v-if="!word && forms.nowLoading" style="opacity: 0.4"
     div.center-block
       div Loading word data...
       div style="font-size: 0.8em" JavaScript should be enabled.
 
-  div v-else="true"
+  div v-else-if="word !== null"
     div.word-krebs.center-block.expandable-list
       div.expandable-list-item v-for="kreb of krebs"
         div
@@ -183,10 +184,10 @@ javascript:
       resetWordData() {
         var _wData = #{{word_empty_data.to_json}};
         for (k in _wData) this[k] = _wData[k];
-        this.forms = {comment: false, kreb: null, card: null};
         this.bullets = #{{bullets.to_json}};
       },
       getWordData(seq) {
+        this.forms.nowLoading = true;
         $.ajax({
           url: `/api/word/${seq}`,
           method: "GET"
@@ -196,6 +197,7 @@ javascript:
           for (k in _wData) {
             this[k] = _wData[k];
           }
+          this.forms.nowLoading = false;
         });
       },
       addConnectedWord(wordType, word) {
