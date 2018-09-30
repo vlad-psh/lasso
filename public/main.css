@@ -433,7 +433,7 @@ body.black .unlocked .description {
   font-size: 20vmin;
   text-align: center;
   padding: 0.2em;
-  margin: 0 0 3px 0;
+  margin: 0;
   font-weight: normal;
 }
 .study-card .show-answer-button {
@@ -446,7 +446,6 @@ body.black .unlocked .description {
   border: none;
 }
 .study-card .answer {
-  display: none;
 }
 .study-card .answer-revealed.center-block {
   margin-top: 0;
@@ -462,6 +461,7 @@ body.black .unlocked .description {
   flex-flow: row wrap;
   vertical-align: center;
   justify-content: space-between;
+  margin-top: 3px;
 }
 .study-card .answer-button,
 .study-card .other-answers-button {
@@ -469,6 +469,7 @@ body.black .unlocked .description {
   flex: 10;
   padding: 0.5em 1em;
   cursor: pointer;
+  line-height: 2em;
 }
 .study-card .other-answers-button {
   margin: 0 3px;
@@ -876,18 +877,45 @@ input.ensentence {
 /* ==============================
    SENTENCE QUIZ
    ============================== */
-#sentence-quiz {
-  max-width: 45em;
-  margin: 0 auto;
-  text-align: center;
+#sentence-quiz-app {
+  margin: 0;
 }
 .sentence-question {
-  font-size: 2em;
+  background-color: #ffec83;
+  text-align: center;
+  padding: 0.7em 0 1.4em 0;
 }
-.sentence-question .word-question {
-  background: orange;
+.sentence-word-container {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.sentence-word {
+  font-size: 2em;
   margin: 0 1px;
 }
+.sentence-question .word-question {
+  background: white;
+  cursor: pointer;
+}
+.sentence-question .word-question:hover,
+.sentence-question .word-question-answered:hover {
+  color: #c00;
+  border-bottom: 2px solid #c00;
+  margin-bottom: -2px;
+}
+.sentence-question .word-question-answered {
+  background: #fcefa9;
+  cursor: pointer;
+}
+.sentence-word-tooltip {
+  font-size: 8pt;
+  border-bottom: 2px solid rgba(255,255,255,0);
+  margin: 0 2px;
+  color: #878764;
+}
+.answer-yes  {border-bottom: 2px solid #4caf50;}
+.answer-no   {border-bottom: 2px solid #e51c23;}
+.answer-soso {border-bottom: 2px solid #2196f3;}
 /* ==============================
    MOBILE
    default window width: 980

@@ -1,23 +1,64 @@
 ruby:
-  words = Word.where(seq: @sentence.structure.map{|i|i['seq']}.compact).with_progresses(current_user)
+  word_seqs = @sentence.structure.map{|i|i['seq']}.compact
+  words = Word.where(seq: word_seqs).with_progresses(current_user)
 
-div#sentence-quiz
+  sentence_quiz_app_data = {
+    sentence: @sentence.structure,
+    english: @sentence.english,
+    f: {
+      wordSelected: nil,
+      answers: Hash[*word_seqs.map{|i| [i,nil]}.flatten]
+    }
+  }
+
+div#sentence-quiz-app.study-card
   div.sentence-question
-    span v-for="(word, wordIndex) of sentence" :class="word.seq ? 'word-question' : ''" @click="selectWord(word.seq)" = "{{word.text}}"
-  p = "{{english}}"
+    div.center-block
+      div.sentence-word-container v-for="(word, wordIndex) of sentence"
+        div v-if="word.seq && f.answers[word.seq]" @click="selectWord(word.seq)"
+          div.sentence-word-tooltip :class="'answer-' + f.answers[word.seq]" = '{{f.answers[word.seq]}}'
+          div.sentence-word.word-question-answered = "{{word.text}}"
+        div v-else-if="word.seq"
+          div.sentence-word-tooltip ?
+          div.sentence-word class="word-question" @click="selectWord(word.seq)" = "{{word.text}}"
+        div.sentence-word v-else="true" = "{{word.text}}"
+
+  div.answer v-if="f.wordSelected"
+    div.answer-buttons v-if="f.answers[f.wordSelected]"
+      div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.wordSelected]}}; RESET'
+    div.answer-buttons v-else="true"
+      div.answer-button.red @click="answer('no')" NO
+      div.other-answers-button.blue ▼
+      div.other-answers.tooltip style="display: none"
+        div.answer-button.blue @click="answer('soso')" SO&#8209;SO
+        div.answer-button.yellow @click="answer('burn')" BURN!
+      div.answer-button.green @click="answer('yes')" YES
 
 == slim :word
 
 javascript:
+  var sentenceQuizAppData = #{{sentence_quiz_app_data.to_json}};
   var sentenceQuizApp = new Vue({
-    el: '#sentence-quiz',
-    data: {
-      sentence: #{{@sentence.structure.to_json}},
-      english: "#{{@sentence.english}}"
-    },
+    el: '#sentence-quiz-app',
+    data: sentenceQuizAppData,
     methods: {
-      selectWord(seq){
-        wordApp.getWordData(seq);
+      selectWord(seq) {
+        if (seq === this.f.wordSelected) {
+          this.f.wordSelected = null;
+          wordApp.resetWordData();
+        } else {
+          this.f.wordSelected = seq;
+          wordApp.getWordData(seq);
+        }
+      },
+      answer(answerText) {
+        this.f.answers[this.f.wordSelected] = answerText;
+        //alert(JSON.stringify(this.f.answers));
+        this.f.wordSelected = null;
+        wordApp.resetWordData();
+      },
+      resetAnswer() {
+        this.f.answers[this.f.wordSelected] = null;
       }
     }
   });

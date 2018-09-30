@@ -311,13 +311,13 @@ javascript:
       if (_wordSeq) this.getWordData(_wordSeq);
     },
     updated() {
-
+      if (this.word) {
         $('.word-connection-autocomplete').autocomplete({
           source: this.paths.autocomplete,
           minLength: 1,
           select: wordConnectionAutocompleteSelect
         });
-
+      };
     }
   });
   function wordConnectionAutocompleteSelect(event, ui) {
