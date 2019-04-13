@@ -1,6 +1,5 @@
 ruby:
   word_seqs = @sentence.structure.map{|i|i['seq']}.compact
-  words = Word.where(seq: word_seqs).with_progresses(current_user)
 
   sentence_quiz_app_data = {
     sentence: @sentence.structure,

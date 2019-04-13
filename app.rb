@@ -472,14 +472,38 @@ end
 get :study2 do
   protect!
 
-  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
+  progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
+  main_word = progress.word
+  main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
+    all_words_learned = sentence.words.with_progresses(current_user).map {|w| w.user_progresses.try(:first).try(:learned_at).present?}.index(false) == nil
+    if all_words_learned
+      @sentence = sentence
+      break
+    end
+  end
+
+  if @sentence.blank?
+    # Compose (without saving) sentence with only one word
+    @sentence = Sentence.new(
+      japanese: progress.title,
+      structure: [{'text' => progress.title, 'seq' => progress.seq}]
+    )
+  end
+#  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
   slim :study2
 end
 
 post :study2 do
+  progresses = {}
   params[:answers].each do |word_id, answer|
-    word = Word.find_by(seq: word_id)
+    progresses[word_id] = Progress.find_by(seq: word_id, user: current_user)
+    halt(403, 'Forbidden') if progresses[word_id].blank?
   end
+
+  params[:answers].each do |word_id, answer|
+    progresses[word_id].answer!(answer)
+  end
+
   return 'ok'
 end
 

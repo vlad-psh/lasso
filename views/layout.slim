@@ -38,7 +38,7 @@ html
         //  input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
       div.right
         form method="GET" action=path_to(:search)
-          input.search type="text" name="query" placeholder="Search..." tabindex=1
+          input.search type="text" name="query" placeholder="Search..." tabindex=1 autocomplete="off"
           //input type="submit" value="Search"
     div#overlay-menu
       div.close-button: a onclick='$("#overlay-menu").hide();' Close
