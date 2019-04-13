@@ -47,29 +47,29 @@ class Progress < ActiveRecord::Base
     return result
   end
 
-  def answer_by!(a, user)
+  def answer!(a)
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
     throw StandardError.new("Unknown answer: #{a}") unless [:yes, :no, :soso, :burn].include?(a)
 
     if a == :yes
-      move_to_deck_by!(self.deck + 1, user)
+      move_to_deck!(self.deck + 1)
       Action.create(progress: self, user: user, action_type: 'correct')
     elsif a == :no
-      move_to_deck_by!(self.deck - 1, user, choose_schedule_day_by(self.deck >= 1 ? 1 : 0, user)) # reschedule to +2..+4 days
+      move_to_deck!(self.deck - 1, choose_schedule_day(self.deck >= 1 ? 1 : 0)) # reschedule to +2..+4 days
       Action.create(progress: self, user: user, action_type: 'incorrect')
     elsif a == :soso
       # leave in the same deck
-      move_to_deck_by!(self.deck, user)
+      move_to_deck!(self.deck)
       Action.create(progress: self, user: user, action_type: 'soso') if self.deck != 0
     elsif a == :burn
-      move_to_deck_by!(7, user)
+      move_to_deck!(7)
       Action.create(progress: self, user: user, action_type: 'burn')
     end
   end
 
-  def move_to_deck_by!(deck, user, scheduled = nil)
+  def move_to_deck!(deck, scheduled = nil)
     if self.failed == true
 # TODO: made logic clearer/simplier
       # no:   failed  update_deck
@@ -83,7 +83,7 @@ class Progress < ActiveRecord::Base
       self.deck = deck
     end
 
-    self.scheduled = scheduled.present? ? scheduled : choose_schedule_day_by(self.deck, user)
+    self.scheduled = scheduled.present? ? scheduled : choose_schedule_day(self.deck)
     self.save
 
     if self.deck != 0
@@ -94,7 +94,7 @@ class Progress < ActiveRecord::Base
   end
 
   private
-  def choose_schedule_day_by(new_deck, user, from_date = Date.today)
+  def choose_schedule_day(new_deck, from_date = Date.today)
     return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
 
     r = SRS_RANGES[new_deck > 7 ? 7 : new_deck]

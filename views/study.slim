@@ -29,7 +29,7 @@ div.study-card
   //      - if @element.kanji?
   //        div.reading-answer
   //          == slim :reading, locals: {e: @element}
-  div.answer style="display: none"
+  div.answer
     - if @progress.kind == 'w'
       - @word_seq = @progress.seq
       == slim :word

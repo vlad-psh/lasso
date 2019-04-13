@@ -52,7 +52,7 @@ paths index: '/',
     sentence: '/sentence/:id', # DELETE
     autocomplete_word: '/autocomplete/word',
 # Temporary API (should be deleted soon)
-    study2: '/study2',
+    study2: '/study2', # get, post
     wk_word: '/wk_word/:id',
     wk_kanji: '/wk_kanji/:id',
     wk_radical: '/wk_radical/:id'
@@ -178,7 +178,7 @@ post :study do
   halt(403, 'Forbidden') if p.user_id != current_user.id
   halt(400, 'Element not found') unless p.present?
 
-  p.answer_by!(params[:answer], current_user)
+  p.answer!(params[:answer])
 
   redirect path_to(:study).with(safe_type(params[:class]), safe_group(params[:group]))
 end
@@ -474,6 +474,13 @@ get :study2 do
 
   @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
   slim :study2
+end
+
+post :study2 do
+  params[:answers].each do |word_id, answer|
+    word = Word.find_by(seq: word_id)
+  end
+  return 'ok'
 end
 
 post :word_set_comment do

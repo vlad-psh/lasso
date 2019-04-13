@@ -23,7 +23,7 @@ div#sentence-quiz-app.study-card
           div.sentence-word class="word-question" @click="selectWord(word.seq)" = "{{word.text}}"
         div.sentence-word v-else="true" = "{{word.text}}"
 
-  div.answer v-if="f.wordSelected"
+  div v-if="f.wordSelected"
     div.answer-buttons v-if="f.answers[f.wordSelected]"
       div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.wordSelected]}}; RESET'
     div.answer-buttons v-else="true"
@@ -34,6 +34,11 @@ div#sentence-quiz-app.study-card
         div.answer-button.yellow @click="answer('burn')" BURN!
       div.answer-button.green @click="answer('yes')" YES
 
+  div v-if="allAnswered && !f.wordSelected"
+    div.answer-buttons v-if="allAnswered"
+      div.answer-button.blue @click="submit" SUBMIT
+    div.center-block style="margin-top: 1em;" = 'Translation: {{english}}'
+
 == slim :word
 
 javascript:
@@ -41,6 +46,16 @@ javascript:
   var sentenceQuizApp = new Vue({
     el: '#sentence-quiz-app',
     data: sentenceQuizAppData,
+    computed: {
+      allAnswered() {
+        var totalWords = Object.keys(this.f.answers).length;
+        var answeredWords = Object.values(this.f.answers).filter((i) => i !== null);
+        if (totalWords > 0 && answeredWords.length == totalWords)
+          return true;
+        else
+          return false;
+      }
+    },
     methods: {
       selectWord(seq) {
         if (seq === this.f.wordSelected) {
@@ -60,6 +75,15 @@ javascript:
       },
       resetAnswer() {
         this.f.answers[this.f.wordSelected] = null;
+      },
+      submit() {
+        $.ajax({
+          url: "#{{path_to(:study2)}}",
+          method: 'POST',
+          data: {answers: this.f.answers}
+        }).done(data => {
+          alert('done');
+        });
       }
     }
   });

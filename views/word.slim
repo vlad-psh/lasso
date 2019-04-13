@@ -129,10 +129,6 @@ div.word-card#word-card-app
           a.remove-sentence-button @click="removeSentence(sIndex, true)" 消す
           | ] 
 
-div style="text-align: center; background: #f7f2d2;"
-  == slim :sentence_form
-br
-
 javascript:
   var wordApp = new Vue({
     el: '#word-card-app',

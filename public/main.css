@@ -446,6 +446,7 @@ body.black .unlocked .description {
   border: none;
 }
 .study-card .answer {
+  display: none;
 }
 .study-card .answer-revealed.center-block {
   margin-top: 0;
@@ -469,7 +470,8 @@ body.black .unlocked .description {
   flex: 10;
   padding: 0.5em 1em;
   cursor: pointer;
-  line-height: 2em;
+  text-align: center;
+  min-height: 2em;
 }
 .study-card .other-answers-button {
   margin: 0 3px;
