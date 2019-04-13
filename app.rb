@@ -39,6 +39,7 @@ paths index: '/',
     settings: '/settings',
     word: '/word/:id',
     kanji: '/kanji/:id',
+    api_sentence: '/api/sentence',
 # Change word properties
     api_word: '/api/word/:id',
     word_learn: '/word/learn', # POST
@@ -472,24 +473,6 @@ end
 get :study2 do
   protect!
 
-  progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
-  main_word = progress.word
-  main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
-    all_words_learned = sentence.words.with_progresses(current_user).map {|w| w.user_progresses.try(:first).try(:learned_at).present?}.index(false) == nil
-    if all_words_learned
-      @sentence = sentence
-      break
-    end
-  end
-
-  if @sentence.blank?
-    # Compose (without saving) sentence with only one word
-    @sentence = Sentence.new(
-      japanese: progress.title,
-      structure: [{'text' => progress.title, 'seq' => progress.seq}]
-    )
-  end
-#  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
   slim :study2
 end
 

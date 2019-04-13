@@ -1,15 +1,3 @@
-ruby:
-  word_seqs = @sentence.structure.map{|i|i['seq']}.compact
-
-  sentence_quiz_app_data = {
-    sentence: @sentence.structure,
-    english: @sentence.english,
-    f: {
-      wordSelected: nil,
-      answers: Hash[*word_seqs.map{|i| [i,nil]}.flatten]
-    }
-  }
-
 div#sentence-quiz-app.study-card
   div.sentence-question
     div.center-block
@@ -41,10 +29,13 @@ div#sentence-quiz-app.study-card
 == slim :word
 
 javascript:
-  var sentenceQuizAppData = #{{sentence_quiz_app_data.to_json}};
   var sentenceQuizApp = new Vue({
     el: '#sentence-quiz-app',
-    data: sentenceQuizAppData,
+    data: {
+      sentence: [],
+      english: null,
+      f: {wordSelected: null, answers: {}}
+    },
     computed: {
       allAnswered() {
         var totalWords = Object.keys(this.f.answers).length;
@@ -76,13 +67,34 @@ javascript:
         this.f.answers[this.f.wordSelected] = null;
       },
       submit() {
+        var app = this;
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
           data: {answers: this.f.answers}
         }).done(data => {
-          alert('done');
+          if (data == 'ok') {
+            app.updateSentence();
+          } else {
+            alert('error');
+          }
+        });
+      },
+      updateSentence() {
+        var app = this;
+        $.ajax({
+          url: "#{{path_to(:api_sentence)}}",
+          method: 'GET'
+        }).done(data => {
+          var j = JSON.parse(data);
+          app.sentence = j.sentence;
+          app.english = j.english;
+          app.f.wordSelected = j.f.wordSelected;
+          app.f.answers = j.f.answers;
         });
       }
+    },
+    mounted: function(){
+      this.updateSentence();
     }
   });

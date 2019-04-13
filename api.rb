@@ -47,3 +47,33 @@ get :api_word do
     }
   }.to_json
 end
+
+get :api_sentence do
+  progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
+  main_word = progress.word
+  main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
+    all_words_learned = sentence.words.with_progresses(current_user).map {|w| w.user_progresses.try(:first).try(:learned_at).present?}.index(false) == nil
+    if all_words_learned
+      @sentence = sentence
+      break
+    end
+  end
+
+  if @sentence.blank?
+    # Compose (without saving) sentence with only one word
+    @sentence = Sentence.new(
+      japanese: progress.title,
+      structure: [{'text' => progress.title, 'seq' => progress.seq}]
+    )
+  end
+#  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
+
+  return {
+    sentence: @sentence.structure,
+    english: @sentence.english,
+    f: {
+      wordSelected: nil,
+      answers: Hash[*@sentence.structure.map{|i|i['seq']}.compact.map{|i| [i,nil]}.flatten]
+    }
+  }.to_json
+end
