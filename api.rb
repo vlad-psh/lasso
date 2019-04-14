@@ -52,8 +52,8 @@ get :api_sentence do
   progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
   main_word = progress.word
   main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
-    all_words_learned = sentence.words.with_progresses(current_user).map {|w| w.user_progresses.try(:first).try(:learned_at).present?}.index(false) == nil
-    if all_words_learned
+    unless sentence.words.with_progresses(current_user).map {|w| w.user_progresses.try(:first).try(:learned_at).present?}.include?(false)
+      # If all words in sentence are learned
       @sentence = sentence
       break
     end

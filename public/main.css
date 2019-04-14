@@ -886,13 +886,14 @@ input.ensentence {
   background-color: #ffec83;
   text-align: center;
   padding: 0.7em 0 1.4em 0;
+  position: relative;
 }
 .sentence-word-container {
   display: inline-block;
   vertical-align: bottom;
 }
 .sentence-word {
-  font-size: 2em;
+  font-size: 10vmin;
   margin: 0 1px;
 }
 .sentence-question .word-question {

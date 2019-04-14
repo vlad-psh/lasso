@@ -6,3 +6,6 @@ Gemfile.lock
 *.sqlite3-journal
 
 public/audio/*.mp3
+
+node_modules/
+public/build/*

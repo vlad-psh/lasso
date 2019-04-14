@@ -1,3 +1,7 @@
+window.Vue = require('vue');
+require("jquery-ui/ui/widgets/autocomplete.js");
+require("jquery-ujs");
+
 /* ====================
    TOGGLE COMPACT CHECKBOX
    ==================== */

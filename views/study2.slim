@@ -1,5 +1,7 @@
 div#sentence-quiz-app.study-card
   div.sentence-question
+    div style="position: absolute; top: 0; left: 0"
+      input type="button" @click="updateSentence" value="Next"
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
         div v-if="word.seq && f.answers[word.seq]" @click="selectWord(word.seq)"
