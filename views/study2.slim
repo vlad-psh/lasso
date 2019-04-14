@@ -15,10 +15,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.wordSelected]}}; RESET'
     div.answer-buttons v-else="true"
       div.answer-button.red @click="answer('no')" NO
-      div.other-answers-button.blue ▼
-      div.other-answers.tooltip style="display: none"
-        div.answer-button.blue @click="answer('soso')" SO&#8209;SO
-        div.answer-button.yellow @click="answer('burn')" BURN!
+      div.answer-button.blue @click="answer('soso')" SO&#8209;SO
       div.answer-button.green @click="answer('yes')" YES
 
   div v-if="allAnswered && !f.wordSelected"
@@ -89,8 +86,11 @@ javascript:
           var j = JSON.parse(data);
           app.sentence = j.sentence;
           app.english = j.english;
-          app.f.wordSelected = j.f.wordSelected;
-          app.f.answers = j.f.answers;
+          app.f.wordSelected = null;
+          app.f.answers = j.sentence.reduce(function(acc,i){
+            if (i.seq) acc[i.seq] = null;
+            return acc;
+          }, {});
         });
       }
     },

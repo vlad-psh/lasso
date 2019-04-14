@@ -58,22 +58,18 @@ get :api_sentence do
       break
     end
   end
+#  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
 
   if @sentence.blank?
     # Compose (without saving) sentence with only one word
-    @sentence = Sentence.new(
-      japanese: progress.title,
-      structure: [{'text' => progress.title, 'seq' => progress.seq}]
-    )
+    return {
+      sentence: [{'text' => progress.title, 'seq' => progress.seq}],
+      english: nil
+    }.to_json
+  else
+    return {
+      sentence: @sentence.structure,
+      english: @sentence.english
+    }.to_json
   end
-#  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
-
-  return {
-    sentence: @sentence.structure,
-    english: @sentence.english,
-    f: {
-      wordSelected: nil,
-      answers: Hash[*@sentence.structure.map{|i|i['seq']}.compact.map{|i| [i,nil]}.flatten]
-    }
-  }.to_json
 end
