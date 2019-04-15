@@ -281,59 +281,6 @@ get :word do
   slim :word
 end
 
-post :word_flag do
-  protect!
-
-  progress = Progress.find_or_initialize_by(
-        seq: params[:seq],
-        title: params[:kreb],
-        user: current_user,
-        kind: :w)
-  progress.flagged = true
-  progress.save
-
-  return progress.to_json
-end
-
-post :word_learn do
-  protect!
-
-  progress = Progress.find_or_initialize_by(
-        seq: params[:seq],
-        title: params[:kreb],
-        user: current_user,
-        kind: :w)
-  throw StandardError.new("Already learned") if progress.learned_at.present?
-
-  unless progress.unlocked
-    progress.unlocked = true
-    progress.unlocked_at = DateTime.now
-  end
-
-  progress.learned_at = DateTime.now
-  progress.deck = 0
-  progress.save
-
-  Action.create(user: current_user, progress: progress, action_type: :learned)
-
-  stats = Statistic.find_or_initialize_by(user: current_user, date: Date.today)
-  stats.learned['w'] += 1
-  stats.save
-
-  return progress.to_json
-end
-
-post :word_burn do
-  protect!
-
-  progress = Progress.find_by(id: params[:progress_id], user: current_user)
-  progress.update_attribute(:burned_at, DateTime.now)
-
-  Action.create(user: current_user, progress: progress, action_type: :burn)
-
-  return progress.to_json
-end
-
 get :list_nf do
   protect!
 

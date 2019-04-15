@@ -1,29 +1,30 @@
-get :api_word do
-  protect!
+PROGRESS_PROPERTIES = [:id, :deck, :learned_at, :burned_at, :flagged]
 
-  word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).where(seq: params[:id]).with_progresses(current_user)[0]
+def word_json(seq, options = {})
+  word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).where(seq: seq).with_progresses(current_user)[0]
+  result = word.serializable_hash(only: [:seq, :en, :ru, :jlptn, :nf])
+
   @title = word.word_titles.first.title
-  word_details = word.word_details.where(user: current_user).take
-  sentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
+  result[:comment] = word.word_details.where(user: current_user).take.try(:comment) || ''
+
+  progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
+  result[:krebs] = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
+    {
+      title: t.title,
+      is_common: t.is_common,
+      progress: progresses[t.title].try(:serializable_hash, only: PROGRESS_PROPERTIES) || {}
+    }
+  end
+
+  result[:sentences] = word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
+  rawSentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
+  result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
 
   kanji = word.kanji.present? ? Hash[ Kanji.where(title: word.kanji.split('')).map {|k| [k.title, k]} ] : {}
 
-  found_progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
-  sorted_word_titles = word.word_titles.sort{|a,b| a.id <=> b.id}.map{|t| {title: t.title, is_common: t.is_common}}
-  progresses = {}
-  sorted_word_titles.each do |t|
-    progresses[t[:title]] = found_progresses[t[:title]] || {}
-  end
-
-  return {
-    word: word,
-    krebs: sorted_word_titles,
-    progresses: progresses,
+  return result.merge({
     shortWords: word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
     longWords:  word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
-    rawSentences: sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
-    sentences: word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}},
-    comment: word_details.try(:comment) || '',
     cards: word.wk_words.sort{|a,b| a.level <=> b.level}.map{|c|
       {
         title: c.title,
@@ -45,7 +46,13 @@ get :api_word do
       comment: path_to(:word_set_comment).with(word.seq),
       autocomplete: path_to(:autocomplete_word)
     }
-  }.to_json
+  }).to_json
+end
+
+get :api_word do
+  protect!
+
+  return word_json(params[:id])
 end
 
 get :api_sentence do
@@ -72,4 +79,57 @@ get :api_sentence do
       english: @sentence.english
     }.to_json
   end
+end
+
+post :word_flag do
+  protect!
+
+  progress = Progress.find_or_initialize_by(
+        seq: params[:seq],
+        title: params[:kreb],
+        user: current_user,
+        kind: :w)
+  progress.flagged = true
+  progress.save
+
+  return progress.to_json(only: PROGRESS_PROPERTIES)
+end
+
+post :word_learn do
+  protect!
+
+  progress = Progress.find_or_initialize_by(
+        seq: params[:seq],
+        title: params[:kreb],
+        user: current_user,
+        kind: :w)
+  throw StandardError.new("Already learned") if progress.learned_at.present?
+
+  unless progress.unlocked
+    progress.unlocked = true
+    progress.unlocked_at = DateTime.now
+  end
+
+  progress.learned_at = DateTime.now
+  progress.deck = 0
+  progress.save
+
+  Action.create(user: current_user, progress: progress, action_type: :learned)
+
+  stats = Statistic.find_or_initialize_by(user: current_user, date: Date.today)
+  stats.learned['w'] += 1
+  stats.save
+
+  return progress.to_json(only: PROGRESS_PROPERTIES)
+end
+
+post :word_burn do
+  protect!
+
+  progress = Progress.find_by(id: params[:progress_id], user: current_user)
+  progress.update_attribute(:burned_at, DateTime.now)
+
+  Action.create(user: current_user, progress: progress, action_type: :burn)
+
+  return progress.to_json(only: PROGRESS_PROPERTIES)
 end

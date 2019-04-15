@@ -1,17 +1,17 @@
 ruby:
-  word_empty_data = {word: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
+  word_empty_data = {seq: nil, en: nil, ru: nil, jlptn: nil, nf: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
          rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil,
          forms: {nowLoading: false, comment: false, kreb: nil, card: nil} }
   word_seq = params[:id] || @word_seq
 
 div.word-card#word-card-app
 
-  div v-if="!word && forms.nowLoading" style="opacity: 0.4"
+  div v-if="!seq && forms.nowLoading" style="opacity: 0.4"
     div.center-block
       div Loading word data...
       div style="font-size: 0.8em" JavaScript should be enabled.
 
-  div v-else-if="word !== null"
+  div v-else-if="seq !== null"
     div.word-krebs.center-block.expandable-list
       div.expandable-list-item v-for="kreb of krebs"
         div
@@ -43,14 +43,14 @@ div.word-card#word-card-app
 
     div.word-glosses.center-block
       div.word-gloss-flag &#x1f1ec;&#x1f1e7;
-      span v-for="(gloss, glossIndex) of word.en"
-        span v-if="word.en.length > 1" = "{{bullets[glossIndex]}} "
+      span v-for="(gloss, glossIndex) of en"
+        span v-if="en.length > 1" = "{{bullets[glossIndex]}} "
         span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
         = "{{gloss.gloss.join(', ')}} "
-    div.word-glosses.center-block v-if="word.ru && word.ru.length > 0"
+    div.word-glosses.center-block v-if="ru && ru.length > 0"
       div.word-gloss-flag &#x1f1f7;&#x1f1fa;
-      span v-for="(gloss, glossIndex) of word.ru"
-        span v-if="word.ru.length > 1" = "{{bullets[glossIndex]}} "
+      span v-for="(gloss, glossIndex) of ru"
+        span v-if="ru.length > 1" = "{{bullets[glossIndex]}} "
         span class="word-gloss-pos" v-if="gloss.pos" = '{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} '
         = "{{gloss.gloss.join(', ')}} "
 
@@ -142,7 +142,7 @@ javascript:
       },
       selectedKrebProgress: function() {
         if (this.forms.kreb !== null) {
-          return this.progresses[this.forms.kreb];
+          return this.krebs.find(i => i.title === this.forms.kreb).progress;
         } else {
           return {};
         }
@@ -151,20 +151,19 @@ javascript:
         var result = {};
         for (kreb of this.krebs) {
           var classes = [];
-          var progress = this.progresses[kreb.title];
 
           if (kreb.is_common) classes.push('word-kreb-common')
 
-          if (progress) {
-            if (progress.burned_at) {
+          if (kreb.progress) {
+            if (kreb.progress.burned_at) {
               classes.push('burned');
-            } else if (progress.learned_at) {
-              if (progress.deck <= 1) classes.push('apprentice');
-              else if (progress.deck == 2) classes.push('guru');
-              else if (progress.deck == 3) classes.push('master');
-              else if (progress.deck >= 6) classes.push('burned');
+            } else if (kreb.progress.learned_at) {
+              if (kreb.progress.deck <= 1) classes.push('apprentice');
+              else if (kreb.progress.deck == 2) classes.push('guru');
+              else if (kreb.progress.deck == 3) classes.push('master');
+              else if (kreb.progress.deck >= 6) classes.push('burned');
               else classes.push('enlightened');
-            } else if (progress.flagged === true) {
+            } else if (kreb.progress.flagged === true) {
               classes.push('unlocked');
             }
           }
@@ -206,7 +205,7 @@ javascript:
         var word = wordType === 'short' ? this.shortWords[wordIndex] : this.longWords[wordIndex];
         var postData = {};
         postData[wordType] = word.seq;
-        postData[wordType === 'short' ? 'long' : 'short'] = this.word.seq;
+        postData[wordType === 'short' ? 'long' : 'short'] = this.seq;
 
         var ask = confirm(`Are you sure you want to delete ${word.title}?`);
         if (ask) {
@@ -243,12 +242,9 @@ javascript:
         $.ajax({
           url: this.paths.learn,
           method: "POST",
-          data: {seq: this.word.seq, kreb: kreb}
+          data: {seq: this.seq, kreb: kreb}
         }).done(data => {
-          var newProgress = JSON.parse(data);
-          var _progresses = Object.assign({}, this.progresses);
-          _progresses[newProgress.title] = newProgress;
-          this.progresses = _progresses;
+          this.krebs.find(i => i.title === kreb).progress = JSON.parse(data);
         });
       },
       burnWord(kreb, progressId) {
@@ -257,20 +253,16 @@ javascript:
           method: "POST",
           data: {progress_id: progressId}
         }).done(data => {
-          //var newProgress = JSON.parse(data);
-          this.progresses[kreb].burned_at = new Date();
+          this.krebs.find(i => i.title === kreb).progress = JSON.parse(data);
         });
       },
       flagWord(kreb) {
         $.ajax({
           url: this.paths.flag,
           method: "POST",
-          data: {seq: this.word.seq, kreb: kreb}
+          data: {seq: this.seq, kreb: kreb}
         }).done(data => {
-          var newProgress = JSON.parse(data);
-          var _progresses = Object.assign({}, this.progresses);
-          _progresses[newProgress.title] = newProgress;
-          this.progresses = _progresses;
+          this.krebs.find(i => i.title === kreb).progress = JSON.parse(data);
         });
       },
       saveComment() {
@@ -308,7 +300,7 @@ javascript:
       if (_wordSeq) this.getWordData(_wordSeq);
     },
     updated() {
-      if (this.word) {
+      if (this.seq) {
         $('.word-connection-autocomplete').autocomplete({
           source: this.paths.autocomplete,
           minLength: 1,
@@ -321,7 +313,7 @@ javascript:
     var wordType = $(this).data('word-type');
     var postData = {};
     postData[wordType] = ui.item.id;
-    postData[wordType === 'short' ? 'long' : 'short'] = wordApp.word.seq;
+    postData[wordType === 'short' ? 'long' : 'short'] = wordApp.seq;
 
     $.ajax({
       url: wordApp.paths.connect,
