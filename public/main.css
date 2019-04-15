@@ -45,6 +45,9 @@ a {
 a:hover {
   color: #c00;
 }
+b {
+  font-weight: bold;
+}
 .japanese {
   font-size: 1.4em;
   font-style: normal !important;

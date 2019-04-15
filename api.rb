@@ -21,6 +21,19 @@ def word_json(seq, options = {})
   result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
 
   kanji = word.kanji.present? ? Hash[ Kanji.where(title: word.kanji.split('')).map {|k| [k.title, k]} ] : {}
+  result[:kanjis] = Kanji.includes(:wk_kanji).where(title: word.kanji.split('')).map{|k|
+    h = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
+    if (w = k.wk_kanji).present?
+      h = h.merge({
+        wk_level: w.level,
+        mmne: w.details['mmne'],
+        mhnt: w.details['mhnt'],
+        rmne: w.details['rmne'],
+        rhnt: w.details['rhnt']
+      })
+    end
+    h
+  }
 
   return result.merge({
     shortWords: word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
@@ -37,7 +50,6 @@ def word_json(seq, options = {})
         href:  path_to(:wk_word).with(c.id)
       }
     },
-    kanji: kanji,
     paths: {
       connect: path_to(:word_connect),
       learn:   path_to(:word_learn),

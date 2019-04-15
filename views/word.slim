@@ -1,6 +1,6 @@
 ruby:
   word_empty_data = {seq: nil, en: nil, ru: nil, jlptn: nil, nf: nil, krebs: nil, progresses: nil, shortWords: nil, longWords: nil,
-         rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanji: nil, paths: nil,
+         rawSentences: nil, sentences: nil, comment: nil, cards: nil, kanjis: nil, paths: nil,
          forms: {nowLoading: false, comment: false, kreb: nil, card: nil} }
   word_seq = params[:id] || @word_seq
 
@@ -28,16 +28,24 @@ div.word-card#word-card-app
         span v-else="true"
           a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)" flag!
           a @click="learnWord(forms.kreb)" learn!
-        div v-for="krebChar of forms.kreb.split('')" v-if="kanji[krebChar]"
-          div.hr-title: span = '{{krebChar}}'
-          span = '{{krebChar}}'
-          span v-if="kanji[krebChar].jlptn" = ' · JLPT N{{kanji[krebChar].jlptn}}'
-          span v-if="kanji[krebChar].wk"    = ' · WK #{{kanji[krebChar].wk}}'
-          span v-if="kanji[krebChar].english" = '：{{kanji[krebChar].english.join("; ")}}'
+        div v-for="kanji of kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1"
+          div.hr-title: span = '{{kanji.title}}'
+          span = '{{kanji.title}}'
+          span v-if="kanji.jlptn" = ' · JLPT N{{kanji.jlptn}}'
+          span v-if="kanji.wk_level"    = ' · WK #{{kanji.wk_level}}'
+          span v-if="kanji.english" = '：{{kanji.english.join("; ")}}'
           div
-            span v-if="kanji[krebChar].on" = '【音読み】{{ kanji[krebChar].on.join(" · ") }} '
-            span v-if="kanji[krebChar].kun" = '【訓読み】{{ kanji[krebChar].kun.join(" · ") }} '
-            //span v-if="kanji[krebChar].nanori" = '【名乗り】{{ kanji[krebChar].nanori.join(" · ") }} '
+            span v-if="kanji.on" = '【音読み】{{ kanji.on.join(" · ") }} '
+            span v-if="kanji.kun" = '【訓読み】{{ kanji.kun.join(" · ") }} '
+            //span v-if="kanji.nanori" = '【名乗り】{{ kanji.nanori.join(" · ") }} '
+          div v-if="kanji.wk_level"
+            span style="font-weight: bold" Meaning:
+            span< v-html="stripBB(kanji.mmne)"
+            span< style="font-style: italic" v-html="stripBB(kanji.mhnt)"
+          div v-if="kanji.wk_level"
+            span style="font-weight: bold" Reading:
+            span< v-html="stripBB(kanji.rmne)"
+            span< style="font-style: italic" v-html="stripBB(kanji.rhnt)"
 
     - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -71,9 +79,9 @@ div.word-card#word-card-app
         span> style="font-style: italic" = '({{selectedCard.pos}})'
         a :href="selectedCard.href" target="_blank" Show ⮭
         div.hr-title: span Meaning
-        div = "{{selectedCard.mexp}}"
+        div v-html="stripBB(selectedCard.mexp)"
         div.hr-title: span Reading
-        div = "{{selectedCard.rexp}}"
+        div v-html="stripBB(selectedCard.rexp)"
 
     div.word-comment-form.center-block
       div v-if="forms.comment"
@@ -293,8 +301,11 @@ javascript:
         } else {
           this.forms.card = cardIndex;
         }
+      },
+      stripBB(str) {
+        return str.replace(/\[[a-zA-Z]*?\](.*?)\[\/[a-zA-Z]*?\]/g, "<b>$1</b>")
       }
-    },
+    }, // end of methods
     mounted() {
       var _wordSeq = #{{word_seq.to_i}};
       if (_wordSeq) this.getWordData(_wordSeq);
