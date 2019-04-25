@@ -47,6 +47,10 @@ class Progress < ActiveRecord::Base
     return result
   end
 
+  def self.api_props
+    return [:id, :deck, :learned_at, :burned_at, :flagged]
+  end
+
   def answer!(a)
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym

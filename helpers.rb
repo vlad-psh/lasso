@@ -140,4 +140,68 @@ module WakameHelpers
       return "Grade #{grade}"
     end
   end
+
+  def kanji_json(kanji)
+    h = kanji.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
+    if (w = kanji.wk_kanji).present?
+      h = h.merge({
+        wk_level: w.level,
+        emph: w.details['yomi']['emph'],
+        mmne: w.details['mmne'],
+        mhnt: w.details['mhnt'],
+        rmne: w.details['rmne'],
+        rhnt: w.details['rhnt']
+      })
+    end
+    h
+  end
+
+  def word_json(seq, options = {})
+    word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).where(seq: seq).with_progresses(current_user)[0]
+    result = word.serializable_hash(only: [:seq, :en, :ru, :jlptn, :nf])
+
+    @title = word.word_titles.first.title
+    result[:comment] = word.word_details.where(user: current_user).take.try(:comment) || ''
+
+    progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
+    result[:krebs] = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
+      {
+        title: t.title,
+        is_common: t.is_common,
+        progress: progresses[t.title].try(:serializable_hash, only: Progress.api_props) || {}
+      }
+    end
+
+    result[:sentences] = word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
+    rawSentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
+    result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
+
+    result[:kanjis] = word.kanji.blank? ? {} :
+        Kanji.includes(:wk_kanji).where(title: word.kanji.split('')).map{|k| kanji_json(k)}
+
+    return result.merge({
+      shortWords: word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
+      longWords:  word.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
+      cards: word.wk_words.sort{|a,b| a.level <=> b.level}.map{|c|
+        {
+          title: c.title,
+          level: c.level,
+          readings: c.details['readings'].join(', '),
+          en:    c.details['en'].join(', '),
+          pos:   c.details['pos'],
+          mexp:  c.details['mexp'],
+          rexp:  c.details['rexp'],
+          href:  path_to(:wk_word).with(c.id)
+        }
+      },
+      paths: {
+        connect: path_to(:word_connect),
+        learn:   path_to(:word_learn),
+        burn:    path_to(:word_burn),
+        flag:    path_to(:word_flag),
+        comment: path_to(:word_set_comment).with(word.seq),
+        autocomplete: path_to(:autocomplete_word)
+      }
+    }).to_json
+  end
 end

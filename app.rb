@@ -137,7 +137,7 @@ get :list_level do
   @words = Word.joins(:wk_words).merge(WkWord.where(level: params[:level])).order(:id).with_progresses(@view_user)
   @kanji = WkKanji.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
 #  @kanji = Kanji.joins(:wk_kanji).merge(WkKanji.where(level: params[:level])).order(:id).with_progresses(@view_user)
-  @radicals = WkRadical.none
+  @radicals = WkRadical.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
 
   @title = "L.#{params[:level]}"
   @separate_list = true

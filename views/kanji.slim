@@ -1,13 +1,3 @@
-ruby:
-  kanji = @kanji.serializable_hash(only: [:title, :jlptn, :english, :on, :kun, :nanori])
-  kanji = kanji.merge({
-    wk_level: @kanji.wk_kanji.level,
-    mmne: @kanji.wk_kanji.details['mmne'],
-    mhnt: @kanji.wk_kanji.details['mhnt'],
-    rmne: @kanji.wk_kanji.details['rmne'],
-    rhnt: @kanji.wk_kanji.details['rhnt']
-  })
-
 div#kanji-card-app
   kanji :kanji="kanji"
 
@@ -15,6 +5,6 @@ javascript:
   var wordApp = new Vue({
     el: '#kanji-card-app',
     data: {
-      kanji: #{{kanji.to_json}}
+      kanji: #{{kanji_json(@kanji).to_json}}
     }
   })
