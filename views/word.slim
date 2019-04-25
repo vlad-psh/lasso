@@ -30,22 +30,7 @@ div.word-card#word-card-app
           a @click="learnWord(forms.kreb)" learn!
         div v-for="kanji of kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1"
           div.hr-title: span = '{{kanji.title}}'
-          span = '{{kanji.title}}'
-          span v-if="kanji.jlptn" = ' · JLPT N{{kanji.jlptn}}'
-          span v-if="kanji.wk_level"    = ' · WK #{{kanji.wk_level}}'
-          span v-if="kanji.english" = '：{{kanji.english.join("; ")}}'
-          div
-            span v-if="kanji.on" = '【音読み】{{ kanji.on.join(" · ") }} '
-            span v-if="kanji.kun" = '【訓読み】{{ kanji.kun.join(" · ") }} '
-            //span v-if="kanji.nanori" = '【名乗り】{{ kanji.nanori.join(" · ") }} '
-          div v-if="kanji.wk_level"
-            span style="font-weight: bold" Meaning:
-            span< v-html="stripBB(kanji.mmne)"
-            span< style="font-style: italic" v-html="stripBB(kanji.mhnt)"
-          div v-if="kanji.wk_level"
-            span style="font-weight: bold" Reading:
-            span< v-html="stripBB(kanji.rmne)"
-            span< style="font-style: italic" v-html="stripBB(kanji.rhnt)"
+          kanji :kanji="kanji"
 
     - bullets = %w(① ② ③ ④ ⑤ ⑥ ⑦ ⑧ ⑨ ⑩ ⑪ ⑫ ⑬ ⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ ㉑ ㉒ ㉓ ㉔ ㉕ ㉖ ㉗ ㉘ ㉙ ㉚ ㉛ ㉜ ㉝ ㉞ ㉟ ㊱ ㊲ ㊳ ㊴ ㊵ ㊶ ㊷ ㊸ ㊹ ㊺ ㊻ ㊼ ㊽ ㊾ ㊿) # white circled numbers
 
@@ -302,9 +287,6 @@ javascript:
           this.forms.card = cardIndex;
         }
       },
-      stripBB(str) {
-        return str.replace(/\[[a-zA-Z]*?\](.*?)\[\/[a-zA-Z]*?\]/g, "<b>$1</b>")
-      }
     }, // end of methods
     mounted() {
       var _wordSeq = #{{word_seq.to_i}};

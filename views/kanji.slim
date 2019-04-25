@@ -1,19 +1,20 @@
-- d = @kanji.wk_kanji.details
-- emph = d['yomi']['emph']
+ruby:
+  kanji = @kanji.serializable_hash(only: [:title, :jlptn, :english, :on, :kun, :nanori])
+  kanji = kanji.merge({
+    wk_level: @kanji.wk_kanji.level,
+    mmne: @kanji.wk_kanji.details['mmne'],
+    mhnt: @kanji.wk_kanji.details['mhnt'],
+    rmne: @kanji.wk_kanji.details['rmne'],
+    rhnt: @kanji.wk_kanji.details['rhnt']
+  })
 
-table
-  tr
-    td
-      ul
-        li
-          ' &#x1f1ec;&#x1f1e7;
-          = d['en'].join('; ')
-        li style=('background-color: yellow' if emph == 'on') = "ON: #{d['yomi']['on']}"
-        li style=('background-color: yellow' if emph == 'kun') = "KUN: #{d['yomi']['kun']}"
-    td
-      ul
-        li = "JLPT N#{@kanji.jlptn}"
-        li = "#{jp_grade(@kanji.grade)}"
-        li = "WK #{@kanji.wk_kanji.level}"
+div#kanji-card-app
+  kanji :kanji="kanji"
 
-= @kanji.wk_kanji.details.inspect
+javascript:
+  var wordApp = new Vue({
+    el: '#kanji-card-app',
+    data: {
+      kanji: #{{kanji.to_json}}
+    }
+  })

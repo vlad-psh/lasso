@@ -20,8 +20,7 @@ def word_json(seq, options = {})
   rawSentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
   result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
 
-  kanji = word.kanji.present? ? Hash[ Kanji.where(title: word.kanji.split('')).map {|k| [k.title, k]} ] : {}
-  result[:kanjis] = Kanji.includes(:wk_kanji).where(title: word.kanji.split('')).map{|k|
+  result[:kanjis] = word.kanji.blank? ? {} : Kanji.includes(:wk_kanji).where(title: word.kanji.split('')).map{|k|
     h = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
     if (w = k.wk_kanji).present?
       h = h.merge({
