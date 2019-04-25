@@ -12,20 +12,19 @@ div#sentence-quiz-app.study-card
           div.sentence-word class="word-question" @click="selectWord(word.seq)" = "{{word.text}}"
         div.sentence-word v-else="true" = "{{word.text}}"
 
-  div v-if="f.wordSelected"
-    div.answer-buttons v-if="f.answers[f.wordSelected]"
-      div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.wordSelected]}}; RESET'
+  div v-if="f.selectedWordSeq"
+    div.answer-buttons v-if="f.answers[f.selectedWordSeq]"
+      div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.selectedWordSeq]}}; RESET'
     div.answer-buttons v-else="true"
       div.answer-button.red @click="answer('no')" NO
       div.answer-button.blue @click="answer('soso')" SO&#8209;SO
       div.answer-button.green @click="answer('yes')" YES
+    word :w="f.selectedWord"
 
-  div v-if="allAnswered && !f.wordSelected"
+  div v-if="allAnswered && !f.selectedWordSeq"
     div.answer-buttons v-if="allAnswered"
       div.answer-button.blue @click="submit" SUBMIT
     div.center-block style="margin-top: 1em;" = 'Translation: {{english}}'
-
-== slim :word
 
 javascript:
   var sentenceQuizApp = new Vue({
@@ -33,7 +32,7 @@ javascript:
     data: {
       sentence: [],
       english: null,
-      f: {wordSelected: null, answers: {}}
+      f: {selectedWordSeq: null, selectedWord: {}, answers: {}}
     },
     computed: {
       allAnswered() {
@@ -47,23 +46,30 @@ javascript:
     },
     methods: {
       selectWord(seq) {
-        if (seq === this.f.wordSelected) {
-          this.f.wordSelected = null;
-          wordApp.resetWordData();
+        if (seq === this.f.selectedWordSeq) {
+          // deselect selected word
+          this.f.selectedWordSeq = null;
         } else {
-          this.f.wordSelected = seq;
-          wordApp.resetWordData();
-          wordApp.getWordData(seq);
+          this.f.selectedWordSeq = seq;
+
+          var app = this;
+          $.ajax({
+            url: "#{{path_to(:api_word)}}",
+            method: 'GET',
+            data: {id: seq}
+          }).done(data => {
+            app.f.selectedWord = JSON.parse(data);
+          });
+
         }
       },
       answer(answerText) {
-        this.f.answers[this.f.wordSelected] = answerText;
+        this.f.answers[this.f.selectedWordSeq] = answerText;
         //alert(JSON.stringify(this.f.answers));
-        this.f.wordSelected = null;
-        wordApp.resetWordData();
+        this.f.selectedWordSeq = null;
       },
       resetAnswer() {
-        this.f.answers[this.f.wordSelected] = null;
+        this.f.answers[this.f.selectedWordSeq] = null;
       },
       submit() {
         var app = this;
@@ -88,7 +94,7 @@ javascript:
           var j = JSON.parse(data);
           app.sentence = j.sentence;
           app.english = j.english;
-          app.f.wordSelected = null;
+          app.f.selectedWordSeq = null;
           app.f.answers = j.sentence.reduce(function(acc,i){
             if (i.seq) acc[i.seq] = null;
             return acc;

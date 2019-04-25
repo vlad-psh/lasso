@@ -190,8 +190,7 @@ module WakameHelpers
           en:    c.details['en'].join(', '),
           pos:   c.details['pos'],
           mexp:  c.details['mexp'],
-          rexp:  c.details['rexp'],
-          href:  path_to(:wk_word).with(c.id)
+          rexp:  c.details['rexp']
         }
       },
       paths: {

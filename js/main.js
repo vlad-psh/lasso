@@ -3,6 +3,7 @@ require("jquery-ui/ui/widgets/autocomplete.js");
 require("jquery-ujs");
 
 require('./kanji.js');
+require('./word.js');
 
 /* ====================
    TOGGLE COMPACT CHECKBOX

@@ -374,8 +374,14 @@ body.black .unlocked .description {
   font-size: 2.5em;
   margin-right: .3em;
 }
-.vue-kanji .emph {
+.expandable-list-container .vue-kanji .emph {
   background-color: rgba(255,255,255,0.5);
+  color: inherit;
+  border-radius: 3px;
+}
+.vue-kanji .emph {
+  background-color: #D3EDD3;
+  color: #357878;
   border-radius: 3px;
 }
 .vue-kanji .kanji-meaning,

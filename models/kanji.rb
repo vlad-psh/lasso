@@ -25,7 +25,11 @@ class Kanji < ActiveRecord::Base
   end
 
   def list_desc
-    self.english ? self.english[0] : '?'
+    if self.association_cached?(:wk_kanji)
+      return wk_kanji.list_desc
+    else
+      return self.english ? self.english[0] : '?'
+    end
   end
 end
 

@@ -41,7 +41,7 @@ paths index: '/',
     kanji: '/kanji/:id',
     api_sentence: '/api/sentence',
 # Change word properties
-    api_word: '/api/word/:id',
+    api_word: '/api/word', # :id should be passed as GET query
     word_learn: '/word/learn', # POST
     word_burn: '/word/burn', # POST
     word_connect: '/word/connect',
@@ -54,8 +54,6 @@ paths index: '/',
     autocomplete_word: '/autocomplete/word',
 # Temporary API (should be deleted soon)
     study2: '/study2', # get, post
-    wk_word: '/wk_word/:id',
-    wk_kanji: '/wk_kanji/:id',
     wk_radical: '/wk_radical/:id'
 
 require_relative './api.rb'
@@ -135,8 +133,8 @@ get :list_level do
   @pagination[:next] = {href: path_to(:list_level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
 
   @words = Word.joins(:wk_words).merge(WkWord.where(level: params[:level])).order(:id).with_progresses(@view_user)
-  @kanji = WkKanji.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
-#  @kanji = Kanji.joins(:wk_kanji).merge(WkKanji.where(level: params[:level])).order(:id).with_progresses(@view_user)
+#  @kanji = WkKanji.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
+  @kanji = Kanji.includes(:wk_kanji).joins(:wk_kanji).merge(WkKanji.where(level: params[:level])).order(:id).with_progresses(@view_user)
   @radicals = WkRadical.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
 
   @title = "L.#{params[:level]}"
@@ -446,22 +444,10 @@ post :word_set_comment do
   return 'ok'
 end
 
-get :wk_word do
-  protect!
-  @element = WkWord.find(params[:id])
-  slim :wk_element
-end
-
-get :wk_kanji do
-  protect!
-  @element = WkKanji.find(params[:id])
-  slim :wk_element
-end
-
 get :wk_radical do
   protect!
-  @element = WkRadical.find(params[:id])
-  slim :wk_element
+  @radical = WkRadical.find(params[:id])
+  slim :wk_radical
 end
 
 get :kanji do
