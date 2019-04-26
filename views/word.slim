@@ -5,6 +5,6 @@ javascript:
   var wordApp = new Vue({
     el: '#word-card-app',
     data: {
-      word: #{{word_json(params[:id])}}
+      word: #{{word_json(params[:id]).to_json}}
     }
   })

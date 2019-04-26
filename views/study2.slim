@@ -19,7 +19,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.red @click="answer('no')" NO
       div.answer-button.blue @click="answer('soso')" SO&#8209;SO
       div.answer-button.green @click="answer('yes')" YES
-    word :w="f.selectedWord"
+    word :w="words[f.selectedWordSeq]"
 
   div v-if="allAnswered && !f.selectedWordSeq"
     div.answer-buttons v-if="allAnswered"
@@ -32,7 +32,8 @@ javascript:
     data: {
       sentence: [],
       english: null,
-      f: {selectedWordSeq: null, selectedWord: {}, answers: {}}
+      words: {},
+      f: {selectedWordSeq: null, answers: {}}
     },
     computed: {
       allAnswered() {
@@ -51,16 +52,6 @@ javascript:
           this.f.selectedWordSeq = null;
         } else {
           this.f.selectedWordSeq = seq;
-
-          var app = this;
-          $.ajax({
-            url: "#{{path_to(:api_word)}}",
-            method: 'GET',
-            data: {id: seq}
-          }).done(data => {
-            app.f.selectedWord = JSON.parse(data);
-          });
-
         }
       },
       answer(answerText) {
@@ -94,6 +85,8 @@ javascript:
           var j = JSON.parse(data);
           app.sentence = j.sentence;
           app.english = j.english;
+          app.words = j.words;
+
           app.f.selectedWordSeq = null;
           app.f.answers = j.sentence.reduce(function(acc,i){
             if (i.seq) acc[i.seq] = null;

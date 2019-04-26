@@ -20,12 +20,14 @@ get :api_sentence do
     # Compose (without saving) sentence with only one word
     return {
       sentence: [{'text' => progress.title, 'seq' => progress.seq}],
-      english: nil
+      english: nil,
+      words: {progress.seq => word_json(progress.seq)}
     }.to_json
   else
     return {
       sentence: @sentence.structure,
-      english: @sentence.english
+      english: @sentence.english,
+      words: Hash[*@sentence.words.map{|i| [i.seq, word_json(i.seq)]}.flatten]
     }.to_json
   end
 end

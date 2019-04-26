@@ -201,6 +201,6 @@ module WakameHelpers
         comment: path_to(:word_set_comment).with(word.seq),
         autocomplete: path_to(:autocomplete_word)
       }
-    }).to_json
+    })
   end
 end
