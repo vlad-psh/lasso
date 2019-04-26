@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_21_093617) do
+ActiveRecord::Schema.define(version: 2019_04_26_025551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 2018_09_21_093617) do
     t.string "on", array: true
     t.string "kun", array: true
     t.string "nanori", array: true
-    t.string "searchable"
+    t.string "searchable_en"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -188,7 +188,9 @@ ActiveRecord::Schema.define(version: 2018_09_21_093617) do
     t.jsonb "kebs"
     t.jsonb "rebs"
     t.integer "jlptn"
-    t.string "searchable"
+    t.string "searchable_jp"
+    t.string "searchable_en"
+    t.string "searchable_ru"
     t.index ["seq"], name: "index_words_on_seq"
   end
 

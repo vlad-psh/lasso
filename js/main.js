@@ -5,22 +5,6 @@ require("jquery-ujs");
 require('./kanji.js');
 require('./word.js');
 
-/* ====================
-   TOGGLE COMPACT CHECKBOX
-   ==================== */
-$(document).on('click', '.toggle-compact-form input', function(event){
-  $('.toggle-compact-form').submit();
-  $("div.elements-list-wrapper").toggleClass("elements-list-compact");
-});
-/* ====================
-   HAMBURGER MENU
-   ==================== */
-$(document).on('mouseenter', '.hamburger', function(event){
-  $("#overlay-menu").show();
-});
-$(document).on('mouseleave', '#overlay-menu', function(event){
-  $("#overlay-menu").hide();
-});
 /* ===================
    CLICK TO SHOW TITLE
    =================== */
@@ -51,7 +35,6 @@ $(document).on('click', '.black-theme-checkbox', function(event){
   } else {
     $('body').removeClass("black");
   };
-  $("#overlay-menu").hide();
 });
 /* ===================
    SPEECH

@@ -192,14 +192,19 @@ get :search do
   @title = "🔎 #{q}"
 
   if q.present?
-    q_hiragana = q.downcase.hiragana
+    if params[:japanese].present?
+      q_hiragana = q.downcase.hiragana
 
-    if q.length > 1
-      @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
+      @words = Word.where('searchable_jp LIKE ? OR searchable_jp LIKE ?', "%#{q}%", "%#{q_hiragana}%").order(:is_common, :id).with_progresses(current_user).sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
+      @kanji = Kanji.where('title LIKE ?', "%#{q}%").order(:grade).with_progresses(current_user)
+    else
+      if q.length > 1
+        @russian_words = RussianWord.where("title ILIKE ?", "#{q}%").order(id: :asc)
+      end
+
+      @words = Word.where('searchable_en LIKE ? OR searchable_ru LIKE ?', "%#{q}%", "%#{q}%").order(:is_common, :id).with_progresses(current_user).sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
+      @kanji = Kanji.where('searchable_en LIKE ?', "%#{q}%").order(:grade).with_progresses(current_user)
     end
-
-    @words = Word.where('searchable LIKE ? OR searchable LIKE ?', "%#{q}%", "%#{q_hiragana}%").order(:is_common, :id).with_progresses(current_user).sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
-    @kanji = Kanji.where('searchable LIKE ? OR searchable LIKE ?', "%#{q}%", "%#{q_hiragana}%").order(:grade).with_progresses(current_user)
   end
 
   slim :search

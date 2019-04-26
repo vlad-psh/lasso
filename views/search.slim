@@ -5,6 +5,15 @@ ruby:
     return "#{words[0]}〈#{words[1..-1].join('・')}〉" if words.length > 1
   end
 
+- if @kanji.length > 0
+  div.hr-title: span style="padding: 1em" Kanji
+  div.search-results
+    - @kanji.each do |e|
+      div.search-result class=wk_level(e.user_progresses)
+        a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
+        - if e.english
+          == " " + highlight(e.english.join(', '), params['query'])
+
 - {'JMdict common words' => @words.select{|i| i.is_common}, 'JMdict' => @words.select{|i| !i.is_common}}.each do |title, words|
   - if words.length > 0
     div.hr-title: span style="padding: 1em" = "#{title} (#{words.length})"
@@ -17,15 +26,6 @@ ruby:
             == highlight(words_to_string(w.rebs), params['query']) + ' '
           == w.en[0]['gloss'].join('; ')
           a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
-
-- if @kanji.length > 0
-  div.hr-title: span style="padding: 1em" Kanji
-  div.search-results
-    - @kanji.each do |e|
-      div.search-result class=wk_level(e.user_progresses)
-        a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
-        - if e.english
-          == " " + highlight(e.english.join(', '), params['query'])
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""

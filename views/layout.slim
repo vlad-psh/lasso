@@ -8,10 +8,6 @@ html
     meta content="width=device-width, initial-scale=1" name="viewport"
   body.myfont_jp2 class="#{current_user.try(:settings).try(:[], 'theme') == 'black' ? 'black' : ''}"
     div#main-menu
-      div.left
-        a onclick='$("#overlay-menu").show();'
-          svg.hamburger viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false"
-            g: path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
       div.center
         div.main-menu-item
           - if current_user.present?
@@ -32,13 +28,12 @@ html
         //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
         //  input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
       div.right
-        form method="GET" action=path_to(:search)
+        form.search-form method="GET" action=path_to(:search)
+          label
+            input type="checkbox" name="japanese" checked="on"
+            span.slider
           input.search type="text" name="query" placeholder="Search..." tabindex=1 autocomplete="off"
           //input type="submit" value="Search"
-    div#overlay-menu
-      div.close-button: a onclick='$("#overlay-menu").hide();' Close
-      div.settings
-        input.black-theme-checkbox type="checkbox" checked=('checked' if current_user.try(:settings).try(:[], 'theme') == 'black') autocomplete="off" Black theme (beta)
     == slim :flashes
     div#container
       == yield
