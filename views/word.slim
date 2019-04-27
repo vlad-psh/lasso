@@ -1,3 +1,5 @@
+- seq = params[:id] || @word_seq
+
 div#word-card-app
   word :w="word"
 
@@ -5,6 +7,6 @@ javascript:
   var wordApp = new Vue({
     el: '#word-card-app',
     data: {
-      word: #{{word_json(params[:id]).to_json}}
+      word: #{{word_json(seq).to_json}}
     }
   })

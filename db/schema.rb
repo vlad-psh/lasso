@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_27_050003) do
+ActiveRecord::Schema.define(version: 2019_04_27_080812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,7 +68,6 @@ ActiveRecord::Schema.define(version: 2019_04_27_050003) do
     t.integer "deck"
     t.date "scheduled"
     t.jsonb "details"
-    t.boolean "failed", default: false
     t.integer "seq"
     t.datetime "unlocked_at"
     t.datetime "learned_at"
