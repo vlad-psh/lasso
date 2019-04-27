@@ -30,7 +30,7 @@ div#sentence-quiz-app.study-card
   div v-if="allAnswered && !f.selectedWordSeq && !f.submitted"
     div.answer-buttons v-if="allAnswered"
       div.answer-button.blue @click="submit" SUBMIT
-    div.center-block style="margin-top: 1em;" = 'Translation: {{english}}'
+    div.center-block style="margin-top: 1em;" v-if="english" = 'Translation: {{english}}'
 
 javascript:
   var sentenceQuizApp = new Vue({

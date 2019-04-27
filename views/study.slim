@@ -4,7 +4,7 @@ div.study-card
   div.answer
     div.answer-buttons
       - ed = @progress.deck
-      div.answer-button.red data-value="no"
+      div.answer-button.red data-value="incorrect"
         ' NO
         div.answer-details = "#{ed} → #{ed>0 ? ed-1 : 0} (~#{SRS_RANGES[1][1]} days)"
       div.other-answers-button.blue style="line-height: 2em" ▼
@@ -17,7 +17,7 @@ div.study-card
           div.answer-button.yellow data-value="burn"
             ' BURN!
             div.answer-details = "#{ed} → 7 (~#{SRS_RANGES[7][1]} days)"
-      div.answer-button.green data-value="yes"
+      div.answer-button.green data-value="correct"
         ' YES
         div.answer-details = "#{ed} → #{ed+1} (~#{SRS_RANGES[ed+1>7 ? 7 : ed+1][1]} days)"
   //div.answer-block

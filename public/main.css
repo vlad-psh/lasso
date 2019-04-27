@@ -436,7 +436,7 @@ body.black .unlocked .description {
   font-size: 0.85em;
 }
 .study-card h1 {
-  font-size: 20vmin;
+  font-size: 6em;
   text-align: center;
   padding: 0.2em;
   margin: 0;
@@ -905,7 +905,7 @@ input.ensentence {
   vertical-align: bottom;
 }
 .sentence-word {
-  font-size: 10vmin;
+  font-size: 6em;
   margin: 0 1px;
 }
 .sentence-question .word-question {
@@ -966,6 +966,9 @@ input.ensentence {
   #overlay-menu {
     width: 100%;
     height: 100%;
+  }
+  .sentence-word {
+    font-size: 4em;
   }
   /* Transpose table */
   .stat-table-block table {display: flex}
