@@ -11,7 +11,7 @@ Vue.component('kanji', {
   },
   template: `
 <div class="vue-kanji">
-  <span class="kanji-title">{{kanji.title}}</span>
+  <span class="kanji-title" :class="kanji.progress.html_class">{{kanji.title}}</span>
   <span v-if="kanji.jlptn">JLPT N{{kanji.jlptn}}</span>
   <span v-if="kanji.wk_level"> · WK #{{kanji.wk_level}}</span>
   <span v-if="kanji.english">：{{kanji.english.join("; ")}}</span>

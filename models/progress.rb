@@ -48,7 +48,7 @@ class Progress < ActiveRecord::Base
   end
 
   def self.api_props
-    return [:id, :deck, :learned_at, :burned_at, :flagged]
+    return [:id, :deck, :learned_at, :burned_at, :flagged, :html_class]
   end
 
   def answer!(a)
@@ -116,6 +116,22 @@ class Progress < ActiveRecord::Base
       transition: Date.today + SRS_RANGES[_deck][1],
       scheduled: Date.today + 3
     }
+  end
+
+  def html_class
+    if self.burned_at.present?
+      return :burned
+    elsif self.learned_at.present?
+      return case self.deck
+        when 0..1 then :apprentice
+        when 2    then :guru
+        when 3    then :master
+        when 6..7 then :burned
+        else           :enlightened
+      end
+    elsif self.flagged == true
+      return :unlocked
+    end
   end
 
   private

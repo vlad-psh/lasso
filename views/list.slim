@@ -9,7 +9,7 @@ ruby:
 div class="elements-list"
   - elements.each do |e|
     div.elements-list-item
-      div class="element-block #{wk_level(e.kind_of?(Word) ? e.best_user_progress : e.user_progresses)}"
+      div class="element-block #{(e.kind_of?(Word) ? e.best_user_progress : e.user_progress).try(:html_class) || :locked}"
         a href=path_to(e.model_name.singular.to_sym).with(e.kind_of?(Word) ? e.seq : e.id)
           div.element: span.japanese = e.list_title
           div.description = e.list_desc

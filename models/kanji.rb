@@ -7,17 +7,18 @@ class Kanji < ActiveRecord::Base
     elements = all
     progresses = Progress.joins(:kanji).where(user: user).merge(elements).hash_me(:kanji_id)
     elements.each do |e|
-      e.user_progresses = progresses[e.id]
+      # kanji has only one progress per user
+      e.user_progress = progresses[e.id].try(:first)
     end
   end
 
-  def user_progresses=(value)
-    @_user_progresses = value
+  def user_progress=(value)
+    @_user_progress = value
   end
 
-  def user_progresses
-    return @_user_progresses if defined?(@_user_progresses)
-    throw StandardError.new("'user_progresses' property can be accessed only when elements have been selected with 'with_progresses' method")
+  def user_progress
+    return @_user_progress if defined?(@_user_progress)
+    throw StandardError.new("'user_progress' property can be accessed only when elements have been selected with 'with_progresses' method")
   end
 
   def list_title

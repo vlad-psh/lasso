@@ -25,32 +25,6 @@ Vue.component('word', {
         return {};
       }
     },
-    krebClasses: function() {
-      var result = {};
-      for (var kreb of this.w.krebs) {
-        var classes = [];
-
-        if (kreb.is_common) classes.push('word-kreb-common')
-
-        if (kreb.progress) {
-          if (kreb.progress.burned_at) {
-            classes.push('burned');
-          } else if (kreb.progress.learned_at) {
-            if (kreb.progress.deck <= 1) classes.push('apprentice');
-            else if (kreb.progress.deck == 2) classes.push('guru');
-            else if (kreb.progress.deck == 3) classes.push('master');
-            else if (kreb.progress.deck >= 6) classes.push('burned');
-            else classes.push('enlightened');
-          } else if (kreb.progress.flagged === true) {
-            classes.push('unlocked');
-          }
-        }
-
-        result[kreb.title] = classes;
-      }
-
-      return result;
-    }
   },
   methods: {
     addConnectedWord(wordType, word) {
@@ -168,7 +142,7 @@ Vue.component('word', {
     <div class="word-krebs center-block expandable-list">
       <div class="expandable-list-item" v-for="kreb of w.krebs">
         <div>
-          <div class="word-kreb" :class="krebClasses[kreb.title]" @click="openKrebForm(kreb.title)">{{kreb.title}}</div>
+          <div class="word-kreb" :class="[kreb.progress.html_class, kreb.is_common ? 'word-kreb-common' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}</div>
         </div>
         <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
       </div>

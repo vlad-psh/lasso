@@ -16,6 +16,7 @@ class Word < ActiveRecord::Base
     elements = all
     progresses = Progress.joins(:word).where(user: user).merge(elements).hash_me(:seq)
     elements.each do |e|
+      # word can have multiple progresses per user (different variants of writing/reading)
       e.user_progresses = progresses[e.seq]
     end
   end

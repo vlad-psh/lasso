@@ -81,27 +81,6 @@ module WakameHelpers
     end
   end
 
-  def wk_level(e)
-    if e.kind_of?(Array)
-      e = e.sort{|a,b| (a.deck || 0) <=> (b.deck || 0)}.last
-    end
-
-    if e.present? && e.try(:unlocked)
-      return 'burned'      if e.burned_at
-      return 'unlocked'    unless e.learned_at
-      return 'apprentice'  if e.deck <= 1
-      return 'guru'        if e.deck == 2
-      return 'master'      if e.deck == 3
-      return 'enlightened' if e.deck == 4 || e.deck == 5
-      return 'burned'      if e.deck >= 6
-    else
-# TODO: locked/unlocked statuses should be removed (or not?)
-# Chain can be like this: [no tags] -> [flagged] -> learned -> apprentice/guru/etc
-      return 'unlocked' if e.try(:flagged)
-      return 'locked'
-    end
-  end
-
   SAFE_TYPES = [:radicals, :kanjis, :words]
   SAFE_GROUPS = [:just_unlocked, :just_learned, :expired, :failed]
 
@@ -143,6 +122,7 @@ module WakameHelpers
 
   def kanji_json(kanji)
     h = kanji.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
+    progress = kanji.progresses.where(user: current_user).take
     if (w = kanji.wk_kanji).present?
       h = h.merge({
         wk_level: w.level,
@@ -150,7 +130,8 @@ module WakameHelpers
         mmne: w.details['mmne'],
         mhnt: w.details['mhnt'],
         rmne: w.details['rmne'],
-        rhnt: w.details['rhnt']
+        rhnt: w.details['rhnt'],
+        progress: progress ? progress.serializable_hash(only: Progress.api_props).merge({html_class: progress.html_class}) : nil
       })
     end
     h
@@ -169,7 +150,8 @@ module WakameHelpers
         progress = p.serializable_hash(only: Progress.api_props).merge({
           correct:   (p.attributes_of_correct_answer[:scheduled]    - Date.today).to_i,
           soso:      (p.attributes_of_soso_answer[:scheduled]       - Date.today).to_i,
-          incorrect: (p.attributes_of_incorrect_answer[:transition] - Date.today).to_i
+          incorrect: (p.attributes_of_incorrect_answer[:transition] - Date.today).to_i,
+          html_class: p.html_class
         })
       end
       {

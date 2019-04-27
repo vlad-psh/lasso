@@ -54,7 +54,7 @@ javascript:
         if (!this.f.selectedWordSeq) return null;
 
         var wordBase = this.sentence.find(i => i.seq === this.f.selectedWordSeq).base;
-        return this.words[this.f.selectedWordSeq].krebs.find(i => i.title = wordBase);
+        return this.words[this.f.selectedWordSeq].krebs.find(i => i.title === wordBase);
       }
     },
     methods: {
