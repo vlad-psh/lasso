@@ -14,12 +14,11 @@ get :api_sentence do
       break
     end
   end
-#  @sentence = Sentence.where.not(structure: nil).order('RANDOM()').first
 
   if @sentence.blank?
     # Compose (without saving) sentence with only one word
     return {
-      sentence: [{'text' => progress.title, 'seq' => progress.seq}],
+      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
       english: nil,
       words: {progress.seq => word_json(progress.seq)}
     }.to_json
