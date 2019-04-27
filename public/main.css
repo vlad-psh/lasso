@@ -921,9 +921,9 @@ input.ensentence {
   margin: 0 2px;
   color: #878764;
 }
-.answer-yes  {border-bottom: 2px solid #4caf50;}
-.answer-no   {border-bottom: 2px solid #e51c23;}
-.answer-soso {border-bottom: 2px solid #2196f3;}
+.answer-correct   {border-bottom: 2px solid #4caf50;}
+.answer-incorrect {border-bottom: 2px solid #e51c23;}
+.answer-soso      {border-bottom: 2px solid #2196f3;}
 /* ==============================
    MOBILE
    default window width: 980

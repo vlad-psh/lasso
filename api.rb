@@ -63,6 +63,8 @@ post :word_learn do
 
   progress.learned_at = DateTime.now
   progress.deck = 0
+  progress.scheduled = Date.today
+  progress.transition = Date.today
   progress.save
 
   Action.create(user: current_user, progress: progress, action_type: :learned)
@@ -78,9 +80,7 @@ post :word_burn do
   protect!
 
   progress = Progress.find_by(id: params[:progress_id], user: current_user)
-  progress.update_attribute(:burned_at, DateTime.now)
-
-  Action.create(user: current_user, progress: progress, action_type: :burn)
+  progress.answer!(:burn)
 
   return progress.to_json(only: Progress.api_props)
 end

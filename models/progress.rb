@@ -27,14 +27,14 @@ class Progress < ActiveRecord::Base
   scope :locked,        ->{where(unlocked: false)} # THIS WILL ALWAYS BE EMPTY
   scope :unlocked,      ->{where(unlocked: true)}
   scope :just_unlocked, ->{where(learned_at: nil, unlocked: true)}
-  scope :just_learned,  ->{where(scheduled: nil, burned_at: nil).where.not(learned_at: nil)}
+  scope :just_learned,  ->{where(deck: 0)}
   scope :any_learned,   ->{where.not(learned_at: nil)}
 #  scope :not_learned,   ->{where(learned_at: nil)} # SHOULD INCLUDE CARDS WITH locked == false
 #  scope :studied,       ->{where.not(scheduled: nil)}
 #  scope :not_studied,   ->{where(scheduled: nil)} # SHOULD INCLUDE CARDS WITH locked == false
 
 #  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
-  scope :expired,  ->{where(scheduled: Date.new..Date.today, burned_at: nil).where.not(deck: 0)}
+  scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
   # Cards in current level which are not learned yet:
 #  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
 
@@ -55,49 +55,71 @@ class Progress < ActiveRecord::Base
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
-    throw StandardError.new("Unknown answer: #{a}") unless [:yes, :no, :soso, :burn].include?(a)
+    throw StandardError.new("Unknown answer: #{a}") unless [:correct, :incorrect, :soso, :burn].include?(a)
 
-    if a == :yes
-      move_to_deck!(self.deck + 1)
-      Action.create(progress: self, user: user, action_type: 'correct')
-    elsif a == :no
-      move_to_deck!(self.deck - 1, choose_schedule_day(self.deck >= 1 ? 1 : 0)) # reschedule to +2..+4 days
-      Action.create(progress: self, user: user, action_type: 'incorrect')
+    if a == :correct
+      self.attributes = attributes_of_correct_answer
+    elsif a == :incorrect
+      self.attributes = attributes_of_incorrect_answer
     elsif a == :soso
-      # leave in the same deck
-      move_to_deck!(self.deck)
-      Action.create(progress: self, user: user, action_type: 'soso') if self.deck != 0
+      self.attributes = attributes_of_soso_answer
     elsif a == :burn
-      move_to_deck!(7)
+      self.attributes = {deck: nil, scheduled: nil, transition: nil, burned_at: DateTime.now}
       Action.create(progress: self, user: user, action_type: 'burn')
     end
-  end
 
-  def move_to_deck!(deck, scheduled = nil)
-    if self.failed == true
-# TODO: made logic clearer/simplier
-      # no:   failed  update_deck
-      # yes:  -       -
-      # soso: failed  -
-      # burn: -       update_deck
-      self.failed = false if deck > self.deck # answer is correct or burn
-      self.deck = deck unless (self.deck == deck) || (self.deck + 1 == deck) # answer is no or burn
-    else
-      self.failed = true if deck < self.deck # when answer is incorrect
-      self.deck = deck
-    end
+    if self.deck.present? && self.deck != 0 # if not burned and not 'just learned'
+      Action.create(progress: self, user: user, action_type: a)
 
-    self.scheduled = scheduled.present? ? scheduled : choose_schedule_day(self.deck)
-    self.save
-
-    if self.deck != 0
       stats = Statistic.find_or_initialize_by(user: user, date: self.scheduled)
       stats.scheduled[self.kind] += 1
       stats.save
     end
+
+    self.save
+  end
+
+  def attributes_of_correct_answer
+    _deck = self.deck
+    _transition = self.transition
+
+    if Date.today >= self.transition
+      _deck += 1 if _deck < 7 # 7th is the highest deck
+      _transition += SRS_RANGES[_deck][1]
+      # Move transition date forward by (deck_range/2) if it still less than today
+      _transition = Date.today + SRS_RANGES[_deck][1] / 2 if _transition < Date.today
+    end
+    _percent = (Date.today - _transition + SRS_RANGES[_deck][1]) / SRS_RANGES[_deck][1].to_f
+    # percent should not be > 1.0 because of previous condition (with dates)
+    return {
+      deck: _deck,
+      transition: _transition,
+# TODO: ADD VARIATION TO SCHEDULE DATE (+/- 20% ?)
+      scheduled: Date.today + SRS_RANGES[self.deck][1] * (1 + _percent) # add full next interval + fraction of it
+    }
+  end
+
+  def attributes_of_soso_answer
+    # Leave in the same deck; move transition date forward
+    _transition = Date.today + SRS_RANGES[self.deck][1]
+    return {
+      deck: self.deck,
+      transition: _transition,
+      scheduled: _transition
+    }
+  end
+
+  def attributes_of_incorrect_answer
+    _deck = self.deck > 1 ? self.deck - 1 : 1
+    return {
+      deck: _deck,
+      transition: Date.today + SRS_RANGES[_deck][1],
+      scheduled: Date.today + 3
+    }
   end
 
   private
+# TODO: DEPRECATED; Should be rewritten
   def choose_schedule_day(new_deck, from_date = Date.today)
     return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
 

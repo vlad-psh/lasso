@@ -16,9 +16,9 @@ div#sentence-quiz-app.study-card
     div.answer-buttons v-if="f.answers[f.selectedWordSeq]"
       div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.selectedWordSeq]}}; RESET'
     div.answer-buttons v-else="true"
-      div.answer-button.red @click="answer('no')" NO
+      div.answer-button.red @click="answer('incorrect')" NO
       div.answer-button.blue @click="answer('soso')" SO&#8209;SO
-      div.answer-button.green @click="answer('yes')" YES
+      div.answer-button.green @click="answer('correct')" YES
     word :w="words[f.selectedWordSeq]"
 
   div v-if="allAnswered && !f.selectedWordSeq && !f.submitted"
