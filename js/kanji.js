@@ -30,6 +30,11 @@ Vue.component('kanji', {
     <span v-html="stripBB(kanji.rmne)"></span>
     <span class="hint" v-html="stripBB(kanji.rhnt)"></span>
   </div>
+  <div v-if="kanji.progress.details" class="kanji-reading">
+    <span style="font-weight: bold">Comment: </span>
+    <span v-if="kanji.progress.details.t">【{{kanji.progress.details.t}}】</span>
+    <span v-html="stripBB(kanji.progress.details.m)"></span>
+  </div>
 </div>
 `
 });

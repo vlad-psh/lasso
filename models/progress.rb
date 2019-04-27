@@ -48,7 +48,7 @@ class Progress < ActiveRecord::Base
   end
 
   def self.api_props
-    return [:id, :deck, :learned_at, :burned_at, :flagged, :html_class]
+    return [:id, :deck, :learned_at, :burned_at, :flagged, :details]
   end
 
   def answer!(a)

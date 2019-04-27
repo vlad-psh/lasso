@@ -121,20 +121,24 @@ module WakameHelpers
   end
 
   def kanji_json(kanji)
-    h = kanji.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
-    progress = kanji.progresses.where(user: current_user).take
+    result = kanji.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
+
     if (w = kanji.wk_kanji).present?
-      h = h.merge({
+      result = result.merge({
         wk_level: w.level,
         emph: w.details['yomi']['emph'],
         mmne: w.details['mmne'],
         mhnt: w.details['mhnt'],
         rmne: w.details['rmne'],
-        rhnt: w.details['rhnt'],
-        progress: progress ? progress.serializable_hash(only: Progress.api_props).merge({html_class: progress.html_class}) : nil
+        rhnt: w.details['rhnt']
       })
     end
-    h
+
+    progress = kanji.progresses.where(user: current_user).take # TODO: do this without separate requests for each kanji
+    result = result.merge({
+      progress: progress ? progress.serializable_hash(only: Progress.api_props).merge({html_class: progress.html_class}) : {}
+    })
+    return result
   end
 
   def word_json(seq, options = {})
