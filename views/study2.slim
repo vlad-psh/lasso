@@ -21,7 +21,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.green @click="answer('yes')" YES
     word :w="words[f.selectedWordSeq]"
 
-  div v-if="allAnswered && !f.selectedWordSeq"
+  div v-if="allAnswered && !f.selectedWordSeq && !f.submitted"
     div.answer-buttons v-if="allAnswered"
       div.answer-button.blue @click="submit" SUBMIT
     div.center-block style="margin-top: 1em;" = 'Translation: {{english}}'
@@ -33,7 +33,7 @@ javascript:
       sentence: [],
       english: null,
       words: {},
-      f: {selectedWordSeq: null, answers: {}}
+      f: {selectedWordSeq: null, answers: {}, submitted: false}
     },
     computed: {
       allAnswered() {
@@ -64,6 +64,7 @@ javascript:
       },
       submit() {
         var app = this;
+        app.f.submitted = true;
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
@@ -92,6 +93,8 @@ javascript:
             if (i.seq) acc[i.seq] = null;
             return acc;
           }, {});
+
+          app.f.submitted = false;
         });
       }
     },
