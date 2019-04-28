@@ -142,19 +142,17 @@ a.study-button {
   color: white;
   font-family: Segoe UI, Helvetica Neue, sans-serif;
   font-weight: 700;
-  display: flex;
-  flex-flow: row wrap;
   width: 100%;
   text-align: center;
-}
-#main-menu>div {
-  flex: 1;
 }
 #main-menu>div.left {
   margin: 0.2em 0.4em;
 }
 #main-menu>div.right {
   text-align: right;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 #main-menu a {
   color: #eee;
@@ -464,32 +462,26 @@ body.black .unlocked .description {
   background-color: #aaa;
 }
 .study-card .answer-buttons {
-  display: flex;
-  flex-flow: row wrap;
-  vertical-align: center;
-  justify-content: space-between;
+  display: grid;
+  grid-gap: 3px;
   margin-top: 3px;
+  grid-auto-columns: auto;
 }
 .study-card .answer-button,
 .study-card .other-answers-button {
-  display: inline-block;
-  flex: 10;
   padding: 0.5em 1em;
   cursor: pointer;
   text-align: center;
   min-height: 2em;
+  grid-column: auto;
+  grid-row: 1;
 }
 .study-card .other-answers-button {
-  margin: 0 3px;
-  text-align: center;
 }
 .study-card .answer-button .answer-details {
   font-size: x-small;
   margin: -0.3em 0 -0.2em 0;
   opacity: 0.6;
-}
-.study-card .other-answers-button {
-  flex: 1;
 }
 .study-card .other-answers {
   max-width: 250px;
@@ -955,10 +947,9 @@ input.ensentence {
   }
   #main-menu {
     font-size: 1em;
+    text-align: left;
+    padding-left: 0.4em;
   }
-  #main-menu .left   {flex: 1}
-  #main-menu .center {flex: 5}
-  #main-menu .right  {flex: 1}
   #main-menu .search {width: 80px}
   #container {
     margin: 0;
