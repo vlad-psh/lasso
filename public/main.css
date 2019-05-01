@@ -799,6 +799,9 @@ body.black svg.graph text {
 .expandable-list-container .hr-title span {
   margin: 0.4em 0;
 }
+.expandable-list-container .vue-kanji {
+  margin-top: 1em;
+}
 .connected-word,
 .connected-word-none {
   display: inline-block;
@@ -847,6 +850,27 @@ body.black svg.graph text {
 }
 .word-sentences-structured {
   background: #f7f2d2;
+}
+.edit-button-container {
+  text-align: right;
+  height: 0;
+}
+.edit-button {
+  display: inline-block;
+  background-color: #f5f5f5;
+  color: #aaa;
+  cursor: pointer;
+  padding: 0 .2em;
+  line-height: 1.2em;
+  border-radius: 3px;
+}
+.edit-button:hover {
+  background-color: #ffec83;
+  color: #333;
+}
+.edit-button-active {
+  background-color: #0b486b;
+  color: white;
 }
 /* ==============================
    SENTENCE FORM
@@ -948,7 +972,9 @@ input.ensentence {
   #main-menu {
     font-size: 1em;
     text-align: left;
-    padding-left: 0.4em;
+  }
+  #main-menu .center {
+    margin-left: 0.4em;
   }
   #main-menu .search {width: 80px}
   #container {
