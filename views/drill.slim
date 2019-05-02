@@ -1,5 +1,16 @@
 h1 = @drill.title
 
-ul
-  - @drill.progresses.each do |p|
-    li = "#{p.title} (#{p.kind})"
+div class="elements-list" id="vue-list"
+  div.elements-list-item v-for="e in elements"
+    div class="element-block" :class="e.html_class || 'locked'"
+      a :href="e.href"
+        div.element: span.japanese = "{{e.title}}"
+        div.description = "{{e.description}}"
+
+javascript:
+  var app = new Vue({
+    el: '#vue-list',
+    data: {
+      elements: #{{@elements.to_json}}
+    }
+  });
