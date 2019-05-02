@@ -79,3 +79,5 @@ div.index-page-container
 
   div.settings
     input.black-theme-checkbox type="checkbox" checked=('checked' if current_user.try(:settings).try(:[], 'theme') == 'black') autocomplete="off" Black theme (beta)
+
+  a href=path_to(:drill_sets_index) Drill Sets

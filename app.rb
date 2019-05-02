@@ -26,6 +26,8 @@ paths index: '/',
     list_nf: '/words/:nf',
     list_jlpt_words: '/words/jlpt/:level',
     list_jlpt_kanji: '/kanji/jlpt/:level',
+    drills: '/drills',
+    drill: '/drill/:id',
 
     current: '/current', # get(redirection)
     cards: '/cards',
@@ -483,4 +485,17 @@ get :list_jlpt_kanji do
 
   @elements = Kanji.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
   slim :list
+end
+
+get :drills do
+  protect!
+  @drill_sets = Drill.where(user: current_user)
+  slim :drills
+end
+
+get :drill do
+  protect!
+  @drill = Drill.find_by(user: current_user, id: params[:id])
+  halt(404, "Drill Set not found") if @drill.blank?
+  slim :drill
 end

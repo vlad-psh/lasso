@@ -1,0 +1,5 @@
+h1 = @drill.title
+
+ul
+  - @drill.progresses.each do |p|
+    li = "#{p.title} (#{p.kind})"

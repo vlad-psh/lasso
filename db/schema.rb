@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_27_080812) do
+ActiveRecord::Schema.define(version: 2019_05_01_024715) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,21 @@ ActiveRecord::Schema.define(version: 2019_04_27_080812) do
     t.bigint "card_id"
     t.integer "relation_id", null: false
     t.index ["card_id"], name: "index_cards_relations_on_card_id"
+  end
+
+  create_table "drills", force: :cascade do |t|
+    t.string "title"
+    t.bigint "user_id"
+    t.datetime "created_at"
+    t.index ["user_id"], name: "index_drills_on_user_id"
+  end
+
+  create_table "drills_progresses", force: :cascade do |t|
+    t.bigint "drill_id"
+    t.bigint "progress_id"
+    t.datetime "created_at"
+    t.index ["drill_id"], name: "index_drills_progresses_on_drill_id"
+    t.index ["progress_id"], name: "index_drills_progresses_on_progress_id"
   end
 
   create_table "kanji", force: :cascade do |t|

@@ -1,0 +1,4 @@
+ul
+  - @drill_sets.each do |d|
+    li
+      a href=path_to(:drill).with(d.id) = "#{d.title} (#{d.created_at})"
