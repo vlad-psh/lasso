@@ -42,7 +42,7 @@ post :word_flag do
   progress.flagged_at = DateTime.now
   progress.save
 
-  return progress.to_json(only: Progress.api_props)
+  return progress.api_json
 end
 
 post :word_learn do
@@ -72,7 +72,7 @@ post :word_learn do
   stats.learned['w'] += 1
   stats.save
 
-  return progress.to_json(only: Progress.api_props)
+  return progress.api_json
 end
 
 post :word_burn do
@@ -81,7 +81,7 @@ post :word_burn do
   progress = Progress.find_by(id: params[:progress_id], user: current_user)
   progress.answer!(:burn)
 
-  return progress.to_json(only: Progress.api_props)
+  return progress.api_json
 end
 
 post :drill_add_word do

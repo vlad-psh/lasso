@@ -140,6 +140,21 @@ class Progress < ActiveRecord::Base
     end
   end
 
+  def api_hash
+    result = self.serializable_hash(only: Progress.api_props)
+    result[:html_class] = self.html_class
+    result = result.merge({
+      correct:   (attributes_of_correct_answer[:scheduled]    - Date.today).to_i,
+      soso:      (attributes_of_soso_answer[:scheduled]       - Date.today).to_i,
+      incorrect: (attributes_of_incorrect_answer[:transition] - Date.today).to_i
+    }) if self.deck.present?
+    result
+  end
+
+  def api_json
+    self.api_hash.to_json
+  end
+
   private
   def random_reschedule!
     variation_days = ((self.scheduled - Date.today) * 0.15).to_i

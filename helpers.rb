@@ -135,9 +135,7 @@ module WakameHelpers
     end
 
     progress = kanji.progresses.where(user: current_user).take # TODO: do this without separate requests for each kanji
-    result = result.merge({
-      progress: progress ? progress.serializable_hash(only: Progress.api_props).merge({html_class: progress.html_class}) : {}
-    })
+    result[:progress] = progress.api_hash if progress.present?
     return result
   end
 
@@ -150,19 +148,10 @@ module WakameHelpers
 
     progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
     result[:krebs] = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
-      if (p = progresses[t.title]).present?
-        progress = p.serializable_hash(only: Progress.api_props)
-        progress = progress.merge({
-          correct:   (p.attributes_of_correct_answer[:scheduled]    - Date.today).to_i,
-          soso:      (p.attributes_of_soso_answer[:scheduled]       - Date.today).to_i,
-          incorrect: (p.attributes_of_incorrect_answer[:transition] - Date.today).to_i
-        }) if p.deck.present?
-        progress[:html_class] = p.html_class
-      end
       {
         title: t.title,
         is_common: t.is_common,
-        progress: progress || {}
+        progress: progresses[t.title].present? ? progresses[t.title].api_hash : {}
       }
     end
 
