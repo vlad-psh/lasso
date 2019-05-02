@@ -164,10 +164,10 @@ Vue.component('word', {
         <div>
           Status:
 
-          <span v-if="editing && !selectedKrebProgress.flagged">
+          <span v-if="editing && !selectedKrebProgress.flagged_at">
             <a @click="flagWord(forms.kreb)">flag!</a>
           </span>
-          <span v-else-if="selectedKrebProgress.flagged">flagged</span>
+          <span v-else-if="selectedKrebProgress.flagged_at">flagged</span>
 
           <span v-if="editing && !selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
             <a @click="learnWord(forms.kreb)">learn!</a>

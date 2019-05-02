@@ -39,7 +39,7 @@ post :word_flag do
         title: params[:kreb],
         user: current_user,
         kind: :w)
-  progress.flagged = true
+  progress.flagged_at = DateTime.now
   progress.save
 
   return progress.to_json(only: Progress.api_props)

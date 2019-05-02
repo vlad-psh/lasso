@@ -49,7 +49,7 @@ class Progress < ActiveRecord::Base
   end
 
   def self.api_props
-    return [:id, :deck, :learned_at, :burned_at, :flagged, :details]
+    return [:id, :deck, :learned_at, :burned_at, :flagged_at, :details]
   end
 
   def answer!(a)
@@ -130,7 +130,7 @@ class Progress < ActiveRecord::Base
         when 6..7 then :burned
         else           :enlightened
       end
-    elsif self.flagged == true
+    elsif self.flagged_at.present?
       return :unlocked
     end
   end

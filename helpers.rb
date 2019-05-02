@@ -156,7 +156,7 @@ module WakameHelpers
           correct:   (p.attributes_of_correct_answer[:scheduled]    - Date.today).to_i,
           soso:      (p.attributes_of_soso_answer[:scheduled]       - Date.today).to_i,
           incorrect: (p.attributes_of_incorrect_answer[:transition] - Date.today).to_i
-        }) unless p.burned_at.present?
+        }) if p.deck.present?
         progress[:html_class] = p.html_class
       end
       {
