@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_02_053652) do
+ActiveRecord::Schema.define(version: 2019_05_02_054351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,7 +88,6 @@ ActiveRecord::Schema.define(version: 2019_05_02_053652) do
     t.datetime "learned_at"
     t.datetime "burned_at"
     t.string "title"
-    t.boolean "flagged", default: false
     t.integer "kind"
     t.integer "kanji_id"
     t.integer "wk_radical_id"
