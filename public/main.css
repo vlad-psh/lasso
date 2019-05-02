@@ -346,7 +346,8 @@ body.black .unlocked .description {
   border-bottom: 2px solid black;
   margin-bottom: -2px;
 }
-.vue-kanji .kanji-title {
+.vue-kanji .kanji-title,
+.vue-radical .radical-title {
   float: left;
   font-size: 2.5em;
   margin-right: .3em;
@@ -363,10 +364,12 @@ body.black .unlocked .description {
   border-radius: 3px;
 }
 .vue-kanji .kanji-meaning,
-.vue-kanji .kanji-reading {
+.vue-kanji .kanji-reading,
+.vue-radical .radical-meaning {
   margin-top: 1em;
 }
-.vue-kanji .hint {
+.vue-kanji .hint,
+.vue-radical .hint {
   font-style: italic;
   opacity: .6;
 }
@@ -672,7 +675,8 @@ body.black svg.graph text {
 /* ==============================
    KANJI CARD
    ============================== */
-#kanji-card-app {
+#kanji-card-app,
+#radical-card-app {
   margin: 1em 2em;
 }
 /* ==============================

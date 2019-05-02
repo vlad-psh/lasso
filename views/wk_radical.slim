@@ -1,3 +1,11 @@
-h2 = @radical.title
+div#radical-card-app
+  radical :radical="radical" :editing="editing"
 
-= @radical.details.inspect
+javascript:
+  var app = new Vue({
+    el: '#radical-card-app',
+    data: {
+      radical: #{{radical_json(@radical.id).to_json}},
+      editing: false
+    }
+  })

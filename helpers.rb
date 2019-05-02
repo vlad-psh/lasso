@@ -139,6 +139,15 @@ module WakameHelpers
     return result
   end
 
+  def radical_json(id)
+    radical = WkRadical.where(id: id).with_progress(current_user)[0]
+    result = radical.serializable_hash(only: [:title, :details])
+    result = result.merge({
+      progress: radical.user_progress.api_hash
+    }) if radical.user_progress.present?
+    return result
+  end
+
   def word_json(seq, options = {})
     word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).where(seq: seq).with_progresses(current_user)[0]
     result = word.serializable_hash(only: [:seq, :en, :ru, :jlptn, :nf])

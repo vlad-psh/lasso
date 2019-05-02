@@ -2,7 +2,7 @@ class WkRadical < ActiveRecord::Base
   has_and_belongs_to_many :wk_kanji, through: :wk_kanji_radicals
   has_many :progresses
 
-  def self.with_progresses(user)
+  def self.with_progress(user)
     elements = all
     progresses = Progress.joins(:wk_radical).where(user: user).merge(elements).hash_me(:wk_radical_id)
     elements.each do |e|

@@ -2,6 +2,7 @@ window.Vue = require('vue');
 require("jquery-ui/ui/widgets/autocomplete.js");
 require("jquery-ujs");
 
+require('./radical.js');
 require('./kanji.js');
 require('./word.js');
 
