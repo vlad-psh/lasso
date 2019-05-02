@@ -7,7 +7,7 @@ Vue.component('word', {
   },
   data() {
     return {
-      forms: {card: null, kreb: null, comment: null},
+      forms: {card: null, kreb: null, comment: null, drillTitle: ''},
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -128,6 +128,16 @@ Vue.component('word', {
         this.forms.card = cardIndex;
       }
     },
+    addToDrill(kreb) {
+      var app = this;
+      $.ajax({
+        url: this.w.paths.drill,
+        method: "POST",
+        data: {drillTitle: this.forms.drillTitle, seq: this.w.seq, kreb: kreb}
+      }).done(data => {
+        alert(data);
+      });
+    },
     ...helpers
   }, // end of methods
   updated() {
@@ -151,17 +161,29 @@ Vue.component('word', {
 
     <div class="expandable-list-container" v-if="forms.kreb !== null">
       <div class="center-block">
-        <span v-if="editing && selectedKrebProgress.learned_at">
-          {{selectedKrebProgress.learned_at ? 'learned ' : ''}}
-          <span v-if="selectedKrebProgress.burned_at">burned</span>
-          <span v-else>
+        <div>
+          Status:
+
+          <span v-if="editing && !selectedKrebProgress.flagged">
+            <a @click="flagWord(forms.kreb)">flag!</a>
+          </span>
+          <span v-else-if="selectedKrebProgress.flagged">flagged</span>
+
+          <span v-if="editing && !selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
+            <a @click="learnWord(forms.kreb)">learn!</a>
+          </span>
+          <span v-else-if="selectedKrebProgress.learned_at">learned</span>
+
+          <span v-if="editing && selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
             <a @click="burnWord(forms.kreb, selectedKrebProgress.id)">burn!</a>
           </span>
-        </span>
-        <span v-else-if="editing">
-          <a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)">flag!</a>
-          <a @click="learnWord(forms.kreb)">learn!</a>
-        </span>
+          <span v-else-if="selectedKrebProgress.burned_at">burned</span>
+
+          <span v-if="editing">
+            <input type="text" v-model="forms.drillTitle" @keyup.enter="addToDrill(forms.kreb)">
+          </span>
+        </div>
+
         <div v-for="kanji of w.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
           <kanji :kanji="kanji"></kanji>
         </div>

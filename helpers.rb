@@ -193,6 +193,7 @@ module WakameHelpers
         burn:    path_to(:word_burn),
         flag:    path_to(:word_flag),
         comment: path_to(:word_set_comment).with(word.seq),
+        drill:   path_to(:drill_add_word),
         autocomplete: path_to(:autocomplete_word)
       }
     })

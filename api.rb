@@ -83,3 +83,22 @@ post :word_burn do
 
   return progress.to_json(only: Progress.api_props)
 end
+
+post :drill_add_word do
+  protect!
+
+  progress = Progress.find_or_initialize_by(
+        seq: params[:seq],
+        title: params[:kreb],
+        user: current_user,
+        kind: :w)
+  progress.save
+
+  drill = Drill.find_or_create_by(
+        title: params[:drillTitle].strip,
+        user: current_user
+  )
+  drill.progresses << progress
+
+  return 'ok'
+end

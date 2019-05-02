@@ -54,6 +54,7 @@ paths index: '/',
     sentences: '/sentences', # POST
     sentence: '/sentence/:id', # DELETE
     autocomplete_word: '/autocomplete/word',
+    drill_add_word: '/drill/word',
 # Temporary API (should be deleted soon)
     study2: '/study2', # get, post
     wk_radical: '/wk_radical/:id'
