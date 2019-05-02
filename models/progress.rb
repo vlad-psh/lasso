@@ -69,6 +69,11 @@ class Progress < ActiveRecord::Base
       Action.create(progress: self, user: user, action_type: 'burn')
     end
 
+    if [:correct, :incorrect, :soso].include?(a)
+      # Get schedule day with offset
+      random_reschedule!
+    end
+
     if self.deck.present? && self.deck != 0 # if not burned and not 'just learned'
       Action.create(progress: self, user: user, action_type: a)
 
@@ -86,23 +91,23 @@ class Progress < ActiveRecord::Base
 
     if Date.today >= self.transition
       _deck += 1 if _deck < 7 # 7th is the highest deck
-      _transition += SRS_RANGES[_deck][1]
+      _transition += SRS_RANGES[_deck]
       # Move transition date forward by (deck_range/2) if it still less than today
-      _transition = Date.today + SRS_RANGES[_deck][1] / 2 if _transition < Date.today
+      _transition = Date.today + SRS_RANGES[_deck] / 2 if _transition < Date.today
     end
-    _percent = (Date.today - _transition + SRS_RANGES[_deck][1]) / SRS_RANGES[_deck][1].to_f
+    _percent = (Date.today - _transition + SRS_RANGES[_deck]) / SRS_RANGES[_deck].to_f
     # percent should not be > 1.0 because of previous condition (with dates)
     return {
       deck: _deck,
       transition: _transition,
 # TODO: ADD VARIATION TO SCHEDULE DATE (+/- 20% ?)
-      scheduled: Date.today + SRS_RANGES[self.deck][1] * (1 + _percent) # add full next interval + fraction of it
+      scheduled: Date.today + SRS_RANGES[_deck] * (1 + _percent) # add full next interval + fraction of it
     }
   end
 
   def attributes_of_soso_answer
     # Leave in the same deck; move transition date forward
-    _transition = Date.today + SRS_RANGES[self.deck][1]
+    _transition = Date.today + SRS_RANGES[self.deck]
     return {
       deck: self.deck,
       transition: _transition,
@@ -114,7 +119,7 @@ class Progress < ActiveRecord::Base
     _deck = self.deck > 1 ? self.deck - 1 : 1
     return {
       deck: _deck,
-      transition: Date.today + SRS_RANGES[_deck][1],
+      transition: Date.today + SRS_RANGES[_deck],
       scheduled: Date.today + 3
     }
   end
@@ -136,17 +141,15 @@ class Progress < ActiveRecord::Base
   end
 
   private
-# TODO: DEPRECATED; Should be rewritten
-  def choose_schedule_day(new_deck, from_date = Date.today)
-    return Date.new(3000, 1, 1) if new_deck == 100 # learned forever
-
-    r = SRS_RANGES[new_deck > 7 ? 7 : new_deck]
-    date_range = [from_date + r[0], from_date + r[2]]
+  def random_reschedule!
+    variation_days = ((self.scheduled - Date.today) * 0.15).to_i
+    range_from = self.scheduled - variation_days
+    range_to   = self.scheduled + variation_days
 
     # make 'day: cards count' hash
     day_cards = {}
-    (from_date + r[0]..from_date + r[2]).each {|d| day_cards[d] = 0}
-    counts = Progress.where(user: user, scheduled: (from_date + r[0])..(from_date + r[2])).group(:scheduled).order('count_all').count
+    (range_from..range_to).each {|d| day_cards[d] = 0}
+    counts = Progress.where(user: self.user, scheduled: range_from..range_to).group(:scheduled).order('count_all').count
     counts.each {|d,c| day_cards[d] += c}
 
     # transpose hash to 'cards count: [days]'
@@ -161,16 +164,15 @@ class Progress < ActiveRecord::Base
 
     # select days with minimal cards count
     vacant_days = cards_days[cards_days.keys.min]
-    optimal_day = from_date + r[1]
     selected_day = vacant_days[0]
     vacant_days.each do |d|
-      if (d - optimal_day).abs < (selected_day - optimal_day).abs
+      if (d - self.scheduled).abs < (selected_day - self.scheduled).abs
         selected_day = d
       end
     end
 
-    puts "### SELECTED #{selected_day} OPTIMAL #{optimal_day} ALL DAYS #{day_cards}"
-    return selected_day
+    puts "### SELECTED #{selected_day} ANCHOR #{self.scheduled} ALL DAYS #{day_cards}"
+    return self.scheduled = selected_day
   end
 
 end

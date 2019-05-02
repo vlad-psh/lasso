@@ -81,7 +81,7 @@ configure do
     :k => {singular: :kanji, plural: :kanji, japanese: '漢字'},
     :w => {singular: :word, plural: :words, japanese: '言葉'}
   }
-  SRS_RANGES = [[0, 0, 0], [2, 3, 4], [6, 7, 8], [12, 14, 16], [25, 30, 35], [50, 60, 70], [100, 120, 140], [200, 240, 280]]
+  SRS_RANGES = [0, 3, 7, 14, 30, 60, 120, 240]
 end
 
 get :index do

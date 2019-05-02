@@ -6,13 +6,13 @@ div.study-card
       - ed = @progress.deck
       div.answer-button.red data-value="incorrect"
         ' NO
-        div.answer-details = "#{ed} → #{ed>0 ? ed-1 : 0} (~#{SRS_RANGES[1][1]} days)"
+        div.answer-details = "#{ed} → #{ed>0 ? ed-1 : 0} (~#{SRS_RANGES[1]} days)"
       div.answer-button.blue data-value="soso"
         ' SO&#8209;SO
-        div.answer-details = "#{ed} → #{ed} (~#{SRS_RANGES[ed>7 ? 7 : ed][1]} days)"
+        div.answer-details = "#{ed} → #{ed} (~#{SRS_RANGES[ed>7 ? 7 : ed]} days)"
       div.answer-button.green data-value="correct"
         ' YES
-        div.answer-details = "#{ed} → #{ed+1} (~#{SRS_RANGES[ed+1>7 ? 7 : ed+1][1]} days)"
+        div.answer-details = "#{ed} → #{ed+1} (~#{SRS_RANGES[ed+1>7 ? 7 : ed+1]} days)"
   //div.answer-block
   //  div style="display: inline-block;"
   //    div Meaning
