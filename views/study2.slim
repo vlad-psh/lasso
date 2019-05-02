@@ -25,7 +25,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.green @click="answer('correct')"
         ' YES
         div.answer-details = '+ {{selectedKreb.progress.correct}}'
-    word :w="words[f.selectedWordSeq]"
+    word :w="words[f.selectedWordSeq]" :editing="editing"
 
   div v-if="allAnswered && !f.selectedWordSeq && !f.submitted"
     div.answer-buttons v-if="allAnswered"
@@ -33,13 +33,14 @@ div#sentence-quiz-app.study-card
     div.center-block style="margin-top: 1em;" v-if="english" = 'Translation: {{english}}'
 
 javascript:
-  var sentenceQuizApp = new Vue({
+  var app = new Vue({
     el: '#sentence-quiz-app',
     data: {
       sentence: [],
       english: null,
       words: {},
-      f: {selectedWordSeq: null, answers: {}, submitted: false}
+      f: {selectedWordSeq: null, answers: {}, submitted: false},
+      editing: false
     },
     computed: {
       allAnswered() {

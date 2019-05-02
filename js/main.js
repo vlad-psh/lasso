@@ -36,6 +36,11 @@ $(document).on('click', '.black-theme-checkbox', function(event){
     $('body').removeClass("black");
   };
 });
+var editing = false;
+$(document).on('click', '.editing-checkbox input', function(event){
+  editing = !editing;
+  app.editing = editing;
+});
 /* ===================
    SPEECH
    =================== */

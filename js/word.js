@@ -2,11 +2,12 @@ import helpers from './helpers.js';
 
 Vue.component('word', {
   props: {
-    w: {type: Object, required: true}
+    w: {type: Object, required: true},
+    editing: {type: Boolean, required: true}
   },
   data() {
     return {
-      forms: {card: null, kreb: null, comment: null, editing: false},
+      forms: {card: null, kreb: null, comment: null},
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -139,10 +140,6 @@ Vue.component('word', {
   template: `
   <div class="word-card" id="word-card-app">
 
-    <div class="edit-button-container center-block">
-      <div class="edit-button" :class="forms.editing ? 'edit-button-active' : null" @click="forms.editing = !forms.editing">{{forms.editing ? 'OFF' : 'ON'}}</div>
-    </div>
-
     <div class="word-krebs center-block expandable-list">
       <div class="expandable-list-item" v-for="kreb of w.krebs">
         <div>
@@ -154,14 +151,14 @@ Vue.component('word', {
 
     <div class="expandable-list-container" v-if="forms.kreb !== null">
       <div class="center-block">
-        <span v-if="forms.editing && selectedKrebProgress.learned_at">
+        <span v-if="editing && selectedKrebProgress.learned_at">
           {{selectedKrebProgress.learned_at ? 'learned ' : ''}}
           <span v-if="selectedKrebProgress.burned_at">burned</span>
           <span v-else>
             <a @click="burnWord(forms.kreb, selectedKrebProgress.id)">burn!</a>
           </span>
         </span>
-        <span v-else-if="forms.editing">
+        <span v-else-if="editing">
           <a v-if="!selectedKrebProgress.flagged" @click="flagWord(forms.kreb)">flag!</a>
           <a @click="learnWord(forms.kreb)">learn!</a>
         </span>
@@ -214,7 +211,7 @@ Vue.component('word', {
       </div>
     </div>
 
-    <div v-if="forms.editing" class="word-comment-form center-block">
+    <div v-if="editing" class="word-comment-form center-block">
       <div v-if="forms.comment">
         <textarea id="word-comment-textarea" v-model="w.comment" @keyup.esc="hideCommentForm"></textarea>
         <input type="button" value="Save" @click="saveComment">
@@ -228,7 +225,7 @@ Vue.component('word', {
       <p v-for="commentLine of w.comment.split('\\n')">{{commentLine}}</p>
     </div>
 
-    <div v-if="forms.editing" class="center-block" style="margin-top: 0.8em; margin-bottom: 0.8em">
+    <div v-if="editing" class="center-block" style="margin-top: 0.8em; margin-bottom: 0.8em">
       <span style="font-weight: bold">Contains:</span>
       <div class="connected-word" v-for="(sw, swIndex) of w.shortWords">
         <a :href="sw.href">{{sw.title}}</a>
@@ -246,15 +243,15 @@ Vue.component('word', {
       <input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long">
     </div>
 
-    <div v-if="forms.editing" class="center-block">
+    <div v-if="editing" class="center-block">
       <div style="opacity: 0.5; font-size: 0.6em; text-align: justify">&#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)</div>
     </div>
 
-    <div class="hr-title center-block" v-if="forms.editing && (w.sentences.length > 0 || w.rawSentences.length > 0)">
+    <div class="hr-title center-block" v-if="editing && (w.sentences.length > 0 || w.rawSentences.length > 0)">
       <span style="margin: 1em 0">Sentences</span>
     </div>
 
-    <div class="word-sentences word-sentences-structured center-block" v-if="forms.editing && w.sentences.length > 0">
+    <div class="word-sentences word-sentences-structured center-block" v-if="editing && w.sentences.length > 0">
       <span v-for="(s, sIndex) of w.sentences">
         {{bullets[sIndex]}} {{s.jp}}
         <span style="font-size: small">《{{s.en}}》</span>
@@ -262,7 +259,7 @@ Vue.component('word', {
       </span>
     </div>
 
-    <div class="word-sentences center-block" v-if="forms.editing && w.rawSentences.length > 0">
+    <div class="word-sentences center-block" v-if="editing && w.rawSentences.length > 0">
       <span v-for="(s, sIndex) of w.rawSentences">
         {{bullets[sIndex]}} {{s.jp}}
         <span style="font-size: small">《{{s.en}}》</span>

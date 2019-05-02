@@ -25,8 +25,9 @@ html
           //div.main-menu-item-details = "#{((Time.now - (level_started_at(level) || DateTime.now)) / (60*60*24)).round(1)} days"
         - if current_user.present?
           a style="padding-left: 0.7em" href=path_to(:notes) 📘
-        //form.toggle-compact-form method="POST" action=path_to(:toggle_compact) data-remote="true"
-        //  input type="checkbox" checked=(session[:compact] ? "checked" : nil) name="compact" 小
+          label.editing-checkbox
+            input type="checkbox"
+            span
       div.right
         form.search-form method="GET" action=path_to(:search)
           label
