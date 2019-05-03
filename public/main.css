@@ -234,6 +234,8 @@ a.study-button {
   color: #638686;
   border-color: #b4c6c6;
 }
+.locked svg,
+.unlocked svg {stroke: #638686}
 body.black .locked, body.black .locked a,
 body.black .unlocked, body.black .unlocked a {
   border-color: #292929;
@@ -255,26 +257,31 @@ body.black .unlocked .description {
   color: #878764;
   border-radius: 0.2em;
 }
+.unlocked svg {stroke: #878764}
 .apprentice, .apprentice a {
   background-color: #a8dba8; /* #dd0093; */
   color: #357878; /* master border */
   border-color: #96c496;
 }
+.apprentice svg {stroke: #357878}
 .guru, .guru a {
   background-color: #79bd9a; /* #882d9e; */
   color: #0b486b; /* enlightened bg */
   border-color: #6ca98a;
 }
+.guru svg {stroke: #0b486b}
 .master, .master a {
   background-color: #3b8686; /* #294ddb; */
   color: #c7e3c7;
   border-color: #357878;
 }
+.master svg {stroke: #c7e3c7}
 .enlightened, .enlightened a {
   background-color: #0b486b; /* #0093dd; */
   color: #79bd9a; /* guru bg */
   border-color: #094060;
 }
+.enlightened svg {stroke: #79bd9a}
 .burned, .burned a {
   /* gradient can be created here: http://www.patternify.com/ */
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gITCRIo7aRYngAAABJJREFUCNdjYIABPrHNuBgMDAAuFwKGaxZ92QAAAABJRU5ErkJggg==) repeat;
@@ -283,6 +290,7 @@ body.black .unlocked .description {
   color: #79bd9a;
   border-color: #022030;
 }
+.burned svg {stroke: #79bd9a}
 @media (-webkit-min-device-pixel-ratio: 2),
 (min-device-pixel-ratio: 2),
 (min-resolution: 2dppx),
@@ -679,6 +687,15 @@ body.black svg.graph text {
 #radical-card-app {
   margin: 1em 2em;
 }
+.elements-list-item svg,
+.radical-title svg {
+  width: 1em;
+  fill: none;
+  stroke-linecap: square;
+  stroke-miterlimit: 2;
+  stroke-width: 68px;
+}
+
 /* ==============================
    WORD CARD
    ============================== */

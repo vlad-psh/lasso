@@ -11,7 +11,10 @@ Vue.component('radical', {
   },
   template: `
 <div class="vue-radical">
-  <span class="radical-title" :class="radical.progress.html_class">{{radical.title}}</span>
+  <span class="radical-title" :class="radical.progress.html_class">
+    <span v-if="radical.title">{{radical.title}}</span>
+    <span v-else v-html="radical.svg"></span>
+  </span>
   <span>{{radical.meaning}}</span>
   <div class="radical-meaning">
     <span style="font-weight: bold">Meaning: </span>

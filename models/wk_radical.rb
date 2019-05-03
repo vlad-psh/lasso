@@ -25,7 +25,7 @@ class WkRadical < ActiveRecord::Base
   end
 
   def list_desc
-    meaning.gsub(/,.*/, '')
+    meaning.try(:gsub, /,.*/, '')
   end
 end
 

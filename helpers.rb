@@ -140,7 +140,7 @@ module WakameHelpers
 
   def radical_json(id)
     radical = WkRadical.where(id: id).with_progress(current_user)[0]
-    result = radical.serializable_hash(only: [:title, :level, :meaning, :nmne])
+    result = radical.serializable_hash(only: [:title, :level, :meaning, :nmne, :svg])
     result[:progress] = radical.progresses.where(user: current_user).take.try(:api_hash) || {}
     return result
   end

@@ -11,5 +11,9 @@ div class="elements-list"
     div.elements-list-item
       div class="element-block #{(e.kind_of?(Word) ? e.best_user_progress : e.user_progress).try(:html_class) || :locked}"
         a href=path_to(e.model_name.singular.to_sym).with(e.kind_of?(Word) ? e.seq : e.id)
-          div.element: span.japanese = e.list_title
+          div.element
+            - if e.kind_of?(WkRadical) && e.title.blank?
+              span.japanese == e.svg
+            - else
+              span.japanese = e.list_title
           div.description = e.list_desc

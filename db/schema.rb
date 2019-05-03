@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_03_130704) do
+ActiveRecord::Schema.define(version: 2019_05_03_140527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(version: 2019_05_03_130704) do
     t.integer "wk_internal_id"
     t.string "meaning"
     t.string "nmne"
+    t.string "svg"
   end
 
   create_table "wk_words", force: :cascade do |t|
