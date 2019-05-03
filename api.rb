@@ -102,3 +102,23 @@ post :drill_add_word do
 
   return 'ok'
 end
+
+get :api_drill do
+  word_progresses = Drill.last.progresses.includes(word: [:short_words, :long_words, :wk_words, :word_titles])
+  word_details = WordDetail.where(seq: word_progresses.map{|i| i.seq}, user: current_user)
+  kanji_chars = word_progresses.reduce([]){|memo, p| memo |= p.word.kanji.split('')}
+  kanjis = Kanji.includes(:wk_kanji).where(title: kanji_chars)
+  kanji_progresses = Progress.joins(:kanji).merge( Kanji.where(title: kanji_chars) )
+
+  data = word_progresses.map do |p|
+    word_json(p.seq, {
+      word: p.word,
+      word_details: word_details.detect{|i| i.seq == p.seq} || WordDetail.none,
+      progresses: [p],
+      kanjis: kanjis.select{|i| p.word.kanji.split('').include?(i.title)},
+      kanji_progresses: kanji_progresses
+    })
+  end
+
+  return data.to_json
+end

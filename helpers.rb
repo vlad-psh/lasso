@@ -120,7 +120,7 @@ module WakameHelpers
     end
   end
 
-  def kanji_json(kanji)
+  def kanji_json(kanji, prefetched = {})
     result = kanji.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun])
 
     if (w = kanji.wk_kanji).present?
@@ -134,7 +134,7 @@ module WakameHelpers
       })
     end
 
-    progress = kanji.progresses.where(user: current_user).take # TODO: do this without separate requests for each kanji
+    progress = prefetched[:progress] || kanji.progresses.where(user: current_user).take
     result[:progress] = progress.api_hash if progress.present?
     return result
   end
@@ -146,14 +146,14 @@ module WakameHelpers
     return result
   end
 
-  def word_json(seq, options = {})
-    word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).find_by(seq: seq)
+  def word_json(seq, prefetched = {})
+    word = prefetched[:word] || Word.includes(:short_words, :long_words, :wk_words, :word_titles).find_by(seq: seq)
     result = word.serializable_hash(only: [:seq, :en, :ru, :jlptn, :nf])
 
     @title = word.word_titles.first.title
-    result[:comment] = word.word_details.where(user: current_user).take.try(:comment) || ''
+    result[:comment] = prefetched[:word_details] || word.word_details.where(user: current_user).take.try(:comment) || ''
 
-    progresses = Progress.where(seq: seq, user: current_user)
+    progresses = prefetched[:progresses] || Progress.where(seq: seq, user: current_user)
     result[:krebs] = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
       {
         title: t.title,
@@ -167,8 +167,12 @@ module WakameHelpers
 #    result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
     result = result.merge({sentences: [], rawSentences: []}) # Empty placeholder
 
-    result[:kanjis] = word.kanji.blank? ? {} :
-        Kanji.includes(:wk_kanji).where(title: word.kanji.split('')).map{|k| kanji_json(k)}
+    kanjis = prefetched[:kanjis] || (word.kanji.blank? ? {} : Kanji.includes(:wk_kanji).where(title: word.kanji.split('')))
+    kanji_progresses = prefetched[:kanji_progresses] || Progress.where(kanji_id: kanjis.map{|i|i.id}, user: current_user)
+    result[:kanjis] = kanjis.map do |k|
+      _progress = kanji_progresses.detect{|i| i.kanji_id == k.id} || Progress.none
+      kanji_json(k, _progress ? {progress: _progress} : {})
+    end
 
     return result.merge({
       shortWords: word.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},

@@ -42,6 +42,7 @@ paths index: '/',
     word: '/word/:id',
     kanji: '/kanji/:id',
     api_sentence: '/api/sentence',
+    api_drill: '/api/drill',
 # Change word properties
     api_word: '/api/word', # :id should be passed as GET query
     word_learn: '/word/learn', # POST
