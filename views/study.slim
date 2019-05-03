@@ -1,6 +1,10 @@
 div.study-card
   div.counter-info = "もう#{@count}つ"
-  h1.show-answer-button = @progress.title
+  h1.show-answer-button
+    - if @progress.title.blank? && @progress.kind == 'r'
+      == @progress.wk_radical.svg
+    - else
+      = @progress.title
   div.answer
     div.answer-buttons
       - ed = @progress.deck

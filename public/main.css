@@ -451,6 +451,9 @@ body.black .unlocked .description {
   margin: 0;
   font-weight: normal;
 }
+.study-card h1 svg {
+  stroke: #333;
+}
 .study-card .show-answer-button {
   cursor: pointer;
   color: #333;
@@ -687,6 +690,7 @@ body.black svg.graph text {
 #radical-card-app {
   margin: 1em 2em;
 }
+.study-card h1 svg,
 .elements-list-item svg,
 .radical-title svg {
   width: 1em;
