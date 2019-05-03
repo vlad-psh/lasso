@@ -12,11 +12,10 @@ Vue.component('radical', {
   template: `
 <div class="vue-radical">
   <span class="radical-title" :class="radical.progress.html_class">{{radical.title}}</span>
-  <span>{{radical.details.en.join(', ')}}</span>
+  <span>{{radical.meaning}}</span>
   <div class="radical-meaning">
     <span style="font-weight: bold">Meaning: </span>
-    <span v-html="stripBB(radical.details.nmne)"></span>
-    <span class="hint" v-html="stripBB(radical.details.nhnt)"></span>
+    <span v-html="stripBB(radical.nmne)"></span>
   </div>
   <div v-if="radical.progress.details" class="radical-meaning">
     <span style="font-weight: bold">Comment: </span>

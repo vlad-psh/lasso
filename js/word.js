@@ -213,7 +213,7 @@ Vue.component('word', {
         <div class="expandable-list-item" v-for="(card, cardIndex) of w.cards">
           <div class="word-gloss" @click="openCardForm(cardIndex)">
             <div class="level-wrapper">{{card.level}}</div>
-            {{card.title}} ({{card.en}})
+            {{card.title}} ({{card.meaning}})
           </div>
           <div class="expandable-list-arrow" v-if="cardIndex === forms.card"></div>
         </div>
@@ -223,13 +223,13 @@ Vue.component('word', {
     <div class="expandable-list-container word-gloss-expanded" v-if="forms.card !== null">
       <div class="center-block">
         <span>{{selectedCard.title}} · </span>
-        <span style="font-weight: bold">{{selectedCard.readings}} </span>
-        <span>· {{selectedCard.en}} </span>
+        <span style="font-weight: bold">{{selectedCard.reading}} </span>
+        <span>· {{selectedCard.meaning}} </span>
         <span style="font-style: italic">({{selectedCard.pos}})</span>
         <div class="hr-title"><span>Meaning</span></div>
-        <div v-html="stripBB(selectedCard.mexp)"></div>
+        <div v-html="stripBB(selectedCard.mmne)"></div>
         <div class="hr-title"><span>Reading</span></div>
-        <div v-html="stripBB(selectedCard.rexp)"></div>
+        <div v-html="stripBB(selectedCard.rmne)"></div>
       </div>
     </div>
 

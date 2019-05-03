@@ -27,7 +27,7 @@ class WkKanji < ActiveRecord::Base
   end
 
   def list_desc
-    details['yomi'][details['yomi']['emph']]
+    self.readings.select{|i| i['primary'] == true}.map{|i| i['reading']}.join(', ')
   end
 end
 

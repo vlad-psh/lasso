@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_02_054351) do
+ActiveRecord::Schema.define(version: 2019_05_03_130704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,8 +135,14 @@ ActiveRecord::Schema.define(version: 2019_05_02_054351) do
   create_table "wk_kanji", force: :cascade do |t|
     t.integer "level"
     t.string "title"
-    t.jsonb "details"
     t.bigint "kanji_id"
+    t.integer "wk_internal_id"
+    t.string "meaning"
+    t.jsonb "readings"
+    t.string "mmne"
+    t.string "mhnt"
+    t.string "rmne"
+    t.string "rhnt"
   end
 
   create_table "wk_kanji_radicals", id: false, force: :cascade do |t|
@@ -156,14 +162,22 @@ ActiveRecord::Schema.define(version: 2019_05_02_054351) do
   create_table "wk_radicals", force: :cascade do |t|
     t.integer "level"
     t.string "title"
-    t.jsonb "details"
+    t.integer "wk_internal_id"
+    t.string "meaning"
+    t.string "nmne"
   end
 
   create_table "wk_words", force: :cascade do |t|
     t.integer "level"
     t.string "title"
-    t.jsonb "details"
     t.integer "seq"
+    t.integer "wk_internal_id"
+    t.string "reading"
+    t.string "meaning"
+    t.string "pos"
+    t.string "mmne"
+    t.string "rmne"
+    t.jsonb "sentences"
   end
 
   create_table "word_connections", id: false, force: :cascade do |t|

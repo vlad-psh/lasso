@@ -16,8 +16,8 @@ Vue.component('kanji', {
   <span v-if="kanji.wk_level"> · WK #{{kanji.wk_level}}</span>
   <span v-if="kanji.english">：{{kanji.english.join("; ")}}</span>
   <div>
-    <span v-if="kanji.on" :class="kanji.emph === 'on' ? 'emph' : ''">【音読み】{{ kanji.on.join(" · ") }}</span>
-    <span v-if="kanji.kun" :class="kanji.emph === 'kun' ? 'emph' : ''">【訓読み】{{ kanji.kun.join(" · ") }}</span>
+    <span v-if="kanji.on">【音読み】{{ kanji.on.join(" · ") }}</span>
+    <span v-if="kanji.kun">【訓読み】{{ kanji.kun.join(" · ") }}</span>
     <span v-if="kanji.nanori">【名乗り】{{ kanji.nanori.join(" · ") }}</span>
   </div>
   <div v-if="kanji.wk_level" class="kanji-meaning">

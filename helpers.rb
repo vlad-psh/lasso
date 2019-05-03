@@ -126,11 +126,10 @@ module WakameHelpers
     if (w = kanji.wk_kanji).present?
       result = result.merge({
         wk_level: w.level,
-        emph: w.details['yomi']['emph'],
-        mmne: w.details['mmne'],
-        mhnt: w.details['mhnt'],
-        rmne: w.details['rmne'],
-        rhnt: w.details['rhnt']
+        mmne: w.mmne,
+        mhnt: w.mhnt,
+        rmne: w.rmne,
+        rhnt: w.rhnt
       })
     end
 
@@ -141,7 +140,7 @@ module WakameHelpers
 
   def radical_json(id)
     radical = WkRadical.where(id: id).with_progress(current_user)[0]
-    result = radical.serializable_hash(only: [:title, :details])
+    result = radical.serializable_hash(only: [:title, :level, :meaning, :nmne])
     result[:progress] = radical.progresses.where(user: current_user).take.try(:api_hash) || {}
     return result
   end
@@ -181,11 +180,11 @@ module WakameHelpers
         {
           title: c.title,
           level: c.level,
-          readings: c.details['readings'].join(', '),
-          en:    c.details['en'].join(', '),
-          pos:   c.details['pos'],
-          mexp:  c.details['mexp'],
-          rexp:  c.details['rexp']
+          reading: c.reading,
+          meaning: c.meaning,
+          pos:   c.pos,
+          mmne:  c.mmne,
+          rmne:  c.rmne
         }
       },
       paths: {

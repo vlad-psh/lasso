@@ -20,16 +20,12 @@ class WkRadical < ActiveRecord::Base
     throw StandardError.new("'user_progress' property can be accessed only when elements have been selected with 'with_progresses' method")
   end
 
-  def description
-    details['en'].first
-  end
-
   def list_title
     return title
   end
 
   def list_desc
-    return details['en'].first
+    meaning.gsub(/,.*/, '')
   end
 end
 

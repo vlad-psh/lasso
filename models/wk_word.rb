@@ -25,7 +25,7 @@ class WkWord < ActiveRecord::Base
   end
 
   def list_desc
-    details['en'].first
+    self.meaning.gsub(/,.*/, '')
   end
 end
 
