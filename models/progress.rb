@@ -39,6 +39,18 @@ class Progress < ActiveRecord::Base
   # Cards in current level which are not learned yet:
 #  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
 
+  include Comparable
+  def <=>(anOther)
+    sorting_score <=> anOther.sorting_score
+  end
+
+  def sorting_score
+    return 10 if self.burned_at.present?
+    return self.deck if self.deck.present?
+    return -1 if self.flagged_at.present?
+    return -2
+  end
+
   def self.hash_me(_method)
     result = {}
     all.each do |p|

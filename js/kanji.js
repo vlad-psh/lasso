@@ -33,6 +33,7 @@ Vue.component('kanji', {
   <div v-if="kanji.progress.details" class="kanji-reading">
     <span style="font-weight: bold">Comment: </span>
     <span v-if="kanji.progress.details.t">【{{kanji.progress.details.t}}】</span>
+    <span v-if="kanji.progress.details.r" v-html="stripBB(kanji.progress.details.r)"></span>
     <span v-if="kanji.progress.details.m" v-html="stripBB(kanji.progress.details.m)"></span>
   </div>
 </div>

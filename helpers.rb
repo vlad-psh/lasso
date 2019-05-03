@@ -142,31 +142,30 @@ module WakameHelpers
   def radical_json(id)
     radical = WkRadical.where(id: id).with_progress(current_user)[0]
     result = radical.serializable_hash(only: [:title, :details])
-    result = result.merge({
-      progress: radical.user_progress.api_hash
-    }) if radical.user_progress.present?
+    result[:progress] = radical.progresses.where(user: current_user).take.try(:api_hash) || {}
     return result
   end
 
   def word_json(seq, options = {})
-    word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).where(seq: seq).with_progresses(current_user)[0]
+    word = Word.includes(:short_words, :long_words, :wk_words, :word_titles).find_by(seq: seq)
     result = word.serializable_hash(only: [:seq, :en, :ru, :jlptn, :nf])
 
     @title = word.word_titles.first.title
     result[:comment] = word.word_details.where(user: current_user).take.try(:comment) || ''
 
-    progresses = word.user_progresses ? Hash[*word.user_progresses.map{|i| [i.title, i]}.flatten] : {}
+    progresses = Progress.where(seq: seq, user: current_user)
     result[:krebs] = word.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
       {
         title: t.title,
         is_common: t.is_common,
-        progress: progresses[t.title].present? ? progresses[t.title].api_hash : {}
+        progress: progresses.detect{|p| p.title == t.title}.try(:api_hash) || {}
       }
     end
 
-    result[:sentences] = word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
-    rawSentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
-    result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
+#    result[:sentences] = word.all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
+#    rawSentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
+#    result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
+    result = result.merge({sentences: [], rawSentences: []}) # Empty placeholder
 
     result[:kanjis] = word.kanji.blank? ? {} :
         Kanji.includes(:wk_kanji).where(title: word.kanji.split('')).map{|k| kanji_json(k)}
