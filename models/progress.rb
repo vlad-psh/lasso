@@ -175,9 +175,13 @@ class Progress < ActiveRecord::Base
 
     # make 'day: cards count' hash
     day_cards = {}
-    (range_from..range_to).each {|d| day_cards[d] = 0}
+    (range_from..range_to).each {|d| day_cards[d.strftime()] = 0}
+    # There was a strange bug when I've used 'Date' objects as key of day_cards hash
+    # sometimes, in following loop/block, day_cards[d] returned nil (but the value was
+    # definitely there! (and it even was non-zero)
+    # That's why we using strings as keys in this hash
     counts = Progress.where(user: self.user, scheduled: range_from..range_to).group(:scheduled).order('count_all').count
-    counts.each {|d,c| day_cards[d] += c}
+    counts.each {|d,c| day_cards[d.strftime()] += c}
 
     # transpose hash to 'cards count: [days]'
     cards_days = {}
@@ -191,8 +195,9 @@ class Progress < ActiveRecord::Base
 
     # select days with minimal cards count
     vacant_days = cards_days[cards_days.keys.min]
-    selected_day = vacant_days[0]
-    vacant_days.each do |d|
+    selected_day = Date.parse(vacant_days[0])
+    vacant_days.each do |d_str|
+      d = Date.parse(d_str)
       if (d - self.scheduled).abs < (selected_day - self.scheduled).abs
         selected_day = d
       end
