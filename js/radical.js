@@ -10,6 +10,10 @@ Vue.component('radical', {
   computed: {
     radical() {
       return this.j.radicals.find(i => i.id === this.id);
+    },
+    kanjiSummaries() {
+      this.radical.kanji_ids.map
+      return this.radical.kanji_ids.map(i => this.j.kanji_summary.find(j => j.wk_id === i))
     }
   },
   methods: {
@@ -22,14 +26,28 @@ Vue.component('radical', {
     <span v-else v-html="radical.svg"></span>
   </span>
   <span>{{radical.meaning}}</span>
-  <div class="radical-meaning">
-    <span style="font-weight: bold">Meaning: </span>
-    <span v-html="stripBB(radical.nmne)"></span>
-  </div>
+
+  <div class="hr-title"><span>Meaning</span></div>
+  <div v-html="stripBB(radical.nmne)"></div>
+
   <div v-if="radical.progress.details" class="radical-meaning">
-    <span style="font-weight: bold">Comment: </span>
+    <div class="hr-title"><span>User's data</span></div>
     <span v-if="radical.progress.details.t">【{{radical.progress.details.t}}】</span>
     <span v-if="radical.progress.details.m" v-html="stripBB(radical.progress.details.m)"></span>
+  </div>
+
+  <div v-if="radical.kanji_ids">
+    <div class="hr-title"><span>Kanji</span></div>
+    <div class="elements-list">
+      <div v-for="kanji of kanjiSummaries" class="elements-list-item">
+        <div class="element-block" :class="kanji.progress.html_class || 'locked'">
+          <a :href="kanji.href">
+            <div class="element">{{kanji.title}}</div>
+            <div class="description">{{kanji.meaning}}</div>
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 `

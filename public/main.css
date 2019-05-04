@@ -672,11 +672,14 @@ body.black svg.graph text {
   stroke-miterlimit: 2;
   stroke-width: 68px;
 }
-.vue-kanji table.kanji-basic-info tr {
-  vertical-align: top;
+.vue-kanji .kanji-info-table {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-gap: 1em;
 }
-.vue-kanji table.kanji-basic-info td + td {
-  padding-left: 1em;
+.vue-kanji .kanji-info-table div {
+  grid-column: auto;
+  grid-row: 1;
 }
 .vue-kanji .kanji-title,
 .vue-radical .radical-title {
@@ -692,6 +695,7 @@ body.black svg.graph text {
   margin-right: .2em;
   padding: 0 .3em;
 }
+.vue-radical .hr-title span,
 .vue-kanji .hr-title span {
   margin: .4em 0;
 }

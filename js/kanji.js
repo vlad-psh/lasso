@@ -20,24 +20,25 @@ Vue.component('kanji', {
   },
   template: `
 <div class="vue-kanji">
-  <table class="kanji-basic-info">
-    <tr><td>
-      <div class="kanji-title" :class="kanji.progress.html_class">{{kanji.title}}</div>
-    </td><td>
+  <div class="kanji-info-table">
+    <div class="kanji-title" :class="kanji.progress.html_class">{{kanji.title}}</div>
+    <div>
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
-      <div v-if="kanji.english">
-        {{kanji.english.join("; ")}}
-        <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
-      </div>
       <div v-if="kanji.on">音：{{ kanji.on.join(" · ") }}</div>
       <div v-if="kanji.kun">訓：{{ kanji.kun.join(" · ") }}</div>
       <div v-if="kanji.nanori">名：{{ kanji.nanori.join(" · ") }}</div>
+    </div>
+    <div>
+      <div v-if="kanji.english">
+        &#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}
+        <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
+      </div>
       <div v-if="kanji.radicals" class="radicals-list">
         部首：<a v-for="radicalId in kanji.radicals" :class="radicalById(radicalId).progress.html_class" :href="radicalById(radicalId).href">{{radicalById(radicalId).meaning}}</a>
       </div>
-    </td></tr>
-  </table>
+    </div>
+  </div>
 
   <div v-if="kanji.wk_level">
     <div class="hr-title"><span>Meaning</span></div>
