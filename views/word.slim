@@ -1,13 +1,15 @@
-- seq = params[:id] || @word_seq
+ruby:
+  seq = params[:id] || @word_seq
+  json = Collector.new(current_user, words: Word.where(seq: seq)).to_hash.to_json
 
 div#word-card-app
-  word :w="word" :editing="editing"
+  word :seq=seq :j="j" :editing="editing"
 
 javascript:
   var app = new Vue({
     el: '#word-card-app',
     data: {
-      word: #{{word_json(seq).to_json}},
+      j: #{{json}},
       editing: true
     }
   })

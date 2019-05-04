@@ -1,11 +1,15 @@
+ruby:
+  id = params[:id] || @kanji.id
+  json = Collector.new(current_user, kanjis: Kanji.where(id: id)).to_hash.to_json
+
 div#kanji-card-app
-  kanji :kanji="kanji" :editing="editing"
+  kanji :id=id :j="j" :editing="editing"
 
 javascript:
   var app = new Vue({
     el: '#kanji-card-app',
     data: {
-      kanji: #{{kanji_json(@kanji).to_json}},
+      j: #{{json}},
       editing: false
     }
   })

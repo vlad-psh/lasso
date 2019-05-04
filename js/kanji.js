@@ -4,7 +4,13 @@ import helpers from './helpers.js';
 
 Vue.component('kanji', {
   props: {
-    kanji: {type: Object, required: true}
+    id: {type: Number, required: true},
+    j: {type: Object, required: true}
+  },
+  computed: {
+    kanji() {
+      return this.j.kanjis.find(i => i.id === this.id);
+    }
   },
   methods: {
     ...helpers

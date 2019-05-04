@@ -2,7 +2,8 @@ import helpers from './helpers.js';
 
 Vue.component('word', {
   props: {
-    w: {type: Object, required: true},
+    seq: {type: Number, required: true},
+    j: {type: Object, required: true},
     editing: {type: Boolean, required: true}
   },
   data() {
@@ -12,14 +13,17 @@ Vue.component('word', {
     }
   },
   computed: {
-    selectedCard: function() {
+    w() {
+      return this.j.words.find(i => i.seq === this.seq);
+    },
+    selectedCard() {
       if (this.forms.card !== null) {
         return this.w.cards[this.forms.card];
       } else {
         return {};
       }
     },
-    selectedKrebProgress: function() {
+    selectedKrebProgress() {
       if (this.forms.kreb !== null) {
         return this.w.krebs.find(i => i.title === this.forms.kreb).progress;
       } else {
@@ -44,7 +48,7 @@ Vue.component('word', {
       var ask = confirm(`Are you sure you want to delete ${word.title}?`);
       if (ask) {
         $.ajax({
-          url: this.w.paths.connect,
+          url: this.j.paths.connect,
           method: "DELETE",
           data: postData
         }).done(data => {
@@ -74,7 +78,7 @@ Vue.component('word', {
     },
     learnWord(kreb) {
       $.ajax({
-        url: this.w.paths.learn,
+        url: this.j.paths.learn,
         method: "POST",
         data: {seq: this.w.seq, kreb: kreb}
       }).done(data => {
@@ -83,7 +87,7 @@ Vue.component('word', {
     },
     burnWord(kreb, progressId) {
       $.ajax({
-        url: this.w.paths.burn,
+        url: this.j.paths.burn,
         method: "POST",
         data: {progress_id: progressId}
       }).done(data => {
@@ -92,7 +96,7 @@ Vue.component('word', {
     },
     flagWord(kreb) {
       $.ajax({
-        url: this.w.paths.flag,
+        url: this.j.paths.flag,
         method: "POST",
         data: {seq: this.w.seq, kreb: kreb}
       }).done(data => {
@@ -101,8 +105,8 @@ Vue.component('word', {
     },
     saveComment() {
       $.ajax({
-        url: this.w.paths.comment,
-        data: {comment: this.w.comment},
+        url: this.j.paths.comment,
+        data: {seq: this.w.seq, comment: this.w.comment},
         method: "POST"
       }).done(data => {
         this.forms.comment = false;
@@ -131,7 +135,7 @@ Vue.component('word', {
     addToDrill(kreb) {
       var app = this;
       $.ajax({
-        url: this.w.paths.drill,
+        url: this.j.paths.drill,
         method: "POST",
         data: {drillTitle: this.forms.drillTitle, seq: this.w.seq, kreb: kreb}
       }).done(data => {
@@ -142,7 +146,7 @@ Vue.component('word', {
   }, // end of methods
   updated() {
     $('.word-connection-autocomplete').autocomplete({
-      source: this.w.paths.autocomplete,
+      source: this.j.paths.autocomplete,
       minLength: 1,
       select: wordConnectionAutocompleteSelect
     });
@@ -184,8 +188,8 @@ Vue.component('word', {
           </span>
         </div>
 
-        <div v-for="kanji of w.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
-          <kanji :kanji="kanji"></kanji>
+        <div v-for="kanji of j.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
+          <kanji :id="kanji.id" :j="j"></kanji>
         </div>
       </div>
     </div>
@@ -300,7 +304,7 @@ function wordConnectionAutocompleteSelect(event, ui) {
   postData[wordType === 'short' ? 'long' : 'short'] = wordApp.seq;
 
   $.ajax({
-    url: wordApp.paths.connect,
+    url: wordApp.j.paths.connect,
     method: 'POST',
     data: postData
   }).done(data => {

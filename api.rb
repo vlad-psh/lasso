@@ -31,7 +31,21 @@ get :api_sentence do
   end
 end
 
-post :word_flag do
+get :api_word_autocomplete do
+  protect!
+
+  ww = Word.where(seq: WordTitle.where(title: params['term']).pluck(:seq)).map{|i|
+        {
+            id: i.seq,
+            value: "#{i.krebs[0]}: #{i.en[0]['gloss'][0]}",
+            title: i.krebs[0],
+            href: path_to(:word).with(i.seq)
+        }
+  }
+  return ww.to_json
+end
+
+post :api_word_flag do
   protect!
 
   progress = Progress.find_or_initialize_by(
@@ -45,7 +59,7 @@ post :word_flag do
   return progress.api_json
 end
 
-post :word_learn do
+post :api_word_learn do
   protect!
 
   progress = Progress.find_or_initialize_by(
@@ -75,13 +89,42 @@ post :word_learn do
   return progress.api_json
 end
 
-post :word_burn do
+post :api_word_burn do
   protect!
 
   progress = Progress.find_by(id: params[:progress_id], user: current_user)
   progress.answer!(:burn)
 
   return progress.api_json
+end
+
+post :api_word_comment do
+  protect!
+
+  wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
+  wd.update_attribute(:comment, params[:comment].strip.present? ? params[:comment] : nil)
+
+  return 'ok'
+end
+
+post :api_word_connect do
+  protect!
+
+  long = Word.find_by(seq: params[:long])
+  short = Word.find_by(seq: params[:short])
+  long.short_words << short
+
+  return 'ok'
+end
+
+delete :api_word_connect do
+  protect!
+
+  long = Word.find_by(seq: params[:long])
+  short = Word.find_by(seq: params[:short])
+  long.short_words.delete(short)
+
+  return 'ok'
 end
 
 post :drill_add_word do
@@ -104,10 +147,11 @@ post :drill_add_word do
 end
 
 get :api_drill do
+#c = Collector.new(words: Word.joins(:progresses).merge( Drill.last.progresses ))
   word_progresses = Drill.last.progresses.includes(word: [:short_words, :long_words, :wk_words, :word_titles])
   word_details = WordDetail.where(seq: word_progresses.map{|i| i.seq}, user: current_user)
   kanji_chars = word_progresses.reduce([]){|memo, p| memo |= p.word.kanji.split('')}
-  kanjis = Kanji.includes(:wk_kanji).where(title: kanji_chars)
+  kanjis = Kanji.includes(wk_kanji: :wk_radicals).where(title: kanji_chars)
   kanji_progresses = Progress.joins(:kanji).merge( Kanji.where(title: kanji_chars) )
 
   data = word_progresses.map do |p|

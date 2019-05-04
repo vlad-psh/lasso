@@ -13,11 +13,13 @@ require 'mojinizer'
 require 'open-uri'
 require 'mecab/light'
 
-require_relative './helpers.rb'
 Dir.glob('./models/*.rb').each {|model| require_relative model}
+require_relative './helpers.rb'
+require_relative './collector.rb'
 
-also_reload './helpers.rb'
 also_reload './models/*.rb'
+also_reload './helpers.rb'
+also_reload './collector.rb'
 
 helpers WakameHelpers
 
@@ -45,16 +47,17 @@ paths index: '/',
     api_drill: '/api/drill',
 # Change word properties
     api_word: '/api/word', # :id should be passed as GET query
-    word_learn: '/word/learn', # POST
-    word_burn: '/word/burn', # POST
-    word_connect: '/word/connect',
-    word_set_comment: '/word/:id/comment',
-    word_flag: '/word/flag',
+    api_word_autocomplete: '/api/word/autocomplete',
+    # POST:
+    api_word_learn:   '/api/word/learn',
+    api_word_burn:    '/api/word/burn',
+    api_word_flag:    '/api/word/flag',
+    api_word_comment: '/api/word/comment',
+    api_word_connect: '/api/word/connect', # + DELETE method
 # Other API
     mecab: '/mecab',
     sentences: '/sentences', # POST
     sentence: '/sentence/:id', # DELETE
-    autocomplete_word: '/autocomplete/word',
     drill_add_word: '/drill/word',
 # Temporary API (should be deleted soon)
     study2: '/study2', # get, post
@@ -390,40 +393,6 @@ delete :sentence do
   return 'ok'
 end
 
-get :autocomplete_word do
-  protect!
-
-  ww = Word.where(seq: WordTitle.where(title: params['term']).pluck(:seq)).map{|i|
-        {
-            id: i.seq,
-            value: "#{i.krebs[0]}: #{i.en[0]['gloss'][0]}",
-            title: i.krebs[0],
-            href: path_to(:word).with(i.seq)
-        }
-  }
-  return ww.to_json
-end
-
-post :word_connect do
-  protect!
-
-  long = Word.find_by(seq: params[:long])
-  short = Word.find_by(seq: params[:short])
-  long.short_words << short
-
-  return 'ok'
-end
-
-delete :word_connect do
-  protect!
-
-  long = Word.find_by(seq: params[:long])
-  short = Word.find_by(seq: params[:short])
-  long.short_words.delete(short)
-
-  return 'ok'
-end
-
 get :study2 do
   protect!
 
@@ -440,15 +409,6 @@ post :study2 do
   params[:answers].each do |word_id, answer|
     progresses[word_id].answer!(answer)
   end
-
-  return 'ok'
-end
-
-post :word_set_comment do
-  protect!
-
-  wd = WordDetail.find_or_create_by(user: current_user, seq: params[:id])
-  wd.update_attribute(:comment, params[:comment].strip.present? ? params[:comment] : nil)
 
   return 'ok'
 end
