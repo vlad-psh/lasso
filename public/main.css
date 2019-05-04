@@ -692,6 +692,21 @@ body.black svg.graph text {
   margin-right: .2em;
   padding: 0 .3em;
 }
+.vue-kanji .hr-title span {
+  margin: .4em 0;
+}
+.expandable-list-container .emphasis {
+  background-color: rgba(255,255,255,0.5);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 .4em;
+}
+.vue-kanji .emphasis {
+  background-color: #D3EDD3;
+  color: #357878;
+  border-radius: 3px;
+  padding: 0 .4em;
+}
 /* ==============================
    WORD CARD
    ============================== */

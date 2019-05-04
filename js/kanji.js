@@ -42,14 +42,14 @@ Vue.component('kanji', {
   <div v-if="kanji.wk_level">
     <div class="hr-title"><span>Meaning</span></div>
     <div>
-      <span>【{{kanji.wk_meaning}}】</span>
+      <span class="emphasis">{{kanji.wk_meaning}}</span>
       <span v-html="stripBB(kanji.mmne)"></span>
       <span class="hint" v-html="stripBB(kanji.mhnt)"></span>
     </div>
 
     <div class="hr-title"><span>Reading</span></div>
     <div>
-      <span>【{{kanji.wk_readings.join(', ')}}】</span>
+      <span class="emphasis">{{kanji.wk_readings.join(', ')}}</span>
       <span v-html="stripBB(kanji.rmne)"></span>
       <span class="hint" v-html="stripBB(kanji.rhnt)"></span>
     </div>

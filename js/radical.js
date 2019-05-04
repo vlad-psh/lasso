@@ -4,7 +4,13 @@ import helpers from './helpers.js';
 
 Vue.component('radical', {
   props: {
-    radical: {type: Object, required: true}
+    id: {type: Number, required: true},
+    j: {type: Object, required: true}
+  },
+  computed: {
+    radical() {
+      return this.j.radicals.find(i => i.id === this.id);
+    }
   },
   methods: {
     ...helpers

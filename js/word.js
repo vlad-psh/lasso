@@ -228,10 +228,18 @@ Vue.component('word', {
       <div class="center-block">
         <span>{{selectedCard.title}} · </span>
         <span style="font-style: italic">({{selectedCard.pos}})</span>
+
         <div class="hr-title"><span>Meaning</span></div>
-        <div>【{{selectedCard.meaning}}】<span v-html="stripBB(selectedCard.mmne)"></span></div>
+        <div>
+          <span class="emphasis">{{selectedCard.meaning}}</span>
+          <span v-html="stripBB(selectedCard.mmne)"></span>
+        </div>
+
         <div class="hr-title"><span>Reading</span></div>
-        <div>【{{selectedCard.reading}}】<span v-html="stripBB(selectedCard.rmne)"></span></div>
+        <div>
+          <span class="emphasis">{{selectedCard.reading}}</span>
+          <span v-html="stripBB(selectedCard.rmne)"></span>
+        </div>
       </div>
     </div>
 

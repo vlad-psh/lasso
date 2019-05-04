@@ -1,11 +1,15 @@
+ruby:
+  id = params[:id] || @radical.id
+  json = Collector.new(current_user, radicals: WkRadical.where(id: id)).to_json
+
 div#radical-card-app
-  radical :radical="radical" :editing="editing"
+  radical :id=id :j="j" :editing="editing"
 
 javascript:
   var app = new Vue({
     el: '#radical-card-app',
     data: {
-      radical: #{{radical_json(@radical.id).to_json}},
+      j: #{{json}},
       editing: false
     }
   })

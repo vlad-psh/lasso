@@ -1,6 +1,6 @@
 ruby:
   id = params[:id] || @kanji.id
-  json = Collector.new(current_user, kanjis: Kanji.where(id: id)).to_hash.to_json
+  json = Collector.new(current_user, kanjis: Kanji.where(id: id)).to_json
 
 div#kanji-card-app
   kanji :id=id :j="j" :editing="editing"

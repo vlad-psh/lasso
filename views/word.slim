@@ -1,6 +1,6 @@
 ruby:
   seq = params[:id] || @word_seq
-  json = Collector.new(current_user, words: Word.where(seq: seq)).to_hash.to_json
+  json = Collector.new(current_user, words: Word.where(seq: seq)).to_json
 
 div#word-card-app
   word :seq=seq :j="j" :editing="editing"
