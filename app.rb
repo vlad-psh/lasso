@@ -46,7 +46,6 @@ paths index: '/',
     api_sentence: '/api/sentence',
     api_drill: '/api/drill',
 # Change word properties
-    api_word: '/api/word', # :id should be passed as GET query
     api_word_autocomplete: '/api/word/autocomplete',
     # POST:
     api_word_learn:   '/api/word/learn',

@@ -1,9 +1,3 @@
-get :api_word do
-  protect!
-
-  return word_json(params[:id])
-end
-
 get :api_sentence do
   # TODO: smarter selection of expired words
   progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
@@ -148,22 +142,5 @@ post :drill_add_word do
 end
 
 get :api_drill do
-#c = Collector.new(words: Word.joins(:progresses).merge( Drill.last.progresses ))
-  word_progresses = Drill.last.progresses.includes(word: [:short_words, :long_words, :wk_words, :word_titles])
-  word_details = WordDetail.where(seq: word_progresses.map{|i| i.seq}, user: current_user)
-  kanji_chars = word_progresses.reduce([]){|memo, p| memo |= p.word.kanji.split('')}
-  kanjis = Kanji.includes(wk_kanji: :wk_radicals).where(title: kanji_chars)
-  kanji_progresses = Progress.joins(:kanji).merge( Kanji.where(title: kanji_chars) )
-
-  data = word_progresses.map do |p|
-    word_json(p.seq, {
-      word: p.word,
-      word_details: word_details.detect{|i| i.seq == p.seq} || WordDetail.none,
-      progresses: [p],
-      kanjis: kanjis.select{|i| p.word.kanji.split('').include?(i.title)},
-      kanji_progresses: kanji_progresses
-    })
-  end
-
-  return data.to_json
+  return Collector.new(current_user, words: Word.joins(:progresses).merge( Drill.last.progresses )).to_json
 end

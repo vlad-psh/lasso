@@ -4,6 +4,7 @@ class Collector
     @kanjis = Kanji.none
     @radicals = WkRadical.none
 
+    raise StandardError.new("User expected as first param") unless user.kind_of?(User)
     @user = user
     @progresses = nil
 
@@ -12,12 +13,16 @@ class Collector
     @radicals = opts[:radicals] if opts[:radicals] && opts[:radicals].kind_of?(ActiveRecord::Relation)
   end
 
+  def to_json
+    return to_hash.to_json
+  end
+
   def to_hash
     # Add 'includes' directive to final relation
     @words = @words.includes(:short_words, :long_words, :wk_words, :word_titles)
     @word_details = WordDetail.where(word: @words, user: @user)
 
-    kanji_chars = @words.map{|i| i.kanji.split('')}.flatten.uniq
+    kanji_chars = @words.map{|i| i.kanji.try(:split, '') || []}.flatten.uniq
     @kanjis = @kanjis.or(Kanji.where(title: kanji_chars))
                      .includes(wk_kanji: :wk_radicals)
 
