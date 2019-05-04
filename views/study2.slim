@@ -54,7 +54,8 @@ javascript:
       selectedKreb() {
         if (!this.f.selectedWord) return null;
 
-        var wordBase = this.sentence.find(i => i.seq === this.f.selectedWord.seq).base;
+        // sentence[].seq is a string (not a number)
+        var wordBase = this.sentence.find(i => i.seq == this.f.selectedWord.seq).base;
         return this.f.selectedWord.krebs.find(i => i.title === wordBase);
       }
     },
@@ -64,7 +65,8 @@ javascript:
           // deselect selected word
           this.f.selectedWord = null;
         } else {
-          this.f.selectedWord = this.j.words.find(i => i.seq === seq);
+          // sentence[].seq is a string (not a number); that's why '==' is used
+          this.f.selectedWord = this.j.words.find(i => i.seq == seq);
         }
       },
       answer(answerText) {

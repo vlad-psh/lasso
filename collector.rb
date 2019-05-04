@@ -4,7 +4,7 @@ class Collector
     @kanjis = Kanji.none
     @radicals = WkRadical.none
 
-    raise StandardError.new("User expected as first param") unless user.kind_of?(User)
+    raise ArgumentError.new("User expected as first param") unless user.kind_of?(User)
     @user = user
     @progresses = nil
 
@@ -26,12 +26,17 @@ class Collector
     @kanjis = @kanjis.or(Kanji.where(title: kanji_chars))
                      .includes(wk_kanji: :wk_radicals)
 
+    radical_ids = @kanjis.map{|i| i.wk_kanji.try(:wk_radicals).try(:map, &:id) || []}.flatten.uniq
+    @radicals = @radicals.or(WkRadical.where(id: radical_ids))
+
     @progresses = Progress.where(user: @user, seq: @words.map(&:seq))
               .or(Progress.where(user: @user, kanji_id: @kanjis.map(&:id)))
+              .or(Progress.where(user: @user, wk_radical_id: @radicals.map(&:id)))
 
     return {
       words: @words.map{|i| word_structure(i)},
       kanjis: @kanjis.map{|i| kanji_structure(i)},
+      radicals: @radicals.map{|i| radical_structure(i)},
       paths: {
         learn:   path_to(:api_word_learn),
         burn:    path_to(:api_word_burn),
@@ -45,6 +50,7 @@ class Collector
   end
 
   def path_to(path_name)
+    # Modified fragment of sinatra-snap code
     pattern = Sinatra::Application.named_paths[path_name]
     raise ArgumentError.new("Unknown path ':#{path_name.to_s}'") if pattern == nil
     pattern.extend(Sinatra::UrlBuilder)
@@ -103,7 +109,7 @@ class Collector
   end
 
   def radical_structure(r)
-    result = radical.serializable_hash(only: [:title, :level, :meaning, :nmne, :svg])
+    result = r.serializable_hash(only: [:id, :title, :level, :meaning, :nmne, :svg])
     result[:progress] = @progresses.detect{|p| p.wk_radical_id == r.id}.try(:api_hash) || {}
     return result
   end

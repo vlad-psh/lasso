@@ -1,4 +1,5 @@
 get :api_sentence do
+  protect!
   # TODO: smarter selection of expired words
   progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
   main_word = progress.word
@@ -142,5 +143,6 @@ post :drill_add_word do
 end
 
 get :api_drill do
+  protect!
   return Collector.new(current_user, words: Word.joins(:progresses).merge( Drill.last.progresses )).to_json
 end

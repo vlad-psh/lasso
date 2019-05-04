@@ -13,6 +13,9 @@ Vue.component('kanji', {
     }
   },
   methods: {
+    radicalById(id) {
+      return this.j.radicals.find(i => i.id === id);
+    },
     ...helpers
   },
   template: `
@@ -41,6 +44,10 @@ Vue.component('kanji', {
     <span v-if="kanji.progress.details.t">【{{kanji.progress.details.t}}】</span>
     <span v-if="kanji.progress.details.r" v-html="stripBB(kanji.progress.details.r)"></span>
     <span v-if="kanji.progress.details.m" v-html="stripBB(kanji.progress.details.m)"></span>
+  </div>
+  <div v-if="kanji.radicals" class="kanji-reading">
+    <span style="font-weight: bold">Radicals: </span>
+    <span v-for="radicalId in kanji.radicals">{{radicalById(radicalId).meaning}}, </span>
   </div>
 </div>
 `
