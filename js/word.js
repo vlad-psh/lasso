@@ -247,7 +247,7 @@ Vue.component('word', {
       </div>
       <div class="editable-text" v-else style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm">Add comment</div>
     </div>
-    <div v-else class="word-comment-form center-block">
+    <div v-else-if="w.comment" class="word-comment-form center-block">
       <p v-for="commentLine of w.comment.split('\\n')">{{commentLine}}</p>
     </div>
 

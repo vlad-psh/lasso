@@ -5,6 +5,7 @@ get :api_word do
 end
 
 get :api_sentence do
+  # TODO: smarter selection of expired words
   progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
   main_word = progress.word
   main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
@@ -20,13 +21,13 @@ get :api_sentence do
     return {
       sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
       english: nil,
-      words: {progress.seq => word_json(progress.seq)}
+      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
     }.to_json
   else
     return {
       sentence: @sentence.structure,
       english: @sentence.english,
-      words: Hash[*@sentence.words.map{|i| [i.seq, word_json(i.seq)]}.flatten]
+      j: Collector.new(current_user, words: Word.where(seq: @sentence.words.map(&:seq))).to_hash
     }.to_json
   end
 end
