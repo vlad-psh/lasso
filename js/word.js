@@ -163,23 +163,23 @@ Vue.component('word', {
       </div>
     </div>
 
-    <div class="expandable-list-container" v-if="forms.kreb !== null">
+    <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
         <div>
           Status:
 
           <span v-if="editing && !selectedKrebProgress.flagged_at">
-            <a @click="flagWord(forms.kreb)">flag!</a>
+            <a @click="flagWord(forms.kreb)" class="button">flag!</a>
           </span>
           <span v-else-if="selectedKrebProgress.flagged_at">flagged</span>
 
           <span v-if="editing && !selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
-            <a @click="learnWord(forms.kreb)">learn!</a>
+            <a @click="learnWord(forms.kreb)" class="button">learn!</a>
           </span>
           <span v-else-if="selectedKrebProgress.learned_at">learned</span>
 
           <span v-if="editing && selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
-            <a @click="burnWord(forms.kreb, selectedKrebProgress.id)">burn!</a>
+            <a @click="burnWord(forms.kreb, selectedKrebProgress.id)" class="button">burn!</a>
           </span>
           <span v-else-if="selectedKrebProgress.burned_at">burned</span>
 
@@ -217,7 +217,7 @@ Vue.component('word', {
         <div class="expandable-list-item" v-for="(card, cardIndex) of w.cards">
           <div class="word-gloss" @click="openCardForm(cardIndex)">
             <div class="level-wrapper">{{card.level}}</div>
-            {{card.title}} ({{card.meaning}})
+            {{card.title}} ({{card.meaning.split(',')[0]}})
           </div>
           <div class="expandable-list-arrow" v-if="cardIndex === forms.card"></div>
         </div>
@@ -227,13 +227,11 @@ Vue.component('word', {
     <div class="expandable-list-container word-gloss-expanded" v-if="forms.card !== null">
       <div class="center-block">
         <span>{{selectedCard.title}} · </span>
-        <span style="font-weight: bold">{{selectedCard.reading}} </span>
-        <span>· {{selectedCard.meaning}} </span>
         <span style="font-style: italic">({{selectedCard.pos}})</span>
         <div class="hr-title"><span>Meaning</span></div>
-        <div v-html="stripBB(selectedCard.mmne)"></div>
+        <div>【{{selectedCard.meaning}}】<span v-html="stripBB(selectedCard.mmne)"></span></div>
         <div class="hr-title"><span>Reading</span></div>
-        <div v-html="stripBB(selectedCard.rmne)"></div>
+        <div>【{{selectedCard.reading}}】<span v-html="stripBB(selectedCard.rmne)"></span></div>
       </div>
     </div>
 

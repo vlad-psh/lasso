@@ -100,6 +100,8 @@ class Collector
         mhnt: w.mhnt,
         rmne: w.rmne,
         rhnt: w.rhnt,
+        wk_meaning: w.meaning,
+        wk_readings: w.readings.select{|i| i['primary'] == true}.map{|i| i['reading']},
         radicals: k.wk_kanji.wk_radicals.map(&:id)
       })
     end
@@ -111,6 +113,7 @@ class Collector
   def radical_structure(r)
     result = r.serializable_hash(only: [:id, :title, :level, :meaning, :nmne, :svg])
     result[:progress] = @progresses.detect{|p| p.wk_radical_id == r.id}.try(:api_hash) || {}
+    result[:href] = path_to(:wk_radical).with(r.id)
     return result
   end
 end

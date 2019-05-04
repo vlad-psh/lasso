@@ -20,34 +20,45 @@ Vue.component('kanji', {
   },
   template: `
 <div class="vue-kanji">
-  <span class="kanji-title" :class="kanji.progress.html_class">{{kanji.title}}</span>
-  <span v-if="kanji.jlptn">JLPT N{{kanji.jlptn}}</span>
-  <span v-if="kanji.wk_level"> · WK #{{kanji.wk_level}}</span>
-  <span v-if="kanji.english">：{{kanji.english.join("; ")}}</span>
-  <div>
-    <span v-if="kanji.on">【音読み】{{ kanji.on.join(" · ") }}</span>
-    <span v-if="kanji.kun">【訓読み】{{ kanji.kun.join(" · ") }}</span>
-    <span v-if="kanji.nanori">【名乗り】{{ kanji.nanori.join(" · ") }}</span>
+  <table class="kanji-basic-info">
+    <tr><td>
+      <div class="kanji-title" :class="kanji.progress.html_class">{{kanji.title}}</div>
+    </td><td>
+      <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
+      <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
+      <div v-if="kanji.english">
+        {{kanji.english.join("; ")}}
+        <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
+      </div>
+      <div v-if="kanji.on">音：{{ kanji.on.join(" · ") }}</div>
+      <div v-if="kanji.kun">訓：{{ kanji.kun.join(" · ") }}</div>
+      <div v-if="kanji.nanori">名：{{ kanji.nanori.join(" · ") }}</div>
+      <div v-if="kanji.radicals" class="radicals-list">
+        部首：<a v-for="radicalId in kanji.radicals" :class="radicalById(radicalId).progress.html_class" :href="radicalById(radicalId).href">{{radicalById(radicalId).meaning}}</a>
+      </div>
+    </td></tr>
+  </table>
+
+  <div v-if="kanji.wk_level">
+    <div class="hr-title"><span>Meaning</span></div>
+    <div>
+      <span>【{{kanji.wk_meaning}}】</span>
+      <span v-html="stripBB(kanji.mmne)"></span>
+      <span class="hint" v-html="stripBB(kanji.mhnt)"></span>
+    </div>
+
+    <div class="hr-title"><span>Reading</span></div>
+    <div>
+      <span>【{{kanji.wk_readings.join(', ')}}】</span>
+      <span v-html="stripBB(kanji.rmne)"></span>
+      <span class="hint" v-html="stripBB(kanji.rhnt)"></span>
+    </div>
   </div>
-  <div v-if="kanji.wk_level" class="kanji-meaning">
-    <span style="font-weight: bold">Meaning: </span>
-    <span v-html="stripBB(kanji.mmne)"></span>
-    <span class="hint" v-html="stripBB(kanji.mhnt)"></span>
-  </div>
-  <div v-if="kanji.wk_level" class="kanji-reading">
-    <span style="font-weight: bold">Reading: </span>
-    <span v-html="stripBB(kanji.rmne)"></span>
-    <span class="hint" v-html="stripBB(kanji.rhnt)"></span>
-  </div>
-  <div v-if="kanji.progress.details" class="kanji-reading">
-    <span style="font-weight: bold">Comment: </span>
-    <span v-if="kanji.progress.details.t">【{{kanji.progress.details.t}}】</span>
+
+  <div v-if="kanji.progress.details && (kanji.progress.details.r || kanji.progress.details.m)">
+    <div class="hr-title"><span>User's data</span></div>
     <span v-if="kanji.progress.details.r" v-html="stripBB(kanji.progress.details.r)"></span>
     <span v-if="kanji.progress.details.m" v-html="stripBB(kanji.progress.details.m)"></span>
-  </div>
-  <div v-if="kanji.radicals" class="kanji-reading">
-    <span style="font-weight: bold">Radicals: </span>
-    <span v-for="radicalId in kanji.radicals">{{radicalById(radicalId).meaning}}, </span>
   </div>
 </div>
 `

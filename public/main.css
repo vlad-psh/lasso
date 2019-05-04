@@ -354,33 +354,6 @@ body.black .unlocked .description {
   border-bottom: 2px solid black;
   margin-bottom: -2px;
 }
-.vue-kanji .kanji-title,
-.vue-radical .radical-title {
-  float: left;
-  font-size: 2.5em;
-  margin-right: .3em;
-  padding: 0 0.2em;
-}
-.expandable-list-container .vue-kanji .emph {
-  background-color: rgba(255,255,255,0.5);
-  color: inherit;
-  border-radius: 3px;
-}
-.vue-kanji .emph {
-  background-color: #D3EDD3;
-  color: #357878;
-  border-radius: 3px;
-}
-.vue-kanji .kanji-meaning,
-.vue-kanji .kanji-reading,
-.vue-radical .radical-meaning {
-  margin-top: 1em;
-}
-.vue-kanji .hint,
-.vue-radical .hint {
-  font-style: italic;
-  opacity: .6;
-}
 /* ==============================
    LEVEL ELEMENTS LIST
    ============================== */
@@ -699,7 +672,26 @@ body.black svg.graph text {
   stroke-miterlimit: 2;
   stroke-width: 68px;
 }
-
+.vue-kanji table.kanji-basic-info tr {
+  vertical-align: top;
+}
+.vue-kanji table.kanji-basic-info td + td {
+  padding-left: 1em;
+}
+.vue-kanji .kanji-title,
+.vue-radical .radical-title {
+  font-size: 2.8em;
+  padding: 0 .2em;
+}
+.vue-kanji .hint,
+.vue-radical .hint {
+  font-style: italic;
+  opacity: .6;
+}
+.vue-kanji .radicals-list a {
+  margin-right: .2em;
+  padding: 0 .3em;
+}
 /* ==============================
    WORD CARD
    ============================== */
@@ -739,7 +731,7 @@ body.black svg.graph text {
   color: #357878;
   padding: 0.5em 0;
 }
-.expandable-list-container a {
+.expandable-list-container a.button {
   cursor: pointer;
   background-color: #0b486b;
   color: white;
@@ -747,7 +739,7 @@ body.black svg.graph text {
   margin: 0 0.3em 0 0;
   border-radius: 2px;
 }
-.expandable-list-container a:hover {
+.expandable-list-container a.button:hover {
   background-color: #ffec83;
   color: #333;
 }
@@ -811,6 +803,7 @@ body.black svg.graph text {
 .word-gloss:hover {
   color: #c00;
 }
+.word-kreb-expanded,
 .word-gloss-expanded {
   text-align: justify;
   font-size: 0.9em;
