@@ -15,29 +15,9 @@ class Progress < ActiveRecord::Base
   scope :kanjis,   ->{where(kind: :k)}
   scope :radicals, ->{where(kind: :r)}
 
-#               unlocked  learned  scheduled
-#locked         -         -        -
-#unlocked       true      ANY      ANY
-#just_unlocked  true      -        -
-#just_learned   true      true     -
-#learned        true      true     ANY
-#not_learned    ANY       -        -
-#studied        true      true     date
-#not_studied    ANY       ANY      -
-
-  scope :locked,        ->{where(unlocked: false)} # THIS WILL ALWAYS BE EMPTY
-  scope :unlocked,      ->{where(unlocked: true)}
-  scope :just_unlocked, ->{where(learned_at: nil, unlocked: true)}
   scope :just_learned,  ->{where(deck: 0)}
   scope :any_learned,   ->{where.not(learned_at: nil)}
-#  scope :not_learned,   ->{where(learned_at: nil)} # SHOULD INCLUDE CARDS WITH locked == false
-#  scope :studied,       ->{where.not(scheduled: nil)}
-#  scope :not_studied,   ->{where(scheduled: nil)} # SHOULD INCLUDE CARDS WITH locked == false
-
-#  scope :failed,   ->{where(scheduled: Date.new..Date.today, deck: 0)}
   scope :expired,  ->{where(scheduled: Date.new..Date.today).where.not(deck: 0)}
-  # Cards in current level which are not learned yet:
-#  scope :to_learn, ->{not_learned.where(level: Card.current_level)}
 
   include Comparable
   def <=>(anOther)

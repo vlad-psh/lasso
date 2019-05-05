@@ -87,7 +87,7 @@ module WakameHelpers
   end
 
   SAFE_TYPES = [:radicals, :kanjis, :words]
-  SAFE_GROUPS = [:just_unlocked, :just_learned, :expired, :failed]
+  SAFE_GROUPS = [:just_learned, :expired]
 
   def safe_type(method)
     m = method.to_sym

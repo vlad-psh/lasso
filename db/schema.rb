@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_03_140527) do
+ActiveRecord::Schema.define(version: 2019_05_05_015444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,12 +79,10 @@ ActiveRecord::Schema.define(version: 2019_05_03_140527) do
   create_table "progresses", force: :cascade do |t|
     t.bigint "card_id"
     t.bigint "user_id"
-    t.boolean "unlocked", default: false
     t.integer "deck"
     t.date "scheduled"
     t.jsonb "details"
     t.integer "seq"
-    t.datetime "unlocked_at"
     t.datetime "learned_at"
     t.datetime "burned_at"
     t.string "title"

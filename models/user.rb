@@ -15,8 +15,6 @@ class User < ActiveRecord::Base
   end
 
   def current_level
-#    self.not_learned.order(level: :asc).first.level
-#    Card.joins(:progresses).merge(Progress.where(learned: false, unlocked: true, user_id: self.id)).order(level: :asc).first.level || 1
     Action.where(user: self, action_type: :levelup).count + 1
   end
 
