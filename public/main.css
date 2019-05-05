@@ -208,6 +208,7 @@ a.study-button {
 /* ==============================
    ELEMENTS LIST - RELATED
    ============================== */
+.flagged, .flagged a,
 .locked, .locked a,
 .unlocked, .unlocked a,
 .apprentice, .apprentice a,
@@ -215,9 +216,9 @@ a.study-button {
 .master, .master a,
 .enlightened, .enlightened a,
 .burned, .burned a {
-  color: white;
   text-decoration: none;
 }
+.flagged,
 .locked,
 .unlocked,
 .apprentice,
@@ -228,12 +229,14 @@ a.study-button {
   border-style: solid;
   border-width: 0 1px 1px 0;
 }
+.flagged, .flagged a,
 .locked, .locked a,
 .unlocked, .unlocked a {
   background-color: rgba(157,157,157,0.1);/*#f5f5f5*/
   color: #638686;
   border-color: #b4c6c6;
 }
+.flagged svg,
 .locked svg,
 .unlocked svg {stroke: #638686}
 body.black .locked, body.black .locked a,
@@ -249,6 +252,16 @@ body.black .unlocked, body.black .unlocked a {
 body.black .unlocked .description {
   background-color: #79bd9a;
   color: #0b486b;
+}
+.flagged::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: -1px;
+  border: 5px solid transparent;
+  border-right-color: red;
+  border-top-color: red;
 }
 /* Green palette from here:
    http://www.colourlovers.com/palette/580974/Adrift_in_Dreams */
@@ -325,6 +338,7 @@ body.black .unlocked .description {
 }
 .elements-list-item .element-block {
   padding: 0.5em 0.3em;
+  position: relative;
 }
 .elements-list-item .element {
   font-size: 1.4em;
@@ -687,6 +701,7 @@ body.black svg.graph text {
 .vue-radical .radical-title {
   font-size: 2.8em;
   padding: 0 .2em;
+  position: relative;
 }
 .vue-kanji .hint,
 .vue-radical .hint {

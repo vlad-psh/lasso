@@ -47,7 +47,7 @@ Vue.component('kanji', {
     </div>
   </div>
 
-  <learn-buttons :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></learn-buttons>
+  <learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></learn-buttons>
 
   <div v-if="kanji.wk_level">
     <div class="hr-title"><span>Meaning</span></div>
