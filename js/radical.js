@@ -5,7 +5,8 @@ import helpers from './helpers.js';
 Vue.component('radical', {
   props: {
     id: {type: Number, required: true},
-    j: {type: Object, required: true}
+    j: {type: Object, required: true},
+    editing: {type: Boolean, required: true}
   },
   computed: {
     radical() {
@@ -17,6 +18,9 @@ Vue.component('radical', {
     }
   },
   methods: {
+    updateProgress(progress) {
+      this.j.radicals.find(i => i.id === this.id).progress = progress;
+    },
     ...helpers
   },
   template: `
@@ -26,6 +30,8 @@ Vue.component('radical', {
     <span v-else v-html="radical.svg"></span>
   </span>
   <span>{{radical.meaning}}</span>
+
+  <learn-buttons :paths="j.paths" :progress="radical.progress" :post-data="{id: radical.id, title: radical.title, kind: 'r'}" :editing="editing" v-on:update-progress="updateProgress($event)"></learn-buttons>
 
   <div class="hr-title"><span>Meaning</span></div>
   <div v-html="stripBB(radical.nmne)"></div>

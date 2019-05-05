@@ -5,7 +5,8 @@ import helpers from './helpers.js';
 Vue.component('kanji', {
   props: {
     id: {type: Number, required: true},
-    j: {type: Object, required: true}
+    j: {type: Object, required: true},
+    editing: {type: Boolean, required: true}
   },
   computed: {
     kanji() {
@@ -15,6 +16,9 @@ Vue.component('kanji', {
   methods: {
     radicalById(id) {
       return this.j.radicals.find(i => i.id === id);
+    },
+    updateProgress(progress) {
+      this.j.kanjis.find(i => i.id === this.id).progress = progress;
     },
     ...helpers
   },
@@ -42,6 +46,8 @@ Vue.component('kanji', {
       </div>
     </div>
   </div>
+
+  <learn-buttons :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></learn-buttons>
 
   <div v-if="kanji.wk_level">
     <div class="hr-title"><span>Meaning</span></div>

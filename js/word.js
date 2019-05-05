@@ -134,7 +134,7 @@ Vue.component('word', {
         <learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></learn-buttons>
 
         <div v-for="kanji of j.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
-          <kanji :id="kanji.id" :j="j"></kanji>
+          <kanji :id="kanji.id" :j="j" :editing="editing"></kanji>
         </div>
       </div>
     </div>

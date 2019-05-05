@@ -11,8 +11,13 @@ Vue.component('learn-buttons', {
     }
   },
   computed: {
-    flagged() {
-      this.progress.flagged_at
+    status() {
+      var s = [];
+      if (this.progress.flagged_at) s.push('flagged');
+      if (this.progress.learned_at) s.push('learned');
+      if (this.progress.burned_at) s.push('burned');
+      if (s.length === 0) s.push('new');
+      return s.join(', ');
     }
   },
   methods: {
@@ -55,22 +60,19 @@ Vue.component('learn-buttons', {
   }, // end of methods
   template: `
 <div class="vue-learn-buttons">
-  Status: <span v-if="!editing && !progress.flagged_at && !progress.learned_at && !progress.burned_at">new</span>
+  Status: {{status}}
 
   <span v-if="editing && !progress.flagged_at">
     <a @click="flag()" class="button">flag!</a>
   </span>
-  <span v-else-if="progress.flagged_at">flagged</span>
 
   <span v-if="editing && !progress.learned_at && !progress.burned_at">
     <a @click="learn()" class="button">learn!</a>
   </span>
-  <span v-else-if="progress.learned_at">learned</span>
 
   <span v-if="editing && progress.learned_at && !progress.burned_at">
     <a @click="burn()" class="button">burn!</a>
   </span>
-  <span v-else-if="progress.burned_at">burned</span>
 
   <span v-if="editing && postData.kind === 'w'">
     <input type="text" v-model="drillTitle" @keyup.enter="addToDrill()">
