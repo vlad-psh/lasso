@@ -35,7 +35,10 @@ Vue.component('kanji', {
         <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
       </div>
       <div v-if="kanji.radicals" class="radicals-list">
-        部首：<a v-for="radicalId in kanji.radicals" :class="radicalById(radicalId).progress.html_class" :href="radicalById(radicalId).href">{{radicalById(radicalId).meaning}}</a>
+        部首：<template v-for="radicalId in kanji.radicals">
+          <a :class="radicalById(radicalId).progress.html_class" :href="radicalById(radicalId).href">{{radicalById(radicalId).meaning}}</a>
+          {{' '}}
+        </template>
       </div>
     </div>
   </div>

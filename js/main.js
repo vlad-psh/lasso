@@ -37,10 +37,13 @@ $(document).on('click', '.black-theme-checkbox', function(event){
     $('body').removeClass("black");
   };
 });
-var editing = false;
 $(document).on('click', '.editing-checkbox input', function(event){
-  editing = !editing;
-  app.editing = editing;
+  $.ajax({
+    method: "POST",
+    url: "/settings",
+    data: {"editing": this.checked}
+  });
+  if (typeof app !== "undefined") app.editing = this.checked;
 });
 /* ===================
    SPEECH

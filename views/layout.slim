@@ -6,7 +6,7 @@ html
     script src="/build/main.js"
     link rel="stylesheet" type="text/css" href="/main.css"
     meta content="width=device-width, initial-scale=1" name="viewport"
-  body.myfont_jp2 class="#{current_user.try(:settings).try(:[], 'theme') == 'black' ? 'black' : ''}"
+  body.myfont_jp2 class="#{user_settings('theme') == 'black' ? 'black' : ''}"
     div#main-menu
       div.center
         div.main-menu-item
@@ -26,7 +26,7 @@ html
         - if current_user.present?
           a style="padding-left: 0.7em" href=path_to(:notes) 📘
           label.editing-checkbox
-            input type="checkbox"
+            input type="checkbox" checked=('checked' if user_settings('editing')) autocomplete="off"
             span
       div.right
         form.search-form method="GET" action=path_to(:search)

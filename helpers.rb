@@ -18,6 +18,11 @@ module WakameHelpers
     return @current_level
   end
 
+  def user_settings(_name)
+    return nil unless current_user
+    return current_user.settings.try(:[], _name)
+  end
+
   def bb_expand(text)
     text = text.gsub(/\[kanji\]([^\[]*)\[\/kanji\]/, "[%(k)\\1%]")
     text = text.gsub(/\[radical\]([^\[]*)\[\/radical\]/, "[%(r)\\1%]")

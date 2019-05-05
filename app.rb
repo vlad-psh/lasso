@@ -279,6 +279,9 @@ post :settings do
   if params['black_theme'] != nil
     current_user.settings['theme'] = (params['black_theme'] == 'true' ? 'black' : 'white')
   end
+  if params['editing'] != nil
+    current_user.settings['editing'] = (params['editing'] == 'true' ? true : false)
+  end
   current_user.save
 
   'ok'

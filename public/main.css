@@ -661,7 +661,9 @@ body.black svg.graph text {
    ============================== */
 #kanji-card-app,
 #radical-card-app {
-  margin: 1em 2em;
+  margin: 1em auto;
+  padding: 0 1em;
+  max-width: 50em;
 }
 .study-card h1 svg,
 .elements-list-item svg,
@@ -673,13 +675,13 @@ body.black svg.graph text {
   stroke-width: 68px;
 }
 .vue-kanji .kanji-info-table {
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  grid-gap: 1em;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
-.vue-kanji .kanji-info-table div {
-  grid-column: auto;
-  grid-row: 1;
+.vue-kanji .kanji-info-table > div + div {
+  margin-left: 1em;
+  min-width: 100px;
 }
 .vue-kanji .kanji-title,
 .vue-radical .radical-title {
@@ -692,7 +694,6 @@ body.black svg.graph text {
   opacity: .6;
 }
 .vue-kanji .radicals-list a {
-  margin-right: .2em;
   padding: 0 .3em;
 }
 .vue-radical .hr-title span,

@@ -78,6 +78,6 @@ div.index-page-container
   == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
   div.settings
-    input.black-theme-checkbox type="checkbox" checked=('checked' if current_user.try(:settings).try(:[], 'theme') == 'black') autocomplete="off" Black theme (beta)
+    input.black-theme-checkbox type="checkbox" checked=('checked' if user_settings('theme') == 'black') autocomplete="off" Black theme (beta)
 
   a href=path_to(:drills) Drill Sets
