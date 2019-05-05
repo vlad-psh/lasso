@@ -41,54 +41,62 @@ get :api_word_autocomplete do
   return ww.to_json
 end
 
-post :api_word_flag do
+def find_or_init_progress(p)
+  kind = p[:kind].to_sym
+
+  return case p[:kind].to_sym
+    when :w
+      Progress.find_or_initialize_by(seq: p[:id], title: p[:title], user: current_user, kind: :w)
+    when :k
+      i = Progress.find_or_initialize_by(kanji_id: p[:id], kind: :k, user: current_user)
+      i.title = p[:title]
+      i
+    when :r
+      i = Progress.find_or_initialize_by(wk_radical_id: p[:id], kind: :r, user: current_user)
+      i.title = p[:title]
+      i
+    else
+      raise ArgumentError.new('Incorrect "kind" value')
+    end
+end
+
+post :api_flag do
   protect!
 
-  progress = Progress.find_or_initialize_by(
-        seq: params[:seq],
-        title: params[:kreb],
-        user: current_user,
-        kind: :w)
+  progress = find_or_init_progress(params)
   progress.flagged_at = DateTime.now
   progress.save
 
   return progress.api_json
 end
 
-post :api_word_learn do
+post :api_learn do
   protect!
 
-  progress = Progress.find_or_initialize_by(
-        seq: params[:seq],
-        title: params[:kreb],
-        user: current_user,
-        kind: :w)
+  progress = find_or_init_progress(params)
   throw StandardError.new("Already learned") if progress.learned_at.present?
 
-  unless progress.unlocked
-    progress.unlocked = true
-    progress.unlocked_at = DateTime.now
-  end
-
-  progress.learned_at = DateTime.now
-  progress.deck = 0
-  progress.scheduled = Date.today
-  progress.transition = Date.today
+  progress.attributes = {
+    learned_at: DateTime.now,
+    deck: 0,
+    scheduled: Date.today,
+    transition: Date.today
+  }
   progress.save
 
   Action.create(user: current_user, progress: progress, action_type: :learned)
 
   stats = Statistic.find_or_initialize_by(user: current_user, date: Date.today)
-  stats.learned['w'] += 1
+  stats.learned[progress.kind] += 1
   stats.save
 
   return progress.api_json
 end
 
-post :api_word_burn do
+post :api_burn do
   protect!
 
-  progress = Progress.find_by(id: params[:progress_id], user: current_user)
+  progress = find_or_init_progress(params)
   progress.answer!(:burn)
 
   return progress.api_json
@@ -126,11 +134,7 @@ end
 post :drill_add_word do
   protect!
 
-  progress = Progress.find_or_initialize_by(
-        seq: params[:seq],
-        title: params[:kreb],
-        user: current_user,
-        kind: :w)
+  progress = find_or_init_progress(params)
   progress.save
 
   drill = Drill.find_or_create_by(

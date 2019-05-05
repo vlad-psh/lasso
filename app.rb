@@ -48,9 +48,9 @@ paths index: '/',
 # Change word properties
     api_word_autocomplete: '/api/word/autocomplete',
     # POST:
-    api_word_learn:   '/api/word/learn',
-    api_word_burn:    '/api/word/burn',
-    api_word_flag:    '/api/word/flag',
+    api_learn:   '/api/word/learn',
+    api_burn:    '/api/word/burn',
+    api_flag:    '/api/word/flag',
     api_word_comment: '/api/word/comment',
     api_word_connect: '/api/word/connect', # + DELETE method
 # Other API

@@ -47,9 +47,9 @@ class Collector
       radicals: @radicals.map{|i| radical_structure(i)},
       kanji_summary: kanji_summary.map{|i| kanji_summary_structure(i)},
       paths: {
-        learn:   path_to(:api_word_learn),
-        burn:    path_to(:api_word_burn),
-        flag:    path_to(:api_word_flag),
+        learn:   path_to(:api_learn),
+        burn:    path_to(:api_burn),
+        flag:    path_to(:api_flag),
         comment: path_to(:api_word_comment),
         connect: path_to(:api_word_connect),
         drill:   path_to(:drill_add_word),

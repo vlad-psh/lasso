@@ -5,6 +5,7 @@ require("jquery-ujs");
 require('./radical.js');
 require('./kanji.js');
 require('./word.js');
+require('./learn_buttons.js');
 
 /* ===================
    CLICK TO SHOW TITLE

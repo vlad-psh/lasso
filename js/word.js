@@ -76,33 +76,6 @@ Vue.component('word', {
         });
       };
     },
-    learnWord(kreb) {
-      $.ajax({
-        url: this.j.paths.learn,
-        method: "POST",
-        data: {seq: this.w.seq, kreb: kreb}
-      }).done(data => {
-        this.w.krebs.find(i => i.title === kreb).progress = JSON.parse(data);
-      });
-    },
-    burnWord(kreb, progressId) {
-      $.ajax({
-        url: this.j.paths.burn,
-        method: "POST",
-        data: {progress_id: progressId}
-      }).done(data => {
-        this.w.krebs.find(i => i.title === kreb).progress = JSON.parse(data);
-      });
-    },
-    flagWord(kreb) {
-      $.ajax({
-        url: this.j.paths.flag,
-        method: "POST",
-        data: {seq: this.w.seq, kreb: kreb}
-      }).done(data => {
-        this.w.krebs.find(i => i.title === kreb).progress = JSON.parse(data);
-      });
-    },
     saveComment() {
       $.ajax({
         url: this.j.paths.comment,
@@ -132,15 +105,8 @@ Vue.component('word', {
         this.forms.card = cardIndex;
       }
     },
-    addToDrill(kreb) {
-      var app = this;
-      $.ajax({
-        url: this.j.paths.drill,
-        method: "POST",
-        data: {drillTitle: this.forms.drillTitle, seq: this.w.seq, kreb: kreb}
-      }).done(data => {
-        alert(data);
-      });
+    updateKrebProgress(progress) {
+      this.w.krebs.find(i => i.title === this.forms.kreb).progress = progress;
     },
     ...helpers
   }, // end of methods
@@ -165,28 +131,7 @@ Vue.component('word', {
 
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
-        <div>
-          Status:
-
-          <span v-if="editing && !selectedKrebProgress.flagged_at">
-            <a @click="flagWord(forms.kreb)" class="button">flag!</a>
-          </span>
-          <span v-else-if="selectedKrebProgress.flagged_at">flagged</span>
-
-          <span v-if="editing && !selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
-            <a @click="learnWord(forms.kreb)" class="button">learn!</a>
-          </span>
-          <span v-else-if="selectedKrebProgress.learned_at">learned</span>
-
-          <span v-if="editing && selectedKrebProgress.learned_at && !selectedKrebProgress.burned_at">
-            <a @click="burnWord(forms.kreb, selectedKrebProgress.id)" class="button">burn!</a>
-          </span>
-          <span v-else-if="selectedKrebProgress.burned_at">burned</span>
-
-          <span v-if="editing">
-            <input type="text" v-model="forms.drillTitle" @keyup.enter="addToDrill(forms.kreb)">
-          </span>
-        </div>
+        <learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></learn-buttons>
 
         <div v-for="kanji of j.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
           <kanji :id="kanji.id" :j="j"></kanji>
