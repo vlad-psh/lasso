@@ -1,11 +1,25 @@
 h1 = @drill.title
 
-div class="elements-list" id="vue-list"
+/div class="elements-list" id="vue-list"
   div.elements-list-item v-for="e in elements"
     div class="element-block" :class="e.html_class || 'locked'"
       a :href="e.href"
         div.element: span.japanese = "{{e.title}}"
         div.description = "{{e.description}}"
+
+css:
+  table {border-collapse: collapse; margin: 0 1em;}
+  table td {border: 1px solid #ccc; padding: .2em .6em}
+  td.hide {opacity: 0}
+  td.hide:hover {opacity: 1}
+
+table
+  - @elements.shuffle.each do |e|
+    tr
+      td: input type="checkbox"
+      td = e[:reading]
+      td.hide: a href=e[:href] = e[:description]
+      td.hide = e[:title]
 
 javascript:
   var app = new Vue({

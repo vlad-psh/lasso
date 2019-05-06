@@ -141,7 +141,7 @@ get :list_level do
   @words = Word.joins(:wk_words).merge(WkWord.where(level: params[:level])).order(:id).with_progresses(@view_user)
 #  @kanji = WkKanji.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
   @kanji = Kanji.includes(:wk_kanji).joins(:wk_kanji).merge(WkKanji.where(level: params[:level])).order(:id).with_progresses(@view_user)
-  @radicals = WkRadical.where(level: params[:level]).order(id: :asc).with_progress(@view_user)
+  @radicals = WkRadical.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
 
   @title = "L.#{params[:level]}"
   @separate_list = true
@@ -193,6 +193,7 @@ get :search do
 
   @words = []
   @kanji = []
+  @radicals = []
   @russian_words = RussianWord.none
   q = params['query'].strip
   @title = "🔎 #{q}"
@@ -210,6 +211,7 @@ get :search do
 
       @words = Word.where('searchable_en ILIKE ? OR searchable_ru ILIKE ?', "%#{q}%", "%#{q}%").order(:is_common, :id).with_progresses(current_user).sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
       @kanji = Kanji.where('searchable_en ILIKE ?', "%#{q}%").order(:grade).with_progresses(current_user)
+      @radicals = WkRadical.where('meaning ILIKE ?', "%#{q}%").order(:level).with_progresses(current_user)
     end
   end
 
@@ -465,6 +467,7 @@ get :drill do
   @elements = @drill.progresses.eager_load(:word).map do |p|
     {
       title: p.title,
+      reading: p.word.rebs.first,
       description: p.word.list_desc,
       html_class: p.html_class,
       href: path_to(:word).with(p.seq)

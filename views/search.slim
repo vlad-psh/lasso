@@ -5,6 +5,14 @@ ruby:
     return "#{words[0]}〈#{words[1..-1].join('・')}〉" if words.length > 1
   end
 
+- if @radicals.length > 0
+  div.hr-title: span style="padding: 1em" Radicals
+  div.search-results
+    - @radicals.each do |e|
+      div.search-result class=(e.user_progress.try(:html_class) || :locked)
+        a href=path_to(:wk_radical).with(e.id) == e.title.present? ? e.title : e.svg
+        == " " + highlight(e.meaning, params['query'])
+
 - if @kanji.length > 0
   div.hr-title: span style="padding: 1em" Kanji
   div.search-results

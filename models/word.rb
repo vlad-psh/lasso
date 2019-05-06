@@ -39,18 +39,6 @@ class Word < ActiveRecord::Base
     return [*kebs, *rebs].compact
   end
 
-  def kanji_objects
-    Card.kanjis.where(title: self.kanji.split('')).map{|i| [i.title, i]}.to_h
-  end
-
-  def kanji_objects_with_progress(user)
-    Card.kanjis.where(title: self.kanji.split('')).with_progress(user).map{|i| [i.title, i]}.to_h
-  end
-
-  def all_sentences
-    Sentence.joins(:sentences_words).merge(SentencesWord.where(word_seq: [seq, *long_words.pluck(:seq)]))
-  end
-
   def burn_by!(user)
     progress = Progress.find_or_create_by(seq: self.seq, user: user)
     throw StandardError.new("Already burned") if progress.burned_at

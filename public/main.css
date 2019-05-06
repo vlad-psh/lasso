@@ -679,6 +679,7 @@ body.black svg.graph text {
   padding: 0 1em;
   max-width: 50em;
 }
+.search-result svg,
 .study-card h1 svg,
 .elements-list-item svg,
 .radical-title svg {
@@ -755,6 +756,9 @@ body.black svg.graph text {
 }
 .word-krebs {
   line-height: 0.5em;
+}
+.word-kreb {
+  position: relative;
 }
 .expandable-list-item {
   display: inline-block;
