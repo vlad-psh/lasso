@@ -731,15 +731,36 @@ body.black svg.graph text {
 /* ==============================
    LEARN BUTTONS
    ============================== */
-.vue-learn-buttons a {
+
+/* ==============================
+   VUE: DOUBLE CLICK BUTTON
+   ============================== */
+.double-click-button {
+  display: inline-block;
   cursor: pointer;
   background-color: #0b486b;
   color: white;
-  padding: 0 0.3em;
-  margin: 0 0.3em 0 0;
+  margin-right: .3em;
   border-radius: 2px;
+  -moz-user-select: none;
+  user-select: none;
 }
-.vue-learn-buttons a:hover {
+.double-click-button .title {
+  margin: 0 .3em;
+}
+.double-click-button .timeout {
+  height: 2px;
+  background-color: red;
+  margin: 0 auto;
+  width: 100%;
+  opacity: 0;
+}
+.double-click-button.waiting .timeout {
+  transition: width 1s ease-out;
+  width: 0;
+  opacity: 1;
+}
+.double-click-button.clicked {
   background-color: #ffec83;
   color: #333;
 }

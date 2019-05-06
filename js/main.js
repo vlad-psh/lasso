@@ -6,6 +6,7 @@ require('./radical.js');
 require('./kanji.js');
 require('./word.js');
 require('./learn_buttons.js');
+require('./double_click_button.js');
 
 /* ===================
    CLICK TO SHOW TITLE

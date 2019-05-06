@@ -56,22 +56,22 @@ Vue.component('learn-buttons', {
       }).done(data => {
         alert(data);
       });
-    }
+    },
   }, // end of methods
   template: `
 <div class="vue-learn-buttons">
   Status: {{status}}
 
   <span v-if="editing && !progress.flagged_at">
-    <a @click="flag()" class="button">flag!</a>
+    <double-click-button @click="flag()">flag!</double-click-button>
   </span>
 
   <span v-if="editing && !progress.learned_at && !progress.burned_at">
-    <a @click="learn()" class="button">learn!</a>
+    <double-click-button @click="learn()">learn!</double-click-button>
   </span>
 
   <span v-if="editing && progress.learned_at && !progress.burned_at">
-    <a @click="burn()" class="button">burn!</a>
+    <double-click-button @click="burn()">burn!</double-click-button>
   </span>
 
   <span v-if="editing && postData.kind === 'w'">
