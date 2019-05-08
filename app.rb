@@ -30,22 +30,24 @@ paths index: '/',
     list_jlpt_kanji: '/kanji/jlpt/:level',
     drills: '/drills',
     drill: '/drill/:id',
+    flagged: '/flagged',
 
     current: '/current', # get(redirection)
     cards: '/cards',
-    learn: '/learn/:id', # post
     study: '/study/:class/:group', # get, post
     search: '/search', # post
     notes: '/notes',
     note: '/note/:id',
-    login: '/login', # GET: login form; POST: log in
-    logout: '/logout', # DELETE: logout
-    settings: '/settings',
+# Element's pages
     word: '/word/:id',
     kanji: '/kanji/:id',
+    wk_radical: '/wk_radical/:id',
+# Session control
+    login: '/login', # GET: login form; POST: log in
+    logout: '/logout', # DELETE: logout
+# API
     api_sentence: '/api/sentence',
-    api_drill: '/api/drill',
-# Change word properties
+    api_drill: '/api/drill', # doesn't used yet
     api_word_autocomplete: '/api/word/autocomplete',
     # POST:
     api_learn:   '/api/word/learn',
@@ -53,14 +55,14 @@ paths index: '/',
     api_flag:    '/api/word/flag',
     api_word_comment: '/api/word/comment',
     api_word_connect: '/api/word/connect', # + DELETE method
+    # GET and POST
+    study2: '/study2',
 # Other API
+    settings: '/settings',
     mecab: '/mecab',
     sentences: '/sentences', # POST
     sentence: '/sentence/:id', # DELETE
-    drill_add_word: '/drill/word',
-# Temporary API (should be deleted soon)
-    study2: '/study2', # get, post
-    wk_radical: '/wk_radical/:id'
+    drill_add_word: '/drill/word'
 
 require_relative './api.rb'
 
@@ -147,15 +149,6 @@ get :list_level do
   @separate_list = true
 
   slim :list_level
-end
-
-post :learn do
-  protect!
-
-  e = Card.find(params[:id])
-  e.learn_by!(current_user)
-
-  redirect path_to(:card).with(params[:id])
 end
 
 get :study do
@@ -475,4 +468,9 @@ get :drill do
   end
 
   slim :drill
+end
+
+get :flagged do
+  @progresses = Progress.where.not(flagged_at: nil).order(flagged_at: :desc)
+  slim :flagged
 end

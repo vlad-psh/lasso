@@ -628,6 +628,7 @@ body.black svg.graph text {
   display: inline-block;              /* Actually FF 20+ */
   width: calc(100% - 0.4em - 1px); /* minus padding minus right border */
 /*  border-bottom: 1px dotted #d2edf7;*/
+  position: relative;
 }
 .search-result.locked,
 .search-result.unlocked,
@@ -738,15 +739,14 @@ body.black svg.graph text {
 .double-click-button {
   display: inline-block;
   cursor: pointer;
-  background-color: #0b486b;
-  color: white;
   margin-right: .3em;
-  border-radius: 2px;
+  border: 1px solid;
+  border-radius: 4px;
   -moz-user-select: none;
   user-select: none;
 }
 .double-click-button .title {
-  margin: 0 .3em;
+  margin: -.1em .4em 0 .4em;
 }
 .double-click-button .timeout {
   height: 2px;
