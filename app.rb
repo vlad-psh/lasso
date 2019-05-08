@@ -419,6 +419,9 @@ end
 get :kanji do
   protect!
   @kanji = Kanji.find(params[:id])
+  if @kanji.wk_kanji.present?
+    @words = Word.joins(:wk_words).merge(@kanji.wk_kanji.wk_words).with_progresses(current_user)
+  end
   slim :kanji
 end
 

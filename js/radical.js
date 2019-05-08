@@ -29,7 +29,7 @@ Vue.component('radical', {
     <span v-if="radical.title">{{radical.title}}</span>
     <span v-else v-html="radical.svg"></span>
   </span>
-  <span>{{radical.meaning}}</span>
+  <span>{{radical.meaning}} (WK#{{radical.level}})</span>
 
   <learn-buttons :paths="j.paths" :progress="radical.progress" :post-data="{id: radical.id, title: radical.title, kind: 'r'}" :editing="editing" v-on:update-progress="updateProgress($event)"></learn-buttons>
 

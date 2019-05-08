@@ -5,6 +5,9 @@ ruby:
 div#kanji-card-app
   kanji :id=id :j="j" :editing="editing"
 
+  div.hr-title: span WK Words
+  == slim :list, locals: {elements: @words}
+
 javascript:
   var app = new Vue({
     el: '#kanji-card-app',
