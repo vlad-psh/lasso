@@ -5,8 +5,10 @@ require("jquery-ujs");
 require('./radical.js');
 require('./kanji.js');
 require('./word.js');
+
 require('./learn_buttons.js');
 require('./double_click_button.js');
+require('./editable_text.js');
 
 /* ===================
    CLICK TO SHOW TITLE

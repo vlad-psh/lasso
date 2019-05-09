@@ -8,7 +8,7 @@ Vue.component('word', {
   },
   data() {
     return {
-      forms: {card: null, kreb: null, comment: null, drillTitle: ''},
+      forms: {card: null, kreb: null, drillTitle: ''},
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -76,21 +76,6 @@ Vue.component('word', {
         });
       };
     },
-    saveComment() {
-      $.ajax({
-        url: this.j.paths.comment,
-        data: {seq: this.w.seq, comment: this.w.comment},
-        method: "POST"
-      }).done(data => {
-        this.forms.comment = false;
-      });
-    },
-    showCommentForm() {
-      this.forms.comment = true;
-    },
-    hideCommentForm() {
-      this.forms.comment = false;
-    },
     openKrebForm(kreb) {
       if (this.forms.kreb === kreb) {
         this.forms.kreb = null;
@@ -107,6 +92,9 @@ Vue.component('word', {
     },
     updateKrebProgress(progress) {
       this.w.krebs.find(i => i.title === this.forms.kreb).progress = progress;
+    },
+    commentUpdated(text) {
+      this.w.comment = text;
     },
     ...helpers
   }, // end of methods
@@ -188,19 +176,7 @@ Vue.component('word', {
       </div>
     </div>
 
-    <div v-if="editing" class="word-comment-form center-block">
-      <div v-if="forms.comment">
-        <textarea id="word-comment-textarea" v-model="w.comment" @keyup.esc="hideCommentForm"></textarea>
-        <input type="button" value="Save" @click="saveComment">
-      </div>
-      <div class="editable-text" v-else-if="w.comment" @click="showCommentForm">
-        <p v-for="commentLine of w.comment.split('\\n')">{{commentLine}}</p>
-      </div>
-      <div class="editable-text" v-else style="font-style: italic; color: rgba(128,128,128,0.7)" @click="showCommentForm">Add comment</div>
-    </div>
-    <div v-else-if="w.comment" class="word-comment-form center-block">
-      <p v-for="commentLine of w.comment.split('\\n')">{{commentLine}}</p>
-    </div>
+    <editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="commentUpdated($event)"></editable-text>
 
     <div v-if="editing" class="center-block" style="margin-top: 0.8em; margin-bottom: 0.8em">
       <span style="font-weight: bold">Contains:</span>
