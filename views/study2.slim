@@ -25,7 +25,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.green @click="answer('correct')"
         ' YES
         div.answer-details = '+ {{selectedKreb.progress.correct}}'
-    word :seq="f.selectedWord.seq" :j="j" :editing="editing"
+    vue-word :seq="f.selectedWord.seq" :j="j" :editing="editing"
 
   div v-if="allAnswered && !f.selectedWord && !f.submitted"
     div.answer-buttons v-if="allAnswered"

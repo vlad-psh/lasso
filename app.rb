@@ -55,6 +55,7 @@ paths index: '/',
     api_flag:    '/api/word/flag',
     api_word_comment: '/api/word/comment',
     api_word_connect: '/api/word/connect', # + DELETE method
+    api_add_word_to_drill: '/api/drill/add_word',
     # GET and POST
     study2: '/study2',
 # Other API
@@ -62,7 +63,9 @@ paths index: '/',
     mecab: '/mecab',
     sentences: '/sentences', # POST
     sentence: '/sentence/:id', # DELETE
-    drill_add_word: '/drill/word'
+    drill_add_word: '/drill/word',
+# TEMP
+    kanjidrill: '/kanjidrill'
 
 require_relative './api.rb'
 
@@ -476,4 +479,16 @@ end
 get :flagged do
   @progresses = Progress.where.not(flagged_at: nil).order(flagged_at: :desc)
   slim :flagged
+end
+
+get :kanjidrill do
+  kanjiused = []
+  @words = WkWord.joins(:wk_kanji).merge(
+             WkKanji.joins(:kanji).merge(
+               Kanji.joins(:progresses).merge(
+                 Progress.where(user: current_user, kind: :k).where.not(learned_at: nil)
+               )
+             )
+           ).where(seq: Progress.where(user: current_user, kind: :w).where.not(learned_at: nil).pluck(:seq))
+  slim :kanjidrill
 end

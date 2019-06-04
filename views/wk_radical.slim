@@ -3,7 +3,7 @@ ruby:
   json = Collector.new(current_user, radicals: WkRadical.where(id: id)).to_json
 
 div#radical-card-app
-  radical :id=id :j="j" :editing="editing"
+  vue-radical :id=id :j="j" :editing="editing"
 
 javascript:
   var app = new Vue({

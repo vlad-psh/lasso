@@ -1,6 +1,6 @@
 import helpers from './helpers.js';
 
-Vue.component('word', {
+Vue.component('vue-word', {
   props: {
     seq: {type: Number, required: true},
     j: {type: Object, required: true},
@@ -8,7 +8,7 @@ Vue.component('word', {
   },
   data() {
     return {
-      forms: {card: null, kreb: null, drillTitle: ''},
+      forms: {card: null, kreb: null, selectedDrill: null},
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -23,9 +23,16 @@ Vue.component('word', {
         return {};
       }
     },
+    selectedKreb() {
+      if (this.forms.kreb !== null) {
+        return this.w.krebs.find(i => i.title === this.forms.kreb);
+      } else {
+        return {};
+      }
+    },
     selectedKrebProgress() {
       if (this.forms.kreb !== null) {
-        return this.w.krebs.find(i => i.title === this.forms.kreb).progress;
+        return this.selectedKreb.progress;
       } else {
         return {};
       }
@@ -93,8 +100,21 @@ Vue.component('word', {
     updateKrebProgress(progress) {
       this.w.krebs.find(i => i.title === this.forms.kreb).progress = progress;
     },
-    commentUpdated(text) {
-      this.w.comment = text;
+    addKrebToDrill() {
+      if (this.selectedKreb.drills.indexOf(this.forms.selectedDrill) === -1) {
+        $.ajax({
+          url: this.j.paths.drill,
+          method: "POST",
+          data: {
+            kind: 'w',
+            id: this.w.seq,
+            title: this.selectedKreb.title,
+            drill_id: this.forms.selectedDrill
+          }
+        }).done(data => {
+          this.selectedKreb.drills.push(this.forms.selectedDrill);
+        });
+      }
     },
     ...helpers
   }, // end of methods
@@ -106,7 +126,7 @@ Vue.component('word', {
     });
   },
   template: `
-  <div class="word-card" id="word-card-app">
+  <div class="vue-word word-card" id="word-card-app">
 
     <div class="word-krebs center-block expandable-list">
       <div class="expandable-list-item" v-for="kreb of w.krebs">
@@ -119,10 +139,15 @@ Vue.component('word', {
 
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
-        <learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></learn-buttons>
+        <table><tr>
+          <td><vue-learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></vue-learn-buttons></td>
+          <td>Drills: {{selectedKreb.drills.map(i => j.drills.find(k => k.id === i).title)}}; Add:</td>
+          <td><vue-dropdown :options="j.drills" empty-item="Select..." :selected-value="forms.selectedDrill" @selected="forms.selectedDrill = $event" value-key="id"></vue-dropdown></td>
+          <td><input type="button" value="Add" @click="addKrebToDrill()"></td>
+        </tr></table>
 
         <div v-for="kanji of j.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
-          <kanji :id="kanji.id" :j="j" :editing="editing"></kanji>
+          <vue-kanji :id="kanji.id" :j="j" :editing="editing"></vue-kanji>
         </div>
       </div>
     </div>
@@ -176,7 +201,7 @@ Vue.component('word', {
       </div>
     </div>
 
-    <editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="commentUpdated($event)"></editable-text>
+    <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="w.comment = $event"></vue-editable-text>
 
     <div v-if="editing" class="center-block" style="margin-top: 0.8em; margin-bottom: 0.8em">
       <span style="font-weight: bold">Contains:</span>

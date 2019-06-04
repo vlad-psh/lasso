@@ -2,13 +2,14 @@ window.Vue = require('vue');
 require("jquery-ui/ui/widgets/autocomplete.js");
 require("jquery-ujs");
 
-require('./radical.js');
-require('./kanji.js');
-require('./word.js');
+require('./vue-radical.js');
+require('./vue-kanji.js');
+require('./vue-word.js');
 
-require('./learn_buttons.js');
-require('./double_click_button.js');
-require('./editable_text.js');
+require('./vue-learn-buttons.js');
+require('./vue-double-click-button.js');
+require('./vue-editable-text.js');
+require('./vue-dropdown.js');
 
 /* ===================
    CLICK TO SHOW TITLE

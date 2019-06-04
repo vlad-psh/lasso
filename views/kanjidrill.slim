@@ -1,0 +1,22 @@
+
+css:
+  table {border-collapse: collapse; margin: 0 1em;}
+  table td {border: 1px solid #ccc; padding: .2em .6em}
+  td.hide {opacity: 0}
+  td.hide:hover {opacity: 1}
+
+table
+  - @words.shuffle.each do |e|
+    tr
+      td: input type="checkbox"
+      td = e.reading
+      td.hide: a href=path_to(:word).with(e.seq) = e.meaning
+      td.hide = e.title
+
+javascript:
+  var app = new Vue({
+    el: '#vue-list',
+    data: {
+      elements: #{{@elements.to_json}}
+    }
+  });

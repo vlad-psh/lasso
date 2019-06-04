@@ -1,4 +1,4 @@
-Vue.component('editable-text', {
+Vue.component('vue-editable-text', {
   props: {
     postUrl: {type: String, required: true},
     postParams: {type: Object, required: true},
@@ -39,7 +39,7 @@ Vue.component('editable-text', {
       <input type="button" value="Save" @click="updateText()">
     </div>
 
-    <div class="editable-text" @click="openForm()">
+    <div v-else class="editable-text" @click="openForm()">
       <template v-if="textData">
         <p v-for="commentLine of textData.split('\\n')">{{commentLine}}</p>
       </template>

@@ -3,7 +3,7 @@ ruby:
   json = Collector.new(current_user, words: Word.where(seq: seq)).to_json
 
 div#word-card-app
-  word :seq=seq :j="j" :editing="editing"
+  vue-word :seq=seq :j="j" :editing="editing"
 
 javascript:
   var app = new Vue({

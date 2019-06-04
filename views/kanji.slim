@@ -3,10 +3,11 @@ ruby:
   json = Collector.new(current_user, kanjis: Kanji.where(id: id)).to_json
 
 div#kanji-card-app
-  kanji :id=id :j="j" :editing="editing"
+  vue-kanji :id=id :j="j" :editing="editing"
 
-  div.hr-title: span WK Words
-  == slim :list, locals: {elements: @words}
+  - @words.present?
+    div.hr-title: span WK Words
+    == slim :list, locals: {elements: @words}
 
 javascript:
   var app = new Vue({

@@ -13,6 +13,8 @@ css:
   td.hide {opacity: 0}
   td.hide:hover {opacity: 1}
 
+input class="word-add-autocomplete" type="text" placeholder="Add short"
+
 table
   - @elements.shuffle.each do |e|
     tr
@@ -28,3 +30,25 @@ javascript:
       elements: #{{@elements.to_json}}
     }
   });
+
+  var autocompleteSelect = function(event, ui) {
+    // ui.item.id, ui.item.title, ui.item.href
+
+    $.ajax({
+      url: "#{{path_to(:api_add_word_to_drill)}}",
+      method: 'POST',
+      data: {drill_id: #{{@drill.id}}, seq: ui.item.id}
+    }).done(data => {
+      console.log(data);
+      $(this).val('');
+    });
+
+    return false;
+  };
+
+  $('.word-add-autocomplete').autocomplete({
+    source: "#{{path_to(:api_word_autocomplete)}}",
+    minLength: 1,
+    select: autocompleteSelect
+  });
+

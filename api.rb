@@ -137,10 +137,7 @@ post :drill_add_word do
   progress = find_or_init_progress(params)
   progress.save
 
-  drill = Drill.find_or_create_by(
-        title: params[:drillTitle].strip,
-        user: current_user
-  )
+  drill = Drill.find_by(id: params[:drill_id], user: current_user)
   drill.progresses << progress
 
   return 'ok'
@@ -149,4 +146,15 @@ end
 get :api_drill do
   protect!
   return Collector.new(current_user, words: Word.joins(:progresses).merge( Drill.last.progresses )).to_json
+end
+
+post :api_add_word_to_drill do
+  protect!
+
+  drill = Drill.find_by(id: params[:drill_id], user: current_user)
+  w = Word.find_by(seq: params[:seq])
+  progress = find_or_init_progress({kind: :w, id: w.seq, title: w.krebs.first})
+  drill.progresses << progress
+
+  return 'ok'
 end

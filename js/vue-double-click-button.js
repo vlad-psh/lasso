@@ -1,4 +1,4 @@
-Vue.component('double-click-button', {
+Vue.component('vue-double-click-button', {
   props: {
   },
   data() {
@@ -20,7 +20,7 @@ Vue.component('double-click-button', {
     }
   },
   template: `
-<div class="double-click-button" :class="state" @click="click">
+<div class="vue-double-click-button" :class="state" @click="click">
   <div class="timeout"></div>
   <div class="title"><slot></slot></div>
 </div>

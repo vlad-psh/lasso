@@ -1,4 +1,4 @@
-Vue.component('learn-buttons', {
+Vue.component('vue-learn-buttons', {
   props: {
     postData: {type: Object, required: true},
     progress: {type: Object, required: true},
@@ -7,7 +7,6 @@ Vue.component('learn-buttons', {
   },
   data() {
     return {
-      drillTitle: null
     }
   },
   computed: {
@@ -47,35 +46,22 @@ Vue.component('learn-buttons', {
       }).done(data => {
         this.$emit('update-progress', JSON.parse(data));
       });
-    },
-    addToDrill() {
-      $.ajax({
-        url: this.paths.drill,
-        method: "POST",
-        data: {drillTitle: this.drillTitle, ...this.postData}
-      }).done(data => {
-        alert(data);
-      });
-    },
+    }
   }, // end of methods
   template: `
 <div class="vue-learn-buttons">
   Status: {{status}}
 
   <span v-if="editing && !progress.flagged_at">
-    <double-click-button @click="flag()">flag!</double-click-button>
+    <vue-double-click-button @click="flag()">flag!</vue-double-click-button>
   </span>
 
   <span v-if="editing && !progress.learned_at && !progress.burned_at">
-    <double-click-button @click="learn()">learn!</double-click-button>
+    <vue-double-click-button @click="learn()">learn!</vue-double-click-button>
   </span>
 
   <span v-if="editing && progress.learned_at && !progress.burned_at">
-    <double-click-button @click="burn()">burn!</double-click-button>
-  </span>
-
-  <span v-if="editing && postData.kind === 'w'">
-    <input type="text" v-model="drillTitle" @keyup.enter="addToDrill()">
+    <vue-double-click-button @click="burn()">burn!</vue-double-click-button>
   </span>
 </div>
 `

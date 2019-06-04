@@ -2,7 +2,7 @@
 
 import helpers from './helpers.js';
 
-Vue.component('radical', {
+Vue.component('vue-radical', {
   props: {
     id: {type: Number, required: true},
     j: {type: Object, required: true},
@@ -31,7 +31,7 @@ Vue.component('radical', {
   </span>
   <span>{{radical.meaning}} (WK#{{radical.level}})</span>
 
-  <learn-buttons :paths="j.paths" :progress="radical.progress" :post-data="{id: radical.id, title: radical.title, kind: 'r'}" :editing="editing" v-on:update-progress="updateProgress($event)"></learn-buttons>
+  <vue-learn-buttons :paths="j.paths" :progress="radical.progress" :post-data="{id: radical.id, title: radical.title, kind: 'r'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
 
   <div class="hr-title"><span>Meaning</span></div>
   <div v-html="stripBB(radical.nmne)"></div>

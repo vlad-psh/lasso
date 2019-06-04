@@ -736,7 +736,7 @@ body.black svg.graph text {
 /* ==============================
    VUE: DOUBLE CLICK BUTTON
    ============================== */
-.double-click-button {
+.vue-double-click-button {
   display: inline-block;
   cursor: pointer;
   margin-right: .3em;
@@ -745,24 +745,114 @@ body.black svg.graph text {
   -moz-user-select: none;
   user-select: none;
 }
-.double-click-button .title {
+.vue-double-click-button .title {
   margin: -.1em .4em 0 .4em;
 }
-.double-click-button .timeout {
+.vue-double-click-button .timeout {
   height: 2px;
   background-color: red;
   margin: 0 auto;
   width: 100%;
   opacity: 0;
 }
-.double-click-button.waiting .timeout {
+.vue-double-click-button.waiting .timeout {
   transition: width 1s ease-out;
   width: 0;
   opacity: 1;
 }
-.double-click-button.clicked {
+.vue-double-click-button.clicked {
   background-color: #ffec83;
   color: #333;
+}
+/* ==============================
+   VUE DROPDOWN
+   ============================== */
+.vue-dropdown {
+
+}
+.vue-dropdown-component {
+  display: inline-block;
+  position: relative;
+  font-size: .9em;
+  line-height: .6em;
+  min-width: 6em;
+}
+.vue-dropdown .vue-dropdown-input {
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: 3px;
+  display: inline-block;
+  padding: 0 .75rem;
+  background: #fff;
+  line-height: 2em;
+  border-radius: 3px 3px 3px 3px;
+  box-shadow: 0 0 0 1px #ddd inset;
+}
+.vue-dropdown .vue-dropdown-input .item {
+  cursor: pointer;
+  padding: 0 35px 0 0;
+  display: inline-block;
+  min-width: 100%;
+  text-indent: 0;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100%;
+  box-sizing: border-box;
+  background: none !important;
+}
+
+.vue-dropdown .vue-dropdown-input::after {
+  content: ' ';
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  margin-top: -3px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: transparent;
+  border-top-color: #808080;
+}
+.vue-dropdown .vue-dropdown-expanded .vue-dropdown-input {
+  border-radius: 3px 3px 0 0 !important;
+  box-shadow: 0 0 0 1px #146fc9 inset;
+}
+.vue-dropdown .vue-dropdown-expanded .vue-dropdown-input::after {
+  border-color: transparent;
+  border-bottom-color: #146fc9;
+  margin-top: -4px;
+  border-width: 0 5px 5px 5px;
+}
+
+.vue-dropdown .vue-dropdown-wrapper {
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+  margin: -1px 0 0 0;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  color: #303030;
+  line-height: 18px;
+  width: 100%;
+  border: 1px solid #979797;
+  border-top-color: #146fc9;
+}
+.vue-dropdown .vue-dropdown-content {
+  overflow-y: auto;
+  overflow-x: hiden;
+  max-height: 200px;
+}
+.vue-dropdown .vue-dropdown-content .option {
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.vue-dropdown .vue-dropdown-content .option:hover {
+  background-color: #146fc9;
+  color: #fff;
 }
 /* ==============================
    WORD CARD
@@ -907,15 +997,15 @@ body.black svg.graph text {
 .word-comment-form {
   margin-top: 0.6em;
 }
-.word-comment-form .editable-text {
+.word-comment-form .vue-editable-text {
   padding: 0.1em 0.6em;
   margin: -0.1em -0.6em;
 }
-.word-comment-form .editable-text p {
+.word-comment-form .vue-editable-text p {
   margin: 0.4em 0;
   text-align: justify;
 }
-.editable-text:hover {
+.vue-editable-text:hover {
   background-color: rgba(128,128,128,0.2);
   cursor: pointer;
 }

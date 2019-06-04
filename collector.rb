@@ -13,6 +13,7 @@ class Collector
     @radicals = opts[:radicals] if opts[:radicals] && opts[:radicals].kind_of?(ActiveRecord::Relation)
 
     @need_kanji_summary = opts[:radicals] && opts[:radicals].kind_of?(ActiveRecord::Relation) ? true : false
+    @include_drills = opts[:words] && opts[:words].kind_of?(ActiveRecord::Relation) ? true : false
   end
 
   def to_json
@@ -40,12 +41,16 @@ class Collector
               .or(Progress.where(user: @user, kanji_id: @kanjis.map(&:id)))
               .or(Progress.where(user: @user, wk_radical_id: @radicals.map(&:id)))
               .or(Progress.where(user: @user, kanji_id: kanji_summary.map(&:kanji_id)))
+              .includes(:drills)
+
+    drills = @include_drills ? Drill.where(user: @user) : Drill.none
 
     return {
       words: @words.map{|i| word_structure(i)},
       kanjis: @kanjis.map{|i| kanji_structure(i)},
       radicals: @radicals.map{|i| radical_structure(i)},
       kanji_summary: kanji_summary.map{|i| kanji_summary_structure(i)},
+      drills: drills.map{|i| {id: i.id, title: i.title} },
       paths: {
         learn:   path_to(:api_learn),
         burn:    path_to(:api_burn),
@@ -70,11 +75,11 @@ class Collector
     result[:comment] = @word_details.detect{|i| i.seq == w.seq}.try(:comment)
 
     result[:krebs] = w.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
-      {
-        title: t.title,
-        is_common: t.is_common,
-        progress: @progresses.detect{|p| p.title == t.title && p.seq == w.seq}.try(:api_hash) || {}
-      }
+      k = {title: t.title, is_common: t.is_common}
+      kreb_progress = @progresses.detect{|p| p.title == t.title && p.seq == w.seq}
+      k[:progress] = kreb_progress.present? ? kreb_progress.api_hash : {}
+      k[:drills] = kreb_progress.present? ? kreb_progress.drills.map(&:id) : []
+      k
     end
 
 ##    all_sentences = Sentence.joins(:sentences_words).merge(SentencesWord.where(word_seq: [seq, *long_words.pluck(:seq)]))
