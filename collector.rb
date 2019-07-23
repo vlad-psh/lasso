@@ -117,7 +117,8 @@ class Collector
         rhnt: w.rhnt,
         wk_meaning: w.meaning,
         wk_readings: w.readings.select{|i| i['primary'] == true}.map{|i| i['reading']},
-        radicals: k.wk_kanji.wk_radicals.map(&:id)
+        radicals: k.wk_kanji.wk_radicals.map(&:id),
+        url: path_to(:kanji).with(k.id)
       })
     end
 

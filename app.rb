@@ -454,7 +454,7 @@ end
 
 get :drills do
   protect!
-  @drill_sets = Drill.where(user: current_user)
+  @drill_sets = Drill.where(user: current_user).order(created_at: :desc)
   slim :drills
 end
 

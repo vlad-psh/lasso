@@ -5,7 +5,7 @@ ruby:
 div#kanji-card-app
   vue-kanji :id=id :j="j" :editing="editing"
 
-  - @words.present?
+  - if @words.present?
     div.hr-title: span WK Words
     == slim :list, locals: {elements: @words}
 

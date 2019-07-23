@@ -25,7 +25,7 @@ Vue.component('vue-kanji', {
   template: `
 <div class="vue-kanji">
   <div class="kanji-info-table">
-    <div class="kanji-title" :class="kanji.progress.html_class">{{kanji.title}}</div>
+    <div class="kanji-title" :class="kanji.progress.html_class"><a :href="kanji.url">{{kanji.title}}</a></div>
     <div>
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
