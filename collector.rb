@@ -50,7 +50,7 @@ class Collector
       kanjis: @kanjis.map{|i| kanji_structure(i)},
       radicals: @radicals.map{|i| radical_structure(i)},
       kanji_summary: kanji_summary.map{|i| kanji_summary_structure(i)},
-      drills: drills.map{|i| {id: i.id, title: i.title} },
+      drills: drills.map{|i| {id: i.id, title: i.title, is_active: i.is_active} },
       paths: {
         learn:   path_to(:api_learn),
         burn:    path_to(:api_burn),

@@ -12,6 +12,23 @@ require('./vue-editable-text.js');
 require('./vue-dropdown.js');
 
 /* ===================
+   GLOBAL HOTKEYS
+   =================== */
+$(document).on('keyup', function(event){
+  if (event.which === 27) { // ESC
+    $('#main-menu input.search').focus();
+  }
+});
+$(function(){
+  $('#main-menu input.search').on('keyup', function(event){
+    if (event.which === 38 || event.which === 40) { // Up/Down keys
+      var el = $('#main-menu input[name=japanese]');
+      el.prop('checked', el.is(':checked') ? false : true);
+    }
+  });
+});
+
+/* ===================
    CLICK TO SHOW TITLE
    =================== */
 $(document).on('click', '[title]', function(event){
