@@ -368,6 +368,14 @@ post :mecab do
   end
 end
 
+get :sentences do
+  protect!
+
+  @sentences = Sentence.order(created_at: :desc).limit(50)
+
+  slim :sentences
+end
+
 post :sentences do
   protect!
 

@@ -1,0 +1,14 @@
+div#sentence-app
+  vue-sentence-form
+
+ul
+  - @sentences.each do |sentence|
+    li = sentence.japanese
+
+javascript:
+  var app = new Vue({
+    el: '#sentence-app',
+    data: {
+    }
+  })
+
