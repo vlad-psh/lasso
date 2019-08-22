@@ -143,10 +143,11 @@ a.study-button {
   font-family: Segoe UI, Helvetica Neue, sans-serif;
   font-weight: 700;
   width: 100%;
-  text-align: center;
 }
-#main-menu>div.left {
-  margin: 0.2em 0.4em;
+#main-menu>div.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #main-menu>div.right {
   text-align: right;
@@ -174,10 +175,7 @@ a.study-button {
   padding: 0.1em 0.3em;
 }
 .main-menu-item {
-  display: inline-block;
-  vertical-align: middle;
-  text-align: center;
-  margin-top: -0.1em;
+  margin: -.1em .3em 0 .3em;
 }
 .main-menu-item-details {
   font-weight: normal;
@@ -1143,8 +1141,9 @@ input.ensentence {
     font-size: 1em;
     text-align: left;
   }
-  #main-menu .center {
+  #main-menu>div.center {
     margin-left: 0.4em;
+    justify-content: flex-start;
   }
   #main-menu .search {width: 80px}
   #container {

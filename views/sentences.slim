@@ -1,9 +1,12 @@
-div#sentence-app
-  vue-sentence-form
+div style="max-width: 800px; margin: 0 auto"
+  div#sentence-app style="text-align: center; margin-top: 2em"
+    vue-sentence-form
 
-ul
-  - @sentences.each do |sentence|
-    li = sentence.japanese
+  ul style="text-align: left"
+    - @sentences.each do |sentence|
+      li
+         = sentence.japanese
+         span< style="opacity: .5" = sentence.english
 
 javascript:
   var app = new Vue({

@@ -17,17 +17,18 @@ html
           - else
             a href=path_to(:login) ●
         div.main-menu-item
-          a> href=path_to(:index) style="font-weight: bold; text-decoration: none" 【ワ亀】
+          a href=path_to(:index) style="font-weight: bold; text-decoration: none" ワ亀
         div.main-menu-item
           - level = current_user.present? ? current_user.current_level : (@view_user.present? ? @view_user.current_level : 1)
           a href=path_to(:list_level).with(level) = "Level #{level}"
           //br
           //div.main-menu-item-details = "#{((Time.now - (level_started_at(level) || DateTime.now)) / (60*60*24)).round(1)} days"
         - if current_user.present?
-          a style="padding-left: 0.7em" href=path_to(:notes) 📘
-          label.editing-checkbox
-            input type="checkbox" checked=('checked' if user_settings('editing')) autocomplete="off"
-            span
+          div.main-menu-item: a href=path_to(:notes) 📘
+          div.main-menu-item: a href=path_to(:sentences) &#x1f4ac;
+          div.main-menu-item
+            label.editing-checkbox
+              input type="checkbox" checked=('checked' if user_settings('editing')) autocomplete="off"
       div.right
         form.search-form method="GET" action=path_to(:search)
           label

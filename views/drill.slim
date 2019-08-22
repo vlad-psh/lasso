@@ -7,12 +7,6 @@ h1 = @drill.title
         div.element: span.japanese = "{{e.title}}"
         div.description = "{{e.description}}"
 
-css:
-  table {border-collapse: collapse; margin: 0 1em;}
-  table td {border: 1px solid #ccc; padding: .2em .6em}
-  td.hide {opacity: 0}
-  td.hide:hover {opacity: 1}
-
 input class="word-add-autocomplete" type="text" placeholder="Add short"
 
 div.hr-title : span Kanji
@@ -26,16 +20,6 @@ div.hr-title : span Reading
 div class="elements-list"
   - @elements.shuffle.each do |e|
     div.elements-list-item : div class="element-block unlocked" : a href=e[:href] : div.element : span.japanese = e[:reading]
-
-div.hr-title : span Table
-
-table
-  - @elements.shuffle.each do |e|
-    tr
-      td: input type="checkbox"
-      td = e[:reading]
-      td.hide: a href=e[:href] = e[:description]
-      td.hide = e[:title]
 
 javascript:
   var app = new Vue({
