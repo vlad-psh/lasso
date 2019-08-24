@@ -111,26 +111,6 @@ post :api_word_comment do
   return 'ok'
 end
 
-post :api_word_connect do
-  protect!
-
-  long = Word.find_by(seq: params[:long])
-  short = Word.find_by(seq: params[:short])
-  long.short_words << short
-
-  return 'ok'
-end
-
-delete :api_word_connect do
-  protect!
-
-  long = Word.find_by(seq: params[:long])
-  short = Word.find_by(seq: params[:short])
-  long.short_words.delete(short)
-
-  return 'ok'
-end
-
 post :drill_add_word do
   protect!
 

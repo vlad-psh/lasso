@@ -7,11 +7,6 @@ class Word < ActiveRecord::Base
   has_many :sentences_words, primary_key: :seq, foreign_key: :word_seq
   has_many :sentences, through: :sentences_words
 
-  has_many :short2long_connections, class_name: 'WordConnection', primary_key: :seq, foreign_key: :short_seq
-  has_many :long2short_connections, class_name: 'WordConnection', primary_key: :seq, foreign_key: :long_seq
-  has_many :long_words,  through: :short2long_connections
-  has_many :short_words, through: :long2short_connections
-
   def self.with_progresses(user)
     elements = all
     progresses = Progress.joins(:word).where(user: user).merge(elements).hash_me(:seq)

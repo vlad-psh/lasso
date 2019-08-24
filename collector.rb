@@ -22,7 +22,7 @@ class Collector
 
   def to_hash
     # Add 'includes' directive to final relation
-    @words = @words.includes(:short_words, :long_words, :wk_words, :word_titles)
+    @words = @words.includes(:wk_words, :word_titles)
     @word_details = WordDetail.where(word: @words, user: @user)
 
     kanji_chars = @words.map{|i| i.kanji.try(:split, '') || []}.flatten.uniq
@@ -56,7 +56,6 @@ class Collector
         burn:    path_to(:api_burn),
         flag:    path_to(:api_flag),
         comment: path_to(:api_word_comment),
-        connect: path_to(:api_word_connect),
         drill:   path_to(:drill_add_word),
         autocomplete: path_to(:api_word_autocomplete)
       }
@@ -89,8 +88,6 @@ class Collector
 
     return result.merge({
       sentences: [], rawSentences: [], # # Empty placeholders
-      shortWords: w.short_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
-      longWords:  w.long_words.map{|i| {seq: i.seq, title: i.krebs[0], href: path_to(:word).with(i.seq)}},
       cards: w.wk_words.sort{|a,b| a.level <=> b.level}.map{|c|
         {
           title: c.title,

@@ -54,7 +54,6 @@ paths index: '/',
     api_burn:    '/api/word/burn',
     api_flag:    '/api/word/flag',
     api_word_comment: '/api/word/comment',
-    api_word_connect: '/api/word/connect', # + DELETE method
     api_add_word_to_drill: '/api/drill/add_word',
     # GET and POST
     study2: '/study2',

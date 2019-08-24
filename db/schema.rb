@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_04_120847) do
+ActiveRecord::Schema.define(version: 2019_08_24_073654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -178,14 +178,6 @@ ActiveRecord::Schema.define(version: 2019_06_04_120847) do
     t.string "mmne"
     t.string "rmne"
     t.jsonb "sentences"
-  end
-
-  create_table "word_connections", id: false, force: :cascade do |t|
-    t.integer "long_seq", null: false
-    t.integer "short_seq", null: false
-    t.datetime "created_at"
-    t.index ["long_seq"], name: "index_word_connections_on_long_seq"
-    t.index ["short_seq"], name: "index_word_connections_on_short_seq"
   end
 
   create_table "word_details", force: :cascade do |t|

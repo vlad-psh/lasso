@@ -119,11 +119,6 @@ Vue.component('vue-word', {
     ...helpers
   }, // end of methods
   updated() {
-    $('.word-connection-autocomplete').autocomplete({
-      source: this.j.paths.autocomplete,
-      minLength: 1,
-      select: wordConnectionAutocompleteSelect
-    });
   },
   template: `
   <div class="vue-word word-card" id="word-card-app">
@@ -203,28 +198,6 @@ Vue.component('vue-word', {
 
     <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="w.comment = $event"></vue-editable-text>
 
-    <div v-if="editing" class="center-block" style="margin-top: 0.8em; margin-bottom: 0.8em">
-      <span style="font-weight: bold">Contains:</span>
-      <div class="connected-word" v-for="(sw, swIndex) of w.shortWords">
-        <a :href="sw.href">{{sw.title}}</a>
-        <span class="action-buttons">[<a @click="deleteConnectedWord('short', swIndex)">消す</a>]</span>
-      </div>
-      <div class="connected-word-none" v-if="!w.shortWords.length">none</div>
-      <input class="word-connection-autocomplete" type="text" data-word-type="short" placeholder="Add short">
-
-      <span style="font-weight: bold">Belongs to:</span>
-      <div class="connected-word" v-for="(sw, swIndex) of w.longWords">
-        <a :href="sw.href">{{sw.title}}</a>
-        <span class="action-buttons">[<a @click="deleteConnectedWord('long', swIndex)">消す</a>]</span>
-      </div>
-      <div class="connected-word-none" v-if="!w.longWords.length">none</div>
-      <input class="word-connection-autocomplete" type="text" data-word-type="long" placeholder="Add long">
-    </div>
-
-    <div v-if="editing" class="center-block">
-      <div style="opacity: 0.5; font-size: 0.6em; text-align: justify">&#x2139;&#xfe0f; Add only those words, which doesn't form new senses or readings when connected. GOOD examples: 電子＋書籍、図書館＋員. BAD examples: 料理＋人 (reading of 人 can be tricky; we should memorize full word 料理人), 一＋週間 (same here for 一; you may want mark this as 'burned' right away if you wish), 食料＋品 (new sense formed: food + articles = groceries; also, reading of 品 can be ひん or ぴん; you can mark 食料 as 'burned' if you want to reduce count of reviewing words)</div>
-    </div>
-
     <div class="hr-title center-block" v-if="editing && (w.sentences.length > 0 || w.rawSentences.length > 0)">
       <span style="margin: 1em 0">Sentences</span>
     </div>
@@ -248,21 +221,3 @@ Vue.component('vue-word', {
   </div>
 `
 });
-
-function wordConnectionAutocompleteSelect(event, ui) {
-  var wordType = $(this).data('word-type');
-  var postData = {};
-  postData[wordType] = ui.item.id;
-  postData[wordType === 'short' ? 'long' : 'short'] = wordApp.seq;
-
-  $.ajax({
-    url: wordApp.j.paths.connect,
-    method: 'POST',
-    data: postData
-  }).done(data => {
-    wordApp.addConnectedWord(wordType, {seq: ui.item.id, title: ui.item.title, href: ui.item.href});
-    $(this).val('');
-  });
-
-  return false;
-}
