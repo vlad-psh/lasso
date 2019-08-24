@@ -94,7 +94,8 @@ class Collector
           meaning: c.meaning,
           pos:   c.pos,
           mmne:  c.mmne,
-          rmne:  c.rmne
+          rmne:  c.rmne,
+          sentences: c.sentences
         }
       }
     })

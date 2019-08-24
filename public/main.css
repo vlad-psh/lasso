@@ -961,6 +961,9 @@ body.black svg.graph text {
 .word-gloss-expanded a {
   text-decoration: none;
 }
+.word-gloss-expanded ul {
+  padding-left: 1em;
+}
 .expandable-list-container .hr-title {
   color: rgba(0,0,0,0.3);
 }

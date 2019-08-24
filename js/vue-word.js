@@ -189,6 +189,11 @@ Vue.component('vue-word', {
           <span class="emphasis">{{selectedCard.reading}}</span>
           <span v-html="stripBB(selectedCard.rmne)"></span>
         </div>
+
+        <div class="hr-title"><span>Example sentences</span></div>
+        <ul>
+          <li v-for="sentence in selectedCard.sentences">{{sentence.ja}}<br>{{sentence.en}}</li>
+        </ul>
       </div>
     </div>
 
