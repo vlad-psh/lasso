@@ -83,11 +83,9 @@ class Collector
 
 ##    all_sentences = Sentence.joins(:sentences_words).merge(SentencesWord.where(word_seq: [seq, *long_words.pluck(:seq)]))
 ##    result[:sentences] = all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
-##    rawSentences = Sentence.where(structure: nil).where('japanese ~ ?', word.krebs.join('|')) # possible sentences
-##    result[:rawSentences] = rawSentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
 
     return result.merge({
-      sentences: [], rawSentences: [], # # Empty placeholders
+      sentences: [], # Empty placeholder
       cards: w.wk_words.sort{|a,b| a.level <=> b.level}.map{|c|
         {
           title: c.title,

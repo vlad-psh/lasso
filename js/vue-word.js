@@ -69,17 +69,13 @@ Vue.component('vue-word', {
     },
     removeSentence(idx, isRawSentence) {
       var ask = confirm("Are you sure?");
-      var sentenceUrl = isRawSentence ? this.w.rawSentences[idx].href : this.w.sentences[idx].href;
+      var sentenceUrl = this.w.sentences[idx].href;
       if (ask) {
         $.ajax({
           url: sentenceUrl,
           method: "DELETE"
         }).done(data => {
-          if (isRawSentence) {
-            this.w.rawSentences = this.w.rawSentences.filter(i => i.href != sentenceUrl);
-          } else {
-            this.w.sentences = this.w.sentences.filter(i => i.href != sentenceUrl);
-          }
+          this.w.sentences = this.w.sentences.filter(i => i.href != sentenceUrl);
         });
       };
     },
@@ -198,7 +194,7 @@ Vue.component('vue-word', {
 
     <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="w.comment = $event"></vue-editable-text>
 
-    <div class="hr-title center-block" v-if="editing && (w.sentences.length > 0 || w.rawSentences.length > 0)">
+    <div class="hr-title center-block" v-if="editing && w.sentences.length > 0">
       <span style="margin: 1em 0">Sentences</span>
     </div>
 
@@ -206,15 +202,7 @@ Vue.component('vue-word', {
       <span v-for="(s, sIndex) of w.sentences">
         {{bullets[sIndex]}} {{s.jp}}
         <span style="font-size: small">《{{s.en}}》</span>
-        <span class="action-buttons">[<a class="remove-sentence-button" @click="removeSentence(sIndex, false)">消す</a>]</span>
-      </span>
-    </div>
-
-    <div class="word-sentences center-block" v-if="editing && w.rawSentences.length > 0">
-      <span v-for="(s, sIndex) of w.rawSentences">
-        {{bullets[sIndex]}} {{s.jp}}
-        <span style="font-size: small">《{{s.en}}》</span>
-        <span class="action-buttons">[<a class="remove-sentence-button" @click="removeSentence(sIndex, true)">消す</a>]</span>
+        <span class="action-buttons">[<a class="remove-sentence-button" @click="removeSentence(sIndex)">消す</a>]</span>
       </span>
     </div>
 
