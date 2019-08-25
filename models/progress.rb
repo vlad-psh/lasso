@@ -48,6 +48,7 @@ class Progress < ActiveRecord::Base
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
+    return if burned_at.present? # no action required for
     throw StandardError.new("Unknown answer: #{a}") unless [:correct, :incorrect, :soso, :burn].include?(a)
 
     if a == :correct
@@ -140,7 +141,7 @@ class Progress < ActiveRecord::Base
       correct:   (attributes_of_correct_answer[:scheduled]    - Date.today).to_i,
       soso:      (attributes_of_soso_answer[:scheduled]       - Date.today).to_i,
       incorrect: (attributes_of_incorrect_answer[:transition] - Date.today).to_i
-    }) if self.deck.present?
+    }) if self.deck.present? && burned_at.blank?
     result
   end
 

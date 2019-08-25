@@ -61,7 +61,7 @@ javascript:
     },
     methods: {
       selectWord(seq) {
-        if (this.f.selectedWord && seq === this.f.selectedWord.seq) {
+        if (this.f.selectedWord && seq == this.f.selectedWord.seq) {
           // deselect selected word
           this.f.selectedWord = null;
         } else {
@@ -105,14 +105,21 @@ javascript:
 
           app.f.selectedWord = null;
           app.f.answers = j.sentence.reduce(function(acc,i){
-            if (i.seq) acc[i.seq] = null;
+            if (i.seq) {
+              var k = app.findKreb(i.seq, i.text);
+              acc[i.seq] = k && k.progress.burned_at ? 'burned' : null;
+            }
             return acc;
           }, {});
 
           app.f.submitted = false;
         });
+      },
+      findKreb(seq, title) {
+        var word = this.j.words.find(i => i.seq == seq);
+        return (word ? word.krebs.find(i => i.title == title) : null);
       }
-    },
+    }, // end of methods
     mounted: function(){
       this.updateSentence();
     }

@@ -795,6 +795,7 @@ JRU5ErkJggg==') repeat;
         .answer-correct   {border-bottom: 2px solid #4caf50;}
         .answer-incorrect {border-bottom: 2px solid #e51c23;}
         .answer-soso      {border-bottom: 2px solid #2196f3;}
+        .answer-burned    {border-bottom: 2px solid #ff9800;}
       }
 
       .word-question {
@@ -964,6 +965,7 @@ body.black {
       .sentence-word-container {
         .word-question {background-color: rgba(255,255,255,0.2);}
         .word-question-answered {background-color: transparent;}
+        .sentence-word-tooltip {color: inherit;}
       }
     }
   }

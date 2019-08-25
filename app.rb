@@ -417,9 +417,12 @@ post :study2 do
   params[:answers].each do |word_id, answer|
     progresses[word_id] = Progress.find_by(seq: word_id, user: current_user)
     halt(403, 'Forbidden') if progresses[word_id].blank?
+# TODO: Make so that answers can be given to words without 'progress' record
+# (new progress record should be created automatically)
   end
 
   params[:answers].each do |word_id, answer|
+    next if answer == 'burned'
     progresses[word_id].answer!(answer)
   end
 
