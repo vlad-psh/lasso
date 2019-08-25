@@ -23,8 +23,14 @@ body {
   transition: background-color 0.5s ease;
 }
 body.black {
-  background: black;
+  background: #0d192b;
   color: #ccc;
+}
+body.black input[type='text'],
+body.black textarea {
+  background: #152844;
+  color: #ccc;
+  border: none;
 }
 body.myfont_jp1 {
   font-family: myfont, Cambria, myfont_jp1, serif;
@@ -80,16 +86,16 @@ b {
 .pink   {background-color: #ff00aa; color: white;}
 
 body.black .r,
-body.black .blue   {background-color: #165e99; border: 1px solid #2196f3;}
-body.black .green  {background-color: #2c662e; border: 1px solid #4caf50;}
+body.black .blue   {background-color: #152844; border: 0px solid #2196f3;}
+body.black .green  {background-color: #0a3f39; border: 0px solid #4caf50;}
 body.black .w,
-body.black .purple {background-color: #53155e; border: 1px solid #9c27b0;}
-body.black .yellow {background-color: #9e5e00; border: 1px solid #ff9800;}
-body.black .red    {background-color: #8c1216; border: 1px solid #e51c23;}
+body.black .purple {background-color: #53155e; border: 0px solid #9c27b0;}
+body.black .yellow {background-color: #9e5e00; border: 0px solid #ff9800;}
+body.black .red    {background-color: #56181a; border: 0px solid #e51c23;}
 body.black .y,
-body.black .lime   {background-color: #629300; border: 1px solid #aaff00;}
+body.black .lime   {background-color: #629300; border: 0px solid #aaff00;}
 body.black .k,
-body.black .pink   {background-color: #89005b; border: 1px solid #ff00aa;}
+body.black .pink   {background-color: #89005b; border: 0px solid #ff00aa;}
 
 .r, .r a,
 .k, .k a,
@@ -144,10 +150,15 @@ a.study-button {
   font-weight: 700;
   width: 100%;
 }
-#main-menu>div.center {
+body.black #main-menu {
+  background-color: #152844;
+}
+#main-menu>div.center,
+#main-menu>div.right form {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 2em;
 }
 #main-menu>div.right {
   text-align: right;
@@ -167,7 +178,10 @@ a.study-button {
   color: white;
   border: none;
   padding: 0.2em 0.4em;
-  margin: 0.2em 0.2em 0 0;
+  margin: 0 0.2em 0 0;
+}
+body.black #main-menu input.search {
+  background: #0d192b;
 }
 #main-menu a.r,
 #main-menu a.k,
@@ -176,6 +190,7 @@ a.study-button {
 }
 .main-menu-item {
   margin: -.1em .3em 0 .3em;
+  text-align: center;
 }
 .main-menu-item-details {
   font-weight: normal;
@@ -239,7 +254,7 @@ a.study-button {
 .unlocked svg {stroke: #638686}
 body.black .locked, body.black .locked a,
 body.black .unlocked, body.black .unlocked a {
-  border-color: #292929;
+  border-color: #0d192b;
   color: #afc6af;
 }
 body.black .locked, body.black .locked a {
@@ -429,6 +444,9 @@ body.black .unlocked .description {
   color: #333;
   font-size: 0.85em;
 }
+.black .study-card .counter-info {
+  color: #6f7784;
+}
 .study-card h1 {
   font-size: 6em;
   text-align: center;
@@ -444,9 +462,10 @@ body.black .unlocked .description {
   color: #333;
   background-color: #ffec83;
 }
-.black .show-answer-button.w {
-  background: #151515;
-  border: none;
+.black .show-answer-button {
+  background: none;
+  color: #8e9db2;
+  border-bottom: 2px dotted #152844;
 }
 .study-card .answer {
   display: none;
@@ -643,6 +662,9 @@ body.black svg.graph text {
   background: none !important;
   color: black !important;
 }
+.black .search-result.locked {
+  color: #bbb !important;
+}
 .search-result.unlocked,
 .word-kreb.unlocked {
   background-color: #efeb9e;
@@ -720,6 +742,10 @@ body.black svg.graph text {
   color: inherit;
   border-radius: 3px;
   padding: 0 .4em;
+}
+.black .expandable-list-container .emphasis {
+  background-color: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
 }
 .vue-kanji .emphasis {
   background-color: #D3EDD3;
@@ -889,10 +915,17 @@ body.black svg.graph text {
   border:5px solid transparent;
   border-bottom-color: #a8dba8;
 }
+.black .expandable-list-arrow {
+  border-bottom-color: #152844;
+}
 .expandable-list-container {
   background-color: #a8dba8;
   color: #357878;
   padding: 0.5em 0;
+}
+.black .expandable-list-container {
+  background-color: #152844;
+  color: #8a94a2;
 }
 .word-krebs .expandable-list-item {
   margin: 0 0.6em 0 -0.3em;

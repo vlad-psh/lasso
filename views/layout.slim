@@ -24,7 +24,8 @@ html
           //br
           //div.main-menu-item-details = "#{((Time.now - (level_started_at(level) || DateTime.now)) / (60*60*24)).round(1)} days"
         - if current_user.present?
-          div.main-menu-item: a href=path_to(:notes) 📘
+          div.main-menu-item: a href=path_to(:drills) &#x1f5c3;
+          div.main-menu-item: a href=path_to(:flagged) &#x1f4cc;
           div.main-menu-item: a href=path_to(:sentences) &#x1f4ac;
           div.main-menu-item
             label.editing-checkbox
