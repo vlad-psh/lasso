@@ -25,7 +25,7 @@ Vue.component('vue-radical', {
   },
   template: `
 <div class="vue-radical">
-  <span class="radical-title" :class="radical.progress.html_class">
+  <span class="radical-title" :class="radical.progress.html_class || 'pristine'">
     <span v-if="radical.title">{{radical.title}}</span>
     <span v-else v-html="radical.svg"></span>
   </span>
@@ -46,7 +46,7 @@ Vue.component('vue-radical', {
     <div class="hr-title"><span>Kanji</span></div>
     <div class="elements-list">
       <div v-for="kanji of kanjiSummaries" class="elements-list-item">
-        <div class="element-block" :class="kanji.progress.html_class || 'locked'">
+        <div class="element-block" :class="kanji.progress.html_class || 'pristine'">
           <a :href="kanji.href">
             <div class="element">{{kanji.title}}</div>
             <div class="description">{{kanji.meaning}}</div>

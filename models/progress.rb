@@ -130,8 +130,7 @@ class Progress < ActiveRecord::Base
     elsif self.flagged_at.present?
       return :flagged
     end
-    # :unlocked is also available
-    return :locked
+    return :pristine
   end
 
   def api_hash

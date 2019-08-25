@@ -11,7 +11,7 @@ html
       div.center
         div.main-menu-item
           - if current_user.present?
-            a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: red" title=current_user.login ●
+            a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: red" ●
             br
             div.main-menu-item-details = current_user.login
           - else

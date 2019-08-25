@@ -2,7 +2,7 @@ h1 = @drill.title
 
 /div class="elements-list" id="vue-list"
   div.elements-list-item v-for="e in elements"
-    div class="element-block" :class="e.html_class || 'locked'"
+    div class="element-block" :class="e.html_class || 'pristine'"
       a :href="e.href"
         div.element: span.japanese = "{{e.title}}"
         div.description = "{{e.description}}"
@@ -13,13 +13,13 @@ div.hr-title : span Kanji
 
 div class="elements-list"
   - @elements.shuffle.each do |e|
-    div.elements-list-item : div class="element-block unlocked" : a href=e[:href] : div.element : span.japanese = e[:title]
+    div.elements-list-item : div class="element-block pristine" : a href=e[:href] : div.element : span.japanese = e[:title]
 
 div.hr-title : span Reading
 
 div class="elements-list"
   - @elements.shuffle.each do |e|
-    div.elements-list-item : div class="element-block unlocked" : a href=e[:href] : div.element : span.japanese = e[:reading]
+    div.elements-list-item : div class="element-block pristine" : a href=e[:href] : div.element : span.japanese = e[:reading]
 
 javascript:
   var app = new Vue({

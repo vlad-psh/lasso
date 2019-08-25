@@ -160,11 +160,11 @@ Vue.component('vue-word', {
       </span>
     </div>
 
-    <div class="word-glosses center-block" v-if="w.cards.length > 0">
+    <div class="word-glosses wk-info center-block" v-if="w.cards.length > 0">
       <div class="word-gloss-flag">&#x1f980;</div>
       <div class="expandable-list" style="display: inline-block">
         <div class="expandable-list-item" v-for="(card, cardIndex) of w.cards">
-          <div class="word-gloss" @click="openCardForm(cardIndex)">
+          <div class="wk-element" @click="openCardForm(cardIndex)">
             <div class="level-wrapper">{{card.level}}</div>
             {{card.title}} ({{card.meaning.split(',')[0]}})
           </div>

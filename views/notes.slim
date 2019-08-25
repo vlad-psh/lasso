@@ -1,9 +1,10 @@
-form method="POST" action=path_to(:notes)
+br
+form.center-block method="POST" action=path_to(:notes) style="text-align: center;"
   textarea style="width: 50em; height: 10em;" name="content"
   br
   input type="submit" value="Save note"
 
-div.notes-list
+div.notes-list.center-block
   - @notes.each do |n|
     div.note-date
       = n.created_at.strftime('%Y %B %-d %H:%M')
