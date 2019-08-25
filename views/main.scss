@@ -463,11 +463,20 @@ JRU5ErkJggg==') repeat;
         /* transparent border; so that height is equal with common words with visible border*/
         border-bottom: 2px solid rgba(255,255,255,0);
 
-        &.word-kreb-common {
-          border-bottom: 2px dotted green;
-          &.guru, &.master, &.enlightened, &.burned {
-            border-color: white;
-          }
+        .word-kreb-common-sign {
+          display: block;
+          color: #ffbc11;
+          background-color: white;
+          border-radius: 1em;
+          font-size: 0.7em;
+          line-height: .8em;
+          width: .8em;
+          height: .8em;
+          -moz-user-select: none;
+          -webkit-user-select: none;
+          position: absolute;
+          top: -.3em;
+          right: -.3em;
         }
       }
 
@@ -775,7 +784,7 @@ JRU5ErkJggg==') repeat;
     .sentence-question {
       background-color: #ffec83;
       text-align: center;
-      padding: 0.7em 0 1.4em 0;
+      padding: 1.5em 0 2.2em 0;
       position: relative;
 
       .sentence-word-container {
@@ -911,7 +920,7 @@ body.black {
   .green  {background-color: #0a3f39; border: 0px solid #4caf50;}
   .w,
   .purple {background-color: #53155e; border: 0px solid #9c27b0;}
-  .yellow {background-color: #9e5e00; border: 0px solid #ff9800;}
+  .yellow {background-color: #c97a04; border: 0px solid #ff9800;}
   .red    {background-color: #56181a; border: 0px solid #e51c23;}
   .y,
   .lime   {background-color: #629300; border: 0px solid #aaff00;}
@@ -937,6 +946,9 @@ body.black {
       background-color: rgba(255,255,255,0.1);
       color: rgba(255,255,255,0.5);
     }
+    .hr-title {
+      color: inherit;
+    }
   }
 
   .word-card {
@@ -944,8 +956,13 @@ body.black {
       background-color: #152844;
       color: #8a94a2;
     }
-    .word-krebs .expandable-list-item .expandable-list-arrow {
-      border-bottom-color: #152844;
+    .word-krebs .expandable-list-item {
+      .expandable-list-arrow {
+        border-bottom-color: #152844;
+      }
+      .word-kreb .word-kreb-common-sign {
+        background-color: #0d192b;
+      }
     }
   }
 
@@ -963,7 +980,7 @@ body.black {
       color: #8e9db2;
       border-bottom: 2px dotted #152844;
       .sentence-word-container {
-        .word-question {background-color: rgba(255,255,255,0.2);}
+        .word-question {background-color: rgba(255,255,255,0.1);}
         .word-question-answered {background-color: transparent;}
         .sentence-word-tooltip {color: inherit;}
       }
