@@ -4,17 +4,17 @@ div#sentence-quiz-app.study-card
       input type="button" @click="updateSentence" value="Next"
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
-        div v-if="word.seq && f.answers[word.seq]" @click="selectWord(word.seq)"
-          div.sentence-word-tooltip :class="'answer-' + f.answers[word.seq]" = '{{f.answers[word.seq]}}'
+        div v-if="word.answer" @click="selectWord(wordIndex)"
+          div.sentence-word-tooltip :class="'answer-' + word.answer" = '{{word.answer}}'
           div.sentence-word.word-question-answered = "{{word.text}}"
         div v-else-if="word.seq"
           div.sentence-word-tooltip ?
-          div.sentence-word class="word-question" @click="selectWord(word.seq)" = "{{word.text}}"
+          div.sentence-word class="word-question" @click="selectWord(wordIndex)" = "{{word.text}}"
         div.sentence-word v-else="true" = "{{word.text}}"
 
-  div v-if="f.selectedWord"
-    div.answer-buttons v-if="f.answers[f.selectedWord.seq]"
-      div.answer-button.yellow @click="resetAnswer" = 'Answered: {{f.answers[f.selectedWord.seq]}}; RESET'
+  div v-if="selectedWord"
+    div.answer-buttons v-if="selectedSentenceWord.answer"
+      div.answer-button.yellow @click="resetAnswer" = 'Answered: {{selectedSentenceWord.answer}}; RESET'
     div.answer-buttons v-else="true"
       div.answer-button.red @click="answer('incorrect')"
         ' NO
@@ -25,9 +25,9 @@ div#sentence-quiz-app.study-card
       div.answer-button.green @click="answer('correct')"
         ' YES
         div.answer-details = '+ {{selectedKreb.progress.correct}}'
-    vue-word :seq="f.selectedWord.seq" :j="j" :editing="editing"
+    vue-word :seq="selectedWord.seq" :j="j" :editing="editing"
 
-  div v-if="allAnswered && !f.selectedWord && !f.submitted"
+  div v-if="allAnswered && !selectedWord && !f.submitted"
     div.answer-buttons v-if="allAnswered"
       div.answer-button.blue @click="submit" SUBMIT
     div.center-block style="margin-top: 1em;" v-if="english" = 'Translation: {{english}}'
@@ -39,51 +39,62 @@ javascript:
       sentence: [],
       english: null,
       j: {},
-      f: {selectedWord: null, answers: {}, submitted: false},
+      f: {selectedWordSentenceIndex: null, submitted: false},
       editing: #{{user_settings('editing')}}
     },
     computed: {
       allAnswered() {
-        var totalWords = Object.keys(this.f.answers).length;
-        var answeredWords = Object.values(this.f.answers).filter((i) => i !== null);
-        if (totalWords > 0 && answeredWords.length == totalWords)
-          return true;
-        else
-          return false;
+        var unanswered = this.sentence.filter(i => (i.seq && i.answer === null));
+        return unanswered.length === 0 ? true : false;
       },
       selectedKreb() {
-        if (!this.f.selectedWord) return null;
+        if (!this.selectedWord) return null;
 
         // sentence[].seq is a string (not a number)
-        var wordBase = this.sentence.find(i => i.seq == this.f.selectedWord.seq).base;
-        return this.f.selectedWord.krebs.find(i => i.title === wordBase);
-      }
+        var wordBase = this.sentence.find(i => i.seq == this.selectedWord.seq).base;
+        return this.selectedWord.krebs.find(i => i.title === wordBase);
+      },
+      selectedSentenceWord() {
+        return this.f.selectedWordSentenceIndex !== null ?
+               this.sentence[this.f.selectedWordSentenceIndex] :
+               null;
+      },
+      selectedWord() {
+        // selectedSentenceWord.seq is a string, that's why comparison is '=='
+        return this.selectedSentenceWord !== null ?
+               this.j.words.find(i => i.seq == this.selectedSentenceWord.seq) :
+               null;
+      },
     },
     methods: {
-      selectWord(seq) {
-        if (this.f.selectedWord && seq == this.f.selectedWord.seq) {
+      selectWord(sentenceIndex) {
+        var seq = this.sentence[sentenceIndex].seq;
+        if (this.selectedWord && seq == this.selectedWord.seq) {
           // deselect selected word
-          this.f.selectedWord = null;
+          this.f.selectedWordSentenceIndex = null;
         } else {
           // sentence[].seq is a string (not a number); that's why '==' is used
-          this.f.selectedWord = this.j.words.find(i => i.seq == seq);
+          this.f.selectedWordSentenceIndex = sentenceIndex;
         }
       },
       answer(answerText) {
-        this.f.answers[this.f.selectedWord.seq] = answerText;
-        //alert(JSON.stringify(this.f.answers));
-        this.f.selectedWord = null;
+        this.sentence[this.f.selectedWordSentenceIndex].answer = answerText;
+        this.f.selectedWordSentenceIndex = null;
       },
       resetAnswer() {
-        this.f.answers[this.f.selectedWord.seq] = null;
+        this.sentence[this.f.selectedWordSentenceIndex].answer = null;
       },
       submit() {
         var app = this;
         app.f.submitted = true;
+        var answers = app.sentence.filter(i => i.seq).map(function(i){
+          return {seq: i.seq, base: i.base, answer: i.answer}
+        });
+
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
-          data: {answers: this.f.answers}
+          data: {answers: answers}
         }).done(data => {
           if (data == 'ok') {
             app.updateSentence();
@@ -99,19 +110,19 @@ javascript:
           method: 'GET'
         }).done(data => {
           var j = JSON.parse(data);
-          app.sentence = j.sentence;
-          app.english = j.english;
           app.j = j.j;
-
-          app.f.selectedWord = null;
-          app.f.answers = j.sentence.reduce(function(acc,i){
+          app.english = j.english;
+          app.sentence = j.sentence.map(function(i){
             if (i.seq) {
-              var k = app.findKreb(i.seq, i.text);
-              acc[i.seq] = k && k.progress.burned_at ? 'burned' : null;
+              var k = app.findKreb(i.seq, i.base);
+              if (k && k.progress.burned_at) {
+                i.answer = 'burned';
+              }
             }
-            return acc;
-          }, {});
+            return i;
+          });
 
+          app.f.selectedWordSentenceIndex = null;
           app.f.submitted = false;
         });
       },

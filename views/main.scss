@@ -927,7 +927,7 @@ body.black {
   .k,
   .pink   {background-color: #89005b; border: 0px solid #ff00aa;}
 
-  .pristine, .apprentice, .master, .guru, .enlightened, .burned {
+  .pristine, .apprentice, .master, .guru, .enlightened, .burned, .flagged {
     border-color: #0d192b;
   }
 
@@ -951,12 +951,20 @@ body.black {
     }
   }
 
+  .vue-kanji,
+  .vue-radical {
+    .emphasis {
+      background-color: #2d3e57;
+      color: #969fab;
+    }
+  }
+
   .word-card {
     .expandable-list-container {
       background-color: #152844;
       color: #8a94a2;
     }
-    .word-krebs .expandable-list-item {
+    .expandable-list-item {
       .expandable-list-arrow {
         border-bottom-color: #152844;
       }
@@ -1005,7 +1013,9 @@ body.black {
     background-color: rgba(255,255,255,0.1);
     color: #ccc;
   }
-
+  .vue-double-click-button {
+    border: 1px dashed;
+  }
 } /* end of body.black */
 
 /* ==============================
