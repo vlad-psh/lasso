@@ -44,8 +44,8 @@ javascript:
     },
     computed: {
       allAnswered() {
-        var unanswered = this.sentence.filter(i => (i.seq && i.answer === null));
-        return unanswered.length === 0 ? true : false;
+        var unanswered = this.sentence.filter(i => i.seq && !i.answer);
+        return unanswered.length === 0 && this.sentence.length !== 0 ? true : false;
       },
       selectedKreb() {
         if (!this.selectedWord) return null;
@@ -115,9 +115,7 @@ javascript:
           app.sentence = j.sentence.map(function(i){
             if (i.seq) {
               var k = app.findKreb(i.seq, i.base);
-              if (k && k.progress.burned_at) {
-                i.answer = 'burned';
-              }
+              i.answer = k && k.progress.burned_at ? 'burned' : null;
             }
             return i;
           });
