@@ -165,26 +165,32 @@ body {
       margin-top: -0.4em;
       margin-bottom: 0.2em;
     }
-    .search-form {
-      input[type='checkbox'] {
-        opacity: 0;
-        width: 0;
-        height: 0;
-        margin: 0;
-      }
-      label {
-        margin-right: 0.3em;
-        cursor: pointer;
-        span {
-          line-height: 1.6em;
-          vertical-align: top;
-        }
-      }
+    .emoji-checkbox.search-language-switch {
       input + .slider:before {content: '\1f1ec\1f1e7'; /* GB flag */}
       input:checked + .slider:before {content: '\1f1ef\1f1f5'; /* JP flag */}
-
+    }
+    .emoji-checkbox.theme-switch {
+      input + .slider:before {content: '\1f4a1'; /* sun */}
+      input:checked + .slider:before {content: '\1f319'; /* moon */}
     }
   } /* end of #main-menu */
+
+  label.emoji-checkbox {
+    margin-right: 0.3em;
+    cursor: pointer;
+    span {
+      line-height: 1.6em;
+      vertical-align: top;
+    }
+    input[type='checkbox'] {
+      opacity: 0;
+      position: fixed;
+      top: -20px;
+    }
+    /* override these: */
+    input + .slider:before {content: 'off';}
+    input:checked + .slider:before {content: 'on';}
+  }
 
 
   .flagged,
