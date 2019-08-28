@@ -1,10 +1,3 @@
-ruby:
-  def words_to_string(words)
-    return '' if words.blank? || words.length == 0
-    return words[0] if words.length == 1
-    return "#{words[0]}〈#{words[1..-1].join('・')}〉" if words.length > 1
-  end
-
 - if @radicals.length > 0
   div.hr-title: span style="padding: 1em" Radicals
   div.search-results
@@ -28,12 +21,9 @@ ruby:
     div.search-results
       - words.each do |w|
         div.search-result class=(w.best_user_progress.try(:html_class) || :pristine)
-          - if w.kebs && w.kebs.length > 0
-            == highlight(words_to_string(w.kebs), params['query']) + '　'
-          - if w.rebs && w.rebs.length > 0
-            == highlight(words_to_string(w.rebs), params['query']) + ' '
-          == w.en[0]['gloss'].join('; ')
-          a< href=path_to(:word).with(w.seq) = "⇒ #{w.seq}"
+          div.search-result-kanji == highlight(w.kebs.join('<br>'), params['query']) if w.kebs && w.kebs.length > 0
+          div.search-result-kana  == highlight(w.rebs.join('<br>'), params['query']) if w.rebs && w.rebs.length > 0
+          div.search-result-english: a href=path_to(:word).with(w.seq) = w.en[0]['gloss'].join('; ')
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""

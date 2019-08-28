@@ -749,13 +749,15 @@ JRU5ErkJggg==') repeat;
     font-size: 0.9em;
 
     .search-result {
+      display: grid;
+      grid-template-columns: 1fr 1fr 2fr;
       padding: 0.2em;
-      -webkit-column-break-inside: avoid; /* Chrome, Safari */
-      page-break-inside: avoid;           /* Theoretically FF 20+ */
-      display: inline-block;              /* Actually FF 20+ */
       width: calc(100% - 0.4em - 1px); /* minus padding minus right border */
-      /*  border-bottom: 1px dotted #d2edf7;*/
-      position: relative;
+
+      .search-result-kanji,
+      .search-result-kana {
+        border-right: 1px solid rgba(128,128,128,0.2);
+      }
 
       a {
         font-size: small;
