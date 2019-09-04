@@ -11,9 +11,11 @@
   div.search-results
     - @kanji.each do |e|
       div.search-result class=(e.user_progress.try(:html_class) || :pristine)
-        a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
-        - if e.english
-          == " " + highlight(e.english.join(', '), params['query'])
+        div.search-result-kanji: a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
+        div.search-result-kana
+        div.search-result-english
+          - if e.english
+            == " " + highlight(e.english.join(', '), params['query'])
 
 - {'JMdict common words' => @words.select{|i| i.is_common}, 'JMdict' => @words.select{|i| !i.is_common}}.each do |title, words|
   - if words.length > 0
@@ -23,7 +25,7 @@
         div.search-result class=(w.best_user_progress.try(:html_class) || :pristine)
           div.search-result-kanji == highlight(w.kebs.join('<br>'), params['query']) if w.kebs && w.kebs.length > 0
           div.search-result-kana  == highlight(w.rebs.join('<br>'), params['query']) if w.rebs && w.rebs.length > 0
-          div.search-result-english: a href=path_to(:word).with(w.seq) = w.en[0]['gloss'].join('; ')
+          div.search-result-english: a href=path_to(:word).with(w.seq) == highlight(w.en[0]['gloss'].join('; '), params['query'])
 
 - if @russian_words.length > 0
   div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""

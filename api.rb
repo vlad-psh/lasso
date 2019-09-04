@@ -10,8 +10,7 @@ get :api_sentence do
       break
     end
   end
-#progress = Progress.find(1862)
-#@sentence = Sentence.find(4108)
+
   if @sentence.blank?
     # Compose (without saving) sentence with only one word
     return {
