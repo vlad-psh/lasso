@@ -300,20 +300,6 @@ JRU5ErkJggg==') repeat;
     }
   } /* end of .elements-list */
 
-  .level-wrapper {
-    display: block;
-    background-color: #ffbc11;
-    color: #99700a;
-    border-radius: 1em;
-    font-size: 0.8em;
-    line-height: 1.6em;
-    width: 1.6em;
-    height: 1.6em;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    text-align: center;
-  }
-
   .levels-header {
     padding: 0.4em 0 0.2em 0;
     display: flex;
@@ -444,94 +430,25 @@ JRU5ErkJggg==') repeat;
   .word-card {
     padding: 0.6em 0;
 
-    .word-krebs {
-      line-height: 0.5em;
 
-      .expandable-list-item {
-        font-size: 1.4em;
-      }
-    }
-    .expandable-list-item {
+    .expandable-list {
       display: inline-block;
-      text-align: center;
-      line-height: 0;
-      text-align: center;
-      vertical-align: top;
-      margin: 0 0.6em 0 -0.3em;
+      vertical-align: middle;
 
-      .word-kreb {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-        border: none;
-        padding: 0 0.3em;
-        line-height: 1.3em;
-        /* transparent border; so that height is equal with common words with visible border*/
-        border-bottom: 2px solid rgba(255,255,255,0);
+      &.word-krebs {
+        padding-bottom: 7px;
 
-        .word-kreb-common-sign {
-          display: block;
-          color: #ffbc11;
-          background-color: white;
-          border-radius: 1em;
-          font-size: 0.7em;
-          line-height: .8em;
-          width: .8em;
-          height: .8em;
-          -moz-user-select: none;
-          -webkit-user-select: none;
-          position: absolute;
-          top: -.3em;
-          right: -.3em;
+        .expandable-list-item {
+          margin: 0 0.6em 0 -0.3em;
+          border-bottom: none;
+          color: inherit;
         }
       }
-
-      .expandable-list-arrow {
-        margin: 0; padding: 0;
-        display: inline-block;
-
-        box-sizing:border-box;
-        height:5px;
-        width:5px;
-        bottom:-10px;
-        margin:0 0 0 -5px;
-        content:" ";
-        border:5px solid transparent;
-        border-bottom-color: #a8dba8;
-      }
-    } /* end of .expandable-list-item */
-
-    .expandable-list-container {
-      background-color: #a8dba8;
-      color: #357878;
-      padding: 0.5em 0;
-    }
-
-    .word-glosses {
-      text-align: justify;
-      line-height: 1.6em;
-      margin-top: 0.4em;
-
-      .word-gloss-flag {
-        display: inline-block;
-        font-size: 1.4em;
-        vertical-align: middle;
-        margin-right: 0.3em;
-      }
-      .word-gloss-pos {
-        color: green;
-        font-style: italic;
-        font-size: 0.9em;
-      }
-    } /* end of .word-glosses */
-
-    .wk-info {
       .expandable-list-item {
-        margin: 0 0.6em 0 0;
-      }
-      .wk-element {
-        margin-right: 1em;
-        margin-top: .3em;
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        margin: 0 .4em;
         cursor: pointer;
         border-bottom: 1px dashed #008ace;
         color: #008ace;
@@ -539,12 +456,88 @@ JRU5ErkJggg==') repeat;
         &:hover {
           color: #c00;
         }
-        .level-wrapper {
+        .word-kreb {
+          font-size: 1.4em;
+          position: relative;
           display: inline-block;
-          font-size: 0.6em;
+          cursor: pointer;
+          border: none;
+          padding: 0 0.3em;
+          /* transparent border; so that height is equal with common words with visible border*/
+          border-bottom: 2px solid rgba(255,255,255,0);
+
+          .word-kreb-common-sign {
+            display: block;
+            color: #ffbc11;
+            background-color: white;
+            border-radius: 1em;
+            font-size: 0.7em;
+            width: .8em;
+            height: .8em;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            position: absolute;
+            top: -.3em;
+            right: -.3em;
+            line-height: .8em;
+          }
         }
+
+        .expandable-list-arrow {
+          display: inline-block;
+          position: absolute;
+          padding: 0;
+
+          box-sizing:border-box;
+          height:5px;
+          width:5px;
+          margin: 2px 0 0 -5px;
+          content:" ";
+          border:5px solid transparent;
+          border-bottom-color: #a8dba8;
+        }
+
+        .level {
+          display: inline-block;
+          background-color: #ffbc11;
+          color: #99700a;
+          border-radius: 2em;
+          font-size: .6em;
+          line-height: 1.6em;
+          width: 1.6em;
+          height: 1.6em;
+          -moz-user-select: none;
+          -webkit-user-select: none;
+          text-align: center;
+          vertical-align: middle;
+        }
+      } /* end of .expandable-list-item */
+    } /* end of .expandable-list */
+
+    .expandable-list-container {
+      background-color: #a8dba8;
+      color: #357878;
+      padding: 0.5em 0;
+      margin-top: 5px;
+    }
+
+    .word-details {
+      text-align: justify;
+      padding: .3em;
+
+      .icon {
+        display: inline-block;
+        font-size: 1.4em;
+        vertical-align: middle;
+        margin-right: 0.3em;
+        line-height: 0;
       }
-    } /* end of .wk-info */
+      .pos {
+        color: green;
+        font-style: italic;
+        font-size: 0.9em;
+      }
+    } /* end of .word-glosses */
 
     .action-buttons {
       opacity: 0.4;

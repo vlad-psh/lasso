@@ -8,7 +8,7 @@ Vue.component('vue-word', {
   },
   data() {
     return {
-      forms: {card: null, kreb: null, selectedDrill: null},
+      forms: {card: null, kreb: null, selectedDrill: null, kanjiIndex: null},
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -80,18 +80,13 @@ Vue.component('vue-word', {
       };
     },
     openKrebForm(kreb) {
-      if (this.forms.kreb === kreb) {
-        this.forms.kreb = null;
-      } else {
-        this.forms.kreb = kreb;
-      }
+      this.forms.kreb = this.forms.kreb === kreb ? null : kreb;
     },
     openCardForm(cardIndex) {
-      if (this.forms.card === cardIndex) {
-        this.forms.card = null;
-      } else {
-        this.forms.card = cardIndex;
-      }
+      this.forms.card = this.forms.card === cardIndex ? null : cardIndex;
+    },
+    openKanji(kanjiIndex) {
+      this.forms.kanjiIndex = this.forms.kanjiIndex === kanjiIndex ? null : kanjiIndex;
     },
     updateKrebProgress(progress) {
       this.w.krebs.find(i => i.title === this.forms.kreb).progress = progress;
@@ -119,12 +114,14 @@ Vue.component('vue-word', {
   template: `
   <div class="vue-word word-card" id="word-card-app">
 
-    <div class="word-krebs center-block expandable-list">
-      <div class="expandable-list-item" v-for="kreb of w.krebs">
-        <div>
-          <div class="word-kreb" :class="[kreb.progress.html_class, kreb.is_common ? 'word-kreb-common' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<div v-if="kreb.is_common" class="word-kreb-common-sign">✪</div></div>
+    <div class="center-block">
+      <div class="word-krebs expandable-list">
+        <div class="expandable-list-item" v-for="kreb of w.krebs">
+          <div>
+            <div class="word-kreb" :class="[kreb.progress.html_class, kreb.is_common ? 'word-kreb-common' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<div v-if="kreb.is_common" class="word-kreb-common-sign">✪</div></div>
+          </div>
+          <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
         </div>
-        <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
       </div>
     </div>
 
@@ -136,36 +133,49 @@ Vue.component('vue-word', {
           <td><vue-dropdown :options="j.drills.filter(i => i.is_active === true)" empty-item="Select..." :selected-value="forms.selectedDrill" @selected="forms.selectedDrill = $event" value-key="id"></vue-dropdown></td>
           <td><input type="button" value="Add" @click="addKrebToDrill()"></td>
         </tr></table>
+      </div>
+    </div>
 
-        <div v-for="kanji of j.kanjis" v-if="forms.kreb.indexOf(kanji.title) !== -1">
-          <vue-kanji :id="kanji.id" :j="j" :editing="editing"></vue-kanji>
+    <div class="word-details center-block" v-if="j.kanjis.length > 0">
+      <div class="icon">&#x1f58c;</div>
+      <div class="expandable-list">
+        <div class="expandable-list-item" v-for="(kanji, kanjiIndex) of j.kanjis">
+          <div class="wk-element" @click="openKanji(kanjiIndex)">{{kanji.title}}</div>
+          <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
         </div>
       </div>
     </div>
 
-    <div class="word-glosses center-block">
-      <div class="word-gloss-flag">&#x1f1ec;&#x1f1e7;</div>
+    <div class="expandable-list-container word-kreb-expanded" v-if="forms.kanjiIndex !== null">
+      <div class="center-block">
+        <vue-kanji :id="j.kanjis[forms.kanjiIndex].id" :j="j" :editing="editing"></vue-kanji>
+      </div>
+    </div>
+
+    <div class="word-details center-block">
+      <div class="icon">&#x1f1ec;&#x1f1e7;</div>
       <span v-for="(gloss, glossIndex) of w.en">
         <span v-if="w.en.length > 1">{{bullets[glossIndex]}} </span>
-        <span class="word-gloss-pos" v-if="gloss.pos">{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} </span>
-        {{gloss.gloss.join(', ')}} 
-      </span>
-    </div>
-    <div class="word-glosses center-block" v-if="w.ru && w.ru.length > 0">
-      <div class="word-gloss-flag">&#x1f1f7;&#x1f1fa;</div>
-      <span v-for="(gloss, glossIndex) of w.ru">
-        <span v-if="w.ru.length > 1">{{bullets[glossIndex]}} </span>
-        <span class="word-gloss-pos" v-if="gloss.pos">{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} </span>
+        <span class="pos" v-if="gloss.pos">{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} </span>
         {{gloss.gloss.join(', ')}} 
       </span>
     </div>
 
-    <div class="word-glosses wk-info center-block" v-if="w.cards.length > 0">
-      <div class="word-gloss-flag">&#x1f980;</div>
-      <div class="expandable-list" style="display: inline-block">
+    <div class="word-details center-block" v-if="w.ru && w.ru.length > 0">
+      <div class="icon">&#x1f1f7;&#x1f1fa;</div>
+      <span v-for="(gloss, glossIndex) of w.ru">
+        <span v-if="w.ru.length > 1">{{bullets[glossIndex]}} </span>
+        <span class="pos" v-if="gloss.pos">{{gloss.pos.map(i => i.replace(/^.(.*).$/, "$1")).join(", ")}} </span>
+        {{gloss.gloss.join(', ')}} 
+      </span>
+    </div>
+
+    <div class="word-details wk-info center-block" v-if="w.cards.length > 0">
+      <div class="icon">&#x1f980;</div>
+      <div class="expandable-list">
         <div class="expandable-list-item" v-for="(card, cardIndex) of w.cards">
           <div class="wk-element" @click="openCardForm(cardIndex)">
-            <div class="level-wrapper">{{card.level}}</div>
+            <span class="level">{{card.level}}</span>
             {{card.title}} ({{card.meaning.split(',')[0]}})
           </div>
           <div class="expandable-list-arrow" v-if="cardIndex === forms.card"></div>
