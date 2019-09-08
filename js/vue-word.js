@@ -118,7 +118,7 @@ Vue.component('vue-word', {
       <div class="word-krebs expandable-list">
         <div class="expandable-list-item" v-for="kreb of w.krebs">
           <div>
-            <div class="word-kreb" :class="[kreb.progress.html_class, kreb.is_common ? 'word-kreb-common' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<div v-if="kreb.is_common" class="word-kreb-common-sign">✪</div></div>
+            <div class="word-kreb" :class="[kreb.is_common ? 'common' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<div v-if="kreb.progress.learned_at" class="learned-icon">✪</div></div>
           </div>
           <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
         </div>

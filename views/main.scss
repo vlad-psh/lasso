@@ -15,6 +15,11 @@
   font-family: "myfont_jp2";
   src: local("myfont_jp2"),url("/fonts/myfont_jp2") format('truetype');
 }
+@mixin non-selectable {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
 body {
   font-family: myfont, Cambria, myfont_jp1, serif;
   font-weight: 300;
@@ -455,6 +460,7 @@ JRU5ErkJggg==') repeat;
 
         &:hover {
           color: #c00;
+          border-bottom-color: #c00;
         }
         .word-kreb {
           font-size: 1.4em;
@@ -466,7 +472,11 @@ JRU5ErkJggg==') repeat;
           /* transparent border; so that height is equal with common words with visible border*/
           border-bottom: 2px solid rgba(255,255,255,0);
 
-          .word-kreb-common-sign {
+          &.common {
+            border-bottom-color: #c00;
+          }
+          .learned-icon {
+            @include non-selectable;
             display: block;
             color: #ffbc11;
             background-color: white;
@@ -474,8 +484,6 @@ JRU5ErkJggg==') repeat;
             font-size: 0.7em;
             width: .8em;
             height: .8em;
-            -moz-user-select: none;
-            -webkit-user-select: none;
             position: absolute;
             top: -.3em;
             right: -.3em;
@@ -498,6 +506,7 @@ JRU5ErkJggg==') repeat;
         }
 
         .level {
+          @include non-selectable;
           display: inline-block;
           background-color: #ffbc11;
           color: #99700a;
@@ -506,8 +515,6 @@ JRU5ErkJggg==') repeat;
           line-height: 1.6em;
           width: 1.6em;
           height: 1.6em;
-          -moz-user-select: none;
-          -webkit-user-select: none;
           text-align: center;
           vertical-align: middle;
         }
@@ -524,8 +531,10 @@ JRU5ErkJggg==') repeat;
     .word-details {
       text-align: justify;
       padding: .3em;
+      line-height: 1.6em;
 
       .icon {
+        @include non-selectable;
         display: inline-block;
         font-size: 1.4em;
         vertical-align: middle;
@@ -826,13 +835,12 @@ JRU5ErkJggg==') repeat;
   } /* end of #sentence-quiz-app */
 
   .vue-double-click-button {
+    @include non-selectable;
     display: inline-block;
     cursor: pointer;
     margin-right: .3em;
     border: 1px solid;
     border-radius: 4px;
-    -moz-user-select: none;
-    user-select: none;
 
     .title {
       margin: -.1em .4em 0 .4em;
@@ -969,7 +977,7 @@ body.black {
       .expandable-list-arrow {
         border-bottom-color: #152844;
       }
-      .word-kreb .word-kreb-common-sign {
+      .word-kreb .learned-icon {
         background-color: #0d192b;
       }
     }
