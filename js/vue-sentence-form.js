@@ -4,60 +4,64 @@ Vue.component('vue-sentence-form', {
       rawSentence: '',
       jpSentence: null,
       enSentence: null,
-      newSentence: []
+      structure: [],
+      editMode: false
     }
   },
   methods: {
     processRawSentence() {
-      this.jpSentence = this.rawSentence.split("\n\n")[0];
-      this.enSentence = this.rawSentence.split("\n\n")[1];
+      this.editMode = true;
 
       $.ajax({
         url: "/mecab",
         method: 'POST',
         data: {sentence: this.jpSentence}
       }).done(data => {
-        this.newSentence = JSON.parse(data);
+        this.structure = JSON.parse(data);
+        this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
       });
     },
-    newSentencePartSelected() {
-      var textarea = document.querySelectorAll('.jpsentence')[0];
-      var start = textarea.selectionStart;
-      var finish = textarea.selectionEnd;
-      if (start === finish) return;
+    newSentencePartSelected(structureIndex, start, finish) {
+      var selectedText = this.structure[structureIndex].text.substring(start, finish);
+      //console.log('newSentencePartSelected()');
+      //console.log('structure[' + structureIndex + '] = ' + JSON.stringify(this.structure[structureIndex]));
+      //console.log('(' + start + '..' + finish + ') = ' + selectedText);
 
       $.ajax({
         url: "/mecab",
         method: 'POST',
-        data: {sentence: textarea.value.substring(start, finish)}
+        data: {sentence: selectedText}
       }).done(data => {
         var jdata = JSON.parse(data);
         var result = [];
-        var i = 0;
-        for (substr of this.newSentence) {
-            if (i <= start && i + substr.text.length >= finish && substr.seq === undefined) {
-                if (i !== start) result.push({text: substr.text.substring(0, start - i)});
+        for (idx in this.structure) {
+          var substr = this.structure[idx];
+          if (idx == structureIndex) {
+            if (start !== 0) result.push({text: substr.text.substring(0, start)});
 
-                jdata[0].text = jdata.reduce((acc,v) => acc + v.text, '');
-                jdata[0].reading = jdata.reduce((acc,v) => acc + (v.reading || v.text), '');
-                result.push(jdata[0]);
+            jdata[0].text = jdata.reduce((acc,v) => acc + v.text, '');
+            jdata[0].reading = jdata.reduce((acc,v) => acc + (v.reading || v.text), '');
+            result.push(jdata[0]);
 
-                if (i + substr.text.length !== finish) result.push({text: substr.text.substring(finish - i, substr.text.length)});
-            } else {
-                result.push(substr);
-            }
-            i += substr.text.length;
+            if (substr.text.length > finish) result.push({text: substr.text.substring(finish, substr.text.length)});
+          } else {
+            result.push(substr);
+          }
         }
-        textarea.selectionStart = textarea.selectionEnd = 0;
-        this.newSentence = result;
+        //textarea.selectionStart = textarea.selectionEnd = 0;
+        // TODO: reset selection
+        this.structure = result;
+        this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
       });
     },
     newSentenceResetPart(partIdx) {
       var result = [];
       var tmpString = '';
-      delete this.newSentence[partIdx].seq; // also: reading, base, gloss
+      if (partIdx !== null) {
+        delete this.structure[partIdx].seq; // also: reading, base, gloss
+      }
 
-      for (part of this.newSentence) {
+      for (part of this.structure) {
         if (part.seq === undefined) {
           tmpString += part.text;
         } else {
@@ -74,11 +78,11 @@ Vue.component('vue-sentence-form', {
         tmpString = '';
       }
 
-      this.newSentence = result;
+      this.structure = result;
     },
     clearProcessedSentence() {
-      this.jpSentence = null;
-      this.enSentence = null;
+      this.editMode = false;
+      this.structure = [];
     },
     saveProcessedSentence() {
       $.ajax({
@@ -87,41 +91,69 @@ Vue.component('vue-sentence-form', {
         data: {
           japanese: this.jpSentence,
           english: this.enSentence,
-          structure: this.newSentence}
+          structure: this.structure}
       }).done(data => {
         alert(data);
-        //this.newSentence = JSON.parse(data);
         this.jpSentence = null;
         this.enSentence = null;
         this.newSentence = [];
       });
     }
   }, // end of methods
+  beforeMount() {
+    var app = this;
+    document.onmouseup = function() {
+      if (window.getSelection) {
+        var selection = window.getSelection();
+        if (selection.anchorNode && selection.toString() !== '' &&
+            $('.new-sentence').has(selection.anchorNode.parentNode).length > 0) {
+          app.newSentencePartSelected(
+                Number.parseInt(selection.anchorNode.parentNode.getAttribute('data-structure-index')),
+                selection.anchorOffset, selection.focusOffset);
+        }
+      } else if (document.selection && document.selection.type != "Control") {
+        console.log('unsupported method');
+        //text = document.selection.createRange().text;
+      }
+    };
+  },
   template: `
 <div class="vue-sentence-form-app">
-  <div v-if="jpSentence === null">
-    <textarea class="raw-sentence" v-model="rawSentence" style="max-width: 95%; width: 35em; height: 8em;"></textarea>
-    <br>
-    <input type="button" value="process" @click="processRawSentence">
-  </div>
-  <div v-else>
-    &#x1f1ef;&#x1f1f5;
-    <input class="jpsentence" type="text" @select="newSentencePartSelected" v-model="jpSentence" readonly="readonly">
-    <br>
-    &#x1f1ec;&#x1f1e7;
-    <input class="ensentence" type="text" v-model="enSentence" readonly="readonly">
+  <table>
+    <tr>
+      <td>&#x1f1ef;&#x1f1f5;</td>
+      <td>
 
-    <div class='new-sentence' @select="console.log('select')">
-      <ruby v-for="(substr, sIdx) of newSentence" @click="newSentenceResetPart(sIdx)" :class='substr.seq ? "question-word" : ""'>
-        <rb>{{substr.text}}</rb>
-        <rt v-if="substr.reading">{{substr.reading}}</rt>
-        <rtc v-if="substr.gloss">{{substr.gloss}}</rtc>
-      </ruby>
-    </div>
+        <template v-if="editMode">
+          <div class='new-sentence' @select="console.log('select')">
+            <ruby v-for="(substr, sIdx) of structure" @click="newSentenceResetPart(sIdx)" :class='substr.seq ? "question-word" : ""'>
+              <rb :data-structure-index="sIdx">{{substr.text}}</rb>
+              <rt v-if="substr.reading">{{substr.reading}}</rt>
+              <rtc v-if="substr.gloss">{{substr.gloss}}</rtc>
+            </ruby>
+          </div>
+        </template>
 
-    <input type="button" value="cancel" @click="clearProcessedSentence">
-    <input type="button" value="save" @click="saveProcessedSentence">
-  </div>
+        <template v-else>
+          <input class="jpsentence" type="text" @select="newSentencePartSelected" v-model="jpSentence">
+        </template>
+
+      <td>
+        <template v-if="editMode">
+          <input type="button" value="Reset" @click="clearProcessedSentence">
+        </template>
+        <template v-else>
+          <input type="button" value="Auto" @click="processRawSentence">
+        </template>
+      </td>
+    </tr>
+    <tr>
+      <td>&#x1f1ec;&#x1f1e7;</td>
+      <td><input class="ensentence" type="text" v-model="enSentence"></td>
+    </tr>
+  </table>
+
+  <input v-if="structure.length > 0" type="button" value="save" @click="saveProcessedSentence">
 </div>
 `
 });

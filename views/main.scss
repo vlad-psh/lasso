@@ -878,12 +878,15 @@ JRU5ErkJggg==') repeat;
 
   .vue-sentence-form-app {
 
+    table td:nth-child(2) {
+      width: 100%;
+    }
     input.jpsentence,
     input.ensentence {
       font-size: 1.2em;
-      width: 100%;
+      width: calc(100% - 0.8em);
       max-width: 40em;
-      padding: 0.2em 0.4em;
+      padding: .2em .4em;
       border: none;
       border-bottom: 2px solid rgba(0,0,0,0.1);
       background: none;
@@ -901,6 +904,7 @@ JRU5ErkJggg==') repeat;
         ruby-position: under;
       }
       .question-word {
+        @include non-selectable;
         cursor: pointer;
         background-color: rgba(0,0,0,0.07);
         color: #333;
