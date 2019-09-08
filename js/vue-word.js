@@ -16,6 +16,10 @@ Vue.component('vue-word', {
     w() {
       return this.j.words.find(i => i.seq === this.seq);
     },
+    kanjis() {
+      var krebsString = this.w.krebs.map(i => i.title).join('');
+      return this.j.kanjis.filter(i => krebsString.indexOf(i.title) !== -1).map(i => i.title);
+    },
     selectedCard() {
       if (this.forms.card !== null) {
         return this.w.cards[this.forms.card];
@@ -136,13 +140,15 @@ Vue.component('vue-word', {
       </div>
     </div>
 
-    <div class="word-details center-block" v-if="j.kanjis.length > 0">
+    <div class="word-details center-block" v-if="kanjis.length > 0">
       <div class="icon">&#x1f58c;</div>
       <div class="expandable-list">
-        <div class="expandable-list-item" v-for="(kanji, kanjiIndex) of j.kanjis">
-          <div class="wk-element" @click="openKanji(kanjiIndex)">{{kanji.title}}</div>
-          <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
-        </div>
+        <template v-for="(kanji, kanjiIndex) of j.kanjis">
+          <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1">
+            <div class="wk-element" @click="openKanji(kanjiIndex)">{{kanji.title}}</div>
+            <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
+          </div>
+        </template>
       </div>
     </div>
 
