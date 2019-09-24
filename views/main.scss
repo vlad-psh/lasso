@@ -473,15 +473,16 @@ JRU5ErkJggg==') repeat;
           border-bottom: 2px solid rgba(255,255,255,0);
 
           &.common {
-            border-bottom-color: #c00;
+            border-bottom-color: green;
+            border-bottom-style: dotted;
           }
           .learned-icon {
             @include non-selectable;
             display: block;
-            color: #ffbc11;
-            background-color: white;
-            border-radius: 1em;
-            font-size: 0.7em;
+            //color: #ffbc11;
+            //background-color: white;
+            //border-radius: 1em;
+            font-size: 0.5em;
             width: .8em;
             height: .8em;
             position: absolute;
@@ -982,7 +983,7 @@ body.black {
         border-bottom-color: #152844;
       }
       .word-kreb .learned-icon {
-        background-color: #0d192b;
+        //background-color: #0d192b;
       }
     }
   }

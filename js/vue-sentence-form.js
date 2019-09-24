@@ -52,6 +52,8 @@ Vue.component('vue-sentence-form', {
         // TODO: reset selection
         this.structure = result;
         this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
+        if (window.getSelection) {window.getSelection().removeAllRanges();}
+        else if (document.selection) {document.selection.empty();}
       });
     },
     newSentenceResetPart(partIdx) {
@@ -150,10 +152,11 @@ Vue.component('vue-sentence-form', {
     <tr>
       <td>&#x1f1ec;&#x1f1e7;</td>
       <td><input class="ensentence" type="text" v-model="enSentence"></td>
+      <td>
+        <input v-if="structure.length > 0" type="button" value="Save" @click="saveProcessedSentence">
+      </td>
     </tr>
   </table>
-
-  <input v-if="structure.length > 0" type="button" value="save" @click="saveProcessedSentence">
 </div>
 `
 });
