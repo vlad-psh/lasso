@@ -1,3 +1,6 @@
+ruby:
+  question_path = params[:drill_id] ? path_to(:api_question_drill) + "?id=#{params[:drill_id]}" : path_to(:api_sentence)
+
 div#sentence-quiz-app.study-card
   div.sentence-question
     div style="position: absolute; top: 0; left: 0"
@@ -106,7 +109,7 @@ javascript:
       updateSentence() {
         var app = this;
         $.ajax({
-          url: "#{{path_to(:api_sentence)}}",
+          url: "#{{question_path}}",
           method: 'GET'
         }).done(data => {
           var j = JSON.parse(data);

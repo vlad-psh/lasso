@@ -74,21 +74,7 @@ post :api_learn do
   protect!
 
   progress = find_or_init_progress(params)
-  throw StandardError.new("Already learned") if progress.learned_at.present?
-
-  progress.attributes = {
-    learned_at: DateTime.now,
-    deck: 0,
-    scheduled: Date.today,
-    transition: Date.today
-  }
-  progress.save
-
-  Action.create(user: current_user, progress: progress, action_type: :learned)
-
-  stats = Statistic.find_or_initialize_by(user: current_user, date: Date.today)
-  stats.learned[progress.kind] += 1
-  stats.save
+  progress.learn!
 
   return progress.api_json
 end
@@ -123,9 +109,15 @@ post :drill_add_word do
   return 'ok'
 end
 
-get :api_drill do
+get :api_question_drill do
   protect!
-  return Collector.new(current_user, words: Word.joins(:progresses).merge( Drill.last.progresses )).to_json
+  drill = Drill.find(params[:id])
+  progress = drill.progresses.where(user: current_user, reviewed_at: nil).first || drill.progresses.order(user: current_user, reviewed_at: :asc).first
+  return {
+      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
+      english: nil,
+      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
+    }.to_json
 end
 
 post :api_add_word_to_drill do

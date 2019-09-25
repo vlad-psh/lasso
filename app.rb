@@ -49,7 +49,7 @@ paths index: '/',
     logout: '/logout', # DELETE: logout
 # API
     api_sentence: '/api/sentence',
-    api_drill: '/api/drill', # doesn't used yet
+    api_question_drill: '/api/question/drill',
     api_word_autocomplete: '/api/word/autocomplete',
     # POST:
     api_learn:   '/api/word/learn',

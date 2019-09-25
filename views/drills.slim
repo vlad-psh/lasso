@@ -2,4 +2,5 @@ ul
   - @drill_sets.each do |d|
     li
       a href=path_to(:drill).with(d.id) = "#{d.title} (#{d.created_at})"
+      a< href=(path_to(:study2) + "?drill_id=#{d.id}") Study
 

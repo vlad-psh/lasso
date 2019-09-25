@@ -44,12 +44,36 @@ class Progress < ActiveRecord::Base
     return [:id, :deck, :learned_at, :burned_at, :flagged_at, :details]
   end
 
+  def learn
+    return if learned_at.present?
+
+    self.attributes = {
+      learned_at: DateTime.now,
+      deck: 0,
+      scheduled: Date.today,
+      transition: Date.today
+    }
+
+    Action.create(user: user, progress: self, action_type: :learned)
+
+    stats = Statistic.find_or_initialize_by(user: user, date: Date.today)
+    stats.learned[self.kind] += 1
+    stats.save
+  end
+
+  def learn!
+    self.learn
+    self.save
+  end
+
   def answer!(a)
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
     return if burned_at.present? # no action required for
     throw StandardError.new("Unknown answer: #{a}") unless [:correct, :incorrect, :soso, :burn].include?(a)
+
+    self.learn unless self.learned_at.present?
 
     if a == :correct
       self.attributes = attributes_of_correct_answer
@@ -75,6 +99,7 @@ class Progress < ActiveRecord::Base
       stats.save
     end
 
+    self.reviewed_at = DateTime.now
     self.save
   end
 
