@@ -9,4 +9,4 @@ public/audio/*.mp3
 
 node_modules/
 public/build/*
-.sass-cache/
+package-lock.json

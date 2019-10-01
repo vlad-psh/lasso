@@ -112,7 +112,7 @@ end
 get :api_question_drill do
   protect!
   drill = Drill.find(params[:id])
-  progress = drill.progresses.where(user: current_user, reviewed_at: nil).first || drill.progresses.order(user: current_user, reviewed_at: :asc).first
+  progress = drill.progresses.where(user: current_user, reviewed_at: nil).sample || drill.progresses.where(user: current_user).order(reviewed_at: :asc).first
   return {
       sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
       english: nil,

@@ -122,7 +122,7 @@ Vue.component('vue-word', {
       <div class="word-krebs expandable-list">
         <div class="expandable-list-item" v-for="kreb of w.krebs">
           <div>
-            <div class="word-kreb" :class="[kreb.is_common ? 'common' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<div v-if="kreb.progress.learned_at" class="learned-icon">&#x1f514;</div></div>
+            <div class="word-kreb" :class="[kreb.is_common ? 'common' : null, kreb.progress.learned_at ? 'learned' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<div v-if="kreb.progress.learned_at && false" class="learned-icon">&#x1f514;</div></div>
           </div>
           <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
         </div>
@@ -145,7 +145,7 @@ Vue.component('vue-word', {
       <div class="expandable-list">
         <template v-for="(kanji, kanjiIndex) of j.kanjis">
           <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1">
-            <div class="wk-element" @click="openKanji(kanjiIndex)">{{kanji.title}}</div>
+            <div class="wk-element" @click="openKanji(kanjiIndex)" :class="kanji.progress.learned_at ? 'learned' : null">{{kanji.title}}</div>
             <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
           </div>
         </template>

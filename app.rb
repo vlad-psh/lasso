@@ -7,7 +7,6 @@ require 'slim'
 require 'rack-flash'
 require 'yaml'
 require 'redcloth'
-require 'sass'
 #require 'httparty'
 #require 'nokogiri'
 require 'mojinizer'
@@ -25,7 +24,6 @@ also_reload './collector.rb'
 helpers WakameHelpers
 
 paths index: '/',
-    css: '/main.css',
     list_level: '/level/:level',
     list_nf: '/words/:nf',
     list_jlpt_words: '/words/jlpt/:level',
@@ -130,10 +128,6 @@ get :index do
   end
 
   slim :index
-end
-
-get :css do
-  scss :main
 end
 
 get :current do
