@@ -6,7 +6,9 @@ form method="POST" action=path_to(:drills)
 table
   - @drill_sets.each do |d|
     tr
-      td: a href=path_to(:drill).with(d.id) = d.title
+      td
+        == d.is_active ? '&#x2705;' : ''
+        a href=path_to(:drill).with(d.id) = d.title
       td = d.created_at
       td: a href=(path_to(:study2) + "?drill_id=#{d.id}") Study
 

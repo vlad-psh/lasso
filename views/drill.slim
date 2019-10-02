@@ -1,4 +1,9 @@
-h1 = @drill.title
+form method="POST" action=path_to(:drill).with(@drill.id)
+  input type="hidden" name="_method" value="patch"
+  input type="hidden" name="is_active" value=(@drill.is_active ? 'false' : 'true')
+  h1
+    = @drill.title
+    input type="submit" value=(@drill.is_active ? 'Disable' : 'Enable')
 
 /div class="elements-list" id="vue-list"
   div.elements-list-item v-for="e in elements"

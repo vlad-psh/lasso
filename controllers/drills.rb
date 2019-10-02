@@ -35,10 +35,26 @@ get :drill do
   slim :drill
 end
 
+patch :drill do
+  protect!
+
+  drill = Drill.find(params[:id])
+  halt(403, "Access denied") if drill.user_id != current_user.id
+
+  if params[:is_active]
+    drill.update_attribute(:is_active, params[:is_active] == 'true' ? true : false)
+  end
+
+  redirect path_to(:drill).with(drill.id)
+end
+
 get :flagged do
+  protect!
+# TODO: this list is for all users; make it personal
   @progresses = Progress.where.not(flagged_at: nil).order(flagged_at: :desc)
   slim :flagged
 end
+
 get :kanjidrill do
   kanjiused = []
   @words = WkWord.joins(:wk_kanji).merge(
