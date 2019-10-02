@@ -9,6 +9,14 @@ get :drills do
   slim :drills
 end
 
+post :drills do
+  protect!
+
+  drill = Drill.create(title: params[:title], user: current_user)
+
+  redirect path_to(:drill).with(drill.id)
+end
+
 get :drill do
   protect!
   @drill = Drill.find_by(user: current_user, id: params[:id])
