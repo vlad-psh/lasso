@@ -117,7 +117,6 @@ Vue.component('vue-word', {
   },
   template: `
   <div class="vue-word word-card" id="word-card-app">
-
     <div class="center-block">
       <div class="word-krebs expandable-list">
         <div class="expandable-list-item" v-for="kreb of w.krebs">

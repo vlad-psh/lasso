@@ -1,3 +1,15 @@
+paths api_sentence: '/api/sentence',
+    api_question_drill: '/api/question/drill',
+    api_word_autocomplete: '/api/word/autocomplete',
+    # POST:
+    api_learn:   '/api/word/learn',
+    api_burn:    '/api/word/burn',
+    api_flag:    '/api/word/flag',
+    api_word_comment: '/api/word/comment',
+    api_add_word_to_drill: '/api/drill/add_word',
+    drill_add_word: '/drill/word'
+
+
 get :api_sentence do
   protect!
   # TODO: smarter selection of expired words
