@@ -921,19 +921,24 @@ JRU5ErkJggg==') repeat;
 } /* end of body */
 
 body.black {
-  background: #0d192b;
-  color: #ccc;
+  $bgcolor: #16202a; // #0d192b
+  $bgcolor2: #1c2939; // top menu bg, etc; little bit lighter
+  $fgcolor: #ccc; // main text color
+  $fgcolor2: #8799a5; // little bit darker text
+
+  background: $bgcolor;
+  color: $fgcolor;
 
   input[type='text'],
   textarea {
-    background: #152844;
-    color: #ccc;
+    background: $bgcolor2;
+    color: $fgcolor;
     border: none;
   }
 
 
   .r,
-  .blue   {background-color: #152844; border: 0px solid #2196f3;}
+  .blue   {background-color: $bgcolor2; border: 0px solid #2196f3;}
   .green  {background-color: #0a3f39; border: 0px solid #4caf50;}
   .w,
   .purple {background-color: #53155e; border: 0px solid #9c27b0;}
@@ -945,13 +950,14 @@ body.black {
   .pink   {background-color: #89005b; border: 0px solid #ff00aa;}
 
   .pristine, .apprentice, .master, .guru, .enlightened, .burned, .flagged {
-    border-color: #0d192b;
+    border-color: $bgcolor;
   }
+  .pristine {color: $fgcolor2;}
 
   #main-menu {
-    background-color: #152844;
+    background-color: $bgcolor2;
 
-    input.search {background: #0d192b;}
+    input.search {background: $bgcolor;}
   }
 
   svg.graph text {
@@ -978,18 +984,18 @@ body.black {
 
   .word-card {
     .expandable-list-container {
-      background-color: #152844;
+      background-color: $bgcolor2;
       color: #8a94a2;
     }
     .expandable-list-item {
       .expandable-list-arrow {
-        border-bottom-color: #152844;
+        border-bottom-color: $bgcolor2;
       }
       .word-kreb .learned-icon {
-        //background-color: #0d192b;
+        //background-color: $bgcolor;
       }
       .learned {
-        background: #152844;
+        background: $bgcolor2;
       }
     }
   }
@@ -998,15 +1004,15 @@ body.black {
     .counter-info {color: #6f7784;}
     .show-answer-button {
       background: none;
-      color: #8e9db2;
-      border-bottom: 2px dotted #152844;
+      color: $fgcolor2;
+      border-bottom: 2px dotted $bgcolor2;
     }
   }
   #sentence-quiz-app {
     .sentence-question {
       background: none;
-      color: #8e9db2;
-      border-bottom: 2px dotted #152844;
+      color: $fgcolor2;
+      border-bottom: 2px dotted $bgcolor2;
       .sentence-word-container {
         .word-question {background-color: rgba(255,255,255,0.1);}
         .word-question-answered {background-color: transparent;}
@@ -1031,7 +1037,7 @@ body.black {
 
   .vue-sentence-form-app .new-sentence .question-word {
     background-color: rgba(255,255,255,0.1);
-    color: #ccc;
+    color: $fgcolor;
   }
   .vue-double-click-button {
     border: 1px dashed;
