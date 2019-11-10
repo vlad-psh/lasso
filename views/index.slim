@@ -1,65 +1,22 @@
-ruby:
-  groups = {
-        just_learned: {title: 'New', class: :blue},
-        expired: {title: 'Expired', class: :red},
-        any_learned: {title: '🎓', tip: 'Total Learned'},
-        n5: {title: 'N5', unit: '%', class: 'jlpt-counter'},
-        n4: {title: 'N4', unit: '%', class: 'jlpt-counter'},
-        n3: {title: 'N3', unit: '%', class: 'jlpt-counter'},
-        n2: {title: 'N2', unit: '%', class: 'jlpt-counter'},
-        n1: {title: 'N1', unit: '%', class: 'jlpt-counter'},
-  }
-  tt = {r: :radicals, k: :kanjis, w: :words}
-
 div.index-page-container
 
   div.stat-table-block
     table
       tr
-        - ['', 'New', 'Expired', '🎓', 'N5', 'N4', 'N3', 'N2', 'N1'].each do |header|
+        - ['', 'N5', 'N4', 'N3', 'N2', 'N1'].each do |header|
           td == header
-      - %w(r k w).each do |k|
+      - %w(k w).each do |k|
         tr
           td class=k = INFODIC[k.to_sym][:japanese]
-          - groups.each do |gk,gv|
-            - i = @counters[gk].try(:[], k) || 0
-            - url = path_to(:study).with(tt[k.to_sym], gk) if [:just_learned, :expired].include?(gk) && i > 0
-            - url = path_to("list_jlpt_#{INFODIC[k.to_sym][:plural]}".to_sym).with(gk[1].to_i) if [:n1,:n2,:n3,:n4,:n5].include?(gk) && i > 0
-            td class=gv[:class]
-              - if url
-                a class="study-button" href=url = "#{i}#{gv[:unit]}"
-              - else
-                = i > 0 ? "#{i}#{gv[:unit]}" : '-'
+          - [:n5, :n4, :n3, :n2, :n1].each do |level|
+            - i = @counters[level].try(:[], k) || 0
+            - url = path_to("list_jlpt_#{INFODIC[k.to_sym][:plural]}".to_sym).with(level[1].to_i)
+            td class='jlpt-counter'
+              a class="study-button" href=path_to("list_jlpt_#{INFODIC[k.to_sym][:plural]}".to_sym).with(level[1].to_i) = "#{i}%"
     a href=path_to(:study2) vue-study
 
   ruby:
     days_in_graph = 21
-
-    # First day's data:
-    gdata = [[
-      (@counters[:just_learned]['w']||0) + (@counters[:expired]['w']||0),
-      (@counters[:just_learned]['k']||0) + (@counters[:expired]['k']||0),
-      (@counters[:just_learned]['r']||0) + (@counters[:expired]['r']||0)
-    ]]
-    gdesc = [Date.today.strftime("%d")]
-
-    ss = Statistic.where(user: @view_user, date: (Date.today + 1)..(Date.today + days_in_graph - 1))
-    sh = {}
-    ss.each {|i| sh[i.date] = [i.scheduled['w'], i.scheduled['k'], i.scheduled['r']]}
-
-    d = Date.today + 1
-    while d < Date.today + days_in_graph
-      gdata << (sh[d] || [0,0,0])
-      gdesc << d.strftime("%d")
-      d += 1
-    end
-
-  div.hr-title style="margin: 1em 0 1.2em 0": span Graphs
-  ' Scheduled (for upcoming 3 weeks):
-  br
-  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
-
-  ruby:
     ss = Statistic.where(user: @view_user, date: (Date.today - days_in_graph + 1)..(Date.today))
     sh = {}
     ss.each {|i| sh[i.date] = [i.learned['w'], i.learned['k'], i.learned['r']]}
@@ -73,8 +30,7 @@ div.index-page-container
       d += 1
     end
 
-  br
-  ' Learning history (past 3 weeks):
+  div.hr-title style="margin: 1em 0 1.2em 0": span Learning history (past 3 weeks):
   br
   == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 

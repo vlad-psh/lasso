@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_24_130651) do
+ActiveRecord::Schema.define(version: 2019_11_10_113236) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,7 +22,9 @@ ActiveRecord::Schema.define(version: 2019_09_24_130651) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.integer "progress_id"
+    t.bigint "srs_progress_id"
     t.index ["card_id"], name: "index_actions_on_card_id"
+    t.index ["srs_progress_id"], name: "index_actions_on_srs_progress_id"
   end
 
   create_table "cards", force: :cascade do |t|
@@ -80,19 +82,18 @@ ActiveRecord::Schema.define(version: 2019_09_24_130651) do
   create_table "progresses", force: :cascade do |t|
     t.bigint "card_id"
     t.bigint "user_id"
-    t.integer "deck"
-    t.date "scheduled"
+    t.integer "_deck"
+    t.date "_scheduled"
     t.jsonb "details"
     t.integer "seq"
     t.datetime "learned_at"
     t.datetime "burned_at"
     t.string "title"
-    t.integer "kind"
     t.integer "kanji_id"
     t.integer "wk_radical_id"
-    t.date "transition"
+    t.date "_transition"
     t.datetime "flagged_at"
-    t.datetime "reviewed_at"
+    t.datetime "_reviewed_at"
     t.index ["card_id"], name: "index_progresses_on_card_id"
     t.index ["seq"], name: "index_progresses_on_seq"
     t.index ["user_id"], name: "index_progresses_on_user_id"
@@ -118,10 +119,23 @@ ActiveRecord::Schema.define(version: 2019_09_24_130651) do
     t.index ["word_seq"], name: "index_sentences_words_on_word_seq"
   end
 
+  create_table "srs_progresses", force: :cascade do |t|
+    t.integer "learning_type", default: 0
+    t.bigint "progress_id"
+    t.bigint "user_id"
+    t.integer "deck"
+    t.date "scheduled"
+    t.date "transition"
+    t.string "last_answer"
+    t.datetime "reviewed_at"
+    t.integer "kind"
+    t.index ["progress_id"], name: "index_srs_progresses_on_progress_id"
+    t.index ["user_id"], name: "index_srs_progresses_on_user_id"
+  end
+
   create_table "statistics", force: :cascade do |t|
     t.date "date"
     t.jsonb "learned", default: {"k"=>0, "r"=>0, "w"=>0}
-    t.jsonb "scheduled", default: {"k"=>0, "r"=>0, "w"=>0}
     t.integer "user_id"
   end
 

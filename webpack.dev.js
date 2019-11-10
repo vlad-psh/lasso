@@ -36,9 +36,9 @@ module.exports = merge(common, {
 //    overlay: true,
     compress: true,
     disableHostCheck: true,
-//    allowedHosts: ['tulip.fc', 'jkb.fruitcode.net'],
-    public: 'jkb.fruitcode.net',
-    sockHost: 'jkb.fruitcode.net',
+//    allowedHosts: ['tulip.fc', 'wakame.fruitcode.net'],
+    public: 'wakame.fruitcode.net',
+    sockHost: 'wakame.fruitcode.net',
     sockPort: 80
   }
 });

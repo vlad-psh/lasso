@@ -10,11 +10,7 @@ get :index do
 
   @counters = {}
 
-  [:just_learned, :expired, :any_learned].each do |g|
-    @counters[g] = Progress.public_send(g).where(user: @view_user).group(:kind).count
-  end
-
-  k_jlpt = Kanji.joins(:progresses).merge( Progress.any_learned.where(user: @view_user, kind: :k) ).group(:jlptn).count
+  k_jlpt = Kanji.joins(:progresses).merge( Progress.learned.kanjis.where(user: @view_user) ).group(:jlptn).count
   # {"5"=>103, "4"=>181, "3"=>367, "2"=>400, "1"=>1207} # non-cumulative
   # {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258} # cumulative
   k_total = {"5"=>103, "4"=>284, "3"=>651, "2"=>1051, "1"=>2258}
@@ -24,7 +20,7 @@ get :index do
     @counters["n#{lvl}".to_sym] = {'k' => (100.0*cumulative/k_total[lvl]).round}
   end
 
-  w_jlpt = Word.joins(:progresses).merge( Progress.any_learned.where(user: @view_user, kind: :w) ).group(:jlptn).count
+  w_jlpt = Word.joins(:progresses).merge( Progress.learned.words.where(user: @view_user) ).group(:jlptn).count
   # {"5"=>438, "4"=>416, "3"=>964, "2"=>531, "1"=>681} # word cards in WK db + 3284 of unknown level
   # {"5"=>438, "4"=>854, "3"=>1818, "2"=>2349, "1"=>3030} # same as above but cumulative
 

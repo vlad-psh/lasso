@@ -58,13 +58,13 @@ def find_or_init_progress(p)
 
   return case p[:kind].to_sym
     when :w
-      Progress.find_or_initialize_by(seq: p[:id], title: p[:title], user: current_user, kind: :w)
+      Progress.find_or_initialize_by(seq: p[:id], title: p[:title], user: current_user)
     when :k
-      i = Progress.find_or_initialize_by(kanji_id: p[:id], kind: :k, user: current_user)
+      i = Progress.find_or_initialize_by(kanji_id: p[:id], user: current_user)
       i.title = p[:title]
       i
     when :r
-      i = Progress.find_or_initialize_by(wk_radical_id: p[:id], kind: :r, user: current_user)
+      i = Progress.find_or_initialize_by(wk_radical_id: p[:id], user: current_user)
       i.title = p[:title]
       i
     else
@@ -76,8 +76,7 @@ post :api_flag do
   protect!
 
   progress = find_or_init_progress(params)
-  progress.flagged_at = DateTime.now
-  progress.save
+  progress.update(flagged_at: DateTime.now) unless progress.flagged_at
 
   return progress.api_json
 end
@@ -95,7 +94,7 @@ post :api_burn do
   protect!
 
   progress = find_or_init_progress(params)
-  progress.answer!(:burn)
+  progress.burn!
 
   return progress.api_json
 end
@@ -124,7 +123,10 @@ end
 get :api_question_drill do
   protect!
   drill = Drill.find(params[:id])
-  progress = drill.progresses.where(user: current_user, reviewed_at: nil).sample || drill.progresses.where(user: current_user).order(reviewed_at: :asc).first
+
+  progress = drill.progresses.left_outer_joins(:srs_progresses).where(srs_progresses: {id: nil}).first ||
+          SrsProgress.includes(:progress).joins(:progress).merge( drill.progresses ).where(learning_type: :reading_question).order('reviewed_at ASC NULLS FIRST').first.progress
+
   return {
       sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
       english: nil,
