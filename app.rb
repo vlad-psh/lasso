@@ -92,7 +92,7 @@ end
 get :sentences do
   protect!
 
-  @sentences = Sentence.order(created_at: :desc).limit(50)
+  @sentences = Sentence.where(user: current_user).order(created_at: :desc).limit(50)
 
   slim :sentences
 end
@@ -100,11 +100,15 @@ end
 post :sentences do
   protect!
 
+  drill = Drill.find_by(user: current_user, id: params['drill_id'])
+
   s = Sentence.new({
     japanese: params['japanese'],
     english: params['english'],
 #    russian: params[''],
-    structure: params['structure'].map{|k,v| v}
+    structure: params['structure'].map{|k,v| v},
+    drill: drill,
+    user: current_user
   })
   s.save
 

@@ -1,11 +1,15 @@
 Vue.component('vue-sentence-form', {
+  props: {
+    drillLists: {type: Object, required: false},
+  },
   data() {
     return {
       rawSentence: '',
       jpSentence: null,
       enSentence: null,
       structure: [],
-      editMode: false
+      editMode: false,
+      selectedDrill: null
     }
   },
   methods: {
@@ -93,12 +97,14 @@ Vue.component('vue-sentence-form', {
         data: {
           japanese: this.jpSentence,
           english: this.enSentence,
-          structure: this.structure}
+          structure: this.structure,
+          drill_id: this.selectedDrill}
       }).done(data => {
-        alert(data);
+        //alert(data);
         this.jpSentence = null;
         this.enSentence = null;
         this.newSentence = [];
+        this.editMode = false;
       });
     }
   }, // end of methods
@@ -121,6 +127,11 @@ Vue.component('vue-sentence-form', {
   },
   template: `
 <div class="vue-sentence-form-app">
+  <select v-model="selectedDrill">
+    <option selected="selected"></option>
+    <option v-for="d in drillLists" :value="d.id">{{d.title}}</option>
+  </select>
+
   <table>
     <tr>
       <td>&#x1f1ef;&#x1f1f5;</td>

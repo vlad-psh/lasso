@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_10_113236) do
+ActiveRecord::Schema.define(version: 2019_11_12_122142) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,10 @@ ActiveRecord::Schema.define(version: 2019_11_10_113236) do
     t.json "structure"
     t.json "details"
     t.datetime "created_at"
+    t.bigint "drill_id"
+    t.bigint "user_id"
+    t.index ["drill_id"], name: "index_sentences_on_drill_id"
+    t.index ["user_id"], name: "index_sentences_on_user_id"
   end
 
   create_table "sentences_words", force: :cascade do |t|

@@ -1,6 +1,6 @@
 div style="max-width: 800px; margin: 0 auto"
   div#sentence-app style="text-align: center; margin-top: 2em"
-    vue-sentence-form
+    vue-sentence-form :drill-lists=(Drill.where(user: current_user, is_active: true).select(:id, :title).to_json)
 
   ul style="text-align: left"
     - @sentences.each do |sentence|
