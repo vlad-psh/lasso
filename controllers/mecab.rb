@@ -2,6 +2,24 @@ require 'mecab/light'
 
 path mecab: '/mecab'
 
+def split_okurigana(word)
+  base = ''
+  okurigana = ''
+  still_okurigana = true
+  word.reverse.split('').each do |c|
+    (c.hiragana? ? okurigana += c : still_okurigana = false) if still_okurigana
+    base += c if still_okurigana == false
+  end
+  return [base.reverse, okurigana.reverse]
+end
+
+def base_reading(element)
+  base_split = split_okurigana(element[:base])
+  text_split = split_okurigana(element[:text])
+  reading = element[:reading].gsub(/#{text_split[1]}$/, '') # subtract okurigana from reading
+  return "#{reading}#{base_split[1]}" # append okurigana from base
+end
+
 def mecab_parse(sentence)
   tagger = MeCab::Light::Tagger.new('')
   mecab_result = tagger.parse(sentence)
@@ -29,7 +47,8 @@ def mecab_parse(sentence)
     if seqs.present? && seqs.length > 1
       # More than one results found (eg.: 石)
       # Find one with correct reading
-      seqs = WordTitle.where(title: e[:reading], seq: seqs).pluck(:seq).uniq
+      reading = base_reading(e)
+      seqs = WordTitle.where(title: reading, seq: seqs).pluck(:seq).uniq
     end
 
     if seqs.blank? || seqs.length != 1 # Skip if length STILL > 1 (or == 0)
