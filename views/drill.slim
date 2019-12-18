@@ -26,6 +26,13 @@ div class="elements-list"
   - @elements.shuffle.each do |e|
     div.elements-list-item : div class="element-block pristine" : a href=e[:href] : div.element : span.japanese = e[:reading]
 
+div.hr-title : span Sentences
+ul
+  - @drill.sentences.order(created_at: :desc).each do |sentence|
+    li
+      = sentence.japanese
+      span style="opacity: 0.5" = sentence.english
+
 javascript:
   var app = new Vue({
     el: '#vue-list',

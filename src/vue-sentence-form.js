@@ -4,12 +4,14 @@ Vue.component('vue-sentence-form', {
   },
   data() {
     return {
-      rawSentence: '',
       jpSentence: null,
       enSentence: null,
       structure: [],
       editMode: false,
-      selectedDrill: null
+      selectedDrill: null,
+      selection: {
+        section: null, start: null, end: null
+      }
     }
   },
   methods: {
@@ -25,7 +27,11 @@ Vue.component('vue-sentence-form', {
         this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
       });
     },
-    newSentencePartSelected(structureIndex, start, finish) {
+    newSentencePartSelected() {
+      var structureIndex = this.selection.section;
+      var start  = Math.min(this.selection.start, this.selection.end);
+      var finish = Math.max(this.selection.start, this.selection.end);
+
       var selectedText = this.structure[structureIndex].text.substring(start, finish);
       //console.log('newSentencePartSelected()');
       //console.log('structure[' + structureIndex + '] = ' + JSON.stringify(this.structure[structureIndex]));
@@ -52,12 +58,9 @@ Vue.component('vue-sentence-form', {
             result.push(substr);
           }
         }
-        //textarea.selectionStart = textarea.selectionEnd = 0;
-        // TODO: reset selection
         this.structure = result;
         this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
-        if (window.getSelection) {window.getSelection().removeAllRanges();}
-        else if (document.selection) {document.selection.empty();}
+        this.selection.section = null; // reset selection
       });
     },
     newSentenceResetPart(partIdx) {
@@ -106,25 +109,17 @@ Vue.component('vue-sentence-form', {
         this.newSentence = [];
         this.editMode = false;
       });
+    },
+    separatorClick(section, position) {
+      if (this.selection.section === null || this.selection.section != section) {
+        this.selection.section = section;
+        this.selection.start = position;
+      } else {
+        this.selection.end = position;
+        this.newSentencePartSelected();
+      }
     }
   }, // end of methods
-  beforeMount() {
-    var app = this;
-    document.onmouseup = function() {
-      if (window.getSelection) {
-        var selection = window.getSelection();
-        if (selection.anchorNode && selection.toString() !== '' &&
-            $('.new-sentence').has(selection.anchorNode.parentNode).length > 0) {
-          app.newSentencePartSelected(
-                Number.parseInt(selection.anchorNode.parentNode.getAttribute('data-structure-index')),
-                selection.anchorOffset, selection.focusOffset);
-        }
-      } else if (document.selection && document.selection.type != "Control") {
-        console.log('unsupported method');
-        //text = document.selection.createRange().text;
-      }
-    };
-  },
   template: `
 <div class="vue-sentence-form-app">
   <select v-model="selectedDrill">
@@ -134,21 +129,33 @@ Vue.component('vue-sentence-form', {
 
   <table>
     <tr>
-      <td>&#x1f1ef;&#x1f1f5;</td>
+      <td>&#x1f1ef;&#x1f1f5;</td><!-- JP flag -->
       <td>
 
         <template v-if="editMode">
-          <div class='new-sentence' @select="console.log('select')">
-            <ruby v-for="(substr, sIdx) of structure" @click="newSentenceResetPart(sIdx)" :class='substr.seq ? "question-word" : ""'>
-              <rb :data-structure-index="sIdx">{{substr.text}}</rb>
-              <rt v-if="substr.reading">{{substr.reading}}</rt>
-              <rtc v-if="substr.gloss">{{substr.gloss}}</rtc>
-            </ruby>
+
+          <div class="sentence-composer">
+            <template v-for="(section, sectionIndex) of structure">
+              <template v-if="section.seq">
+                <div class="word" @click="newSentenceResetPart(sectionIndex)">
+                  <div class="reading" v-if="section.reading">{{section.reading}}</div>
+                  <div class="text">{{section.text}}</div>
+                  <div class="gloss" v-if="section.gloss">{{section.gloss}}</div>
+                  <div class="base" v-if="section.base">{{section.base}}</div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="separator" @click="separatorClick(sectionIndex, 0)" :class="[selection.section == sectionIndex && selection.start == 0 ? 'selected' : null]"></div><template v-for="(char, charIndex) of section.text">
+                  <div class="letter">{{char}}</div><div class="separator" @click="separatorClick(sectionIndex, charIndex + 1)" :class="[selection.section == sectionIndex && selection.start == charIndex + 1 ? 'selected' : null]"></div>
+                </template>
+              </template>
+            </template>
           </div>
+
         </template>
 
         <template v-else>
-          <input class="jpsentence" type="text" @select="newSentencePartSelected" v-model="jpSentence">
+          <input class="jpsentence" type="text" v-model="jpSentence">
         </template>
 
       <td>
@@ -161,7 +168,7 @@ Vue.component('vue-sentence-form', {
       </td>
     </tr>
     <tr>
-      <td>&#x1f1ec;&#x1f1e7;</td>
+      <td>&#x1f1ec;&#x1f1e7;</td><!-- UK flag -->
       <td><input class="ensentence" type="text" v-model="enSentence"></td>
       <td>
         <input v-if="structure.length > 0" type="button" value="Save" @click="saveProcessedSentence">
