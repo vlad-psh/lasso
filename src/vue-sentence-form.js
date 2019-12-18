@@ -10,7 +10,8 @@ Vue.component('vue-sentence-form', {
       editMode: false,
       selectedDrill: null,
       selection: {
-        section: null, start: null, end: null
+        section: null, start: null, end: null,
+        word: {base: null, gloss: null, reading: null, seq: null, text: null, index: null}
       }
     }
   },
@@ -44,14 +45,20 @@ Vue.component('vue-sentence-form', {
       }).done(data => {
         var jdata = JSON.parse(data);
         var result = [];
+        var newSectionIndex = null;
         for (idx in this.structure) {
           var substr = this.structure[idx];
           if (idx == structureIndex) {
             if (start !== 0) result.push({text: substr.text.substring(0, start)});
 
-            jdata[0].text = jdata.reduce((acc,v) => acc + v.text, '');
-            jdata[0].reading = jdata.reduce((acc,v) => acc + (v.reading || v.text), '');
-            result.push(jdata[0]);
+            if (jdata.length === 1 && jdata[0].seq !== undefined) {
+              jdata[0].text = jdata.reduce((acc,v) => acc + v.text, '');
+              jdata[0].reading = jdata.reduce((acc,v) => acc + (v.reading || v.text), '');
+              result.push(jdata[0]);
+            } else {
+              result.push({text: selectedText, seq: 0, reading: selectedText})
+              newSectionIndex = result.length - 1;
+            }
 
             if (substr.text.length > finish) result.push({text: substr.text.substring(finish, substr.text.length)});
           } else {
@@ -61,6 +68,7 @@ Vue.component('vue-sentence-form', {
         this.structure = result;
         this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
         this.selection.section = null; // reset selection
+        if (newSectionIndex !== null) this.editWord(newSectionIndex); // open editor for current word
       });
     },
     newSentenceResetPart(partIdx) {
@@ -87,6 +95,7 @@ Vue.component('vue-sentence-form', {
         tmpString = '';
       }
 
+      this.selection.word.index = null;
       this.structure = result;
     },
     clearProcessedSentence() {
@@ -114,12 +123,43 @@ Vue.component('vue-sentence-form', {
       if (this.selection.section === null || this.selection.section != section) {
         this.selection.section = section;
         this.selection.start = position;
+      } else if (this.selection.start == position) {
+        // reset selection if separator clicked twice
+        this.selection.section == null;
       } else {
         this.selection.end = position;
         this.newSentencePartSelected();
       }
+    },
+    editWord(section) {
+      for (prop of ['base', 'gloss', 'reading', 'seq', 'text']) {
+        this.selection.word[prop] = this.structure[section][prop];
+      }
+      this.selection.word.index = section;
+    },
+    updateWord() {
+      var section = this.selection.word.index;
+      for (prop of ['base', 'gloss', 'reading', 'seq', 'text']) {
+        this.structure[section][prop] = this.selection.word[prop];
+      }
+      this.selection.word.index = null;
     }
   }, // end of methods
+  updated() {
+    var app = this;
+    $('.word-settings input.search').autocomplete({
+      source: "/api/word/autocomplete",
+      minLength: 1,
+      select: function(event, ui){
+        app.selection.word.seq = ui.item.id;
+        app.selection.word.gloss = ui.item.gloss;
+        return false;
+      },
+      focus: function(event, ui){
+        return false;
+      }
+    });
+  },
   template: `
 <div class="vue-sentence-form-app">
   <select v-model="selectedDrill">
@@ -136,8 +176,8 @@ Vue.component('vue-sentence-form', {
 
           <div class="sentence-composer">
             <template v-for="(section, sectionIndex) of structure">
-              <template v-if="section.seq">
-                <div class="word" @click="newSentenceResetPart(sectionIndex)">
+              <template v-if="section.seq !== null && section.seq !== undefined">
+                <div class="word" @click="editWord(sectionIndex)" @click.middle="newSentenceResetPart(sectionIndex)">
                   <div class="reading" v-if="section.reading">{{section.reading}}</div>
                   <div class="text">{{section.text}}</div>
                   <div class="gloss" v-if="section.gloss">{{section.gloss}}</div>
@@ -150,6 +190,13 @@ Vue.component('vue-sentence-form', {
                 </template>
               </template>
             </template>
+          </div>
+
+          <div v-if="selection.word.index !== null" class="word-settings">
+            <div><input type="button" value="Clear" @click="newSentenceResetPart(selection.word.index)"></div>
+            <div><input type="text" v-model="selection.word.reading" placeholder="reading"><br>{{selection.word.text}}</div>
+            <div><input type="text" class="search" v-model="selection.word.base" placeholder="search..."><br>#{{selection.word.seq}} - {{selection.word.gloss}}</div>
+            <div><input type="button" value="Update" @click="updateWord()"></div>
           </div>
 
         </template>

@@ -40,10 +40,7 @@ end
 post :study2 do
   progresses = {}
   params[:answers].each do |i, a|
-    a['progress'] = Progress.find_by(seq: a['seq'], title: a['base'], user: current_user)
-    halt(403, 'Forbidden') if a['progress'].blank?
-# TODO: Make so that answers can be given to words without 'progress' record
-# (new progress record should be created automatically)
+    a['progress'] = Progress.find_or_initialize_by(seq: a['seq'], title: a['base'], user: current_user)
   end
 
   params[:answers].each do |i,a|

@@ -47,6 +47,7 @@ get :api_word_autocomplete do
             id: i.seq,
             value: "#{i.krebs[0]}: #{i.en[0]['gloss'][0]}",
             title: i.krebs[0],
+            gloss: i.en[0]['gloss'][0],
             href: path_to(:word).with(i.seq)
         }
   }

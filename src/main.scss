@@ -930,6 +930,22 @@ JRU5ErkJggg==') repeat;
           color: red;
         }
       }
+    } /* end of sentence-composer */
+
+    .word-settings {
+      display: flex;
+      justify-content: space-evenly;
+      background-color: #eee;
+      padding: .5em 0;
+      margin: .5em 0;
+
+      .label {
+        font-size: .7em;
+        opacity: .5;
+      }
+      input[type="text"] {
+        width: 8em;
+      }
     }
 
     table td:nth-child(2) {
