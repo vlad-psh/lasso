@@ -11,6 +11,7 @@ require 'redcloth'
 #require 'nokogiri'
 require 'mojinizer'
 require 'open-uri'
+require 'mini_magick'
 
 Dir.glob('./models/*.rb').each {|model| require_relative model}
 Dir.glob('./controllers/*.rb').each {|model| require_relative model}

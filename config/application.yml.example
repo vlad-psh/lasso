@@ -1,5 +1,6 @@
 ---
 secret: xxx
+pictures: /srv/data/wakame_pictures
 admins:
   login1: password1
 guests:

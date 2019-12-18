@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_12_122142) do
+ActiveRecord::Schema.define(version: 2019_12_16_075439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,23 @@ ActiveRecord::Schema.define(version: 2019_11_12_122142) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+  end
+
+  create_table "picture_areas", force: :cascade do |t|
+    t.bigint "picture_id"
+    t.string "symbol"
+    t.index ["picture_id"], name: "index_picture_areas_on_picture_id"
+  end
+
+  create_table "pictures", force: :cascade do |t|
+    t.string "filename"
+    t.string "sid"
+    t.string "tool"
+    t.string "source"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_pictures_on_user_id"
   end
 
   create_table "progresses", force: :cascade do |t|
