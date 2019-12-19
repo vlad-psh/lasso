@@ -25,18 +25,15 @@ Vue.component('vue-sentence-form', {
         data: {sentence: this.jpSentence}
       }).done(data => {
         this.structure = JSON.parse(data);
-        this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
+        this.resetSegment(null); // compact consecutive 'text' elements (without seq)
       });
     },
-    newSentencePartSelected() {
+    textFragmentSelected() {
       var structureIndex = this.selection.section;
       var start  = Math.min(this.selection.start, this.selection.end);
       var finish = Math.max(this.selection.start, this.selection.end);
 
       var selectedText = this.structure[structureIndex].text.substring(start, finish);
-      //console.log('newSentencePartSelected()');
-      //console.log('structure[' + structureIndex + '] = ' + JSON.stringify(this.structure[structureIndex]));
-      //console.log('(' + start + '..' + finish + ') = ' + selectedText);
 
       $.ajax({
         url: "/mecab",
@@ -66,12 +63,12 @@ Vue.component('vue-sentence-form', {
           }
         }
         this.structure = result;
-        this.newSentenceResetPart(null); // compact consecutive 'text' elements (without seq)
         this.selection.section = null; // reset selection
+        this.resetSegment(null); // compact consecutive 'text' elements (without seq)
         if (newSectionIndex !== null) this.editWord(newSectionIndex); // open editor for current word
       });
     },
-    newSentenceResetPart(partIdx) {
+    resetSegment(partIdx) {
       var result = [];
       var tmpString = '';
       if (partIdx !== null) {
@@ -125,10 +122,10 @@ Vue.component('vue-sentence-form', {
         this.selection.start = position;
       } else if (this.selection.start == position) {
         // reset selection if separator clicked twice
-        this.selection.section == null;
+        this.selection.section = null;
       } else {
         this.selection.end = position;
-        this.newSentencePartSelected();
+        this.textFragmentSelected();
       }
     },
     editWord(section) {
@@ -177,7 +174,7 @@ Vue.component('vue-sentence-form', {
           <div class="sentence-composer">
             <template v-for="(section, sectionIndex) of structure">
               <template v-if="section.seq !== null && section.seq !== undefined">
-                <div class="word" @click="editWord(sectionIndex)" @click.middle="newSentenceResetPart(sectionIndex)">
+                <div class="word" @click="editWord(sectionIndex)" @click.middle="resetSegment(sectionIndex)">
                   <div class="reading" v-if="section.reading">{{section.reading}}</div>
                   <div class="text">{{section.text}}</div>
                   <div class="gloss" v-if="section.gloss">{{section.gloss}}</div>
@@ -193,7 +190,7 @@ Vue.component('vue-sentence-form', {
           </div>
 
           <div v-if="selection.word.index !== null" class="word-settings">
-            <div><input type="button" value="Clear" @click="newSentenceResetPart(selection.word.index)"></div>
+            <div><input type="button" value="Clear" @click="resetSegment(selection.word.index)"></div>
             <div><input type="text" v-model="selection.word.reading" placeholder="reading"><br>{{selection.word.text}}</div>
             <div><input type="text" class="search" v-model="selection.word.base" placeholder="search..."><br>#{{selection.word.seq}} - {{selection.word.gloss}}</div>
             <div><input type="button" value="Update" @click="updateWord()"></div>

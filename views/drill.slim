@@ -30,7 +30,12 @@ div.hr-title : span Sentences
 ul
   - @drill.sentences.order(created_at: :desc).each do |sentence|
     li
-      = sentence.japanese
+      span> style="opacity: .5; font-size: .8em" = "##{sentence.id}"
+      - sentence.structure.each do |s|
+        - if s['seq']
+          a href=path_to(:word).with(s['seq']) = s['text']
+        - else
+          = s['text']
       span style="opacity: 0.5" = sentence.english
 
 javascript:
