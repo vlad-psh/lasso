@@ -493,7 +493,14 @@ JRU5ErkJggg==') repeat;
             right: -.3em;
             line-height: .8em;
           }
-        }
+          .pitch {
+            font-size: .6em;
+            vertical-align: super;
+            border-radius: .2em;
+            background: rgba(192,192,192,.3);
+            padding: 0 .2em;
+          }
+        } /* end of .word-kreb */
 
         .expandable-list-arrow {
           display: inline-block;

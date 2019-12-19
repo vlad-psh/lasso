@@ -75,6 +75,7 @@ class Collector
 
     result[:krebs] = w.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
       k = {title: t.title, is_common: t.is_common}
+      k[:pitch] = t.pitch if t.pitch
       kreb_progress = @progresses.detect{|p| p.title == t.title && p.seq == w.seq}
       k[:progress] = kreb_progress.present? ? kreb_progress.api_hash : {}
       k[:drills] = kreb_progress.present? ? kreb_progress.drills.map(&:id) : []

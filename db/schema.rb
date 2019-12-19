@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_16_075439) do
+ActiveRecord::Schema.define(version: 2019_12_19_064004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 2019_12_16_075439) do
     t.integer "gai"
     t.integer "nf"
     t.boolean "is_common", default: false
+    t.string "pitch"
   end
 
   create_table "words", force: :cascade do |t|
