@@ -51,6 +51,11 @@ post :study2 do
     a['progress'].answer!(a['answer'])
   end
 
+  if params[:sentence_id].present?
+    review = SentenceReview.find_or_initialize_by(sentence_id: params[:sentence_id], user: current_user)
+    review.update(reviewed_at: DateTime.now)
+  end
+
   return 'ok'
 end
 
@@ -70,7 +75,7 @@ get :api_drill_sentence do
        sAT.create_on(  srAT[:sentence_id].eq(sAT[:id]).and(srAT[:user_id].eq(current_user.id))  ),
        Arel::Nodes::OuterJoin
     )
-  ).where(sentence_reviews: {id: nil}).first
+  ).where(sentence_reviews: {id: nil}).sample
 
   sentence = sentence_without_any_reviews ||
     SentenceReview.joins(:sentence).merge( Sentence.where(drill: drill) ).where(user: current_user).order(reviewed_at :asc).first.try(:sentence)
@@ -78,6 +83,7 @@ get :api_drill_sentence do
   halt(400, 'Element not found') unless sentence.present?
 
   return {
+      sentence_id: sentence.id,
       sentence: sentence.structure,
       english: sentence.english,
       j: Collector.new(current_user, words: Word.where(seq: sentence.words.map(&:seq))).to_hash

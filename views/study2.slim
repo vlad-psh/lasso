@@ -44,6 +44,7 @@ javascript:
   var app = new Vue({
     el: '#sentence-quiz-app',
     data: {
+      sentenceId: null,
       sentence: [],
       english: null,
       j: {},
@@ -102,7 +103,7 @@ javascript:
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
-          data: {answers: answers}
+          data: {sentence_id: app.sentenceId, answers: answers}
         }).done(data => {
           if (data == 'ok') {
             app.updateSentence();
@@ -120,6 +121,7 @@ javascript:
           var j = JSON.parse(data);
           app.j = j.j;
           app.english = j.english;
+          app.sentenceId = j.sentence_id;
           app.sentence = j.sentence.map(function(i){
             if (i.seq) {
               var k = app.findKreb(i.seq, i.base);
