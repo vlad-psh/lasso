@@ -86,7 +86,6 @@ class Collector
 ##    result[:sentences] = all_sentences.map{|i| {jp: i.japanese, en: i.english, href: path_to(:sentence).with(i.id)}}
 
     return result.merge({
-      sentences: [], # Empty placeholder
       cards: w.wk_words.sort{|a,b| a.level <=> b.level}.map{|c|
         {
           title: c.title,

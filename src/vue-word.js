@@ -43,46 +43,6 @@ Vue.component('vue-word', {
     },
   },
   methods: {
-    addConnectedWord(wordType, word) {
-      if (wordType === 'short') {
-        this.w.shortWords.push(word);
-      } else {
-        this.w.longWords.push(word);
-      }
-    },
-    deleteConnectedWord(wordType, wordIndex) {
-      var word = wordType === 'short' ? this.w.shortWords[wordIndex] : this.w.longWords[wordIndex];
-      var postData = {};
-      postData[wordType] = word.seq;
-      postData[wordType === 'short' ? 'long' : 'short'] = this.w.seq;
-
-      var ask = confirm(`Are you sure you want to delete ${word.title}?`);
-      if (ask) {
-        $.ajax({
-          url: this.j.paths.connect,
-          method: "DELETE",
-          data: postData
-        }).done(data => {
-          if (wordType === 'short') {
-            this.w.shortWords = this.w.shortWords.filter(i => i.seq != word.seq);
-          } else {
-            this.w.longWords = this.w.longWords.filter(i => i.seq != word.seq);
-          }
-        });
-      }
-    },
-    removeSentence(idx, isRawSentence) {
-      var ask = confirm("Are you sure?");
-      var sentenceUrl = this.w.sentences[idx].href;
-      if (ask) {
-        $.ajax({
-          url: sentenceUrl,
-          method: "DELETE"
-        }).done(data => {
-          this.w.sentences = this.w.sentences.filter(i => i.href != sentenceUrl);
-        });
-      };
-    },
     openKrebForm(kreb) {
       this.forms.kreb = this.forms.kreb === kreb ? null : kreb;
     },
@@ -216,18 +176,6 @@ Vue.component('vue-word', {
     </div>
 
     <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="w.comment = $event"></vue-editable-text>
-
-    <div class="hr-title center-block" v-if="editing && w.sentences.length > 0">
-      <span style="margin: 1em 0">Sentences</span>
-    </div>
-
-    <div class="word-sentences word-sentences-structured center-block" v-if="editing && w.sentences.length > 0">
-      <span v-for="(s, sIndex) of w.sentences">
-        {{bullets[sIndex]}} {{s.jp}}
-        <span style="font-size: small">《{{s.en}}》</span>
-        <span class="action-buttons">[<a class="remove-sentence-button" @click="removeSentence(sIndex)">消す</a>]</span>
-      </span>
-    </div>
 
   </div>
 `
