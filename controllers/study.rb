@@ -78,7 +78,7 @@ get :api_drill_sentence do
   ).where(sentence_reviews: {id: nil}).sample
 
   sentence = sentence_without_any_reviews ||
-    SentenceReview.joins(:sentence).merge( Sentence.where(drill: drill) ).where(user: current_user).order(reviewed_at :asc).first.try(:sentence)
+    SentenceReview.joins(:sentence).merge( Sentence.where(drill: drill) ).where(user: current_user).order(reviewed_at: :asc).first.try(:sentence)
 
   halt(400, 'Element not found') unless sentence.present?
 

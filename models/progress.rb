@@ -93,6 +93,8 @@ class Progress < ActiveRecord::Base
 # TODO: Made this code more effective (without additional requests; or delete it completely)
     srs = srs_progresses.where(learning_type: 0).take
     result = result.merge({
+      last_answer: srs.last_answer,
+      reviewed_at: srs.reviewed_at,
       correct:   (srs.attributes_of_correct_answer[:scheduled]   - Date.today).to_i,
       soso:      (srs.attributes_of_soso_answer[:scheduled]      - Date.today).to_i,
       incorrect: (srs.attributes_of_incorrect_answer[:scheduled] - Date.today).to_i

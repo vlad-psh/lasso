@@ -125,7 +125,15 @@ javascript:
           app.sentence = j.sentence.map(function(i){
             if (i.seq) {
               var k = app.findKreb(i.seq, i.base);
-              i.answer = k && k.progress.burned_at ? 'burned' : null;
+              i.answer = null;
+              if (k && k.progress.burned_at) {
+                i.answer = 'burned';
+              } else if (k.progress.reviewed_at) {
+                var reviewedAt = new Date(k.progress.reviewed_at);
+                if (reviewedAt.toDateString() == (new Date()).toDateString()) {
+                  i.answer = k.progress.last_answer;
+                }
+              }
             }
             return i;
           });
