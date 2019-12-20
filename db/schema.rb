@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_19_064004) do
+ActiveRecord::Schema.define(version: 2019_12_20_022427) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,15 @@ ActiveRecord::Schema.define(version: 2019_12_19_064004) do
 
   create_table "russian_words", force: :cascade do |t|
     t.string "title"
+  end
+
+  create_table "sentence_reviews", force: :cascade do |t|
+    t.bigint "sentence_id"
+    t.bigint "user_id"
+    t.integer "learning_type", default: 0
+    t.datetime "reviewed_at"
+    t.index ["sentence_id"], name: "index_sentence_reviews_on_sentence_id"
+    t.index ["user_id"], name: "index_sentence_reviews_on_user_id"
   end
 
   create_table "sentences", force: :cascade do |t|

@@ -111,8 +111,8 @@ Vue.component('vue-sentence-form', {
       }).done(data => {
         //alert(data);
         this.jpSentence = null;
-        this.enSentence = null;
-        this.newSentence = [];
+        //this.enSentence = null;
+        this.structure = [];
         this.editMode = false;
       });
     },

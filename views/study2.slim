@@ -1,5 +1,10 @@
 ruby:
-  question_path = params[:drill_id] ? path_to(:api_question_drill) + "?id=#{params[:drill_id]}" : path_to(:api_sentence)
+  if params[:drill_id].present?
+    question_path = params[:type] == 'sentences' ? path_to(:api_drill_sentence) : path_to(:api_question_drill)
+    question_path += "?id=#{params[:drill_id]}"
+  else
+    question_path = path_to(:api_sentence)
+  end
 
 div#sentence-quiz-app.study-card
   div.sentence-question
