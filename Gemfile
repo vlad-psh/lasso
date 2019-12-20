@@ -13,7 +13,7 @@ gem 'pg'#, '<1.0'
 
 gem 'rack-flash3'
 gem 'puma'
-gem 'RedCloth'
+#gem 'RedCloth'
 #gem 'httparty'
 #gem 'nokogiri'
 gem 'mojinizer'

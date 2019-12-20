@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_063329) do
+ActiveRecord::Schema.define(version: 2019_12_20_124736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -154,7 +154,6 @@ ActiveRecord::Schema.define(version: 2019_12_20_063329) do
     t.date "transition"
     t.string "last_answer"
     t.datetime "reviewed_at"
-    t.integer "kind"
     t.index ["progress_id"], name: "index_srs_progresses_on_progress_id"
     t.index ["user_id"], name: "index_srs_progresses_on_user_id"
   end

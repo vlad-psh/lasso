@@ -4,11 +4,6 @@ class SrsProgress < ActiveRecord::Base
   has_many :actions
 
   enum learning_type: {reading_question: 0, kanji_question: 1, listening_question: 2}
-  enum kind: {radical: 0, kanji: 1, word: 2, r: 0, k: 1, w: 2}
-
-  scope :words,    ->{where(kind: :word)}
-  scope :kanjis,   ->{where(kind: :kanji)}
-  scope :radicals, ->{where(kind: :radical)}
 
   def answer!(a)
     # answer should be 'yes', 'no' or 'soso'

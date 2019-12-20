@@ -23,19 +23,6 @@ module WakameHelpers
     return current_user.settings.try(:[], _name)
   end
 
-  def bb_expand(text)
-    text = text.gsub(/\[kanji\]([^\[]*)\[\/kanji\]/, "[%(k)\\1%]")
-    text = text.gsub(/\[radical\]([^\[]*)\[\/radical\]/, "[%(r)\\1%]")
-    text = text.gsub(/\[meaning\]([^\[]*)\[\/meaning\]/, "[%(m)\\1%]")
-    text = text.gsub(/\[reading\]([^\[]*)\[\/reading\]/, "[%(y)\\1%]")
-    text = text.gsub(/\[vocabulary\]([^\[]*)\[\/vocabulary\]/, "[%(w)\\1%]")
-    return text
-  end
-
-  def bb_textile(text)
-    RedCloth.new( bb_expand(text) ).to_html
-  end
-
   def highlight(text, term)
     return text unless text.present? && term.present?
 
@@ -74,18 +61,6 @@ module WakameHelpers
     return result.flatten
   end
 
-  def wk_path(e)
-    if e.kind_of?(WkWord)
-      path_to(:wk_word).with(e.id)
-    elsif e.kind_of?(WkKanji)
-      path_to(:wk_kanji).with(e.id)
-    elsif e.kind_of?(WkRadical)
-      path_to(:wk_radical).with(e.id)
-    else
-      raise StandardError.new("Unknown WkElement kind: #{e}")
-    end
-  end
-
   SAFE_TYPES = [:radicals, :kanjis, :words]
   SAFE_GROUPS = [:just_learned, :expired]
 
@@ -99,30 +74,6 @@ module WakameHelpers
     m = method.to_sym
     throw StandardError.new("Unknown method: #{method}") unless SAFE_GROUPS.include?(m)
     return m
-  end
-
-  def kr_common?(kreb)
-    return false unless kreb && kreb['pri']
-    kreb['pri'].each do |k,v|
-      return true if %w(news ichi spec gai).include?(k) && v == 1
-      return true if k == 'spec' && v == 2
-    end
-    return false
-  end
-
-  def jp_grade(grade)
-    grade = grade.to_i
-    if grade <= 3
-      return "小#{grade}"
-    elsif grade <= 6
-      return "中#{grade-3}"
-    elsif grade == 8
-      return "高校"
-    elsif grade == 9
-      return "人名用"
-    else
-      return "Grade #{grade}"
-    end
   end
 
 end

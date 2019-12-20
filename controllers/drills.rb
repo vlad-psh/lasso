@@ -1,7 +1,6 @@
 paths drills: '/drills',
     drill: '/drill/:id',
-    flagged: '/flagged',
-    kanjidrill: '/kanjidrill'
+    flagged: '/flagged'
 
 get :drills do
   protect!
@@ -53,17 +52,5 @@ get :flagged do
 # TODO: this list is for all users; make it personal
   @progresses = Progress.where.not(flagged_at: nil).order(flagged_at: :desc)
   slim :flagged
-end
-
-get :kanjidrill do
-  kanjiused = []
-  @words = WkWord.joins(:wk_kanji).merge(
-             WkKanji.joins(:kanji).merge(
-               Kanji.joins(:progresses).merge(
-                 Progress.where(user: current_user, kind: :k).where.not(learned_at: nil)
-               )
-             )
-           ).where(seq: Progress.where(user: current_user, kind: :w).where.not(learned_at: nil).pluck(:seq))
-  slim :kanjidrill
 end
 
