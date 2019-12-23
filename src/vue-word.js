@@ -74,12 +74,25 @@ Vue.component('vue-word', {
     trimPitch(pitch){
       return pitch.replace(/\(.*?\)/g, '');
     },
+    gradeText(grade){
+      if (grade >=1 && grade <= 6) {
+        return [null, '１', '２', '３', '４', '５', '６'][grade] + '年';
+      } else if (grade == 8) {
+        return '常用';
+      } else if (grade == 9 || grade == 10) {
+        return '人名';
+      } else {
+        return '表外';
+      }
+    },
     ...helpers
   }, // end of methods
   updated() {
   },
   template: `
   <div class="vue-word word-card" id="word-card-app">
+
+    <!-- list of krebs -->
     <div class="center-block">
       <div class="word-krebs expandable-list">
         <div class="expandable-list-item" v-for="kreb of w.krebs">
@@ -91,6 +104,7 @@ Vue.component('vue-word', {
       </div>
     </div>
 
+    <!-- expanded word properties -->
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
         <table><tr>
@@ -102,24 +116,26 @@ Vue.component('vue-word', {
       </div>
     </div>
 
+    <!-- list of used kanjis -->
     <div class="word-details center-block" v-if="kanjis.length > 0">
-      <div class="icon">&#x1f58c;</div>
-      <div class="expandable-list">
+      <div class="expandable-list word-kanjis">
         <template v-for="(kanji, kanjiIndex) of j.kanjis">
-          <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1">
-            <div class="wk-element" @click="openKanji(kanjiIndex)" :class="kanji.progress.learned_at ? 'learned' : null">{{kanji.title}}</div>
+          <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1" :class="'grade-' + (kanji.grade || 'no')">
+            <div class="wk-element" @click="openKanji(kanjiIndex)" :class="kanji.progress.learned_at ? 'learned' : null">{{kanji.title}}<div class="kanji-grade">{{gradeText(kanji.grade)}}</div></div>
             <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
           </div>
         </template>
       </div>
     </div>
 
+    <!-- expanded kanji details -->
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kanjiIndex !== null">
       <div class="center-block">
         <vue-kanji :id="j.kanjis[forms.kanjiIndex].id" :j="j" :editing="editing"></vue-kanji>
       </div>
     </div>
 
+    <!-- english glossary -->
     <div class="word-details center-block">
       <div class="icon">&#x1f1ec;&#x1f1e7;</div>
       <span v-for="(gloss, glossIndex) of w.en">
@@ -129,6 +145,7 @@ Vue.component('vue-word', {
       </span>
     </div>
 
+    <!-- russian glossary -->
     <div class="word-details center-block" v-if="w.ru && w.ru.length > 0">
       <div class="icon">&#x1f1f7;&#x1f1fa;</div>
       <span v-for="(gloss, glossIndex) of w.ru">

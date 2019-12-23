@@ -41,7 +41,8 @@ post :search2 do
   q = params['query'].strip
 
   # TODO: English/Russian search
-  q = q.hiragana unless q.japanese?
+  qk = q.downcase.katakana
+  q = q.downcase.hiragana unless q.japanese?
 
   # Kinda simple deflector
   if q =~ /(って|った)$/
@@ -57,7 +58,7 @@ post :search2 do
     base = q.gsub(/(いで|いだ)$/, '')
     qstr = "(#{q}%|#{base}ぐ)"
   else
-    qstr = "#{q}%"
+    qstr = "(#{q}|#{qk})%"
   end
 
 

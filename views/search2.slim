@@ -2,7 +2,8 @@ div#search-app
   div.browse-panel
     input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.esc="clearInputField()"
     div.search-results
-      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result" :class="[result[2] ? 'common' : 'uncommon', selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
+      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
+        div class="common-icon" :class="result[2] ? 'common' : 'uncommon'" &#x2b50;
         = "{{result[1]}}"
         div v-if="result[3]" class="learned-icon"
   div.contents-panel
