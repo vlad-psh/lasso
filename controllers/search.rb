@@ -46,35 +46,40 @@ post :search2 do
   # Kinda simple deflector
   if q =~ /(って|った)$/
     base = q.gsub(/(って|った)$/, '')
-    qstr = "(#{q}|#{base}う|#{base}つ|#{base}る)%"
+    qstr = "(#{q}%|#{base}う|#{base}つ|#{base}る)"
   elsif q =~ /(んで|んだ)$/
     base = q.gsub(/(んで|んだ)$/, '')
-    qstr = "(#{q}|#{base}ぬ|#{base}む|#{base}ぶ)%"
+    qstr = "(#{q}%|#{base}ぬ|#{base}む|#{base}ぶ)"
   elsif q =~ /(いて|いた)$/
     base = q.gsub(/(いて|いた)$/, '')
-    qstr = "(#{q}|#{base}く)%"
+    qstr = "(#{q}%|#{base}く)"
   elsif q =~ /(いで|いだ)$/
     base = q.gsub(/(いで|いだ)$/, '')
-    qstr = "(#{q}|#{base}ぐ)%"
+    qstr = "(#{q}%|#{base}ぐ)"
   else
     qstr = "#{q}%"
   end
 
 
-  word_titles = WordTitle.where("title SIMILAR TO ?", qstr).order(:is_common, :id).limit(1000).pluck(:seq, :title, :is_common).sort do |a,b|
-    if a[2] != b[2]
-      a[2] == true ? -1 : 1 # common words should be first
-    elsif (compare = a[1].length <=> b[1].length) != 0
+  word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(:is_common, :id).limit(1000).sort do |a,b|
+    if a.is_common != b.is_common
+      a.is_common == true ? -1 : 1 # common words should be first
+    elsif (compare = a.title.length <=> b.title.length) != 0
       compare # result of comparing lengths
     else
-      a[1] <=> b[1] # result of comparing two strings
+      a.title <=> b.title # result of comparing two strings
     end
   end
 
-  progresses = Progress.where(user: current_user, seq: word_titles.map{|i|i[0]}).where.not(learned_at: nil).pluck(:seq)
+  progresses = Progress.where(user: current_user, seq: word_titles.map{|i|i.seq}).where.not(learned_at: nil).pluck(:seq)
 
   result = word_titles.map do |wt|
-    [*wt, progresses.include?(wt[0]) ? true : false]
+    [
+      wt.seq,
+      wt.title,
+      wt.is_common,
+      progresses.include?(wt.seq)
+    ]
   end
 
   return result.to_json

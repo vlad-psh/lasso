@@ -1,8 +1,8 @@
 div#search-app
   div.browse-panel
-    input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery"
+    input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery" @keydown.down="nextResult()" @keydown.up="previousResult()"
     div.search-results
-      div v-for="result in searchResults" class="result" :class="[result[2] ? 'common' : 'uncommon', selectedWord == result[0] ? 'selected' : null]" @click="openWord(result[0])"
+      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result" :class="[result[2] ? 'common' : 'uncommon', selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(result[0])"
         = "{{result[1]}}"
         div v-if="result[3]" class="learned-icon"
   div.contents-panel
@@ -32,6 +32,7 @@ javascript:
       searchQuery: '',
       searchResults: [],
       selectedWord: null,
+      highlightedWordIndex: null,
       wordData: null
     },
     computed: {
@@ -48,6 +49,7 @@ javascript:
         }).done(data => {
           // If input field hasn't been changed while we're trying to get results
           if (query === app.searchQuery) {
+            app.highlightedWordIndex = null;
             var j = JSON.parse(data);
             app.searchResults = j;
           }
@@ -67,6 +69,39 @@ javascript:
             app.wordData = j;
           }
         });
-      }
+      },
+      openWordDebounced: debounce(function(){
+        this.openWord(this.searchResults[this.highlightedWordIndex][0]);
+      }, 250),
+      nextResult() {
+        if (this.searchResults.length === 0) return;
+
+        if (this.highlightedWordIndex === null) {
+          this.highlightedWordIndex = 0;
+        } else {
+          this.highlightedWordIndex += 1;
+        }
+
+        if (this.highlightedWordIndex === this.searchResults.length) {
+          this.highlightedWordIndex = 0;
+        }
+
+        this.openWordDebounced();
+      },
+      previousResult() {
+        if (this.searchResults.length === 0) return;
+
+        if (this.highlightedWordIndex === null) {
+          this.highlightedWordIndex = this.searchResults.length - 1;
+        } else {
+          this.highlightedWordIndex -= 1;
+        }
+
+        if (this.highlightedWordIndex === -1) {
+          this.highlightedWordIndex = this.searchResults.length - 1;
+        }
+
+        this.openWordDebounced();
+      },
     }, // end of methods
   });
