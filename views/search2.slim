@@ -1,8 +1,8 @@
 div#search-app
   div.browse-panel
-    input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery" @keydown.down="nextResult()" @keydown.up="previousResult()"
+    input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.esc="clearInputField()"
     div.search-results
-      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result" :class="[result[2] ? 'common' : 'uncommon', selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(result[0])"
+      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result" :class="[result[2] ? 'common' : 'uncommon', selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
         = "{{result[1]}}"
         div v-if="result[3]" class="learned-icon"
   div.contents-panel
@@ -30,6 +30,7 @@ javascript:
     el: '#search-app',
     data: {
       searchQuery: '',
+      previousQuery: '',
       searchResults: [],
       selectedWord: null,
       highlightedWordIndex: null,
@@ -42,6 +43,11 @@ javascript:
       search() {
         var app = this;
         var query = this.searchQuery;
+
+        // Prevent request while composing japanese text sing IME
+        // Otherwise, same (unchanged) request will be sent after each key press
+        if (this.searchQuery === this.previousQuery) return;
+
         $.ajax({
           url: "#{{path_to(:search2)}}",
           method: 'POST',
@@ -52,11 +58,14 @@ javascript:
             app.highlightedWordIndex = null;
             var j = JSON.parse(data);
             app.searchResults = j;
+            app.previousQuery = query;
           }
         });
       },
-      openWord(seq) {
+      openWord(index) {
         var app = this;
+        var seq = this.searchResults[index][0];
+        this.highlightedWordIndex = index;
         this.selectedWord = seq;
         this.wordData = null;
         $.ajax({
@@ -71,7 +80,7 @@ javascript:
         });
       },
       openWordDebounced: debounce(function(){
-        this.openWord(this.searchResults[this.highlightedWordIndex][0]);
+        this.openWord(this.highlightedWordIndex);
       }, 250),
       nextResult() {
         if (this.searchResults.length === 0) return;
@@ -102,6 +111,10 @@ javascript:
         }
 
         this.openWordDebounced();
+      },
+      clearInputField() {
+        this.searchQuery = '';
+        this.previousQuery = '';
       },
     }, // end of methods
   });

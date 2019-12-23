@@ -15,11 +15,6 @@ require('./vue-sentence-form.js');
 /* ===================
    GLOBAL HOTKEYS
    =================== */
-$(document).on('keyup', function(event){
-  if (event.which === 27) { // ESC
-    $('#main-menu input.search').focus();
-  }
-});
 $(function(){
   $('#main-menu input.search').on('keyup', function(event){
     if (event.which === 38 || event.which === 40) { // Up/Down keys

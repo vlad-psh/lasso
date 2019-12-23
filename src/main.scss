@@ -761,11 +761,15 @@ JRU5ErkJggg==') repeat;
     grid-template-columns: 22em 1fr;
     grid-template-rows: 100%;
 
-    .browse-panel, .contents-panel {
+    .contents-panel {
       height: 100%;
+      overflow-y: auto;
     }
     .browse-panel {
       border-right: 1px solid rgba(192,192,192,0.3);
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr;
 
       input[type="text"] {
         background: none;

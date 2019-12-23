@@ -61,13 +61,13 @@ post :search2 do
   end
 
 
-  word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(:is_common, :id).limit(1000).sort do |a,b|
+  word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(is_common: :desc, id: :asc).limit(1000).sort do |a,b|
     if a.is_common != b.is_common
       a.is_common == true ? -1 : 1 # common words should be first
-    elsif (compare = a.title.length <=> b.title.length) != 0
+    elsif (compare = a.word.list_title.length <=> b.word.list_title.length) != 0
       compare # result of comparing lengths
     else
-      a.title <=> b.title # result of comparing two strings
+      a.word.list_title <=> b.word.list_title # result of comparing two strings
     end
   end
 
@@ -76,7 +76,7 @@ post :search2 do
   result = word_titles.map do |wt|
     [
       wt.seq,
-      wt.title,
+      wt.word.list_title,
       wt.is_common,
       progresses.include?(wt.seq)
     ]
