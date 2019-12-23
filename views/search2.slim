@@ -9,23 +9,6 @@ div#search-app
     vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true"
 
 javascript:
-  function debounce(func, wait, immediate) {
-    var timeout;
-    return function() {
-      var context = this,
-        args = arguments;
-      var callNow = immediate && !timeout;
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        timeout = null;
-        if (!immediate) {
-          func.apply(context, args);
-        }
-      }, wait);
-      if (callNow) func.apply(context, args);
-    }
-  }
-
   var app = new Vue({
     el: '#search-app',
     data: {
@@ -118,3 +101,29 @@ javascript:
       },
     }, // end of methods
   });
+
+  document.onclick = function(){
+    var f = document.activeElement;
+    if (f.nodeName === "TEXTAREA" || (f.nodeName === "INPUT" && f.type === "text")) {
+      return;
+    } else if (window.getSelection().toString() === '') {
+      $('#search-app .browse-panel input').focus()
+    }
+  };
+
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this,
+        args = arguments;
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+        timeout = null;
+        if (!immediate) {
+          func.apply(context, args);
+        }
+      }, wait);
+      if (callNow) func.apply(context, args);
+    }
+  }

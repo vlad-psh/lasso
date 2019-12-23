@@ -782,19 +782,20 @@ JRU5ErkJggg==') repeat;
       .search-results {
         height: 100%;
         overflow-y: auto;
+        background: #f7f7f7;
 
         .result {
           padding: .2em .4em;
           border-bottom: 1px solid rgba(192,192,192,0.3);
           cursor: pointer;
 
-          &.uncommon {
-            background: #f7f7f7;
-            color: #444;
+          &.common {
+            background: white;
           }
-
+          &.uncommon {
+          }
           &.selected {
-            background: #008ace;
+            background: #008ace !important;
             color: white;
           }
           &:hover, &.highlighted {
@@ -1035,6 +1036,7 @@ body.black {
   $bgcolor2: #1c2939; // top menu bg, etc; little bit lighter
   $fgcolor: #ccc; // main text color
   $fgcolor2: #8799a5; // little bit darker text
+  $lightborder: rgba(128,128,128,0.2);
 
   background: $bgcolor;
   color: $fgcolor;
@@ -1151,6 +1153,17 @@ body.black {
   }
   .vue-double-click-button {
     border: 1px dashed;
+  }
+
+  #search-app {
+    .browse-panel .search-results {
+      background: $bgcolor;
+
+      .result {
+        border-bottom: 1px solid $lightborder;
+        &.common {background: $bgcolor2;}
+      }
+    }
   }
 } /* end of body.black */
 
