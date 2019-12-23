@@ -755,6 +755,56 @@ JRU5ErkJggg==') repeat;
     } /* end of .answer-buttons */
   } /* end of .study-card */
 
+  #search-app {
+    height: calc(100vh - 33px);
+    display: grid;
+    grid-template-columns: 22em 1fr;
+
+    .browse-panel, .contents-panel {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .browse-panel {
+      border-right: 1px solid rgba(192,192,192,0.3);
+
+      input[type="text"] {
+        background: none;
+        border: none;
+        border-bottom: 1px solid rgba(192,192,192,0.3);
+        padding: .4em .6em .5em .6em;
+        box-sizing: border-box;
+        width: 100%;
+      }
+      .search-results {
+        .result {
+          padding: .2em .4em;
+          border-bottom: 1px solid rgba(192,192,192,0.3);
+          cursor: pointer;
+
+          &.uncommon {
+            background: #f7f7f7;
+            color: #444;
+          }
+
+          &.selected {
+            background: #008ace;
+            color: white;
+          }
+          &:hover {
+            color: #c00;
+          }
+          .learned-icon {
+            float: right;
+
+            &::after {
+              content: '\01f4ae';
+            }
+          }
+        }
+      }
+    }
+  } // end of #search-app
+
   .search-results {
     column-width: 300px;
     column-gap: 0; /*0.4em;*/

@@ -1,0 +1,72 @@
+div#search-app
+  div.browse-panel
+    input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery"
+    div.search-results
+      div v-for="result in searchResults" class="result" :class="[result[2] ? 'common' : 'uncommon', selectedWord == result[0] ? 'selected' : null]" @click="openWord(result[0])"
+        = "{{result[1]}}"
+        div v-if="result[3]" class="learned-icon"
+  div.contents-panel
+    vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true"
+
+javascript:
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this,
+        args = arguments;
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+        timeout = null;
+        if (!immediate) {
+          func.apply(context, args);
+        }
+      }, wait);
+      if (callNow) func.apply(context, args);
+    }
+  }
+
+  var app = new Vue({
+    el: '#search-app',
+    data: {
+      searchQuery: '',
+      searchResults: [],
+      selectedWord: null,
+      wordData: null
+    },
+    computed: {
+    },
+    methods: {
+      searchDebounce: debounce(function(){this.search();}, 250),
+      search() {
+        var app = this;
+        var query = this.searchQuery;
+        $.ajax({
+          url: "#{{path_to(:search2)}}",
+          method: 'POST',
+          data: {query: query}
+        }).done(data => {
+          // If input field hasn't been changed while we're trying to get results
+          if (query === app.searchQuery) {
+            var j = JSON.parse(data);
+            app.searchResults = j;
+          }
+        });
+      },
+      openWord(seq) {
+        var app = this;
+        this.selectedWord = seq;
+        this.wordData = null;
+        $.ajax({
+          url: "#{{path_to(:word_details)}}",
+          method: 'GET',
+          data: {seq: seq}
+        }).done(data => {
+          if (seq === app.selectedWord) {
+            var j = JSON.parse(data);
+            app.wordData = j;
+          }
+        });
+      }
+    }, // end of methods
+  });

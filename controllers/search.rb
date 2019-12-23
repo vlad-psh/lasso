@@ -1,4 +1,5 @@
-path search: '/search'
+path search: '/search',
+     search2: '/search2'
 
 get :search do
   protect!
@@ -28,5 +29,54 @@ get :search do
   end
 
   slim :search
+end
+
+get :search2 do
+  protect!
+  slim :search2
+end
+
+post :search2 do
+  protect!
+  q = params['query'].strip
+
+  # TODO: English/Russian search
+  q = q.hiragana unless q.japanese?
+
+  # Kinda simple deflector
+  if q =~ /(って|った)$/
+    base = q.gsub(/(って|った)$/, '')
+    qstr = "(#{q}|#{base}う|#{base}つ|#{base}る)%"
+  elsif q =~ /(んで|んだ)$/
+    base = q.gsub(/(んで|んだ)$/, '')
+    qstr = "(#{q}|#{base}ぬ|#{base}む|#{base}ぶ)%"
+  elsif q =~ /(いて|いた)$/
+    base = q.gsub(/(いて|いた)$/, '')
+    qstr = "(#{q}|#{base}く)%"
+  elsif q =~ /(いで|いだ)$/
+    base = q.gsub(/(いで|いだ)$/, '')
+    qstr = "(#{q}|#{base}ぐ)%"
+  else
+    qstr = "#{q}%"
+  end
+
+
+  word_titles = WordTitle.where("title SIMILAR TO ?", qstr).order(:is_common, :id).limit(1000).pluck(:seq, :title, :is_common).sort do |a,b|
+    if a[2] != b[2]
+      a[2] == true ? -1 : 1 # common words should be first
+    elsif (compare = a[1].length <=> b[1].length) != 0
+      compare # result of comparing lengths
+    else
+      a[1] <=> b[1] # result of comparing two strings
+    end
+  end
+
+  progresses = Progress.where(user: current_user, seq: word_titles.map{|i|i[0]}).where.not(learned_at: nil).pluck(:seq)
+
+  result = word_titles.map do |wt|
+    [*wt, progresses.include?(wt[0]) ? true : false]
+  end
+
+  return result.to_json
 end
 

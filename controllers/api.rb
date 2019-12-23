@@ -7,8 +7,13 @@ paths api_sentence: '/api/sentence',
     api_flag:    '/api/word/flag',
     api_word_comment: '/api/word/comment',
     api_add_word_to_drill: '/api/drill/add_word',
-    drill_add_word: '/drill/word'
+    drill_add_word: '/drill/word',
+    word_details: '/api/word' # params: seq
 
+get :word_details do
+  protect!
+  return Collector.new(current_user, words: Word.where(seq: params[:seq])).to_json
+end
 
 get :api_sentence do
   protect!
