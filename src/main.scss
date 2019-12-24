@@ -132,18 +132,11 @@ body {
     font-weight: 700;
     width: 100%;
 
-    &>div.center,
-    &>div.right form {
+    &>div.center {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 2em;
-    }
-    &>div.right {
-      text-align: right;
-      position: absolute;
-      top: 0;
-      right: 0;
     }
     a {
       color: #eee;
@@ -152,14 +145,6 @@ body {
       &:hover {opacity: 0.5;}
       &.r, &.k, &.w {padding: 0.1em 0.3em;}
     }
-    input.search {
-      background: #333;
-      color: white;
-      border: none;
-      padding: 0.2em 0.4em;
-      margin: 0 0.2em 0 0;
-    }
-
     .main-menu-item {
       margin: -.1em .3em 0 .3em;
       text-align: center;
@@ -169,10 +154,6 @@ body {
       font-size: 0.53em;
       margin-top: -0.4em;
       margin-bottom: 0.2em;
-    }
-    .emoji-checkbox.search-language-switch {
-      input + .slider:before {content: '\1f1ec\1f1e7'; /* GB flag */}
-      input:checked + .slider:before {content: '\1f1ef\1f1f5'; /* JP flag */}
     }
     .emoji-checkbox.theme-switch {
       input + .slider:before {content: '\1f4a1'; /* sun */}
@@ -453,8 +434,8 @@ JRU5ErkJggg==') repeat;
         .expandable-list-item {
           border-bottom: none;
           color: inherit;
-          border: 2px solid white;
-          border-radius: 3px;
+          border: 1px solid white;
+          border-radius: 2px;
           font-size: 2em;
           margin: 0 .4em 0 0;
 
@@ -818,10 +799,12 @@ JRU5ErkJggg==') repeat;
         overflow-y: auto;
         background: #f7f7f7;
 
-        .result {
+        .result-item {
           padding: .2em .4em;
           border-bottom: 1px solid rgba(192,192,192,0.3);
           cursor: pointer;
+          display: flex;
+          align-items: center;
 
           &.selected {
             background: #008ace !important;
@@ -829,6 +812,9 @@ JRU5ErkJggg==') repeat;
           }
           &:hover, &.highlighted {
             font-weight: bold;
+          }
+          .result {
+            flex-grow: 10;
           }
           .common-icon {
             display: inline-block;
@@ -894,7 +880,6 @@ JRU5ErkJggg==') repeat;
       }
     }
   }
-
 
   #sentence-quiz-app {
     margin: 0;
@@ -1067,6 +1052,13 @@ JRU5ErkJggg==') repeat;
     }
   }
 
+  .old-search-form {
+    .emoji-checkbox.search-language-switch {
+      input + .slider:before {content: '\1f1ec\1f1e7'; /* GB flag */}
+      input:checked + .slider:before {content: '\1f1ef\1f1f5'; /* JP flag */}
+    }
+  }
+
 } /* end of body */
 
 body.black {
@@ -1197,7 +1189,7 @@ body.black {
     .browse-panel .search-results {
       background: $bgcolor;
 
-      .result {
+      .result-item {
         border-bottom: 1px solid $lightborder;
       }
     }
@@ -1238,6 +1230,26 @@ body.black {
     display: flex;
     tbody {display: flex;}
     td {display: block; margin: 1px 1px; height: 22px;}
+  }
+  .word-card .expandable-list.word-kanjis {
+    font-size: .8em;
+  }
+  #search-app {
+    grid-template-columns: 8em 1fr;
+    height: calc(100vh - 33px); // fallback value
+    // Proper height: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+    // --vh value is calculated in javascript on search page
+    height: calc(var(--vh, 1vh) * 100 - 33px);
+
+    .browse-panel .search-results .result-item {
+      font-size: 0.8em;
+      .common-icon, .learned-icon {
+        font-size: 0.7em;
+      }
+    }
+    .contents-panel {
+      font-size: 0.8em;
+    }
   }
 }}
 

@@ -16,9 +16,9 @@ require('./vue-sentence-form.js');
    GLOBAL HOTKEYS
    =================== */
 $(function(){
-  $('#main-menu input.search').on('keyup', function(event){
+  $('.old-search-form input.search').on('keyup', function(event){
     if (event.which === 38 || event.which === 40) { // Up/Down keys
-      var el = $('#main-menu input[name=japanese]');
+      var el = $('.old-search-form input[name=japanese]');
       el.prop('checked', el.is(':checked') ? false : true);
     }
   });
