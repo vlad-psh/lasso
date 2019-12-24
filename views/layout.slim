@@ -18,17 +18,17 @@ html
             a href=path_to(:login) ●
         div.main-menu-item
           a href=path_to(:index) style="font-weight: bold; text-decoration: none" ワ亀
-          ' ・
         - if current_user.present?
           / 探索 ドリル 文 書道
+          ' ・
           div.main-menu-item: a href=path_to(:search2) &#x1f50d;
           ' ・
           div.main-menu-item: a href=path_to(:drills) &#x1f5c3;
           ' ・
           div.main-menu-item: a href=path_to(:sentences) &#x1f4ac;
           ' ・
-          div.main-menu-item: a href=path_to(:pictures) &#x1f4f7;
-          ' ・
+          //div.main-menu-item: a href=path_to(:pictures) &#x1f4f7;
+          //' ・
           div.main-menu-item
             label.emoji-checkbox.theme-switch
               input.black-theme-checkbox type="checkbox" checked=('checked' if user_settings('theme') == 'black') autocomplete="off"

@@ -24,7 +24,7 @@ javascript:
     },
     methods: {
       searchDebounce: debounce(function(){this.search();}, 250),
-      search() {
+      search(openWordAtIndex = null) {
         var app = this;
         var query = this.searchQuery;
 
@@ -43,6 +43,13 @@ javascript:
             var j = JSON.parse(data);
             app.searchResults = j;
             app.previousQuery = query;
+
+            history.pushState({}, query, '?query=' + query);
+            document.title = query;
+
+            if (openWordAtIndex !== null) {
+              app.openWord(openWordAtIndex);
+            }
           }
         });
       },
@@ -60,6 +67,11 @@ javascript:
           if (seq === app.selectedWord) {
             var j = JSON.parse(data);
             app.wordData = j;
+
+            // update current location
+            u = new URLSearchParams(location.search);
+            u.set('index', index);
+            history.replaceState({}, '', '?' + u.toString());
           }
         });
       },
@@ -101,6 +113,13 @@ javascript:
         this.previousQuery = '';
       },
     }, // end of methods
+    mounted() {
+      var u = new URLSearchParams(location.search)
+      if (u.has('query')) {
+        this.searchQuery = u.get('query');
+        this.search(u.has('index') ? u.get('index') : null);
+      }
+    }
   });
 
   document.onclick = function(){
