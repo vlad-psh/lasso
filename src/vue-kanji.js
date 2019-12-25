@@ -30,7 +30,7 @@ Vue.component('vue-kanji', {
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
       <div v-if="kanji.on">音：{{ kanji.on.join(" · ") }}</div>
-      <div v-if="kanji.kun">訓：{{ kanji.kun.join(" · ") }}</div>
+      <div v-if="kanji.kun">訓：<span v-for="kun of kanji.kun" class="reading">{{kun.split('.')[0]}}<span class="okurigana" v-if="kun.split('.').length > 1">{{kun.split('.')[1]}}</span></span></div>
       <div v-if="kanji.nanori">名：{{ kanji.nanori.join(" · ") }}</div>
     </div>
     <div>
@@ -51,14 +51,14 @@ Vue.component('vue-kanji', {
 
   <div v-if="kanji.wk_level">
     <div class="hr-title"><span>Meaning</span></div>
-    <div>
+    <div class="mnemonics">
       <span class="emphasis">{{kanji.wk_meaning}}</span>
       <span v-html="stripBB(kanji.mmne)"></span>
       <span class="hint" v-if="kanji.mhnt" v-html="stripBB(kanji.mhnt)"></span>
     </div>
 
     <div class="hr-title"><span>Reading</span></div>
-    <div>
+    <div class="mnemonics">
       <span class="emphasis">{{kanji.wk_readings.join(', ')}}</span>
       <span v-html="stripBB(kanji.rmne)"></span>
       <span class="hint" v-if="kanji.rhnt" v-html="stripBB(kanji.rhnt)"></span>

@@ -21,6 +21,9 @@
   user-select: none;
 }
 body {
+  $expandBg: #a8dba8; // #a8dba8 (green)
+  $expandFg: #0b486b;
+
   font-family: myfont, Cambria, myfont_jp1, serif;
   font-weight: 300;
   font-size: 12pt;
@@ -143,7 +146,6 @@ body {
       text-decoration: none;
 
       &:hover {opacity: 0.5;}
-      &.r, &.k, &.w {padding: 0.1em 0.3em;}
     }
     .main-menu-item {
       margin: -.1em .3em 0 .3em;
@@ -389,21 +391,18 @@ JRU5ErkJggg==') repeat;
       padding: 0 .2em;
       position: relative;
     }
-    .hint {
-      font-style: italic;
-      opacity: .6;
+    .reading {
+      &::after {content: '・';}
+      &:last-child::after {content: '';}
+      .okurigana {
+        color: #d00;
+      }
     }
     .radicals-list a {
       padding: 0 .3em;
     }
     .hr-title span {
       margin: .4em 0;
-    }
-    .emphasis {
-      background-color: #D3EDD3;
-      color: #357878;
-      border-radius: 3px;
-      padding: 0 .4em;
     }
   }
 
@@ -528,7 +527,7 @@ JRU5ErkJggg==') repeat;
           margin: 2px 0 0 -5px;
           content:" ";
           border:5px solid transparent;
-          border-bottom-color: #a8dba8;
+          border-bottom-color: $expandBg;
         }
 
         .level {
@@ -548,8 +547,10 @@ JRU5ErkJggg==') repeat;
     } /* end of .expandable-list */
 
     .expandable-list-container {
-      background-color: #a8dba8;
-      color: #357878;
+      background-color: $expandBg;
+      // Background image source: https://www.transparenttextures.com/
+      background-image: url("/img/little-pluses.png");
+      color: $expandFg;
       padding: 0.5em 0;
       margin-top: 5px;
     }
@@ -610,11 +611,18 @@ JRU5ErkJggg==') repeat;
 
     a {text-decoration: none;}
     ul {padding-left: 1em;}
-    .emphasis {
-      background-color: rgba(255,255,255,0.5);
-      color: inherit;
-      border-radius: 3px;
-      padding: 0 .4em;
+
+    .mnemonics {
+      .hint {
+        font-style: italic;
+        opacity: .6;
+      }
+      .emphasis {
+        background-color: rgba(255,255,255,0.5);
+        color: inherit;
+        border-radius: 3px;
+        padding: 0 .4em;
+      }
     }
     .hr-title {
       color: rgba(0,0,0,0.3);
@@ -627,6 +635,9 @@ JRU5ErkJggg==') repeat;
     }
 
   } /* end of .expandable-list-container */
+  .expandable-list {
+    position: relative;
+  }
 
   .vue-dropdown {
 
@@ -1107,6 +1118,10 @@ body.black {
   }
 
   .expandable-list-container {
+    background-color: $bgcolor2;
+    background-image: none;
+    color: #8a94a2;
+
     .emphasis {
       background-color: rgba(255,255,255,0.1);
       color: rgba(255,255,255,0.5);
@@ -1116,19 +1131,7 @@ body.black {
     }
   }
 
-  .vue-kanji,
-  .vue-radical {
-    .emphasis {
-      background-color: #2d3e57;
-      color: #969fab;
-    }
-  }
-
   .word-card {
-    .expandable-list-container {
-      background-color: $bgcolor2;
-      color: #8a94a2;
-    }
     .expandable-list-item {
       .expandable-list-arrow {
         border-bottom-color: $bgcolor2;

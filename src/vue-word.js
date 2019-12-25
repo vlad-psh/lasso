@@ -174,13 +174,13 @@ Vue.component('vue-word', {
         <span style="font-style: italic">({{selectedCard.pos}})</span>
 
         <div class="hr-title"><span>Meaning</span></div>
-        <div>
+        <div class="mnemonics">
           <span class="emphasis">{{selectedCard.meaning}}</span>
           <span v-html="stripBB(selectedCard.mmne)"></span>
         </div>
 
         <div class="hr-title"><span>Reading</span></div>
-        <div>
+        <div class="mnemonics">
           <span class="emphasis">{{selectedCard.reading}}</span>
           <span v-html="stripBB(selectedCard.rmne)"></span>
         </div>
