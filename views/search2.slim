@@ -1,6 +1,6 @@
 div#search-app
   div.browse-panel
-    input type="text" placeholder="Search..." @input="searchDebounce" v-model="searchQuery" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.esc="clearInputField()"
+    input type="text" placeholder="Search..." @input="inputChanged()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.enter="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.left.prevent="previousResult()" @keydown.229.prevent="nextResult()"
     div.search-results
       div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
         div class="common-icon" :class="result[2] ? 'common' : 'uncommon'" &#x2b50;
@@ -23,6 +23,10 @@ javascript:
     computed: {
     },
     methods: {
+      inputChanged() {
+        this.searchQuery = this.searchQuery.replace(/、/g, '')
+        this.searchDebounce();
+      },
       searchDebounce: debounce(function(){this.search();}, 250),
       search(openWordAtIndex = null) {
         var app = this;
