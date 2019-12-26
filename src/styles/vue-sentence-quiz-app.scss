@@ -1,0 +1,45 @@
+#sentence-quiz-app {
+  margin: 0;
+
+  .sentence-question {
+    background-color: #ffec83;
+    text-align: center;
+    padding: 1.5em 0 2.2em 0;
+    position: relative;
+
+    .sentence-word-container {
+      display: inline-block;
+      vertical-align: bottom;
+
+      .sentence-word {
+        font-size: 3em;
+        margin: 0 1px;
+      }
+      .sentence-word-tooltip {
+        font-size: 8pt;
+        border-bottom: 2px solid rgba(255,255,255,0);
+        margin: 0 2px;
+        color: #878764;
+      }
+      .answer-correct   {border-bottom: 2px solid #4caf50;}
+      .answer-incorrect {border-bottom: 2px solid #e51c23;}
+      .answer-soso      {border-bottom: 2px solid #2196f3;}
+      .answer-burned    {border-bottom: 2px solid #ff9800;}
+    }
+
+    .word-question {
+      background: white;
+      cursor: pointer;
+    }
+    .word-question-answered {
+      background: #fcefa9;
+      cursor: pointer;
+    }
+    .word-question:hover,
+    .word-question-answered:hover {
+      color: #c00;
+      border-bottom: 2px solid #c00;
+      margin-bottom: -2px;
+    }
+  } /* end of .sentence-question */
+} /* end of #sentence-quiz-app */

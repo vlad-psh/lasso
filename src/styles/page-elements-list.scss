@@ -1,0 +1,56 @@
+.levels-header {
+  padding: 0.4em 0 0.2em 0;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+
+  &>div {
+    flex: auto;
+  }
+  &>div.left {
+    text-align: left;
+    margin-left: 0.5em;
+  }
+  &>div.right {
+    text-align: right;
+    margin-right: 0.5em;
+  }
+}
+
+.elements-list {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+
+  &::after {
+    content: '';
+    flex-grow: 1000000000;
+  }
+  .elements-list-item {
+    display: inline-block;
+    min-width: 4em;
+    text-align: center;
+    font-size: 0.7em;
+    font-weight: 100;
+    flex: auto;
+
+    .element-block {
+      padding: 0.5em 0.3em;
+      position: relative;
+    }
+    .element {
+      font-size: 1.4em;
+      line-height: 1.5em;
+    }
+    .description {
+      font-size: 0.8em;
+    }
+    .level-wrapper {
+      position: absolute;
+      margin: -0.8em 0 0 -0.8em;
+    }
+  }
+} /* end of .elements-list */
+

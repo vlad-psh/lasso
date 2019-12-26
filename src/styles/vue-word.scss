@@ -1,0 +1,189 @@
+.word-card {
+  padding: 0.6em 0;
+
+  .expandable-list {
+    display: inline-block;
+    vertical-align: middle;
+
+    &.word-krebs {
+      padding-bottom: 7px;
+
+      .expandable-list-item {
+        margin: 0 0.6em 0 -0.3em;
+        border-bottom: none;
+        color: inherit;
+      }
+    }
+    &.word-kanjis {
+      .expandable-list-item {
+        border-bottom: none;
+        color: inherit;
+        border: 1px solid white;
+        border-radius: 2px;
+        font-size: 2em;
+        margin: 0 .4em 0 0;
+
+        .wk-element {
+          width: 1.5em;
+          line-height: initial;
+        }
+
+        $grade1: #cc4628;
+        $grade2: #e8b419;
+        $grade3: #e89297;
+        $grade4: #43a057;
+        $grade5: #6ab8c9;
+        $grade6: #51568e;
+        $grade8: black;
+        $grade9: #eabbc3;
+        $gradeno: #bbe4ea;
+        .kanji-grade {color: white; font-size: .4em; font-weight: bold;}
+        &.grade-1 {border-color: $grade1; .kanji-grade {background: $grade1;}}
+        &.grade-2 {border-color: $grade2; .kanji-grade {background: $grade2;}}
+        &.grade-3 {border-color: $grade3; .kanji-grade {background: $grade3;}}
+        &.grade-4 {border-color: $grade4; .kanji-grade {background: $grade4;}}
+        &.grade-5 {border-color: $grade5; .kanji-grade {background: $grade5;}}
+        &.grade-6 {border-color: $grade6; .kanji-grade {background: $grade6;}}
+        &.grade-8 {border-color: $grade8; .kanji-grade {background: $grade8;}}
+        &.grade-9 {border-color: $grade9; .kanji-grade {background: $grade9;}}
+        &.grade-no{border-color: $gradeno;.kanji-grade {background: $gradeno;}}
+      }
+    }
+    .expandable-list-item {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      margin: 0 .4em;
+      cursor: pointer;
+      border-bottom: 1px dashed #008ace;
+      color: #008ace;
+
+      &:hover {
+        color: #c00;
+        border-bottom-color: #c00;
+      }
+      .learned {
+        background: rgba(255,255,0,0.3);
+      }
+      .word-kreb {
+        font-size: 1.4em;
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        padding: 0 0.3em;
+        /* transparent border; so that height is equal with common words with visible border*/
+        border-bottom: 2px solid rgba(255,255,255,0);
+
+        &.common {
+          border-bottom-color: green;
+          border-bottom-style: dotted;
+        }
+        .learned-icon {
+          @include non-selectable;
+          display: block;
+          //color: #ffbc11;
+          //background-color: white;
+          //border-radius: 1em;
+          font-size: 0.5em;
+          width: .8em;
+          height: .8em;
+          position: absolute;
+          top: -.3em;
+          right: -.3em;
+          line-height: .8em;
+        }
+        .pitch {
+          font-size: .6em;
+          vertical-align: super;
+          border-radius: .2em;
+          color: #d00;
+        }
+      } /* end of .word-kreb */
+
+      .expandable-list-arrow {
+        display: inline-block;
+        position: absolute;
+        padding: 0;
+
+        box-sizing:border-box;
+        height:5px;
+        width:5px;
+        margin: 2px 0 0 -5px;
+        content:" ";
+        border:5px solid transparent;
+        border-bottom-color: $expandBg;
+      }
+
+      .level {
+        @include non-selectable;
+        display: inline-block;
+        background-color: #ffbc11;
+        color: #99700a;
+        border-radius: 2em;
+        font-size: .6em;
+        line-height: 1.6em;
+        width: 1.6em;
+        height: 1.6em;
+        text-align: center;
+        vertical-align: middle;
+      }
+    } /* end of .expandable-list-item */
+  } /* end of .expandable-list */
+
+  .expandable-list-container {
+    background-color: $expandBg;
+    // Background image source: https://www.transparenttextures.com/
+    background-image: url("/img/little-pluses.png");
+    color: $expandFg;
+    padding: 0.5em 0;
+    margin-top: 5px;
+  }
+
+  .word-details {
+    text-align: justify;
+    padding: .3em;
+    line-height: 1.6em;
+
+    .icon {
+      @include non-selectable;
+      display: inline-block;
+      font-size: 1.4em;
+      vertical-align: middle;
+      margin-right: 0.3em;
+      line-height: 0;
+    }
+    .pos {
+      color: green;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+  } /* end of .word-glosses */
+
+  .action-buttons {
+    opacity: 0.4;
+    font-size: 0.8em;
+
+    &:hover {opacity: 1;}
+    a {cursor: pointer;}
+  }
+
+  .word-comment-form.vue-editable-text {
+    padding: 0.1em 0.6em;
+    margin: -0.1em auto;
+
+    &:hover {
+      background-color: rgba(128,128,128,0.2);
+      cursor: pointer;
+    }
+    p {
+      margin: 0.4em 0;
+      text-align: justify;
+    }
+    textarea {
+      width: 100%;
+      height: 8em;
+      resize: vertical;
+    }
+  } /* end of .word-comment-form */
+} /* end of .word-card */

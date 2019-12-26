@@ -1,0 +1,126 @@
+body.black {
+  $bgcolor: #16202a; // #0d192b
+  $bgcolor2: #1c2939; // top menu bg, etc; little bit lighter
+  $fgcolor: #ccc; // main text color
+  $fgcolor2: #8799a5; // little bit darker text
+  $lightborder: rgba(128,128,128,0.2);
+
+  background: $bgcolor;
+  color: $fgcolor;
+
+  input[type='text'],
+  textarea {
+    background: $bgcolor2;
+    color: $fgcolor;
+    border: none;
+  }
+
+
+  .r,
+  .blue   {background-color: $bgcolor2; border: 0px solid #2196f3;}
+  .green  {background-color: #0a3f39; border: 0px solid #4caf50;}
+  .w,
+  .purple {background-color: #53155e; border: 0px solid #9c27b0;}
+  .yellow {background-color: #c97a04; border: 0px solid #ff9800;}
+  .red    {background-color: #56181a; border: 0px solid #e51c23;}
+  .y,
+  .lime   {background-color: #629300; border: 0px solid #aaff00;}
+  .k,
+  .pink   {background-color: #89005b; border: 0px solid #ff00aa;}
+
+  .pristine, .apprentice, .master, .guru, .enlightened, .burned, .flagged {
+    border-color: $bgcolor;
+  }
+  .pristine {color: $fgcolor2;}
+
+  #main-menu {
+    background-color: $bgcolor2;
+
+    input.search {background: $bgcolor;}
+  }
+
+  svg.graph text {
+    fill: #fff;
+  }
+
+  .expandable-list-container {
+    background-color: $bgcolor2;
+    background-image: none;
+    color: #8a94a2;
+
+    .emphasis {
+      background-color: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+    }
+    .hr-title {
+      color: inherit;
+    }
+  }
+
+  .word-card {
+    .expandable-list-item {
+      .expandable-list-arrow {
+        border-bottom-color: $bgcolor2;
+      }
+      .word-kreb .learned-icon {
+        //background-color: $bgcolor;
+      }
+      .learned {
+        background: $bgcolor2;
+      }
+    }
+  }
+
+  .study-card {
+    .counter-info {color: #6f7784;}
+    .show-answer-button {
+      background: none;
+      color: $fgcolor2;
+      border-bottom: 2px dotted $bgcolor2;
+    }
+  }
+  #sentence-quiz-app {
+    .sentence-question {
+      background: none;
+      color: $fgcolor2;
+      border-bottom: 2px dotted $bgcolor2;
+      .sentence-word-container {
+        .word-question {background-color: rgba(255,255,255,0.1);}
+        .word-question-answered {background-color: transparent;}
+        .sentence-word-tooltip {color: inherit;}
+      }
+    }
+  }
+
+  .search-results-old {
+    .search-result-old {
+      &.pristine {
+        color: inherit;
+        border-color: rgba(255,255,255,0.2);
+      }
+      .highlight {
+        background-color: transparent;
+        color: #c00;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .vue-sentence-form-app .new-sentence .question-word {
+    background-color: rgba(255,255,255,0.1);
+    color: $fgcolor;
+  }
+  .vue-double-click-button {
+    border: 1px dashed;
+  }
+
+  #search-app {
+    .browse-panel .search-results {
+      background: $bgcolor;
+
+      .result-item {
+        border-bottom: 1px solid $lightborder;
+      }
+    }
+  }
+} /* end of body.black */

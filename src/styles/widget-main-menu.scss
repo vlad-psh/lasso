@@ -1,0 +1,35 @@
+#main-menu {
+  background-color: #222;
+  margin: 0;
+  color: white;
+  font-family: Segoe UI, Helvetica Neue, sans-serif;
+  font-weight: 700;
+  width: 100%;
+
+  &>div.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 2em;
+  }
+  a {
+    color: #eee;
+    text-decoration: none;
+
+    &:hover {opacity: 0.5;}
+  }
+  .main-menu-item {
+    margin: -.1em .3em 0 .3em;
+    text-align: center;
+  }
+  .main-menu-item-details {
+    font-weight: normal;
+    font-size: 0.53em;
+    margin-top: -0.4em;
+    margin-bottom: 0.2em;
+  }
+  .emoji-checkbox.theme-switch {
+    input + .slider:before {content: '\1f4a1'; /* sun */}
+    input:checked + .slider:before {content: '\1f319'; /* moon */}
+  }
+} /* end of #main-menu */

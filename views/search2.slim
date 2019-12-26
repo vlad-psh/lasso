@@ -51,8 +51,8 @@ javascript:
             history.pushState({}, query, '?query=' + query);
             document.title = query;
 
-            if (openWordAtIndex !== null) {
-              app.openWord(openWordAtIndex);
+            if (j.length > 0) {
+              app.openWord(openWordAtIndex || 0);
             }
           }
         });
