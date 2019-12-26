@@ -1,6 +1,11 @@
 div#search-app
   div.browse-panel
-    input type="text" placeholder="Search..." @input="inputChanged()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.enter="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.left.prevent="previousResult()" @keydown.229.prevent="nextResult()"
+    div.search-field
+      input type="text" placeholder="Search..." @input="inputChanged()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.enter="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.left.prevent="previousResult()" @keydown.229.prevent="nextResult()"
+      div.loading-circles v-if="loading"
+        div
+        div
+        div
     div.search-results
       div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
         div class="common-icon" :class="result[2] ? 'common' : 'uncommon'" &#x2b50;
@@ -18,7 +23,8 @@ javascript:
       searchResults: [],
       selectedWord: null,
       highlightedWordIndex: null,
-      wordData: null
+      wordData: null,
+      loading: false
     },
     computed: {
     },
@@ -35,6 +41,7 @@ javascript:
         // Prevent request while composing japanese text sing IME
         // Otherwise, same (unchanged) request will be sent after each key press
         if (this.searchQuery === this.previousQuery) return;
+        this.loading = true;
 
         $.ajax({
           url: "#{{path_to(:search2)}}",
@@ -47,6 +54,7 @@ javascript:
             var j = JSON.parse(data);
             app.searchResults = j;
             app.previousQuery = query;
+            app.loading = false;
 
             history.pushState({}, query, '?query=' + query);
             document.title = query;
@@ -63,6 +71,8 @@ javascript:
         this.highlightedWordIndex = index;
         this.selectedWord = seq;
         this.wordData = null;
+        this.loading = true;
+
         $.ajax({
           url: "#{{path_to(:word_details)}}",
           method: 'GET',
@@ -71,6 +81,7 @@ javascript:
           if (seq === app.selectedWord) {
             var j = JSON.parse(data);
             app.wordData = j;
+            app.loading = false;
 
             // update current location
             u = new URLSearchParams(location.search);

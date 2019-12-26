@@ -14,13 +14,22 @@
     display: grid;
     grid-template-rows: auto 1fr;
 
-    input[type="text"] {
-      background: none;
-      border: none;
-      border-bottom: 1px solid rgba(192,192,192,0.3);
-      padding: .4em .6em .5em .6em;
-      box-sizing: border-box;
-      width: 100%;
+    .search-field {
+      position: relative;
+
+      input[type="text"] {
+        background: none;
+        border: none;
+        border-bottom: 1px solid rgba(192,192,192,0.3);
+        padding: .4em .6em .5em .6em;
+        box-sizing: border-box;
+        width: 100%;
+      }
+      .loading-circles {
+        position: absolute;
+        right: 1em;
+        top: .8em;
+      }
     }
     .search-results {
       height: 100%;
