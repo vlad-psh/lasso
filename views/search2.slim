@@ -8,9 +8,11 @@ div#search-app
         div
     div.search-results
       div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
-        div class="common-icon" :class="result[2] ? 'common' : 'uncommon'" &#x2b50;
-        div class="result" = "{{result[1]}}"
-        div v-if="result[3]" class="learned-icon"
+        div class="common-icon" :class="result[4] ? 'common' : 'uncommon'" &#x2b50;
+        div class="result"
+          div class="title" = "{{result[1]}}"
+          div class="details" = "{{result[2]}}・{{result[3]}}"
+        div v-if="result[5]" class="learned-icon"
   div.contents-panel
     vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true"
 
@@ -132,7 +134,7 @@ javascript:
       var u = new URLSearchParams(location.search)
       if (u.has('query')) {
         this.searchQuery = u.get('query');
-        this.search(u.has('index') ? u.get('index') : null);
+        this.search(u.has('index') ? Number.parseInt(u.get('index')) : null);
       }
     }
   });

@@ -48,10 +48,24 @@
           color: white;
         }
         &:hover, &.highlighted {
-          font-weight: bold;
+          .title {
+            font-weight: bold;
+          }
         }
         .result {
           flex-grow: 10;
+
+          .title {
+
+          }
+          .details {
+            width: 25em;
+            font-size: .7em;
+            opacity: .5;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+          }
         }
         .common-icon {
           display: inline-block;

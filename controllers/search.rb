@@ -65,21 +65,26 @@ post :search2 do
   word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(is_common: :desc, id: :asc).limit(1000).sort do |a,b|
     if a.is_common != b.is_common
       a.is_common == true ? -1 : 1 # common words should be first
-    elsif (compare = a.word.list_title.length <=> b.word.list_title.length) != 0
+    elsif (compare = a.title.length <=> b.title.length) != 0
       compare # result of comparing lengths
     else
-      a.word.list_title <=> b.word.list_title # result of comparing two strings
+      a.title <=> b.title # result of comparing two strings
     end
   end
 
-  progresses = Progress.where(user: current_user, seq: word_titles.map{|i|i.seq}).where.not(learned_at: nil).pluck(:seq)
+  seqs = word_titles.map{|i|i.seq}.uniq
+  progresses = Progress.where(user: current_user, seq: seqs).where.not(learned_at: nil).pluck(:seq)
 
-  result = word_titles.map do |wt|
+  result = seqs.map do |seq|
+    wts = word_titles.filter{|w| w.seq == seq}
+    title = wts.first.word.list_title
     [
-      wt.seq,
-      wt.word.list_title,
-      wt.is_common,
-      progresses.include?(wt.seq)
+      seq,
+      title,
+      wts.map{|w| w.title}.filter{|t| t != title}.first,
+      wts.first.word.en[0]['gloss'].join(', '),
+      wts.first.is_common, # If there is more than one WordTitle, show property for 'best match' (ie. common, shortest)
+      progresses.include?(seq)
     ]
   end
 
