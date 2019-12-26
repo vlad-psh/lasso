@@ -7,6 +7,7 @@ $expandBg: #a8dba8; // #a8dba8 (green)
 $expandFg: #0b486b;
 
 @import "styles/fonts.scss";
+@import "styles/images.scss";
 @import "styles/theme-black.scss";
 @import "styles/mobile-fixes.scss";
 @import "styles/vue-dropdown.scss";
@@ -189,10 +190,7 @@ body {
   }
   .burned {
     /* gradient can be created here: http://www.patternify.com/ */
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAM\
-AAAADCAYAAABWKLW/AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYA\
-AAAB3RJTUUH4gITCRIo7aRYngAAABJJREFUCNdjYIABPrHNuBgMDAAuFwKGaxZ92QAAAAB\
-JRU5ErkJggg==') repeat;
+    background: $pattern-burned repeat;
     background-size: 3px 3px;
     background-color: #0b486b;
     color: #79bd9a;

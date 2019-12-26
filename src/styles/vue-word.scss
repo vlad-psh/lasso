@@ -133,8 +133,7 @@
 
   .expandable-list-container {
     background-color: $expandBg;
-    // Background image source: https://www.transparenttextures.com/
-    background-image: url("/img/little-pluses.png");
+    background-image: $pattern-little-pluses;
     color: $expandFg;
     padding: 0.5em 0;
     margin-top: 5px;
