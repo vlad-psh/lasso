@@ -10,32 +10,35 @@ html
     div#main-menu
       div.center
         div.main-menu-item
-          - if current_user.present?
-            a href=path_to(:logout) data-method="delete" data-confirm="Logout?" style="text-decoration: none; color: red" ●
-            br
-            div.main-menu-item-details = current_user.login
-          - else
-            a href=path_to(:login) ●
-        div.main-menu-item
-          a href=path_to(:index) style="font-weight: bold; text-decoration: none" ワ亀
+          div.main-menu-item: a href=path_to(:index)
+            div class="svg-icon icon-bear"
         - if current_user.present?
-          / 探索 ドリル 文 書道
-          ' ・
-          div.main-menu-item: a href=path_to(:search2) &#x1f50d;
-          ' ・
-          div.main-menu-item: a href=path_to(:drills) &#x1f5c3;
-          ' ・
-          div.main-menu-item: a href=path_to(:sentences) &#x1f4ac;
-          ' ・
-          //div.main-menu-item: a href=path_to(:pictures) &#x1f4f7;
-          //' ・
+
+          div.main-menu-item: a href=path_to(:search2)
+            div class="svg-icon icon-search"
+          div.main-menu-item: a href=path_to(:drills)
+            div class="svg-icon icon-bookmark"
+          div.main-menu-item: a href=path_to(:sentences)
+            div class="svg-icon icon-typewriter"
+
           div.main-menu-item
             label.emoji-checkbox.theme-switch
               input.black-theme-checkbox type="checkbox" checked=('checked' if user_settings('theme') == 'black') autocomplete="off"
               span.slider
-          div.main-menu-item
-            label.editing-checkbox
-              input type="checkbox" checked=('checked' if user_settings('editing')) autocomplete="off"
+                div.svg-icon.icon-sun
+                div.svg-icon.icon-moon
+          //div.main-menu-item
+          //  label.editing-checkbox
+          //    input type="checkbox" checked=('checked' if user_settings('editing')) autocomplete="off"
+      div.right
+        div.main-menu-item
+          - if current_user.present?
+            a href=path_to(:logout) data-method="delete" data-confirm="Logout?"
+              span.username = current_user.login
+              div< class="svg-icon icon-exit"
+          - else
+            a href=path_to(:login)
+              div class="svg-icon icon-login"
     == slim :flashes
     div#container
       == yield

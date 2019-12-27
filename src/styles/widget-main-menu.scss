@@ -3,33 +3,41 @@
   margin: 0;
   color: white;
   font-family: Segoe UI, Helvetica Neue, sans-serif;
-  font-weight: 700;
   width: 100%;
 
-  &>div.center {
+  &>div.center,
+  &>div.right {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 2em;
   }
+  &>div.right {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   a {
     color: #eee;
     text-decoration: none;
+    padding: .7em;
 
     &:hover {opacity: 0.5;}
   }
-  .main-menu-item {
-    margin: -.1em .3em 0 .3em;
-    text-align: center;
-  }
-  .main-menu-item-details {
-    font-weight: normal;
-    font-size: 0.53em;
-    margin-top: -0.4em;
-    margin-bottom: 0.2em;
+  .username {
+    font-size: .7em;
   }
   .emoji-checkbox.theme-switch {
-    input + .slider:before {content: '\1f4a1'; /* sun */}
-    input:checked + .slider:before {content: '\1f319'; /* moon */}
+    padding: 0 .7em;
+    input + .slider {
+      &::before {content: none;}
+      .icon-sun {display: inline-block;}
+      .icon-moon {display: none;}
+    }
+    input:checked + .slider {
+      &::before {content: none;}
+      .icon-sun {display: none;}
+      .icon-moon {display: inline-block;}
+    }
   }
 } /* end of #main-menu */

@@ -15,14 +15,15 @@
     padding: 8px 0 4px 0 !important;
   }
   #main-menu {
-    font-size: 1em;
     text-align: left;
 
     &>div.center {
       margin-left: 0.4em;
       justify-content: flex-start;
     }
-    .search {width: 80px}
+    .main-menu-item {
+      margin-top: .2em;
+    }
   }
   #container {
     margin: 0;

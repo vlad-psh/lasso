@@ -39,6 +39,7 @@ javascript:
         // Prevent request while composing japanese text sing IME
         // Otherwise, same (unchanged) request will be sent after each key press
         if (this.searchQuery === this.previousQuery) return;
+        if (this.searchQuery.trim() === '') return;
         this.loading = true;
 
         $.ajax({
