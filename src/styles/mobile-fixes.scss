@@ -44,12 +44,17 @@
     height: calc(var(--vh, 1vh) * 100 - 33px);
 
     .browse-panel .search-results .result-item {
-      font-size: 0.8em;
-      .common-icon, .learned-icon {
-        font-size: 0.7em;
+
+      .title {
+        font-size: 0.8em;
+        .common-icon, .learned-icon {
+          font-size: 0.7em;
+        }
       }
-      .result .details {
+      .details {
         width: 10em;
+        padding-left: 0;
+        font-size: 0.6em;
       }
     }
     .contents-panel {
