@@ -71,7 +71,7 @@
         display: inline-block;
         cursor: pointer;
         border: none;
-        padding: 0 0.3em;
+        padding: 0 .3em .2em .3em; // bottom padding needed so that bottom border will not intersects with pitch accent
         /* transparent border; so that height is equal with common words with visible border*/
         border-bottom: 2px solid rgba(255,255,255,0);
 
@@ -92,12 +92,6 @@
           top: -.3em;
           right: -.3em;
           line-height: .8em;
-        }
-        .pitch {
-          font-size: .6em;
-          vertical-align: super;
-          border-radius: .2em;
-          color: #d00;
         }
       } /* end of .word-kreb */
 

@@ -11,6 +11,7 @@ require('./vue-double-click-button.js');
 require('./vue-editable-text.js');
 require('./vue-dropdown.js');
 require('./vue-sentence-form.js');
+require('./vue-pitch-word.js');
 
 /* ===================
    GLOBAL HOTKEYS

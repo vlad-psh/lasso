@@ -71,9 +71,6 @@ Vue.component('vue-word', {
         });
       }
     },
-    trimPitch(pitch){
-      return pitch.replace(/\(.*?\)/g, '');
-    },
     gradeText(grade){
       if (grade >=1 && grade <= 6) {
         return [null, '１', '２', '３', '４', '５', '６'][grade] + '年';
@@ -97,7 +94,7 @@ Vue.component('vue-word', {
       <div class="word-krebs expandable-list">
         <div class="expandable-list-item" v-for="kreb of w.krebs">
           <div>
-            <div class="word-kreb" :class="[kreb.is_common ? 'common' : null, kreb.progress.learned_at ? 'learned' : null]" @click="openKrebForm(kreb.title)">{{kreb.title}}<span class="pitch" v-if="kreb.pitch" :title="kreb.pitch">{{trimPitch(kreb.pitch)}}</span><div v-if="kreb.progress.learned_at && false" class="learned-icon">&#x1f514;</div></div>
+            <div class="word-kreb" :class="[kreb.is_common ? 'common' : null, kreb.progress.learned_at ? 'learned' : null]" @click="openKrebForm(kreb.title)"><vue-pitch-word :word="kreb.title" :pitch="kreb.pitch"></vue-pitch-word><div v-if="kreb.progress.learned_at && false" class="learned-icon">&#x1f514;</div></div>
           </div>
           <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
         </div>
@@ -108,6 +105,7 @@ Vue.component('vue-word', {
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
         <table><tr>
+          <td v-if="selectedKreb.pitch">Pitch: {{selectedKreb.pitch}}</td>
           <td><vue-learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></vue-learn-buttons></td>
           <td>Drills: {{selectedKreb.drills.map(i => j.drills.find(k => k.id === i).title)}}; Add:</td>
           <td><vue-dropdown :options="j.drills.filter(i => i.is_active === true)" empty-item="Select..." :selected-value="forms.selectedDrill" @selected="forms.selectedDrill = $event" value-key="id"></vue-dropdown></td>

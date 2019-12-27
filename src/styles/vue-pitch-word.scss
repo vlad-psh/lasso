@@ -1,0 +1,26 @@
+.vue-pitch-word {
+  $pitch-color: #d00;
+  .br {
+    border-bottom: 1px solid $pitch-color;
+    border-right: 1px solid $pitch-color;
+    margin-right: -1px;
+  }
+  .tr {
+    border-top: 1px solid $pitch-color;
+    border-right: 1px solid $pitch-color;
+    margin-right: -1px;
+  }
+  .t {
+    border-top: 1px solid $pitch-color;
+  }
+  .b {
+    border-bottom: 1px solid $pitch-color;
+  }
+  .pitch-number {
+    font-size: .6em;
+    vertical-align: super;
+    color: #d00;
+    opacity: .7;
+  }
+
+}
