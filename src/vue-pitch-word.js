@@ -17,19 +17,30 @@ Vue.component('vue-pitch-word', {
   },
   mounted(){
     if (this.pitch) {
+      var digraphs = 'ゃゅょャュョ'.split('');
       var p = Number.parseInt(this.pitch.replace(/\(.*?\)/g, '')[0]);
-      var w = this.word;
+
+      var w = [];
+      // split by moras
+      for (letter of this.word.split('')) {
+        if (digraphs.indexOf(letter) !== -1) {
+          w[w.length - 1] = w[w.length - 1] + letter;
+        } else {
+          w.push(letter);
+        }
+      }
+
       var struct = []
       if (p === 0) {
         struct.push([w[0], 'br']); // first mora bottom + right borders
-        struct.push([w.substr(1, w.length - 1), 't']); // the rest with top border
+        struct.push([w.slice(1, w.length).join(''), 't']); // the rest with top border
       } else if (p === 1) {
         struct.push([w[0], 'tr']);
-        struct.push([w.substr(1, w.length - 1), 'b']);
+        struct.push([w.slice(1, w.length).join(''), 'b']);
       } else {
         struct.push([w[0], 'br']);
-        struct.push([w.substring(1, p), 'tr']);
-        struct.push([w.substr(p, w.length - 1), 'b']);
+        struct.push([w.slice(1, p).join(''), 'tr']);
+        struct.push([w.slice(p, w.length).join(''), 'b']);
       }
       this.structure = struct;
     }
