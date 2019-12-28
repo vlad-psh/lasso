@@ -71,17 +71,6 @@ Vue.component('vue-word', {
         });
       }
     },
-    gradeText(grade){
-      if (grade >=1 && grade <= 6) {
-        return [null, '１', '２', '３', '４', '５', '６'][grade] + '年';
-      } else if (grade == 8) {
-        return '常用';
-      } else if (grade == 9 || grade == 10) {
-        return '人名';
-      } else {
-        return '表外';
-      }
-    },
     ...helpers
   }, // end of methods
   updated() {
@@ -118,8 +107,8 @@ Vue.component('vue-word', {
     <div class="word-details center-block" v-if="kanjis.length > 0">
       <div class="expandable-list word-kanjis">
         <template v-for="(kanji, kanjiIndex) of j.kanjis">
-          <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1" :class="'grade-' + (kanji.grade || 'no')">
-            <div class="wk-element" @click="openKanji(kanjiIndex)" :class="kanji.progress.learned_at ? 'learned' : null">{{kanji.title}}<div class="kanji-grade">{{gradeText(kanji.grade)}}</div></div>
+          <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1">
+            <div class="wk-element" @click="openKanji(kanjiIndex)"><vue-kanji-card :kanji="kanji.title" :grade="kanji.grade" :learned="kanji.progress.learned_at ? true : false"></vue-kanji-card></div>
             <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
           </div>
         </template>

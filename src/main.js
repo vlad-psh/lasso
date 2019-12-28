@@ -12,6 +12,8 @@ require('./vue-editable-text.js');
 require('./vue-dropdown.js');
 require('./vue-sentence-form.js');
 require('./vue-pitch-word.js');
+require('./vue-kanji-readings.js');
+require('./vue-kanji-card.js');
 
 /* ===================
    GLOBAL HOTKEYS
@@ -47,13 +49,4 @@ $(document).on('click', '.editing-checkbox input', function(event){
     data: {"editing": this.checked}
   });
   if (typeof app !== "undefined") app.editing = this.checked;
-});
-/* ===================
-   SPEECH
-   =================== */
-$(document).on('click', '.speech-link', function(event){
-  if ($('#main-player').attr('src') != $(this).data('src')) {
-    $('#main-player').attr('src', $(this).data('src'));
-  }
-  $('#main-player')[0].play();
 });

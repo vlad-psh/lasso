@@ -1,0 +1,18 @@
+.vue-kanji-readings {
+  table {
+    border-collapse: collapse;
+    border: 1px solid rgba(128,128,128,.3);
+
+    td {
+      border-bottom: 1px solid rgba(128,128,128,.3);
+      vertical-align: top;
+    }
+    td:nth-child(2) {
+      font-size: 1.3em;
+    }
+    .vue-kanji-card {
+      display: inline-block;
+      margin-right: .35em;
+    }
+  }
+}

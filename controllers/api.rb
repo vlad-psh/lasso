@@ -8,7 +8,8 @@ paths api_sentence: '/api/sentence',
     api_word_comment: '/api/word/comment',
     api_add_word_to_drill: '/api/drill/add_word',
     drill_add_word: '/drill/word',
-    word_details: '/api/word' # params: seq
+    word_details: '/api/word', # params: seq
+    kanji_readings: '/api/kanji_readings'
 
 get :word_details do
   protect!
@@ -149,4 +150,27 @@ post :api_add_word_to_drill do
   drill.progresses << progress
 
   return 'ok'
+end
+
+post :kanji_readings do
+  protect!
+
+  kanji = Kanji.find_by(title: params[:kanji])
+  halt(404, "Kanji not found" + params.inspect) if kanji.blank?
+
+  result = {}
+  kanji.on.each do |on|
+    result[on] = Kanji.joins(:kanji_readings).merge(
+      KanjiReading.where(reading: on, kind: :on)
+    ).where.not(grade: nil).distinct.sort{|a,b| a.grade <=> b.grade}.map{|i| [i.title, i.grade]}
+  end if kanji.on.present?
+
+  kanji.kun.map{|i| i.gsub(/\..*/, '')}.uniq.each do |kun|
+    kun = kun.gsub(/\..*/, '') # Drop okurigana
+    result[kun] = Kanji.joins(:kanji_readings).merge(
+      KanjiReading.where('reading SIMILAR TO ?', kun + '(.%)?').where(kind: :kun)
+    ).where.not(grade: nil).distinct.sort{|a,b| a.grade <=> b.grade}.map{|i| [i.title, i.grade]}
+  end if kanji.kun.present?
+
+  return result.to_json
 end

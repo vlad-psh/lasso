@@ -29,11 +29,6 @@ Vue.component('vue-kanji', {
     <div>
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
-      <div v-if="kanji.on">音：{{ kanji.on.join(" · ") }}</div>
-      <div v-if="kanji.kun">訓：<span v-for="kun of kanji.kun" class="reading">{{kun.split('.')[0]}}<span class="okurigana" v-if="kun.split('.').length > 1">{{kun.split('.')[1]}}</span></span></div>
-      <div v-if="kanji.nanori">名：{{ kanji.nanori.join(" · ") }}</div>
-    </div>
-    <div>
       <div v-if="kanji.english">
         &#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}
         <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
@@ -47,6 +42,7 @@ Vue.component('vue-kanji', {
     </div>
   </div>
 
+  <vue-kanji-readings :kanji="kanji" :key="kanji.title"></vue-kanji-readings>
   <vue-learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
 
   <div v-if="kanji.wk_level">
