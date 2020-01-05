@@ -142,6 +142,10 @@ Vue.component('vue-word', {
       </span>
     </div>
 
+    <div class="word-details center-block" v-if="w.nhk_data">
+      <div class="icon-nhk"></div><vue-pitch-word-nhk :j="w.nhk_data"></vue-pitch-word-nhk>
+    </div>
+
     <div class="word-details wk-info center-block" v-if="w.cards.length > 0">
       <div class="icon">&#x1f980;</div>
       <div class="expandable-list">

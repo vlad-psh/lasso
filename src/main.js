@@ -12,6 +12,7 @@ require('./vue-editable-text.js');
 require('./vue-dropdown.js');
 require('./vue-sentence-form.js');
 require('./vue-pitch-word.js');
+require('./vue-pitch-word-nhk.js');
 require('./vue-kanji-readings.js');
 require('./vue-kanji-card.js');
 
