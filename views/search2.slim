@@ -32,7 +32,7 @@ javascript:
     },
     methods: {
       searchDebounce: debounce(function(){this.search();}, 250),
-      search(openWordAtIndex = null) {
+      search(openWordAtIndex = null, popHistory = true) {
         var app = this;
         var query = this.searchQuery;
 
@@ -55,7 +55,9 @@ javascript:
             app.previousQuery = query;
             app.loading = false;
 
-            history.pushState({}, query, '?query=' + query);
+            if (popHistory) {
+              history.pushState({}, query, '?query=' + query);
+            }
             document.title = query;
 
             if (j.length > 0) {
@@ -128,11 +130,18 @@ javascript:
       },
     }, // end of methods
     mounted() {
-      var u = new URLSearchParams(location.search)
-      if (u.has('query')) {
-        this.searchQuery = u.get('query');
-        this.search(u.has('index') ? Number.parseInt(u.get('index')) : null);
+      var app = this;
+      var loadContent = function () {
+        var u = new URLSearchParams(location.search);
+        console.log('load content ' + u);
+        if (u.has('query')) {
+          app.searchQuery = u.get('query');
+          app.search(u.has('index') ? Number.parseInt(u.get('index')) : null, false);
+        }
+        return true;
       }
+      loadContent();
+      window.onpopstate = loadContent;
     }
   });
 
