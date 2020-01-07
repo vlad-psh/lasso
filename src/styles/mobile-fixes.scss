@@ -38,27 +38,36 @@
     font-size: .8em;
   }
   #search-app {
-    grid-template-columns: 8em 1fr;
+    grid-template-columns: 1fr 8em;
     height: calc(100vh - 33px); // fallback value
     // Proper height: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
     // --vh value is calculated in javascript on search page
     height: calc(var(--vh, 1vh) * 100 - 33px);
 
-    .browse-panel .search-results .result-item {
+    .browse-panel {
+      grid-row: 1;
+      grid-column: 2;
+      border-right-width: 0;
+      border-left-width: 1px;
 
-      .title {
-        font-size: 0.8em;
-        .common-icon, .learned-icon {
-          font-size: 0.7em;
+      .search-results .result-item {
+
+        .title {
+          font-size: 0.8em;
+          .common-icon, .learned-icon {
+            font-size: 0.7em;
+          }
         }
-      }
-      .details {
-        width: 12em;
-        padding-left: 0;
-        font-size: 0.6em;
+        .details {
+          width: 12em;
+          padding-left: 0;
+          font-size: 0.6em;
+        }
       }
     }
     .contents-panel {
+      grid-row: 1;
+      grid-column: 1;
       font-size: 0.8em;
     }
   }
