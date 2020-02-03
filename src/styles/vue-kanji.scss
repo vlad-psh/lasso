@@ -1,0 +1,7 @@
+.vue-kanji {
+  table.kanji-common-words {
+    tr:nth-child(odd) {
+      background: rgba(0,128,0,.1);
+    }
+  }
+}
