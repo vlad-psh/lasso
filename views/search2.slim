@@ -76,7 +76,7 @@ javascript:
             app.loading = false;
 
             if (popHistory) {
-              history.pushState({}, query, '?query=' + query);
+              history.pushState({}, query, '?query=' + query + '&method=' + app.searchMethod);
             }
             document.title = query;
 
@@ -161,6 +161,7 @@ javascript:
         console.log('load content ' + u);
         if (u.has('query')) {
           app.searchQuery = u.get('query');
+          app.searchMethod = u.get('method') || 'forward';
           app.search(u.has('index') ? Number.parseInt(u.get('index')) : null, false);
         }
         return true;
