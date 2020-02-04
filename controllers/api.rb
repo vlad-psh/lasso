@@ -8,8 +8,7 @@ paths api_sentence: '/api/sentence',
     api_word_comment: '/api/word/comment',
     api_add_word_to_drill: '/api/drill/add_word',
     drill_add_word: '/drill/word',
-    kanji_readings: '/api/kanji_readings',
-    kanji_common_words: '/api/kanji_common_words'
+    kanji_readings: '/api/kanji_readings'
 
 get :word_details do
   protect!
@@ -175,21 +174,3 @@ post :kanji_readings do
   return result.to_json
 end
 
-post :kanji_common_words do
-  protect!
-
-  kanji = params[:kanji]
-
-  result = Word.joins(:word_titles).merge(
-    WordTitle.where(is_kanji: true, is_common: true).where('title LIKE ?', "%#{kanji}%").order(nf: :asc)
-).map do |w|
-    [
-      w.id,
-      w.kebs.filter{|k| k =~ /#{kanji}/}.first,
-      w.rebs.first,
-      w.en.first['gloss'].join('; ')
-    ]
-  end
-
-  return result.to_json
-end

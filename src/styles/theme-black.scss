@@ -115,11 +115,16 @@ body.black {
   }
 
   #search-app {
-    .browse-panel .search-results {
-      background: $bgcolor;
+    .browse-panel {
+      .search-method {
+        div.selected {color: white}
+      }
+      .search-results {
+        background: $bgcolor;
 
-      .result-item {
-        border-bottom: 1px solid $lightborder;
+        .result-item {
+          border-bottom: 1px solid $lightborder;
+        }
       }
     }
   }

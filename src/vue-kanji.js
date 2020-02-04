@@ -1,5 +1,4 @@
 //import Vue from 'vue/dist/vue.js';
-const axios = require('axios');
 import helpers from './helpers.js';
 
 Vue.component('vue-kanji', {
@@ -26,16 +25,8 @@ Vue.component('vue-kanji', {
     updateProgress(progress) {
       this.j.kanjis.find(i => i.id === this.id).progress = progress;
     },
-    fetchCommonWords() {
-      const app = this;
-      const formData = new FormData();
-      formData.append('kanji', this.kanji.title);
-
-      axios.post('/api/kanji_common_words', formData
-      ).then(function(resp) {
-        app.commonWordsFetched = true;
-        app.commonWords = resp.data;
-      })
+    search() {
+      this.$emit('search', this.kanji.title, 'kanji');
     },
     ...helpers
   },
@@ -46,6 +37,7 @@ Vue.component('vue-kanji', {
     <div>
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
+      <span @click="search">&#x1f50d; <a>Search words</a></span>
       <div v-if="kanji.english">
         &#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}
         <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
@@ -83,21 +75,6 @@ Vue.component('vue-kanji', {
     <span v-if="kanji.progress.details.r" v-html="stripBB(kanji.progress.details.r)"></span>
     <span v-if="kanji.progress.details.m" v-html="stripBB(kanji.progress.details.m)"></span>
   </div>
-
-  <br>
-  <div v-if="commonWordsFetched">
-    <table class="kanji-common-words">
-      <tr v-for="word of commonWords">
-        <td>{{word[1]}}</td>
-        <td>{{word[2]}}</td>
-        <td>{{word[3]}}</td>
-      </tr>
-    </table>
-  </div>
-  <div v-else>
-    <a @click="fetchCommonWords()">Common words</a>
-  </div>
-
 </div>
 `
 });

@@ -71,6 +71,9 @@ Vue.component('vue-word', {
         });
       }
     },
+    search(query, method) {
+      this.$emit('search', query, method);
+    },
     ...helpers
   }, // end of methods
   updated() {
@@ -118,7 +121,7 @@ Vue.component('vue-word', {
     <!-- expanded kanji details -->
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kanjiIndex !== null">
       <div class="center-block">
-        <vue-kanji :id="j.kanjis[forms.kanjiIndex].id" :j="j" :editing="editing" :key="forms.kanjiIndex"></vue-kanji>
+        <vue-kanji :id="j.kanjis[forms.kanjiIndex].id" :j="j" :editing="editing" :key="forms.kanjiIndex" @search="search"></vue-kanji>
       </div>
     </div>
 

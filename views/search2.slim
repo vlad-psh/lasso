@@ -6,6 +6,10 @@ div#search-app
         div
         div
         div
+    div.search-method
+      div :class="searchMethod == 'forward' ? 'selected' : null" @click="searchMethod = 'forward'" FWD
+      div :class="searchMethod == 'kanji'   ? 'selected' : null" @click="searchMethod = 'kanji'" KNJ
+      div :class="searchMethod == 'english' ? 'selected' : null" @click="searchMethod = 'english'" ENG
     div.search-results
       div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
         div class="title"
@@ -14,7 +18,7 @@ div#search-app
           div v-if="result[5]" class="learned-icon"
         div class="details" = "{{result[2]}}・{{result[3]}}"
   div.contents-panel
-    vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true"
+    vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true" @search="searchExec"
 
 javascript:
   var app = new Vue({
@@ -26,12 +30,28 @@ javascript:
       selectedWord: null,
       highlightedWordIndex: null,
       wordData: null,
-      loading: false
+      loading: false,
+      searchMethod: 'forward',
     },
     computed: {
+      searchUrl() {
+        if (this.searchMethod == 'forward') {
+          return "#{{path_to(:search2)}}";
+        } else if (this.searchMethod == 'kanji') {
+          return "#{{path_to(:search_kanji)}}";
+        } else if (this.searchMethod == 'english') {
+          return "#{{path_to(:search_english)}}";
+        }
+      }
     },
     methods: {
       searchDebounce: debounce(function(){this.search();}, 250),
+      searchExec(query, method) {
+        this.searchMethod = method;
+        this.previousQuery = '';
+        this.searchQuery = query;
+        this.search();
+      },
       search(openWordAtIndex = null, popHistory = true) {
         var app = this;
         var query = this.searchQuery;
@@ -43,7 +63,7 @@ javascript:
         this.loading = true;
 
         $.ajax({
-          url: "#{{path_to(:search2)}}",
+          url: app.searchUrl,
           method: 'POST',
           data: {query: query}
         }).done(data => {

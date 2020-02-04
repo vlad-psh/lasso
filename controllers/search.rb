@@ -1,5 +1,7 @@
 path search: '/search',
-     search2: '/search2'
+     search2: '/search2',
+     search_kanji: '/search_kanji',
+     search_english: '/search_english'
 
 get :search do
   protect!
@@ -73,7 +75,12 @@ post :search2 do
   end
 
   seqs = word_titles.map{|i|i.seq}.uniq
+  return search_result_from_seqs(seqs).to_json
+end
+
+def search_result_from_seqs(seqs, word_titles = nil)
   progresses = Progress.where(user: current_user, seq: seqs).where.not(learned_at: nil).pluck(:seq)
+  word_titles = WordTitle.eager_load(:word).where(seq: seqs) unless word_titles.present?
 
   result = seqs.map do |seq|
     wts = word_titles.filter{|w| w.seq == seq}
@@ -88,6 +95,21 @@ post :search2 do
     ]
   end
 
-  return result.to_json
+  return result
 end
 
+post :search_kanji do
+  protect!
+
+  q = params['query'].strip
+  return if q.blank?
+
+  seqs1 = Progress.words.where(user: current_user).where('title LIKE ?', "%#{q}%").pluck(:seq)
+  seqs2 = WordTitle.where(is_kanji: true, is_common: true).where('title LIKE ?', "%#{q}%").order(nf: :asc).pluck(:seq)
+
+  return search_result_from_seqs(seqs1 | seqs2).to_json
+end
+
+post :search_english do
+  protect!
+end
