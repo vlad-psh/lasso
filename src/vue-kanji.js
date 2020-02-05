@@ -37,7 +37,7 @@ Vue.component('vue-kanji', {
     <div>
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
-      <span @click="search">&#x1f50d; <a>Search words</a></span>
+      <span @click="search" class="no-refocus">&#x1f50d; <a>Search words</a></span>
       <div v-if="kanji.english">
         &#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}
         <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>

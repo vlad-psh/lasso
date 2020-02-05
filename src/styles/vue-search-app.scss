@@ -9,7 +9,7 @@
     overflow-y: auto;
   }
   .browse-panel {
-    border: 0px solid rgba(192,192,192,0.3);
+    border: 0px solid $borderColor;
     border-right-width: 1px;
     height: 100%;
     display: grid;
@@ -21,7 +21,7 @@
       input[type="text"] {
         background: none;
         border: none;
-        border-bottom: 1px solid rgba(192,192,192,0.3);
+        border-bottom: 1px solid $borderColor;
         padding: .4em .6em .5em .6em;
         box-sizing: border-box;
         width: 100%;
@@ -37,11 +37,12 @@
       grid-template-columns: 1fr 1fr 1fr;
       text-align: center;
       font-size: .8em;
+      border-bottom: 1px solid $borderColor;
 
       div {
         font-family: sans-serif;
-        margin: .2em 0;
-        border-right: 1px solid rgba(128,128,128,.3);
+        margin: .2em 0 .3em 0;
+        border-right: 1px solid $borderColor;
         cursor: pointer;
         color: #777;
 

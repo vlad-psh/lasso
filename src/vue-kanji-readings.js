@@ -39,7 +39,7 @@ Vue.component('vue-kanji-readings', {
     </table>
   </div>
   <div v-else>
-    <a @click="fetchReadings()">Readings table</a>
+    <a @click="fetchReadings()" class="no-refocus">Readings table</a>
   </div>
 </div>
 `
