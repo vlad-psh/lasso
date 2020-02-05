@@ -40,7 +40,9 @@ end
 
 post :search2 do
   protect!
+
   q = params['query'].strip
+  return if q.blank?
 
   # TODO: English/Russian search
   qk = q.downcase.katakana
@@ -104,6 +106,7 @@ post :search_kanji do
   q = params['query'].strip
   return if q.blank?
 
+# TODO: Limit search results
   seqs1 = Progress.words.where(user: current_user).where('title LIKE ?', "%#{q}%").pluck(:seq)
   seqs2 = WordTitle.where(is_kanji: true, is_common: true).where('title LIKE ?', "%#{q}%").order(nf: :asc).pluck(:seq)
 
@@ -113,5 +116,10 @@ end
 post :search_english do
   protect!
 
-  return [].to_json
+  q = params['query'].strip
+  return if q.blank?
+
+  seqs = Word.where('searchable_en ILIKE ? OR searchable_ru ILIKE ?', "%#{q}%", "%#{q}%").order(:is_common, :id).limit(1000).map{|i| i.seq} # .sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
+
+  return search_result_from_seqs(seqs).to_json
 end
