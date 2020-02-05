@@ -11,7 +11,7 @@ div#search-app
       div :class="searchMethod == 'kanji'   ? 'selected' : null" @click="setSearchMethod('kanji')" KNJ
       div :class="searchMethod == 'english' ? 'selected' : null" @click="setSearchMethod('english')" ENG
     div.search-results
-      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
+      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item no-refocus" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
         div class="title"
           div class="common-icon" :class="result[4] ? 'common' : 'uncommon'" &#x2b50;
           div class="text" = "{{result[1]}}"
@@ -177,11 +177,17 @@ javascript:
     }
   });
 
-  document.onclick = function(){
+  document.onclick = function(evt){
     var f = document.activeElement;
+
     if (f.nodeName === "TEXTAREA" || (f.nodeName === "INPUT" && f.type === "text")) {
       return;
     } else if (window.getSelection().toString() === '') {
+      var el = evt.target;
+      while (el.nodeName !== 'BODY') {
+        if (el.classList.contains('no-refocus')) return;
+        el = el.parentElement;
+      }
       $('#search-app .browse-panel input').focus()
     }
   };
