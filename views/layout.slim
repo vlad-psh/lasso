@@ -6,7 +6,7 @@ html
     script src="/build/main.js"
     link rel="stylesheet" type="text/css" href="/build/main.css"
     meta content="width=device-width, initial-scale=1" name="viewport"
-  body.myfont_jp2 theme=(user_settings('theme') || 'white')
+  body.myfont_jp2 theme=options('theme')
     div#main-menu
       div.center
         div.main-menu-item
@@ -21,7 +21,9 @@ html
           div.main-menu-item: a href=path_to(:sentences)
             div class="svg-icon icon-typewriter"
           div.main-menu-item
-            vue-settings-button name="theme" :options=({white: 'icon-sun', black: 'icon-moon'}.to_json) value=(user_settings('theme') || 'white')
+            vue-settings-button name="theme" value=options('theme')
+          div.main-menu-item
+            vue-settings-button name="device" value=options('device')
       div.right
         div.main-menu-item
           - if current_user.present?
@@ -36,6 +38,8 @@ html
       == yield
 
     javascript:
+      var _sDevice = "#{{options('device')}}";
+
       var app = new Vue({
         el: '#main-menu',
         data: {

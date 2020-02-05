@@ -76,4 +76,15 @@ module WakameHelpers
     return m
   end
 
+  OPTIONS_DEFAULTS = {
+    theme: 'white',
+    device: 'pc'
+  }
+  # List of options which should be saved in current_user.settings
+  # All other options will be saved in session
+  OPTIONS_PERSISTENT = []
+
+  def options(name)
+    return (OPTIONS_PERSISTENT.include?(name) ? current_user.settings[name] : session[name]) || OPTIONS_DEFAULTS[name.to_sym]
+  end
 end

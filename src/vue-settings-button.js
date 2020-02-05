@@ -3,11 +3,14 @@ const axios = require('axios');
 Vue.component('vue-settings-button', {
   props: {
     name: {type: String, required: true},
-    options: {type: Object, required: true},
     value: {type: String, required: true},
   },
   data() {
     return {
+      options: {
+        theme: {white: 'icon-sun', black: 'icon-moon'},
+        device: {pc: 'icon-pc', mobile: 'icon-mobile'},
+      },
       inProgress: false,
       currentValue: null
     }
@@ -15,40 +18,45 @@ Vue.component('vue-settings-button', {
   computed: {
   },
   methods: {
-    nextValue() {
+    switchValue() {
       if (this.inProgress) return;
 
-      const app = this;
+      const newValue = this.nextValue();
       const formData = new FormData();
-      const keys = Object.keys(this.options);
-      var i = keys.indexOf(this.currentValue) + 1;
-      if (i == keys.length) i = 0;
-      const newValue = keys[i];
       formData.append(this.name, newValue);
 
-      this.inProgress = true;
+      this.currentValue = newValue;
+      if (this.name == 'theme') {
+        document.querySelector('body').setAttribute('theme', newValue);
+      } else if (this.name == 'device') {
+        _sDevice = newValue;
+      }
+      this.saveSettings(formData, () => true);
+    },
+    nextValue() {
+      const keys = Object.keys(this.options[this.name]);
+      var i = keys.indexOf(this.currentValue) + 1;
+      if (i == keys.length) i = 0;
+      return keys[i];
+    },
+    saveSettings(formData, callback) {
+      const app = this;
+      app.inProgress = true;
       axios.post('/settings', formData
       ).then(function(resp) {
-        app.updateValue(newValue);
+        app.inProgress = false;
+        callback();
       }).catch(function(error) {
         app.inProgress = false;
       });
     },
-    updateValue(newValue) {
-      this.currentValue = newValue;
-      this.inProgress = false;
-
-      if (this.name == 'theme') {
-        document.querySelector('body').setAttribute('theme', newValue);
-      }
-    }
   },
   mounted(){
     this.currentValue = this.value;
   },
   template: `
-<div class="vue-settings-button" :class="inProgress ? 'in-progress' : null" @click="nextValue()">
-  <div class="svg-icon" :class="options[currentValue]"></div>
+<div class="vue-settings-button" :class="inProgress ? 'in-progress' : null" @click="switchValue()">
+  <div class="svg-icon" :class="options[name][currentValue]"></div>
 </div>
 `
 });

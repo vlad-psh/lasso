@@ -37,7 +37,14 @@ end
 post :settings do
   protect!
 
-  %w(theme device).each do |opt|
+  session_stored = %w(theme device)
+  persistent = %w()
+
+  session_stored.each do |opt|
+    session[opt] = params[opt].strip[0..20] if params[opt] != nil
+  end
+
+  persistent.each do |opt|
     current_user.settings[opt] = params[opt].strip[0..20] if params[opt] != nil
   end
   current_user.save
