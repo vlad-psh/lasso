@@ -27,17 +27,4 @@
   .username {
     font-size: .7em;
   }
-  .emoji-checkbox.theme-switch {
-    padding: 0 .7em;
-    input + .slider {
-      &::before {content: none;}
-      .icon-sun {display: inline-block;}
-      .icon-moon {display: none;}
-    }
-    input:checked + .slider {
-      &::before {content: none;}
-      .icon-sun {display: none;}
-      .icon-moon {display: inline-block;}
-    }
-  }
 } /* end of #main-menu */

@@ -37,11 +37,8 @@ end
 post :settings do
   protect!
 
-  if params['black_theme'] != nil
-    current_user.settings['theme'] = (params['black_theme'] == 'true' ? 'black' : 'white')
-  end
-  if params['editing'] != nil
-    current_user.settings['editing'] = (params['editing'] == 'true' ? true : false)
+  %w(theme device).each do |opt|
+    current_user.settings[opt] = params[opt].strip[0..20] if params[opt] != nil
   end
   current_user.save
 

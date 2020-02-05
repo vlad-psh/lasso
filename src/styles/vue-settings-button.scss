@@ -1,0 +1,13 @@
+.vue-settings-button {
+  display: inline;
+  padding: .7em;
+  cursor: pointer;
+
+  &:hover {
+    opacity: .5;
+  }
+  &.in-progress {
+    opacity: .5;
+    cursor: progress;
+  }
+}

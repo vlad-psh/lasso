@@ -15,6 +15,7 @@ require('./vue-pitch-word.js');
 require('./vue-pitch-word-nhk.js');
 require('./vue-kanji-readings.js');
 require('./vue-kanji-card.js');
+require('./vue-settings-button.js');
 
 /* ===================
    GLOBAL HOTKEYS
@@ -28,26 +29,3 @@ $(function(){
   });
 });
 
-/* ===================
-   SETTINGS
-   =================== */
-$(document).on('click', '.black-theme-checkbox', function(event){
-  $.ajax({
-    method: "POST",
-    url: "/settings",
-    data: {"black_theme": this.checked}
-  });
-  if (this.checked) {
-    $('body').addClass("black");
-  } else {
-    $('body').removeClass("black");
-  };
-});
-$(document).on('click', '.editing-checkbox input', function(event){
-  $.ajax({
-    method: "POST",
-    url: "/settings",
-    data: {"editing": this.checked}
-  });
-  if (typeof app !== "undefined") app.editing = this.checked;
-});

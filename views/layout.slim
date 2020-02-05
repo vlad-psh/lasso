@@ -6,7 +6,7 @@ html
     script src="/build/main.js"
     link rel="stylesheet" type="text/css" href="/build/main.css"
     meta content="width=device-width, initial-scale=1" name="viewport"
-  body.myfont_jp2 class="#{user_settings('theme') == 'black' ? 'black' : ''}"
+  body.myfont_jp2 theme=(user_settings('theme') || 'white')
     div#main-menu
       div.center
         div.main-menu-item
@@ -20,16 +20,8 @@ html
             div class="svg-icon icon-bookmark"
           div.main-menu-item: a href=path_to(:sentences)
             div class="svg-icon icon-typewriter"
-
           div.main-menu-item
-            label.emoji-checkbox.theme-switch
-              input.black-theme-checkbox type="checkbox" checked=('checked' if user_settings('theme') == 'black') autocomplete="off"
-              span.slider
-                div.svg-icon.icon-sun
-                div.svg-icon.icon-moon
-          //div.main-menu-item
-          //  label.editing-checkbox
-          //    input type="checkbox" checked=('checked' if user_settings('editing')) autocomplete="off"
+            vue-settings-button name="theme" :options=({white: 'icon-sun', black: 'icon-moon'}.to_json) value=(user_settings('theme') || 'white')
       div.right
         div.main-menu-item
           - if current_user.present?
@@ -42,3 +34,12 @@ html
     == slim :flashes
     div#container
       == yield
+
+    javascript:
+      var app = new Vue({
+        el: '#main-menu',
+        data: {
+        },
+        methods: {}
+      });
+
