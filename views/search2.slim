@@ -1,7 +1,7 @@
 div#search-app
   div.browse-panel
     div.search-field
-      input type="text" placeholder="Search..." @input="searchDebounce()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.left.prevent="previousResult()" @keydown.enter="nextResult()"
+      input type="text" placeholder="Search..." @input="searchDebounce()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.left.prevent="previousResult()" @keydown.enter="nextResult()" @keydown.tab.prevent="nextSearchMethod()"
       div.loading-circles v-if="loading"
         div
         div
@@ -85,6 +85,12 @@ javascript:
             }
           }
         });
+      },
+      nextSearchMethod() {
+        const methods = ['forward', 'kanji', 'english'];
+        var i = methods.indexOf(this.searchMethod) + 1;
+        if (i >= methods.length) i = 0;
+        this.setSearchMethod(methods[i]);
       },
       setSearchMethod(method) {
         this.searchMethod = method;

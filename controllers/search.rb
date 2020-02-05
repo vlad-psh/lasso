@@ -112,4 +112,6 @@ end
 
 post :search_english do
   protect!
+
+  return [].to_json
 end
