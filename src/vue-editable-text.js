@@ -1,3 +1,5 @@
+import helpers from './helpers.js';
+
 Vue.component('vue-editable-text', {
   props: {
     postUrl: {type: String, required: true},
@@ -29,7 +31,8 @@ Vue.component('vue-editable-text', {
         this.closeForm();
         this.$emit('updated', this.textCache);
       });
-    }
+    },
+    ...helpers
   },
   template: `
 <div class="vue-editable-text">
@@ -41,7 +44,7 @@ Vue.component('vue-editable-text', {
 
     <div v-else class="editable-text" @click="openForm()">
       <template v-if="textData">
-        <p v-for="commentLine of textData.split('\\n')">{{commentLine}}</p>
+        <p v-for="commentLine of textData.split('\\n')" v-html="stripBB(commentLine)"></p>
       </template>
       <template v-else>
         <p style="font-style: italic; color: rgba(128,128,128,0.7)">{{placeholder}}</p>
@@ -51,7 +54,7 @@ Vue.component('vue-editable-text', {
 
   <template v-else-if="textData">
     <div class="word-comment-form center-block">
-      <p v-for="commentLine of textData.split('\\n')">{{commentLine}}</p>
+      <p v-for="commentLine of textData.split('\\n')" v-html="stripBB(commentLine)"></p>
     </div>
   </template>
 </div>

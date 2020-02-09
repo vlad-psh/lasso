@@ -1,0 +1,40 @@
+- if @radicals.length > 0
+  div.hr-title: span style="padding: 1em" Radicals
+  div.search-results-old
+    - @radicals.each do |e|
+      div.search-result-old class=(e.user_progress.try(:html_class) || :pristine)
+        a href=path_to(:wk_radical).with(e.id) == e.title.present? ? e.title : e.svg
+        == " " + highlight(e.meaning, params['query'])
+
+- if @kanji.length > 0
+  div.hr-title: span style="padding: 1em" Kanji
+  div.search-results-old
+    - @kanji.each do |e|
+      div.search-result-old class=(e.user_progress.try(:html_class) || :pristine)
+        div.search-result-kanji: a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
+        div.search-result-kana
+        div.search-result-english
+          - if e.english
+            == " " + highlight(e.english.join(', '), params['query'])
+
+- {'JMdict common words' => @words.select{|i| i.is_common}, 'JMdict' => @words.select{|i| !i.is_common}}.each do |title, words|
+  - if words.length > 0
+    div.hr-title: span style="padding: 1em" = "#{title} (#{words.length})"
+    div.search-results-old
+      - words.each do |w|
+        div.search-result-old class=(w.best_user_progress.try(:html_class) || :pristine)
+          div.search-result-kanji == highlight(w.kebs.join('<br>'), params['query']) if w.kebs && w.kebs.length > 0
+          div.search-result-kana  == highlight(w.rebs.join('<br>'), params['query']) if w.rebs && w.rebs.length > 0
+          div.search-result-english: a href=path_to(:word).with(w.seq) == highlight(w.en[0]['gloss'].join('; '), params['query'])
+
+- if @russian_words.length > 0
+  div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""
+  div.search-results-old
+    - @russian_words.each do |w|
+      div.search-result-old
+        div == highlight(w.title, params['query'])
+
+- if @words.length == 0 && @kanji.length == 0 && @russian_words.length == 0
+  p Sorry, nothing found
+
+br

@@ -1,40 +1,225 @@
-- if @radicals.length > 0
-  div.hr-title: span style="padding: 1em" Radicals
-  div.search-results-old
-    - @radicals.each do |e|
-      div.search-result-old class=(e.user_progress.try(:html_class) || :pristine)
-        a href=path_to(:wk_radical).with(e.id) == e.title.present? ? e.title : e.svg
-        == " " + highlight(e.meaning, params['query'])
+div#search-app
+  div.browse-panel
+    div.search-field
+      input type="text" placeholder="Search..." @input="searchDebounce()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.tab.prevent="nextSearchMethod()"
+      div.loading-circles v-if="loading"
+        div
+        div
+        div
+    div.search-method
+      div :class="searchMethod == 'forward' ? 'selected' : null" @click="setSearchMethod('forward')" FWD
+      div :class="searchMethod == 'kanji'   ? 'selected' : null" @click="setSearchMethod('kanji')" KNJ
+      div :class="searchMethod == 'english' ? 'selected' : null" @click="setSearchMethod('english')" ENG
+    div.search-results
+      div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item no-refocus" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)"
+        div class="title"
+          div class="common-icon" :class="result[4] ? 'common' : 'uncommon'" &#x2b50;
+          div class="text" = "{{result[1]}}"
+          div v-if="result[5]" class="learned-icon"
+        div class="details" = "{{result[2]}}・{{result[3]}}"
+  div.contents-panel
+    vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true" @search="searchExec"
 
-- if @kanji.length > 0
-  div.hr-title: span style="padding: 1em" Kanji
-  div.search-results-old
-    - @kanji.each do |e|
-      div.search-result-old class=(e.user_progress.try(:html_class) || :pristine)
-        div.search-result-kanji: a href=path_to(:kanji).with(e.id) == highlight(e.title, params['query'])
-        div.search-result-kana
-        div.search-result-english
-          - if e.english
-            == " " + highlight(e.english.join(', '), params['query'])
+javascript:
+  var app = new Vue({
+    el: '#search-app',
+    data: {
+      searchQuery: '',
+      previousQuery: '',
+      searchResults: [],
+      selectedWord: null,
+      highlightedWordIndex: null,
+      wordData: null,
+      loading: false,
+      searchMethod: 'forward',
+    },
+    computed: {
+      searchUrl() {
+        if (this.searchMethod == 'forward') {
+          return "#{{path_to(:search)}}";
+        } else if (this.searchMethod == 'kanji') {
+          return "#{{path_to(:search_kanji)}}";
+        } else if (this.searchMethod == 'english') {
+          return "#{{path_to(:search_english)}}";
+        }
+      }
+    },
+    methods: {
+      searchDebounce: debounce(function(e = null){this.search(e);}, 250),
+      searchExec(query, method) {
+        this.searchMethod = method;
+        this.previousQuery = '';
+        this.searchQuery = query;
+        this.search(-1);
+      },
+      search(openWordAtIndex = null, popHistory = true) {
+        var app = this;
+        var query = this.searchQuery;
+        var searchMethod = this.searchMethod;
 
-- {'JMdict common words' => @words.select{|i| i.is_common}, 'JMdict' => @words.select{|i| !i.is_common}}.each do |title, words|
-  - if words.length > 0
-    div.hr-title: span style="padding: 1em" = "#{title} (#{words.length})"
-    div.search-results-old
-      - words.each do |w|
-        div.search-result-old class=(w.best_user_progress.try(:html_class) || :pristine)
-          div.search-result-kanji == highlight(w.kebs.join('<br>'), params['query']) if w.kebs && w.kebs.length > 0
-          div.search-result-kana  == highlight(w.rebs.join('<br>'), params['query']) if w.rebs && w.rebs.length > 0
-          div.search-result-english: a href=path_to(:word).with(w.seq) == highlight(w.en[0]['gloss'].join('; '), params['query'])
+        // Prevent request while composing japanese text sing IME
+        // Otherwise, same (unchanged) request will be sent after each key press
+        if (this.searchQuery === this.previousQuery) return;
+        if (this.searchQuery.trim() === '') return;
+        this.loading = true;
 
-- if @russian_words.length > 0
-  div.hr-title: span style="padding: 1em" = "Russian words started with \"#{params['query']}\""
-  div.search-results-old
-    - @russian_words.each do |w|
-      div.search-result-old
-        div == highlight(w.title, params['query'])
+        $.ajax({
+          url: app.searchUrl,
+          method: 'POST',
+          data: {query: query}
+        }).done(data => {
+          // If input field hasn't been changed while we're trying to get results
+          if (query === app.searchQuery && searchMethod === app.searchMethod) {
+            app.highlightedWordIndex = null;
+            var j = JSON.parse(data);
+            app.searchResults = j;
+            app.previousQuery = query;
+            app.loading = false;
 
-- if @words.length == 0 && @kanji.length == 0 && @russian_words.length == 0
-  p Sorry, nothing found
+            if (popHistory) {
+              history.pushState({}, query, '?query=' + query + '&method=' + app.searchMethod);
+            }
+            document.title = query;
 
-br
+            if (j.length > 0 && openWordAtIndex !== -1) {
+              app.openWord(openWordAtIndex || 0);
+            }
+          }
+        });
+      },
+      nextSearchMethod() {
+        const methods = ['forward', 'kanji', 'english'];
+        var i = methods.indexOf(this.searchMethod) + 1;
+        if (i >= methods.length) i = 0;
+        this.searchMethod = methods[i];
+        this.previousQuery = '';
+        this.searchDebounce(-1);
+      },
+      setSearchMethod(method) {
+        this.searchMethod = method;
+        this.previousQuery = '';
+        this.search(-1);
+      },
+      openWord(index) {
+        var app = this;
+        var seq = this.searchResults[index][0];
+        this.highlightedWordIndex = index;
+        this.selectedWord = seq;
+        this.wordData = null;
+        this.loading = true;
+
+        $.ajax({
+          url: "#{{path_to(:word_details)}}",
+          method: 'GET',
+          data: {seq: seq}
+        }).done(data => {
+          if (seq === app.selectedWord) {
+            var j = JSON.parse(data);
+            app.wordData = j;
+            app.loading = false;
+
+            // update current location
+            u = new URLSearchParams(location.search);
+            u.set('index', index);
+            history.replaceState({}, '', '?' + u.toString());
+          }
+        });
+      },
+      openWordDebounced: debounce(function(){
+        this.openWord(this.highlightedWordIndex);
+      }, 250),
+      nextResult() {
+        if (this.searchResults.length === 0) return;
+
+        if (this.highlightedWordIndex === null) {
+          this.highlightedWordIndex = 0;
+        } else {
+          this.highlightedWordIndex += 1;
+        }
+
+        if (this.highlightedWordIndex === this.searchResults.length) {
+          this.highlightedWordIndex = 0;
+        }
+
+        this.openWordDebounced();
+      },
+      previousResult() {
+        if (this.searchResults.length === 0) return;
+
+        if (this.highlightedWordIndex === null) {
+          this.highlightedWordIndex = this.searchResults.length - 1;
+        } else {
+          this.highlightedWordIndex -= 1;
+        }
+
+        if (this.highlightedWordIndex === -1) {
+          this.highlightedWordIndex = this.searchResults.length - 1;
+        }
+
+        this.openWordDebounced();
+      },
+      clearInputField() {
+        this.searchQuery = '';
+        this.previousQuery = '';
+      },
+    }, // end of methods
+    mounted() {
+      var app = this;
+      var loadContent = function () {
+        var u = new URLSearchParams(location.search);
+        console.log('load content ' + u);
+        if (u.has('query')) {
+          app.searchQuery = u.get('query');
+          app.searchMethod = u.get('method') || 'forward';
+          app.search(u.has('index') ? Number.parseInt(u.get('index')) : null, false);
+        }
+        return true;
+      }
+      loadContent();
+      window.onpopstate = loadContent;
+    }
+  });
+
+  document.onclick = function(evt){
+    var f = document.activeElement;
+
+    if (f.nodeName === "TEXTAREA" || (f.nodeName === "INPUT" && f.type === "text")) {
+      return;
+    } else if (window.getSelection().toString() === '') {
+      if (_sDevice == 'mobile') {
+        var el = evt.target;
+        while (el.nodeName !== 'BODY') {
+          if (el.classList.contains('no-refocus')) return;
+          el = el.parentElement;
+        }
+      }
+      $('#search-app .browse-panel input').focus()
+    }
+  };
+
+  // Mobile browsers proper height hack; Source: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+  function correctVH() {
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  };
+  correctVH();
+  window.addEventListener('resize', correctVH);
+
+  function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this,
+        args = arguments;
+      var callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(function() {
+        timeout = null;
+        if (!immediate) {
+          func.apply(context, args);
+        }
+      }, wait);
+      if (callNow) func.apply(context, args);
+    }
+  }

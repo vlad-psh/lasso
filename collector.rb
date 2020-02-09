@@ -55,7 +55,7 @@ class Collector
         learn:   path_to(:api_learn),
         burn:    path_to(:api_burn),
         flag:    path_to(:api_flag),
-        comment: path_to(:api_word_comment),
+        comment: path_to(:api_comment),
         drill:   path_to(:drill_add_word),
         autocomplete: path_to(:api_word_autocomplete)
       }

@@ -5,7 +5,7 @@ paths api_sentence: '/api/sentence',
     api_learn:   '/api/word/learn',
     api_burn:    '/api/word/burn',
     api_flag:    '/api/word/flag',
-    api_word_comment: '/api/word/comment',
+    api_comment: '/api/comment',
     api_add_word_to_drill: '/api/drill/add_word',
     drill_add_word: '/drill/word',
     kanji_readings: '/api/kanji_readings'
@@ -105,11 +105,22 @@ post :api_burn do
   return progress.api_json
 end
 
-post :api_word_comment do
+post :api_comment do
   protect!
 
-  wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
-  wd.update_attribute(:comment, params[:comment].strip.present? ? params[:comment] : nil)
+  comment = params[:comment].strip
+
+  if params[:seq].present?
+    wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
+    wd.update_attribute(:comment, comment.present? ? comment : nil)
+  elsif params[:kanji].present?
+    kanji = Kanji.find_by(title: params[:kanji])
+    halt(404, "Kanji not found") if kanji.blank?
+    progress = find_or_init_progress({kind: :k, id: kanji.id})
+    progress.details ||= {}
+    comment.present? ? progress.details[:m] = comment : progress.details.delete('m')
+    progress.save!
+  end
 
   return 'ok'
 end

@@ -152,7 +152,7 @@ Vue.component('vue-word', {
     <div class="word-details wk-info center-block" v-if="w.cards.length > 0">
       <div class="icon">&#x1f980;</div>
       <div class="expandable-list">
-        <div class="expandable-list-item" v-for="(card, cardIndex) of w.cards">
+        <div class="expandable-list-item no-refocus" v-for="(card, cardIndex) of w.cards">
           <div class="wk-element" @click="openCardForm(cardIndex)">
             <span class="level">{{card.level}}</span>
             {{card.title}} ({{card.meaning.split(',')[0]}})

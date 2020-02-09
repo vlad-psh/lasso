@@ -1,9 +1,9 @@
-path search: '/search',
-     search2: '/search2',
+path search_old: '/search_old',
+     search: '/search',
      search_kanji: '/search_kanji',
      search_english: '/search_english'
 
-get :search do
+get :search_old do
   protect!
 
   @words = []
@@ -30,15 +30,15 @@ get :search do
     end
   end
 
+  slim :search_old
+end
+
+get :search do
+  protect!
   slim :search
 end
 
-get :search2 do
-  protect!
-  slim :search2
-end
-
-post :search2 do
+post :search do
   protect!
 
   q = params['query'].strip
@@ -82,7 +82,7 @@ end
 
 def search_result_from_seqs(seqs, word_titles = nil)
   progresses = Progress.where(user: current_user, seq: seqs).where.not(learned_at: nil).pluck(:seq)
-  word_titles = WordTitle.eager_load(:word).where(seq: seqs) unless word_titles.present?
+  word_titles = WordTitle.eager_load(:word).where(seq: seqs).order(order: :asc) unless word_titles.present?
 
   result = seqs.map do |seq|
     wts = word_titles.filter{|w| w.seq == seq}
@@ -90,7 +90,7 @@ def search_result_from_seqs(seqs, word_titles = nil)
     [
       seq,
       title,
-      wts.map{|w| w.title}.filter{|t| t != title}.first,
+      wts.filter{|w| w.is_kanji == false && w.title != title}.first.try(:title),
       wts.first.word.en[0]['gloss'].join(', '),
       wts.first.is_common, # If there is more than one WordTitle, show property for 'best match' (ie. common, shortest)
       progresses.include?(seq)

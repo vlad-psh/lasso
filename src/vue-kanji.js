@@ -10,12 +10,18 @@ Vue.component('vue-kanji', {
   data() {
     return {
       commonWordsFetched: false,
-      commonWords: []
+      commonWords: [],
     }
   },
   computed: {
     kanji() {
       return this.j.kanjis.find(i => i.id === this.id);
+    },
+    comment() {
+      if (this.kanji.progress && this.kanji.progress.details) {
+        return this.kanji.progress.details.m || null;
+      }
+      return null;
     }
   },
   methods: {
@@ -27,6 +33,10 @@ Vue.component('vue-kanji', {
     },
     search() {
       this.$emit('search', this.kanji.title, 'kanji');
+    },
+    setComment(newComment) {
+      // TODO: what if kanji hasn't had a progress data yet?
+      this.kanji.progress.details.m = newComment;
     },
     ...helpers
   },
@@ -70,11 +80,9 @@ Vue.component('vue-kanji', {
     </div>
   </div>
 
-  <div v-if="kanji.progress.details && (kanji.progress.details.r || kanji.progress.details.m)">
-    <div class="hr-title"><span>User's data</span></div>
-    <span v-if="kanji.progress.details.r" v-html="stripBB(kanji.progress.details.r)"></span>
-    <span v-if="kanji.progress.details.m" v-html="stripBB(kanji.progress.details.m)"></span>
-  </div>
+  <div class="hr-title"><span>User's data</span></div>
+  <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{kanji: kanji.title}" :text-data="comment" :editing="editing" placeholder="Add comment" @updated="setComment($event)"></vue-editable-text>
+
 </div>
 `
 });

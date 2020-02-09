@@ -55,7 +55,7 @@ Vue.component('vue-settings-button', {
     this.currentValue = this.value;
   },
   template: `
-<div class="vue-settings-button" :class="inProgress ? 'in-progress' : null" @click="switchValue()">
+<div class="vue-settings-button no-refocus" :class="inProgress ? 'in-progress' : null" @click="switchValue()">
   <div class="svg-icon" :class="options[name][currentValue]"></div>
 </div>
 `
