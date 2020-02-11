@@ -5,6 +5,7 @@ require("jquery-ujs");
 require('./vue-radical.js');
 require('./vue-kanji.js');
 require('./vue-word.js');
+require('./vue-search.js');
 
 require('./vue-learn-buttons.js');
 require('./vue-double-click-button.js');

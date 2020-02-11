@@ -1,7 +1,5 @@
 path search_old: '/search_old',
-     search: '/search',
-     search_kanji: '/search_kanji',
-     search_english: '/search_english'
+     search: '/search'
 
 get :search_old do
   protect!
@@ -44,7 +42,16 @@ post :search do
   q = params['query'].strip
   return if q.blank?
 
-  # TODO: English/Russian search
+  if q.length == 1 && q.kanji? # this condition shoud be before 'fwd search' condition
+    return search_kanji(q)
+  elsif q.hiragana.japanese?
+    return search_fwd(q)
+  else
+    return search_english(q)
+  end
+end
+
+def search_fwd(q)
   qk = q.downcase.katakana
   q = q.downcase.hiragana unless q.japanese?
 
@@ -65,10 +72,11 @@ post :search do
     qstr = "(#{q}|#{qk})%"
   end
 
-
-  word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(is_common: :desc, id: :asc).limit(1000).sort do |a,b|
-    if a.is_common != b.is_common
-      a.is_common == true ? -1 : 1 # common words should be first
+  word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(nf: :asc, id: :asc).limit(1000).sort do |a,b|
+#    if a.is_common != b.is_common
+#      a.is_common == true ? -1 : 1 # common words should be first
+    if (compare = (a.nf || 99) <=> (b.nf || 99)) != 0
+      compare
     elsif (compare = a.title.length <=> b.title.length) != 0
       compare # result of comparing lengths
     else
@@ -100,25 +108,16 @@ def search_result_from_seqs(seqs, word_titles = nil)
   return result
 end
 
-post :search_kanji do
-  protect!
-
-  q = params['query'].strip
-  return if q.blank?
-
+def search_kanji(q)
 # TODO: Limit search results
   seqs1 = Progress.words.where(user: current_user).where('title LIKE ?', "%#{q}%").pluck(:seq)
-  seqs2 = WordTitle.where(is_kanji: true, is_common: true).where('title LIKE ?', "%#{q}%").order(nf: :asc).pluck(:seq)
+#  seqs2 = WordTitle.where(is_kanji: true, is_common: true).where('title LIKE ?', "%#{q}%").order(nf: :asc).pluck(:seq)
+  seqs2 = WordTitle.where(is_kanji: true).where('title LIKE ?', "%#{q}%").order(is_common: :desc, nf: :asc).pluck(:seq) #if seqs2.length < 20
 
   return search_result_from_seqs(seqs1 | seqs2).to_json
 end
 
-post :search_english do
-  protect!
-
-  q = params['query'].strip
-  return if q.blank?
-
+def search_english(q)
   seqs = Word.where('searchable_en ILIKE ? OR searchable_ru ILIKE ?', "%#{q}%", "%#{q}%").order(:is_common, :id).limit(1000).map{|i| i.seq} # .sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
 
   return search_result_from_seqs(seqs).to_json

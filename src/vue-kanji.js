@@ -32,7 +32,7 @@ Vue.component('vue-kanji', {
       this.j.kanjis.find(i => i.id === this.id).progress = progress;
     },
     search() {
-      this.$emit('search', this.kanji.title, 'kanji');
+      this.$emit('search', this.kanji.title);
     },
     setComment(newComment) {
       // TODO: what if kanji hasn't had a progress data yet?
