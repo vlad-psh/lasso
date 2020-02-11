@@ -1,5 +1,6 @@
 //import Vue from 'vue/dist/vue.js';
 import helpers from './helpers.js';
+const radicalsList = helpers.radicalsList();
 
 Vue.component('vue-kanji', {
   props: {
@@ -22,6 +23,9 @@ Vue.component('vue-kanji', {
         return this.kanji.progress.details.m || null;
       }
       return null;
+    },
+    classicalRadical() {
+      return radicalsList[this.kanji.radnum - 1];
     }
   },
   methods: {
@@ -53,7 +57,7 @@ Vue.component('vue-kanji', {
         <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
       </div>
       <div v-if="kanji.radicals" class="radicals-list">
-        部首：<template v-for="radicalId in kanji.radicals">
+        部首：{{classicalRadical}} <template v-for="radicalId in kanji.radicals">
           <a :class="radicalById(radicalId).progress.html_class || 'pristine'" :href="radicalById(radicalId).href">{{radicalById(radicalId).meaning}}</a>
           {{' '}}
         </template>

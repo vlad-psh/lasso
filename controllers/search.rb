@@ -112,7 +112,7 @@ def search_kanji(q)
 # TODO: Limit search results
   seqs1 = Progress.words.where(user: current_user).where('title LIKE ?', "%#{q}%").pluck(:seq)
 #  seqs2 = WordTitle.where(is_kanji: true, is_common: true).where('title LIKE ?', "%#{q}%").order(nf: :asc).pluck(:seq)
-  seqs2 = WordTitle.where(is_kanji: true).where('title LIKE ?', "%#{q}%").order(is_common: :desc, nf: :asc).pluck(:seq) #if seqs2.length < 20
+  seqs2 = WordTitle.where(is_kanji: true).where.not(nf: nil).where('title LIKE ?', "%#{q}%").order(is_common: :desc, nf: :asc).pluck(:seq) #if seqs2.length < 20
 
   return search_result_from_seqs(seqs1 | seqs2).to_json
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_05_034119) do
+ActiveRecord::Schema.define(version: 2020_02_11_140418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 2020_01_05_034119) do
     t.string "kun", array: true
     t.string "nanori", array: true
     t.string "searchable_en"
+    t.integer "radnum"
   end
 
   create_table "kanji_readings", force: :cascade do |t|
