@@ -20,7 +20,6 @@ $borderColor: rgba(192,192,192,.3);
 @import "styles/vue-pitch-word.scss";
 @import "styles/vue-kanji.scss";
 @import "styles/vue-kanji-readings.scss";
-@import "styles/vue-kanji-card.scss";
 @import "styles/theme-black.scss";
 @import "styles/widget-main-menu.scss";
 @import "styles/widget-loader.scss";
@@ -266,39 +265,6 @@ body {
     margin: 1em auto;
     padding: 0 1em;
     max-width: 50em;
-  }
-
-  .vue-kanji,
-  .vue-radical {
-    .kanji-info-table {
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-
-      & > div + div {
-        margin-left: 1em;
-        min-width: 100px;
-      }
-    }
-    .kanji-title,
-    .radical-title {
-      font-size: 2.8em;
-      padding: 0 .2em;
-      position: relative;
-    }
-    .reading {
-      &::after {content: '・';}
-      &:last-child::after {content: '';}
-      .okurigana {
-        color: #d00;
-      }
-    }
-    .radicals-list a {
-      padding: 0 .3em;
-    }
-    .hr-title span {
-      margin: .4em 0;
-    }
   }
 
   .center-block {

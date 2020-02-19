@@ -4,4 +4,69 @@
       background: rgba(0,128,0,.1);
     }
   }
+
+  .kanji-title {
+    $grade1: #cc4628;
+    $grade2: #e8b419;
+    $grade3: #e89297;
+    $grade4: #43a057;
+    $grade5: #6ab8c9;
+    $grade6: #51568e;
+    $grade8: black;
+    $grade9: #eabbc3;
+    $gradeno: #bbe4ea;
+
+    border: 1px solid white;
+    border-radius: 2px;
+    font-size: 2em;
+    width: 1.5em;
+    text-align: center;
+
+    cursor: pointer;
+
+    .kanji-grade {color: white; font-size: .4em; font-weight: bold;}
+    &.grade-1 {border-color: $grade1; .kanji-grade {background: $grade1;}}
+    &.grade-2 {border-color: $grade2; .kanji-grade {background: $grade2;}}
+    &.grade-3 {border-color: $grade3; .kanji-grade {background: $grade3;}}
+    &.grade-4 {border-color: $grade4; .kanji-grade {background: $grade4;}}
+    &.grade-5 {border-color: $grade5; .kanji-grade {background: $grade5;}}
+    &.grade-6 {border-color: $grade6; .kanji-grade {background: $grade6;}}
+    &.grade-8 {border-color: $grade8; .kanji-grade {background: $grade8;}}
+    &.grade-9 {border-color: $grade9; .kanji-grade {background: $grade9;}}
+    &.grade-10{border-color: $grade9; .kanji-grade {background: $grade9;}}
+    &.grade-no{border-color: $gradeno;.kanji-grade {background: $gradeno;}}
+  }
+
+  .kanji-info-table {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    & > div:nth-child(1) {
+      width: 4em;
+    }
+    .vue-learn-buttons {
+      font-size: .8em;
+      line-height: 2em;
+      span {line-height: 1.5em;}
+    }
+  }
+  .reading {
+    &::after {content: '・';}
+    &:last-child::after {content: '';}
+    .okurigana {
+      color: #d00;
+    }
+  }
+
+  .on-label, .kun-label, .radical-label {
+    display: inline-block;
+    color: white;
+    padding: .1em .2em;
+    margin: .05em .1em .05em 0;
+    border-radius: 2px;
+  }
+  .on-label {background: #d37;}
+  .kun-label {background: #39d;}
+  .radical-label {background: #333;}
 }

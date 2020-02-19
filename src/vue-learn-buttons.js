@@ -50,7 +50,7 @@ Vue.component('vue-learn-buttons', {
   }, // end of methods
   template: `
 <div class="vue-learn-buttons">
-  Status: {{status}}
+  {{status}}
 
   <span v-if="editing && !progress.flagged_at">
     <vue-double-click-button @click="flag()">flag!</vue-double-click-button>

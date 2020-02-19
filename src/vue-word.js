@@ -8,7 +8,7 @@ Vue.component('vue-word', {
   },
   data() {
     return {
-      forms: {card: null, kreb: null, selectedDrill: null, kanjiIndex: null},
+      forms: {card: null, kreb: null, selectedDrill: null},
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -16,9 +16,9 @@ Vue.component('vue-word', {
     w() {
       return this.j.words.find(i => i.seq === this.seq);
     },
-    kanjis() {
+    kanjiIds() {
       var krebsString = this.w.krebs.map(i => i.title).join('');
-      return this.j.kanjis.filter(i => krebsString.indexOf(i.title) !== -1).map(i => i.title);
+      return this.j.kanjis.filter(i => krebsString.indexOf(i.title) !== -1).map(i => i.id);
     },
     selectedCard() {
       if (this.forms.card !== null) {
@@ -48,9 +48,6 @@ Vue.component('vue-word', {
     },
     openCardForm(cardIndex) {
       this.forms.card = this.forms.card === cardIndex ? null : cardIndex;
-    },
-    openKanji(kanjiIndex) {
-      this.forms.kanjiIndex = this.forms.kanjiIndex === kanjiIndex ? null : kanjiIndex;
     },
     updateKrebProgress(progress) {
       this.w.krebs.find(i => i.title === this.forms.kreb).progress = progress;
@@ -103,25 +100,6 @@ Vue.component('vue-word', {
           <td><vue-dropdown :options="j.drills.filter(i => i.is_active === true)" empty-item="Select..." :selected-value="forms.selectedDrill" @selected="forms.selectedDrill = $event" value-key="id"></vue-dropdown></td>
           <td><input type="button" value="Add" @click="addKrebToDrill()"></td>
         </tr></table>
-      </div>
-    </div>
-
-    <!-- list of used kanjis -->
-    <div class="word-details center-block" v-if="kanjis.length > 0">
-      <div class="expandable-list word-kanjis">
-        <template v-for="(kanji, kanjiIndex) of j.kanjis">
-          <div class="expandable-list-item" v-if="kanjis.indexOf(kanji.title) !== -1">
-            <div class="wk-element no-refocus" @click="openKanji(kanjiIndex)"><vue-kanji-card :kanji="kanji.title" :grade="kanji.grade" :learned="kanji.progress.learned_at ? true : false"></vue-kanji-card></div>
-            <div class="expandable-list-arrow" v-if="kanjiIndex === forms.kanjiIndex"></div>
-          </div>
-        </template>
-      </div>
-    </div>
-
-    <!-- expanded kanji details -->
-    <div class="expandable-list-container word-kreb-expanded" v-if="forms.kanjiIndex !== null">
-      <div class="center-block">
-        <vue-kanji :id="j.kanjis[forms.kanjiIndex].id" :j="j" :editing="editing" :key="forms.kanjiIndex" @search="search"></vue-kanji>
       </div>
     </div>
 
@@ -188,6 +166,10 @@ Vue.component('vue-word', {
 
     <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="w.comment = $event"></vue-editable-text>
 
+    <!-- list of used kanjis -->
+    <div class="center-block" v-if="kanjiIds.length > 0">
+      <vue-kanji v-for="kanjiId of kanjiIds" :id="kanjiId" :j="j" :editing="editing" :key="kanjiId" @search="search"></vue-kanji>
+    </div>
   </div>
 `
 });

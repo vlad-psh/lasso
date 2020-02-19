@@ -14,19 +14,6 @@
         color: inherit;
       }
     }
-    &.word-kanjis {
-      .expandable-list-item {
-        border-bottom: none;
-        color: inherit;
-        font-size: 2em;
-        margin: 0 .4em 0 0;
-
-        .wk-element {
-          width: 1.5em;
-          line-height: initial;
-        }
-      }
-    }
     .expandable-list-item {
       display: inline-block;
       text-align: center;
@@ -157,4 +144,13 @@
       resize: vertical;
     }
   } /* end of .word-comment-form */
+
+  .vue-kanji {
+    width: calc(50% - 0.5em);
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 1em;
+    &:nth-child(odd){margin-right: 0.5em;}
+    .vue-editable-text {margin: 0 -.6em; font-size: .9em;}
+  }
 } /* end of .word-card */
