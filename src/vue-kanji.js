@@ -65,11 +65,9 @@ Vue.component('vue-kanji', {
   template: `
 <div class="vue-kanji">
   <div class="kanji-info-table">
-    <div>
-      <div class="kanji-title no-refocus" :class="htmlClass" @click="search">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
-      <vue-learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
-    </div>
-    <div>
+    <div class="kanji-title no-refocus" :class="htmlClass" @click="search">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
+    <vue-learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
+    <div class="kanji-details">
       <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
       <div class="radical"><div class="radical-label">部首</div>{{classicalRadical}}</div>

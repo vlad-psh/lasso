@@ -38,13 +38,14 @@
   }
 
   .kanji-info-table {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    display: grid;
+    align-items: start;
+    grid-template-columns: 4em 1fr;
 
-    & > div:nth-child(1) {
-      width: 4em;
-    }
+    .kanji-title {grid-column: 1; grid-row: 1;}
+    .vue-learn-buttons {grid-column: 1; grid-row: 2;}
+    .kanji-details {grid-column: 2; grid-row: 1 / span 2;}
+
     .vue-learn-buttons {
       font-size: .8em;
       line-height: 2em;

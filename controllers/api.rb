@@ -117,9 +117,7 @@ post :api_comment do
     kanji = Kanji.find_by(title: params[:kanji])
     halt(404, "Kanji not found") if kanji.blank?
     progress = find_or_init_progress({kind: :k, id: kanji.id})
-    progress.details ||= {}
-    comment.present? ? progress.details[:m] = comment : progress.details.delete('m')
-    progress.save!
+    progress.update(comment: comment.present? ? comment : nil)
   end
 
   return 'ok'
