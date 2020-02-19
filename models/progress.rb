@@ -84,7 +84,7 @@ class Progress < ActiveRecord::Base
   end
 
   def self.api_props
-    return [:id, :learned_at, :burned_at, :flagged_at, :details]
+    return [:id, :learned_at, :burned_at, :flagged_at, :comment]
   end
 
   def api_hash

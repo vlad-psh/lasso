@@ -19,10 +19,7 @@ Vue.component('vue-kanji', {
       return this.j.kanjis.find(i => i.id === this.id);
     },
     comment() {
-      if (this.kanji.progress && this.kanji.progress.details) {
-        return this.kanji.progress.details.m || null;
-      }
-      return null;
+      return this.kanji.progress ? this.kanji.progress.comment : null;
     },
     classicalRadical() {
       return radicalsList[this.kanji.radnum - 1];
@@ -61,7 +58,7 @@ Vue.component('vue-kanji', {
     },
     setComment(newComment) {
       // TODO: what if kanji hasn't had a progress data yet?
-      this.kanji.progress.details.m = newComment;
+      this.kanji.progress.comment = newComment;
     },
     ...helpers
   },
@@ -69,7 +66,7 @@ Vue.component('vue-kanji', {
 <div class="vue-kanji">
   <div class="kanji-info-table">
     <div>
-      <div class="kanji-title" :class="htmlClass" @click="search">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
+      <div class="kanji-title no-refocus" :class="htmlClass" @click="search">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
       <vue-learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
     </div>
     <div>
@@ -80,11 +77,7 @@ Vue.component('vue-kanji', {
     </div>
   </div>
 
-  <div v-if="kanji.english">
-    &#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}
-    <span v-if="kanji.progress.details && kanji.progress.details.t">&#x1f464; {{kanji.progress.details.t}}</span>
-  </div>
-
+  <div v-if="kanji.english">&#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}</div>
 
   <div v-if="false && kanji.wk_level">
     <div class="hr-title"><span>Meaning</span></div>
