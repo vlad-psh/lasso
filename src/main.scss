@@ -27,7 +27,6 @@ $borderColor: rgba(192,192,192,.3);
 @import "styles/widget-emoji-checkbox.scss";
 @import "styles/widget-expandable-list.scss";
 @import "styles/page-elements-list.scss";
-@import "styles/page-search-old.scss";
 @import "styles/vue-settings-button.scss";
 
 body {
@@ -100,6 +99,8 @@ body {
     text-decoration: none;
   }
   .m, .m a {background-color: #777; border: 0px solid #777;}
+
+  .learned {background: rgba(255,255,0,0.3);}
 
   svg {
     .r {fill: #0af !important;}
@@ -249,7 +250,6 @@ body {
     }
   }
 
-  .search-result svg,
   .study-card h1 svg,
   .elements-list-item svg,
   .radical-title svg {
