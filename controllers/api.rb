@@ -113,14 +113,16 @@ post :api_comment do
   if params[:seq].present?
     wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
     wd.update_attribute(:comment, comment.present? ? comment : nil)
+
+    return 'ok'
   elsif params[:kanji].present?
     kanji = Kanji.find_by(title: params[:kanji])
     halt(404, "Kanji not found") if kanji.blank?
     progress = find_or_init_progress({kind: :k, id: kanji.id})
     progress.update(comment: comment.present? ? comment : nil)
-  end
 
-  return 'ok'
+    return progress.api_json
+  end
 end
 
 post :drill_add_word do

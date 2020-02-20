@@ -56,9 +56,8 @@ Vue.component('vue-kanji', {
     search() {
       this.$emit('search', this.kanji.title);
     },
-    setComment(newComment) {
-      // TODO: what if kanji hasn't had a progress data yet?
-      this.kanji.progress.comment = newComment;
+    setComment(progress) {
+      this.kanji.progress = JSON.parse(progress);
     },
     ...helpers
   },

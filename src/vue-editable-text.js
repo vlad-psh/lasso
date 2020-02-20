@@ -29,7 +29,7 @@ Vue.component('vue-editable-text', {
         method: "POST"
       }).done(data => {
         this.closeForm();
-        this.$emit('updated', this.textCache);
+        this.$emit('updated', data);
       });
     },
     ...helpers
