@@ -1,5 +1,6 @@
 import helpers from './helpers.js';
 const debounce = helpers.debounce;
+const axios = require('axios');
 
 Vue.component('vue-search', {
   data() {
@@ -10,7 +11,7 @@ Vue.component('vue-search', {
       selectedWord: null,
       highlightedWordIndex: null,
       wordData: null,
-      requests: 0,
+      axiosSearchToken: null,
     }
   },
   computed: {
@@ -30,19 +31,30 @@ Vue.component('vue-search', {
       // Otherwise, same (unchanged) request will be sent after each key press
       if (this.searchQuery === this.previousQuery) return;
       if (this.searchQuery.trim() === '') return;
-      this.requests += 1;
 
-      $.ajax({
-        url: '/search',
-        method: 'POST',
-        data: {query: query}
-      }).done(data => {
-        app.requests -= 1;
+      const cancelTokenSource = axios.CancelToken.source();
+      // Cancel current request and replace with new CancelToken
+      if (this.axiosSearchToken) {
+        console.log('canceling previous request');
+        this.axiosSearchToken.cancel();
+      }
+      this.axiosSearchToken = cancelTokenSource;
+
+      const params = new URLSearchParams();
+      params.append('query', query);
+
+      axios.post('/search', params, {
+        cancelToken: cancelTokenSource.token,
+      }).then(resp => {
         // If input field hasn't been changed while we're trying to get results
+        if (this.axiosSearchToken === cancelTokenSource) {
+          console.log('erasing cancel token');
+          this.axiosSearchToken = null;
+        }
+
         if (query === app.searchQuery) {
           app.highlightedWordIndex = null;
-          var j = JSON.parse(data);
-          app.searchResults = j;
+          app.searchResults = resp.data;
           app.previousQuery = query;
 
           if (popHistory) {
@@ -50,7 +62,7 @@ Vue.component('vue-search', {
           }
           document.title = query;
 
-          if (j.length > 0 && openWordAtIndex !== -1) {
+          if (resp.data.length > 0 && openWordAtIndex !== -1) {
             app.openWord(openWordAtIndex || 0);
           }
         }
@@ -62,20 +74,18 @@ Vue.component('vue-search', {
       this.highlightedWordIndex = index;
       this.selectedWord = seq;
       this.wordData = null;
-      this.requests += 1;
 
       $.ajax({
         url: "/api/word",
         method: 'GET',
         data: {seq: seq}
       }).done(data => {
-        app.requests -= 1;
         if (seq === app.selectedWord) {
           var j = JSON.parse(data);
           app.wordData = j;
 
           // update current location
-          u = new URLSearchParams(location.search);
+          var u = new URLSearchParams(location.search);
           u.set('index', index);
           history.replaceState({}, '', '?' + u.toString());
         }
@@ -139,7 +149,7 @@ Vue.component('vue-search', {
   <div class="browse-panel">
     <div class="search-field">
       <input type="text" placeholder="Search..." @input="searchDebounce()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()">
-      <div class="loading-circles" v-if="requests > 0"><div></div><div></div><div></div></div>
+      <div class="loading-circles" v-if="axiosSearchToken"><div></div><div></div><div></div></div>
     </div>
     <div class="search-results">
       <div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item no-refocus" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)">
