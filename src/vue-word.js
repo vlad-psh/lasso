@@ -76,7 +76,7 @@ Vue.component('vue-word', {
   updated() {
   },
   template: `
-  <div class="vue-word word-card" id="word-card-app">
+  <div class="vue-word word-card" id="word-card-app" :data-seq="seq">
 
     <!-- list of krebs -->
     <div class="center-block">

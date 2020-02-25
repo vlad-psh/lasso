@@ -8,13 +8,16 @@ Vue.component('vue-search', {
       searchQuery: '',
       previousQuery: '',
       searchResults: [],
-      selectedWord: null,
+      wordsSeq: [],
+      wordsData: {drills: [], kanjis: [], words: [], paths: []},
       highlightedWordIndex: null,
-      wordData: null,
       axiosSearchToken: null,
     }
   },
   computed: {
+    selectedWord() {
+      return this.wordsSeq[0] || null;
+    },
   },
   methods: {
     searchDebounce: debounce(function(e = null){this.search(e);}, 250),
@@ -34,10 +37,7 @@ Vue.component('vue-search', {
 
       const cancelTokenSource = axios.CancelToken.source();
       // Cancel current request and replace with new CancelToken
-      if (this.axiosSearchToken) {
-        console.log('canceling previous request');
-        this.axiosSearchToken.cancel();
-      }
+      if (this.axiosSearchToken) this.axiosSearchToken.cancel();
       this.axiosSearchToken = cancelTokenSource;
 
       const params = new URLSearchParams();
@@ -48,7 +48,6 @@ Vue.component('vue-search', {
       }).then(resp => {
         // If input field hasn't been changed while we're trying to get results
         if (this.axiosSearchToken === cancelTokenSource) {
-          console.log('erasing cancel token');
           this.axiosSearchToken = null;
         }
 
@@ -72,8 +71,7 @@ Vue.component('vue-search', {
       var app = this;
       var seq = this.searchResults[index][0];
       this.highlightedWordIndex = index;
-      this.selectedWord = seq;
-      this.wordData = null;
+      this.wordsSeq.unshift(seq);
 
       $.ajax({
         url: "/api/word",
@@ -82,7 +80,7 @@ Vue.component('vue-search', {
       }).done(data => {
         if (seq === app.selectedWord) {
           var j = JSON.parse(data);
-          app.wordData = j;
+          app.mergeWordsData(j);
 
           // update current location
           var u = new URLSearchParams(location.search);
@@ -128,6 +126,20 @@ Vue.component('vue-search', {
       this.searchQuery = '';
       this.previousQuery = '';
     },
+    mergeWordsData(data) {
+      const kv = {drills: 'id', kanjis: 'id', words: 'seq'};
+      for (var k in kv) {
+        var v = kv[k];
+        for (var i of data[k]) {
+          if (!this.wordsData[k].find(j => j[v] === i[v])) this.wordsData[k].push(i);
+        }
+      };
+      this.wordsData.paths = data.paths;
+//kanji_summary?, radicals
+    },
+    hasCachedWord(seq) {
+      return this.wordsData.words.find(i => i.seq === seq) ? true : false;
+    },
     ...helpers
   }, // end of methods
   mounted() {
@@ -163,7 +175,10 @@ Vue.component('vue-search', {
     </div>
   </div>
   <div class='contents-panel'>
-    <vue-word v-if="wordData" :seq="selectedWord" :j="wordData" :editing="true" @search="searchExec"></vue-word>
+    <template v-for="seq of wordsSeq">
+      <vue-word v-if="hasCachedWord(seq)" :seq="seq" :j="wordsData" :editing="true" @search="searchExec"></vue-word>
+      <div v-else>Loading...</div>
+    </template>
   </div>
 </div>
 `
