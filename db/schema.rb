@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_19_161106) do
+ActiveRecord::Schema.define(version: 2020_02_25_025810) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 2020_02_19_161106) do
     t.string "nanori", array: true
     t.string "searchable_en"
     t.integer "radnum"
+    t.jsonb "links"
   end
 
   create_table "kanji_readings", force: :cascade do |t|

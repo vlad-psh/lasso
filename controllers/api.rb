@@ -114,7 +114,7 @@ post :api_comment do
     wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
     wd.update_attribute(:comment, comment.present? ? comment : nil)
 
-    return 'ok'
+    return wd.comment
   elsif params[:kanji].present?
     kanji = Kanji.find_by(title: params[:kanji])
     halt(404, "Kanji not found") if kanji.blank?

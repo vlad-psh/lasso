@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'sinatra/activerecord'
+require 'sinatra/content_for'
 require 'sinatra-snap'
 require 'slim'
 

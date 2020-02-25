@@ -71,6 +71,9 @@ Vue.component('vue-kanji', {
       <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
       <div class="radical"><div class="radical-label">部首</div>{{classicalRadical}}</div>
       <vue-kanji-readings :kanji="kanji" :key="kanji.title"></vue-kanji-readings>
+      <template v-if="kanji.links">
+        <a v-for="(urlHash, idx) of kanji.links.ishiseiji" :href="'https://blog.goo.ne.jp/ishiseiji/e/' + urlHash">{{kanji.title}}</a>
+      </template>
     </div>
   </div>
 
