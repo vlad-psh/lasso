@@ -92,20 +92,6 @@ body[theme='black'] {
     }
   }
 
-  .search-results-old {
-    .search-result-old {
-      &.pristine {
-        color: inherit;
-        border-color: rgba(255,255,255,0.2);
-      }
-      .highlight {
-        background-color: transparent;
-        color: #c00;
-        font-weight: bold;
-      }
-    }
-  }
-
   .vue-sentence-form-app .new-sentence .question-word {
     background-color: rgba(255,255,255,0.1);
     color: $fgcolor;
@@ -124,5 +110,18 @@ body[theme='black'] {
         }
       }
     }
+    .contents-panel {
+      .vue-word.highlighted {
+        //animation: 2s ease-out 0s 1 normal blink-highlight-black;
+        animation-name: blink-highlight-black;
+      }
+    }
+
   }
 } /* end of body.black */
+
+@keyframes blink-highlight-black {
+  from {background-color: rgba(192,192,192,.2);}
+  to   {background-color: transparent;}
+}
+

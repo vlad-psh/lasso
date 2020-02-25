@@ -4,7 +4,8 @@ Vue.component('vue-word', {
   props: {
     seq: {type: Number, required: true},
     j: {type: Object, required: true},
-    editing: {type: Boolean, required: true}
+    editing: {type: Boolean, required: true},
+    highlighted: {type: Boolean, required: false, default: false}
   },
   data() {
     return {
@@ -76,7 +77,7 @@ Vue.component('vue-word', {
   updated() {
   },
   template: `
-  <div class="vue-word word-card" id="word-card-app" :data-seq="seq">
+  <div class="vue-word word-card" :class="highlighted ? 'highlighted' : null" :data-seq="seq">
 
     <!-- list of krebs -->
     <div class="center-block">

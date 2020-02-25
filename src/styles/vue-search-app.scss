@@ -7,6 +7,18 @@
   .contents-panel {
     height: 100%;
     overflow-y: auto;
+
+    .vue-word {
+      &.highlighted {
+        animation: 2s ease-out 0s 1 normal blink-highlight;
+      }
+      &::after {
+        content: '';
+        display: block;
+        border-bottom: 1px dashed #777;
+      }
+      &:last-child::after {content: none;}
+    }
   }
   .browse-panel {
     border: 0px solid $borderColor;
@@ -95,3 +107,8 @@
     }
   }
 } // end of #search-app
+
+@keyframes blink-highlight {
+  from {background-color: rgba(255,255,0,.2);}
+  to   {background-color: transparent;}
+}

@@ -8,6 +8,7 @@ Vue.component('vue-search', {
       searchQuery: '',
       previousQuery: '',
       searchResults: [],
+      selectedSeq: null,
       wordsSeq: [],
       wordsData: {drills: [], kanjis: [], words: [], paths: []},
       highlightedWordIndex: null,
@@ -15,9 +16,6 @@ Vue.component('vue-search', {
     }
   },
   computed: {
-    selectedWord() {
-      return this.wordsSeq[0] || null;
-    },
   },
   methods: {
     searchDebounce: debounce(function(e = null){this.search(e);}, 250),
@@ -67,27 +65,38 @@ Vue.component('vue-search', {
         }
       });
     },
+    scrollToWord(seq = null) {
+      const offset = seq ? $(`[data-seq=${seq}]`)[0].offsetTop - 32 : 0;
+      $('.contents-panel').animate({'scrollTop': offset}, 500);
+    },
     openWord(index) {
       var app = this;
       var seq = this.searchResults[index][0];
+      this.selectedSeq = seq;
       this.highlightedWordIndex = index;
-      this.wordsSeq.unshift(seq);
 
-      $.ajax({
-        url: "/api/word",
-        method: 'GET',
-        data: {seq: seq}
-      }).done(data => {
-        if (seq === app.selectedWord) {
-          var j = JSON.parse(data);
-          app.mergeWordsData(j);
+      if (this.wordsSeq.find(i => i === seq)) {
+        this.scrollToWord(seq);
+      } else {
+        this.wordsSeq.unshift(seq);
 
-          // update current location
-          var u = new URLSearchParams(location.search);
-          u.set('index', index);
-          history.replaceState({}, '', '?' + u.toString());
-        }
-      });
+        $.ajax({
+          url: "/api/word",
+          method: 'GET',
+          data: {seq: seq}
+        }).done(data => {
+          if (seq === app.selectedSeq) {
+            var j = JSON.parse(data);
+            app.mergeWordsData(j);
+            app.scrollToWord();
+
+            // update current location
+            var u = new URLSearchParams(location.search);
+            u.set('index', index);
+            history.replaceState({}, '', '?' + u.toString());
+          }
+        }); // end of ajax request
+      }
     },
     openWordDebounced: debounce(function(){
       this.openWord(this.highlightedWordIndex);
@@ -164,7 +173,7 @@ Vue.component('vue-search', {
       <div class="loading-circles" v-if="axiosSearchToken"><div></div><div></div><div></div></div>
     </div>
     <div class="search-results">
-      <div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item no-refocus" :class="[selectedWord == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)">
+      <div v-for="(result, resultIndex) in searchResults" :id="'search-result-' + resultIndex" class="result-item no-refocus" :class="[selectedSeq == result[0] ? 'selected' : null, highlightedWordIndex === resultIndex ? 'highlighted' : null]" @click="openWord(resultIndex)">
         <div class="title">
           <div class="common-icon" :class="result[4] ? 'common' : 'uncommon'">&#x2b50;</div>
           <div class="text">{{result[1]}}</div>
@@ -176,7 +185,7 @@ Vue.component('vue-search', {
   </div>
   <div class='contents-panel'>
     <template v-for="seq of wordsSeq">
-      <vue-word v-if="hasCachedWord(seq)" :seq="seq" :j="wordsData" :editing="true" @search="searchExec"></vue-word>
+      <vue-word v-if="hasCachedWord(seq)" :seq="seq" :j="wordsData" :editing="true" @search="searchExec" :highlighted="selectedSeq === seq"></vue-word>
       <div v-else>Loading...</div>
     </template>
   </div>
