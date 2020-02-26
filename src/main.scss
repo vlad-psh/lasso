@@ -54,6 +54,9 @@ body {
     color: #008ace;
     &:hover {color: #c00;}
   }
+  .ajax-link {
+    cursor: pointer;
+  }
   b {font-weight: bold;}
 
   .japanese {
