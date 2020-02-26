@@ -28,7 +28,7 @@ Vue.component('vue-search', {
       var app = this;
       var query = this.searchQuery;
 
-      // Prevent request while composing japanese text sing IME
+      // Prevent request while composing japanese text using IME
       // Otherwise, same (unchanged) request will be sent after each key press
       if (this.searchQuery === this.previousQuery) return;
       if (this.searchQuery.trim() === '') return;
@@ -79,6 +79,7 @@ Vue.component('vue-search', {
         this.scrollToWord(seq);
       } else {
         this.wordsSeq.unshift(seq);
+        if (this.wordsSeq.length > 6) this.wordsSeq.pop();
 
         $.ajax({
           url: "/api/word",
@@ -185,11 +186,9 @@ Vue.component('vue-search', {
   </div>
   <div class='contents-panel'>
     <template v-for="seq of wordsSeq">
-      <template v-if="hasCachedWord(seq)">
-        <vue-word :seq="seq" :j="wordsData" :editing="true" @search="searchExec" :highlighted="selectedSeq === seq"></vue-word>
-        <div class="tear-line"></div>
-      </template>
-      <div v-else>Loading...</div>
+      <vue-word v-if="hasCachedWord(seq)" :seq="seq" :j="wordsData" :editing="true" @search="searchExec" :highlighted="selectedSeq === seq"></vue-word>
+      <div v-else class="center-block" style="margin-top: 1em; margin-bottom: 2em;">Loading...</div>
+      <div class="tear-line"></div>
     </template>
   </div>
 </div>

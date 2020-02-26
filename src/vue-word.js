@@ -76,6 +76,7 @@ Vue.component('vue-word', {
     ...helpers
   }, // end of methods
   updated() {
+    console.log(this.w.krebs[0].title + " updated");
   },
   template: `
   <div class="vue-word word-card" :class="highlighted ? 'highlighted' : null" :data-seq="seq">
