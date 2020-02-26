@@ -169,7 +169,7 @@ Vue.component('vue-search', {
 <div id="search-app">
   <div class="browse-panel">
     <div class="search-field">
-      <input type="text" placeholder="Search..." @input="searchDebounce()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()">
+      <input type="text" placeholder="Search..." @input="searchDebounce()" v-model="searchQuery" @keydown.esc="clearInputField()" @keydown.down="nextResult()" @keydown.up="previousResult()" @keydown.enter="search()">
       <div class="loading-circles" v-if="axiosSearchToken"><div></div><div></div><div></div></div>
     </div>
     <div class="search-results">
@@ -185,7 +185,10 @@ Vue.component('vue-search', {
   </div>
   <div class='contents-panel'>
     <template v-for="seq of wordsSeq">
-      <vue-word v-if="hasCachedWord(seq)" :seq="seq" :j="wordsData" :editing="true" @search="searchExec" :highlighted="selectedSeq === seq"></vue-word>
+      <template v-if="hasCachedWord(seq)">
+        <vue-word :seq="seq" :j="wordsData" :editing="true" @search="searchExec" :highlighted="selectedSeq === seq"></vue-word>
+        <div class="tear-line"></div>
+      </template>
       <div v-else>Loading...</div>
     </template>
   </div>

@@ -12,12 +12,12 @@
       &.highlighted {
         animation: 2s ease-out 0s 1 normal blink-highlight;
       }
-      &::after {
-        content: '';
-        display: block;
-        border-bottom: 1px dashed #777;
-      }
-      &:last-child::after {content: none;}
+    }
+    .tear-line {
+      width: 100%;
+      height: 16px;
+      background-repeat: repeat-x;
+      background-size: 10px 16px;
     }
   }
   .browse-panel {
@@ -109,6 +109,6 @@
 } // end of #search-app
 
 @keyframes blink-highlight {
-  from {background-color: rgba(255,255,0,.2);}
+  from {background-color: rgba(255,255,0,.3);}
   to   {background-color: transparent;}
 }
