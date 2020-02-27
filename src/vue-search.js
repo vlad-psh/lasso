@@ -10,7 +10,6 @@ Vue.component('vue-search', {
       searchResults: [],
       selectedSeq: null,
       words: [],
-      cache: [],
       highlightedWordIndex: null,
       axiosSearchToken: null,
     }
@@ -88,7 +87,9 @@ Vue.component('vue-search', {
         }).done(data => {
           if (seq === app.selectedSeq) {
             var j = JSON.parse(data);
-            app.mergeCache(j);
+            for (var w of app.words) {
+              if (!w.data && w.seq === seq) w.data = j;
+            }
             app.scrollToWord();
 
             // update current location
@@ -136,14 +137,6 @@ Vue.component('vue-search', {
       this.searchQuery = '';
       this.previousQuery = '';
     },
-    mergeCache(data) {
-      this.cache.push(data);
-      if (this.cache.length > 20) this.cache.shift();
-
-      for (var w of this.words) {
-        if (!w.data) w.data = data
-      }
-    },
     ...helpers
   }, // end of methods
   mounted() {
@@ -180,7 +173,7 @@ Vue.component('vue-search', {
   </div>
   <div class='contents-panel'>
     <template v-for="w of words">
-      <vue-word v-if="w.data" :seq="w.seq" :j="w.data" :editing="true" @search="searchExec" :highlighted="selectedSeq === w.seq" :key="w.seq"></vue-word>
+      <vue-word v-if="w.data" :seq="w.seq" :j="w.data" :editing="true" @search="searchExec" :key="w.seq"></vue-word>
       <div v-else class="center-block" style="margin-top: 1em; margin-bottom: 2em;">Loading...</div>
       <div class="tear-line"></div>
     </template>
