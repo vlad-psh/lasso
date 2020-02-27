@@ -9,8 +9,8 @@ Vue.component('vue-search', {
       previousQuery: '',
       searchResults: [],
       selectedSeq: null,
-      wordsSeq: [],
-      wordsData: {drills: [], kanjis: [], words: [], paths: []},
+      words: [],
+      cache: [],
       highlightedWordIndex: null,
       axiosSearchToken: null,
     }
@@ -75,11 +75,11 @@ Vue.component('vue-search', {
       this.selectedSeq = seq;
       this.highlightedWordIndex = index;
 
-      if (this.wordsSeq.find(i => i === seq)) {
+      if (this.words.find(i => i.seq === seq)) {
         this.scrollToWord(seq);
       } else {
-        this.wordsSeq.unshift(seq);
-        if (this.wordsSeq.length > 6) this.wordsSeq.pop();
+        this.words.unshift({seq: seq, data: null});
+        if (this.words.length > 6) this.words.pop();
 
         $.ajax({
           url: "/api/word",
@@ -88,7 +88,7 @@ Vue.component('vue-search', {
         }).done(data => {
           if (seq === app.selectedSeq) {
             var j = JSON.parse(data);
-            app.mergeWordsData(j);
+            app.mergeCache(j);
             app.scrollToWord();
 
             // update current location
@@ -136,19 +136,13 @@ Vue.component('vue-search', {
       this.searchQuery = '';
       this.previousQuery = '';
     },
-    mergeWordsData(data) {
-      const kv = {drills: 'id', kanjis: 'id', words: 'seq'};
-      for (var k in kv) {
-        var v = kv[k];
-        for (var i of data[k]) {
-          if (!this.wordsData[k].find(j => j[v] === i[v])) this.wordsData[k].push(i);
-        }
-      };
-      this.wordsData.paths = data.paths;
-//kanji_summary?, radicals
-    },
-    hasCachedWord(seq) {
-      return this.wordsData.words.find(i => i.seq === seq) ? true : false;
+    mergeCache(data) {
+      this.cache.push(data);
+      if (this.cache.length > 20) this.cache.shift();
+
+      for (var w of this.words) {
+        if (!w.data) w.data = data
+      }
     },
     ...helpers
   }, // end of methods
@@ -185,8 +179,8 @@ Vue.component('vue-search', {
     </div>
   </div>
   <div class='contents-panel'>
-    <template v-for="seq of wordsSeq">
-      <vue-word v-if="hasCachedWord(seq)" :seq="seq" :j="wordsData" :editing="true" @search="searchExec" :highlighted="selectedSeq === seq"></vue-word>
+    <template v-for="w of words">
+      <vue-word v-if="w.data" :seq="w.seq" :j="w.data" :editing="true" @search="searchExec" :highlighted="selectedSeq === w.seq" :key="w.seq"></vue-word>
       <div v-else class="center-block" style="margin-top: 1em; margin-bottom: 2em;">Loading...</div>
       <div class="tear-line"></div>
     </template>
