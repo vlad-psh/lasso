@@ -1,4 +1,5 @@
 //import Vue from 'vue/dist/vue.js';
+const axios = require('axios');
 import helpers from './helpers.js';
 const radicalsList = helpers.radicalsList();
 
@@ -10,8 +11,8 @@ Vue.component('vue-kanji', {
   },
   data() {
     return {
-      commonWordsFetched: false,
-      commonWords: [],
+      readings: {},
+      readingsFetched: false,
     }
   },
   computed: {
@@ -59,21 +60,43 @@ Vue.component('vue-kanji', {
     setComment(progress) {
       this.kanji.progress = JSON.parse(progress);
     },
+    fetchReadings() {
+      const app = this;
+      const formData = new FormData();
+      formData.append('kanji', this.kanji.title);
+
+      axios.post('/api/kanji_readings', formData
+      ).then(function(resp) {
+        app.readingsFetched = true;
+        app.readings = resp.data;
+      })
+    },
     ...helpers
   },
   template: `
 <div class="vue-kanji">
   <div class="kanji-info-table">
     <div class="kanji-title no-refocus" :class="htmlClass" @click="search">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
-    <vue-learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
     <div class="kanji-details">
-      <span v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</span>
-      <span v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</span>
-      <div class="radical"><div class="radical-label">部首</div>{{classicalRadical}}</div>
-      <vue-kanji-readings :kanji="kanji" :key="kanji.title"></vue-kanji-readings>
-      <template v-if="kanji.links">
-        <a v-for="(urlHash, idx) of kanji.links.ishiseiji" :href="'https://blog.goo.ne.jp/ishiseiji/e/' + urlHash">{{kanji.title}}</a>
-      </template>
+      <div class="nb" v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</div>
+      <div class="nb" v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</div>
+      <div class="radical-label">部首</div><span class="nb">{{classicalRadical}}</span>
+
+      <template v-if="kanji.links"><div class="naritachi-label">成立</div><a v-for="(urlHash, idx) of kanji.links.ishiseiji" :href="'https://blog.goo.ne.jp/ishiseiji/e/' + urlHash" target="_blank">{{kanji.title}}</a></template>
+
+      <template v-for="(v, idx) of kanji.on"><div class="nb"><div v-if="idx === 0" class="on-label">音</div>{{v}}</div><template v-if="idx !== kanji.on.length - 1"> · </template></template>
+      <template v-for="(v, idx) of kanji.kun"><div class="nb"><div v-if="idx === 0" class="kun-label">訓</div>{{v.split('.')[0]}}<span class="okurigana" v-if="v.split('.').length > 1">{{v.split('.')[1]}}</span></div><template v-if="idx !== kanji.kun.length - 1"> · </template></template>
+      <div v-if="!readingsFetched" @click="fetchReadings()" class="ajax-link no-refocus same-readings-label">⋯</div>
+
+      <div v-if="readingsFetched">
+        <table class="same-readings-table">
+          <tr v-for="reading of Object.keys(readings)">
+            <td><div class="nb">{{reading}}</div></td>
+            <td><template v-for="k in readings[reading]">{{k[0]}}</template></td>
+          </tr>
+        </table>
+        <vue-learn-buttons v-if="editing" :paths="j.paths" :progress="kanji.progress" :post-data="{id: kanji.id, title: kanji.title, kind: 'k'}" :editing="editing" v-on:update-progress="updateProgress($event)"></vue-learn-buttons>
+      </div>
     </div>
   </div>
 

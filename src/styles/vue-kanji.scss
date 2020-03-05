@@ -52,22 +52,37 @@
       span {line-height: 1.5em;}
     }
   }
-  .reading {
-    &::after {content: '・';}
-    &:last-child::after {content: '';}
-    .okurigana {
-      color: #d00;
-    }
+
+  .kanji-details {
+    text-align: justify;
+    .okurigana {color: #d00;}
   }
 
-  .on-label, .kun-label, .radical-label {
+  .on-label, .kun-label, .radical-label, .naritachi-label, .same-readings-label {
     display: inline-block;
     color: white;
     padding: .1em .2em;
-    margin: .05em .1em .05em 0;
+    margin: .05em .3em .05em 0;
     border-radius: 2px;
   }
   .on-label {background: #d37;}
   .kun-label {background: #39d;}
   .radical-label {background: #333;}
+  .naritachi-label {background: #ffe300; color: #5e5042;}
+  .same-readings-label {background: #88888815; color: #888;}
+
+  .same-readings-table {
+    border-collapse: collapse;
+    border: 1px solid rgba(128,128,128,.3);
+    tr:nth-child(odd) {
+      background-color: #88888815;
+    }
+    td {
+      border-bottom: 1px solid rgba(128,128,128,.3);
+      vertical-align: top;
+    }
+    td:nth-child(2) {
+      font-size: 1.3em;
+    }
+  }
 }

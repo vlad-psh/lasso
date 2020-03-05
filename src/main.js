@@ -14,6 +14,5 @@ require('./vue-dropdown.js');
 require('./vue-sentence-form.js');
 require('./vue-pitch-word.js');
 require('./vue-pitch-word-nhk.js');
-require('./vue-kanji-readings.js');
 require('./vue-settings-button.js');
 

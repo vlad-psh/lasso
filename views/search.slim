@@ -21,7 +21,9 @@ vue-search
           el = el.parentElement;
         }
       }
-      document.querySelector('#search-app .browse-panel input').focus();
+      var field = document.querySelector('#search-app .browse-panel input');
+      field.selectionStart = -1; // move cursor to the end of input field
+      field.focus();
     }
   };
 

@@ -10,7 +10,6 @@ Vue.component('vue-word', {
   data() {
     return {
       forms: {card: null, kreb: null, selectedDrill: null},
-      showKanji: false,
       bullets: "①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿".split('')
     }
   },
@@ -170,11 +169,8 @@ Vue.component('vue-word', {
     <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{seq: w.seq}" :text-data="w.comment" :editing="editing" placeholder="Add comment" @updated="w.comment = $event"></vue-editable-text>
 
     <!-- list of used kanjis -->
-    <div class="center-block" v-if="kanjiIds.length > 0">
-      <template v-if="showKanji">
-        <vue-kanji v-for="kanjiId of kanjiIds" :id="kanjiId" :j="j" :editing="editing" :key="kanjiId" @search="search"></vue-kanji>
-      </template>
-      <div v-else @click="showKanji = true" class="ajax-link">&#x3299;&#xfe0f;</div>
+    <div class="center-block">
+      <vue-kanji v-for="kanjiId of kanjiIds" :id="kanjiId" :j="j" :editing="editing" :key="kanjiId" @search="search"></vue-kanji>
     </div>
   </div>
 `
