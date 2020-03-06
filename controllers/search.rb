@@ -1,6 +1,7 @@
-paths search: '/search'
+paths index: '/',
+  search: '/search'
 
-get :search do
+get :index do
   protect!
   slim :search
 end

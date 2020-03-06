@@ -8,13 +8,9 @@ html
     meta content="width=device-width, initial-scale=1" name="viewport"
   body.myfont_jp2 theme=options('theme')
     div#main-menu
-      div.center
-        div.main-menu-item
+      - if current_user.present?
+        div.center
           div.main-menu-item: a href=path_to(:index)
-            div class="svg-icon icon-bear"
-        - if current_user.present?
-
-          div.main-menu-item: a href=path_to(:search)
             div class="svg-icon icon-search"
           div.main-menu-item: a href=path_to(:drills)
             div class="svg-icon icon-bookmark"
@@ -24,15 +20,11 @@ html
             vue-settings-button name="theme" value=options('theme')
           div.main-menu-item
             vue-settings-button name="device" value=options('device')
-      div.right
-        div.main-menu-item
-          - if current_user.present?
+        div.right
+          div.main-menu-item
             a href=path_to(:logout) data-method="delete" data-confirm="Logout?"
               span.username = current_user.login
               div< class="svg-icon icon-exit"
-          - else
-            a href=path_to(:login)
-              div class="svg-icon icon-login"
 
     - if flash[:error]
       div.flash-container: div.flash-error = flash[:error]

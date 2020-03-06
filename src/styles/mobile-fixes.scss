@@ -34,18 +34,6 @@
     tbody {display: flex;}
     td {display: block; margin: 1px 1px; height: 22px;}
   }
-  .word-card {
-    .vue-kanji {
-      .kanji-info-table {
-        display: grid;
-        grid-template-columns: 4em 1fr;
-
-        .kanji-title {grid-column: 1; grid-row: 1;}
-        .vue-learn-buttons {grid-column: 2; grid-row: 1;}
-        .kanji-details {grid-column: 1 / span 2; grid-row: 2;}
-      }
-    }
-  }
   #search-app {
     grid-template-columns: 1fr 8em;
     height: calc(100vh - 33px); // fallback value

@@ -1,11 +1,11 @@
-paths index: '/',
+paths dashboard: '/dashboard',
     current: '/current', # get(redirection)
     list_level: '/level/:level',
     list_nf: '/words/:nf',
     list_jlpt_words: '/words/jlpt/:level',
     list_jlpt_kanji: '/kanji/jlpt/:level'
 
-get :index do
+get :dashboard do
   @view_user = current_user || User.first
 
   @counters = {}
@@ -37,7 +37,7 @@ get :index do
     @counters["n#{lvl}".to_sym]['w'] = (100.0*cumulative/w_total[lvl]).round
   end
 
-  slim :index
+  slim :dashboard
 end
 
 get :current do

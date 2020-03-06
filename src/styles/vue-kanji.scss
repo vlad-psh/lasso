@@ -38,13 +38,10 @@
   }
 
   .kanji-info-table {
-    display: grid;
-    align-items: start;
-    grid-template-columns: 4em 1fr;
-
-    .kanji-title {grid-column: 1; grid-row: 1;}
-    .vue-learn-buttons {grid-column: 1; grid-row: 2;}
-    .kanji-details {grid-column: 2; grid-row: 1 / span 2;}
+    .kanji-title {
+      float: left;
+      margin-right: .3em;
+    }
 
     .vue-learn-buttons {
       font-size: .8em;
