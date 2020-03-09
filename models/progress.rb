@@ -24,7 +24,7 @@ class Progress < ActiveRecord::Base
   def sorting_score
     return 3 if self.burned_at.present?
     return 2 if self.learned_at.present?
-    return 1 if self.flagged_at.present?
+    return 1 if self.flagged
     return 0
   end
 
@@ -77,14 +77,14 @@ class Progress < ActiveRecord::Base
       return :burned
     elsif self.learned_at.present?
       return :guru
-    elsif self.flagged_at.present?
+    elsif self.flagged
       return :apprentice
     end
     return :pristine
   end
 
   def self.api_props
-    return [:id, :learned_at, :burned_at, :flagged_at, :comment]
+    return [:id, :learned_at, :burned_at, :flagged, :comment]
   end
 
   def api_hash

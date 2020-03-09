@@ -4,9 +4,7 @@ paths api_sentence: '/api/sentence',
     api_word_autocomplete: '/api/word/autocomplete',
     api_learn:   '/api/word/learn',
     api_burn:    '/api/word/burn',
-    api_flag:    '/api/word/flag',
     api_comment: '/api/comment',
-    api_add_word_to_drill: '/api/drill/add_word',
     drill_add_word: '/drill/word',
     kanji_readings: '/api/kanji_readings'
 
@@ -78,15 +76,6 @@ def find_or_init_progress(p)
     end
 end
 
-post :api_flag do
-  protect!
-
-  progress = find_or_init_progress(params)
-  progress.update(flagged_at: DateTime.now) unless progress.flagged_at
-
-  return progress.api_json
-end
-
 post :api_learn do
   protect!
 
@@ -128,10 +117,14 @@ end
 post :drill_add_word do
   protect!
 
-  progress = find_or_init_progress(params)
+  drill = Drill.find_by(id: params[:drill_id], user: current_user)
+  halt(404, "Drill list not found") if drill.blank?
+
+  word_title = params[:title] || Word.find_by(seq: params[:id]).krebs.first
+  progress = find_or_init_progress({kind: :w, id: params[:id], title: word_title})
+  progress.flagged = true
   progress.save
 
-  drill = Drill.find_by(id: params[:drill_id], user: current_user)
   drill.progresses << progress
 
   return 'ok'
@@ -149,17 +142,6 @@ get :api_question_drill do
       english: nil,
       j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
     }.to_json
-end
-
-post :api_add_word_to_drill do
-  protect!
-
-  drill = Drill.find_by(id: params[:drill_id], user: current_user)
-  w = Word.find_by(seq: params[:seq])
-  progress = find_or_init_progress({kind: :w, id: w.seq, title: w.krebs.first})
-  drill.progresses << progress
-
-  return 'ok'
 end
 
 post :kanji_readings do

@@ -1,8 +1,0 @@
-
-- d = Date.new
-div.center-block
-  - @progresses.each do |p|
-    - if p.flagged_at.to_date != d
-      - d = p.flagged_at.to_date
-      h3 = d
-    div: a href=path_to(:word).with(p.seq) = p.title

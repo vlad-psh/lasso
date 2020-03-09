@@ -1,6 +1,5 @@
 paths drills: '/drills',
-    drill: '/drill/:id',
-    flagged: '/flagged'
+    drill: '/drill/:id'
 
 get :drills do
   protect!
@@ -45,12 +44,5 @@ patch :drill do
   end
 
   redirect path_to(:drill).with(drill.id)
-end
-
-get :flagged do
-  protect!
-# TODO: this list is for all users; make it personal
-  @progresses = Progress.where.not(flagged_at: nil).order(flagged_at: :desc)
-  slim :flagged
 end
 

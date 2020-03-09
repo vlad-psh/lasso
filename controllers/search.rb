@@ -57,7 +57,7 @@ def search_fwd(q)
 end
 
 def search_result_from_seqs(seqs, word_titles = nil)
-  progresses = Progress.where(user: current_user, seq: seqs).where.not(learned_at: nil).pluck(:seq)
+  flagged = Progress.where(user: current_user, seq: seqs, flagged: true).pluck(:seq)
   word_titles = WordTitle.eager_load(:word).where(seq: seqs).order(order: :asc) unless word_titles.present?
 
   result = seqs.map do |seq|
@@ -69,7 +69,7 @@ def search_result_from_seqs(seqs, word_titles = nil)
       wts.filter{|w| w.is_kanji == false && w.title != title}.first.try(:title),
       wts.first.word.en[0]['gloss'].join(', '),
       wts.first.is_common, # If there is more than one WordTitle, show property for 'best match' (ie. common, shortest)
-      progresses.include?(seq)
+      flagged.include?(seq)
     ]
   end
 

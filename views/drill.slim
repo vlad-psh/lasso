@@ -50,9 +50,9 @@ javascript:
     // ui.item.id, ui.item.title, ui.item.href
 
     $.ajax({
-      url: "#{{path_to(:api_add_word_to_drill)}}",
+      url: "#{{path_to(:drill_add_word)}}",
       method: 'POST',
-      data: {drill_id: #{{@drill.id}}, seq: ui.item.id}
+      data: {drill_id: #{{@drill.id}}, id: ui.item.id}
     }).done(data => {
       console.log(data);
       $(this).val('');
