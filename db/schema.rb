@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_09_065630) do
+ActiveRecord::Schema.define(version: 2020_05_08_153320) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -177,6 +177,7 @@ ActiveRecord::Schema.define(version: 2020_03_09_065630) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
+    t.bigint "activity_time", default: 0
   end
 
   create_table "wk_kanji", force: :cascade do |t|

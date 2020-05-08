@@ -4,8 +4,16 @@
   .sentence-question {
     background-color: #ffec83;
     text-align: center;
-    padding: 1.5em 0 2.2em 0;
+    padding: 1.5em 0 0 0;
     position: relative;
+    max-height: 12em;
+    overflow-y: scroll;
+
+    &::after {
+      height: 2.2em;
+      display: block;
+      content: '';
+    }
 
     .sentence-word-container {
       display: inline-block;

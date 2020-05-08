@@ -16,3 +16,15 @@ require('./vue-pitch-word.js');
 require('./vue-pitch-word-nhk.js');
 require('./vue-settings-button.js');
 
+function activeSecondsAdd() {
+  activeSeconds += 1;
+  if (activeSeconds === 5) {
+    fetch('/api/activity/5');
+    activeSeconds = 0;
+    if (!document.hasFocus) activeInterval = window.clearInterval(activeInterval);
+  }
+}
+var activeSeconds = 0;
+var activeInterval = window.setInterval(activeSecondsAdd, 1000);
+document.onfocus = () => {if (!activeInterval) activeInterval = window.setInterval(activeSecondsAdd, 1000)};
+document.onblur = () => activeInterval = window.clearInterval(activeInterval);

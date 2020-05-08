@@ -6,7 +6,8 @@ paths api_sentence: '/api/sentence',
     api_burn:    '/api/word/burn',
     api_comment: '/api/comment',
     drill_add_word: '/drill/word',
-    kanji_readings: '/api/kanji_readings'
+    kanji_readings: '/api/kanji_readings',
+    activity: '/api/activity/:seconds'
 
 get :word_details do
   protect!
@@ -167,3 +168,11 @@ post :kanji_readings do
   return result.to_json
 end
 
+get :activity do
+  protect!
+
+  current_user.activity_time += params[:seconds].to_i
+  current_user.save
+
+  current_user.activity_time.to_s
+end
