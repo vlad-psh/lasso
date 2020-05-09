@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_153320) do
+ActiveRecord::Schema.define(version: 2020_05_09_083759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,14 @@ ActiveRecord::Schema.define(version: 2020_05_08_153320) do
     t.bigint "srs_progress_id"
     t.index ["card_id"], name: "index_actions_on_card_id"
     t.index ["srs_progress_id"], name: "index_actions_on_srs_progress_id"
+  end
+
+  create_table "activities", force: :cascade do |t|
+    t.bigint "user_id"
+    t.date "date"
+    t.integer "category"
+    t.bigint "seconds", default: 0
+    t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
   create_table "cards", force: :cascade do |t|
@@ -177,7 +185,6 @@ ActiveRecord::Schema.define(version: 2020_05_08_153320) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
-    t.jsonb "activity", default: {}
   end
 
   create_table "wk_kanji", force: :cascade do |t|

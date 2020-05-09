@@ -87,4 +87,10 @@ module WakameHelpers
       return session[name] || OPTIONS_DEFAULTS[name.to_sym]
     end
   end
+
+  def custom_today
+    # TODO: configurable settings for users
+    # Right now, new days starts from 5AM (server's local time)
+    return Date.today - (DateTime.now.hour < 5 ? 1 : 0)
+  end
 end
