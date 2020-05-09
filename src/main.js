@@ -16,15 +16,39 @@ require('./vue-pitch-word.js');
 require('./vue-pitch-word-nhk.js');
 require('./vue-settings-button.js');
 
-function activeSecondsAdd() {
-  activeSeconds += 1;
-  if (activeSeconds === 5) {
-    fetch('/api/activity/5');
-    activeSeconds = 0;
-    if (!document.hasFocus) activeInterval = window.clearInterval(activeInterval);
+function activity() {
+  var s = 0;
+  var active; // active interval
+  var idle; // idle timeout
+  var idleTS = new Date() - 5000;
+  ['load', 'mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(function(name) {
+    window.addEventListener(name, start, true);
+  });
+  document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === 'visible') start();
+  });
+
+  function start() {
+    if (!active) {
+      active = setInterval(tick, 1000);
+    }
+    if (new Date() - idleTS > 1000) {
+      idleTS = new Date();
+      clearTimeout(idle);
+      idle = setTimeout(stop, 5000);
+    }
+  }
+  function stop() {
+    clearInterval(active);
+    active = null;
+  }
+  function tick() {
+    s += 1;
+    if (s === 30) {
+      fetch('/api/activity/search/30');
+      s = 0;
+    }
   }
 }
-var activeSeconds = 0;
-var activeInterval = window.setInterval(activeSecondsAdd, 1000);
-document.onfocus = () => {if (!activeInterval) activeInterval = window.setInterval(activeSecondsAdd, 1000)};
-document.onblur = () => activeInterval = window.clearInterval(activeInterval);
+activity();
+

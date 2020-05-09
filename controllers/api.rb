@@ -7,7 +7,7 @@ paths api_sentence: '/api/sentence',
     api_comment: '/api/comment',
     drill_add_word: '/drill/word',
     kanji_readings: '/api/kanji_readings',
-    activity: '/api/activity/:seconds'
+    activity: '/api/activity/:category/:seconds'
 
 get :word_details do
   protect!
@@ -171,8 +171,10 @@ end
 get :activity do
   protect!
 
-  current_user.activity_time += params[:seconds].to_i
+  halt(405, "Unknown category") unless %w(search kanji kokugo).include?(params[:category])
+  current_user.activity[params[:category]] ||= 0
+  current_user.activity[params[:category]] += params[:seconds].to_i
   current_user.save
 
-  current_user.activity_time.to_s
+  current_user.activity[params[:category]].to_s
 end

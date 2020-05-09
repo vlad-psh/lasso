@@ -177,7 +177,7 @@ ActiveRecord::Schema.define(version: 2020_05_08_153320) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
-    t.bigint "activity_time", default: 0
+    t.jsonb "activity", default: {}
   end
 
   create_table "wk_kanji", force: :cascade do |t|

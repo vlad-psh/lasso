@@ -81,7 +81,7 @@ Vue.component('vue-kanji', {
       <div class="nb" v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</div>
       <div class="nb" v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</div>
       <div class="radical-label">部首</div><span class="nb">{{classicalRadical}}</span>
-      <a :href="'https://fruitcode.net/jiten/?book=kanji&search=' + kanji.title" target="_blank">&#x1f50e;</a>
+      <a :href="'https://wakame.fruitcode.net/jiten/?book=kanji&search=' + kanji.title" target="_blank">&#x1f50e;</a>
 
       <template v-if="kanji.links"><div class="naritachi-label">成立</div><a v-for="(urlHash, idx) of kanji.links.ishiseiji" :href="'https://blog.goo.ne.jp/ishiseiji/e/' + urlHash" target="_blank">{{kanji.title}}</a></template><br>
 

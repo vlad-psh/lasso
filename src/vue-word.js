@@ -96,7 +96,7 @@ Vue.component('vue-word', {
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
         <table><tr>
-          <td><a :href="'https://fruitcode.net/jiten/?book=kokugo&search=' + selectedKreb.title" target="_blank">&#x1f50e;</a></td>
+          <td><a :href="'https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + selectedKreb.title" target="_blank">&#x1f50e;</a></td>
           <td v-if="selectedKreb.pitch">Pitch: {{selectedKreb.pitch}}</td>
           <td><vue-learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></vue-learn-buttons></td>
           <td>Drills: {{selectedKreb.drills.map(i => j.drills.find(k => k.id === i).title)}}; Add:</td>
