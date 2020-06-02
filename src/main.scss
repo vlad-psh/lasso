@@ -245,6 +245,11 @@ body {
     }
   } /* end of .hr-title */
 
+  $kokugo: #F5203E;
+  $kanji: #66A48E;
+  $onomat: #FCE35A;
+  $search: #6C05A5;
+
   svg.graph {
     padding: 8px 12px 4px 12px;
     margin: 0 auto;
@@ -254,14 +259,28 @@ body {
     .bar {
       fill: #e1282e;
       // https://www.colourlovers.com/palette/4718881/Humming
-      &.search {fill: #6C05A5}
-      &.kanji  {fill: #66A48E}
-      &.kokugo {fill: #F5203E}
-      &.onomat {fill: #FCE35A}
+      &.search {fill: $search}
+      &.kanji  {fill: $kanji}
+      &.kokugo {fill: $kokugo}
+      &.onomat {fill: $onomat}
     }
     text {
       text-anchor: middle;
       font-size: x-small;
+    }
+  }
+  .graph-legend {
+    .rect {
+      display: inline-block;
+      width: 1em;
+      height: .7em;
+      margin: 0 .5em;
+      border-radius: 2px;
+
+      &.search {background: $search}
+      &.kanji  {background: $kanji}
+      &.kokugo {background: $kokugo}
+      &.onomat {background: $onomat}
     }
   }
 
