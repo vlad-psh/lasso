@@ -29,38 +29,38 @@ div.index-page-container
       d += 1
     end
 
-  div.hr-title style="margin: 1em 0 1.2em 0": span Learning history (past 3 weeks):
-  br
-  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
-
   ruby:
     aa = Activity.where(user: @view_user, date: (Date.today - days_in_graph + 1)..(Date.today))
     sh = {}
     aa.each {|i| sh[i.date] ||= {}; sh[i.date][i.category] = i.seconds/60.0}
 
-    gdata = [] # gdesc is the same as above
+    gdata_activity = [] # gdesc is the same as above
     d = Date.today - days_in_graph + 1
     while d <= Date.today
-      gdata << [sh[d].try(:[], 'kokugo') || 0, sh[d].try(:[], 'onomat') || 0,
+      gdata_activity << [sh[d].try(:[], 'kokugo') || 0, sh[d].try(:[], 'onomat') || 0,
             sh[d].try(:[], 'kanji') || 0, sh[d].try(:[], 'search') || 0]
       d += 1
     end
 
   div.hr-title style="margin: 1em 0 1.2em 0": span Activity time (past 3 weeks):
   br
-  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:kokugo, :onomat, :kanji, :search]}
+  == slim :svg_graph, locals: {gdata: gdata_activity, gdesc: gdesc, classes: [:kokugo, :onomat, :kanji, :search]}
 
   br
   div.graph-legend
-    div.rect.kokugo
-    = "国語 #{gdata.reduce(0){|acc,i| acc + i[0]}.round}"
-    div.rect.onomat
-    = "ｵﾉﾏﾄ #{gdata.reduce(0){|acc,i| acc + i[1]}.round}"
-    div.rect.kanji
-    = "漢字 #{gdata.reduce(0){|acc,i| acc + i[2]}.round}"
-    div.rect.search
-    = "探 #{gdata.reduce(0){|acc,i| acc + i[3]}.round}"
-    = " ・ Σ = #{(gdata.reduce(0){|acc,i| acc + i.sum} / 60).round(1)}h"
+    div.rect.kokugo title="国語"
+    = gdata_activity.reduce(0){|acc,i| acc + i[0]}.round
+    div.rect.onomat title="ｵﾉﾏﾄﾍﾟ"
+    = gdata_activity.reduce(0){|acc,i| acc + i[1]}.round
+    div.rect.kanji title="漢字"
+    = gdata_activity.reduce(0){|acc,i| acc + i[2]}.round
+    div.rect.search title="search"
+    = gdata_activity.reduce(0){|acc,i| acc + i[3]}.round
+    = " ・ Σ = #{(gdata_activity.reduce(0){|acc,i| acc + i.sum} / 60).round(1)}h"
+
+  div.hr-title style="margin: 1em 0 1.2em 0": span Learning history (past 3 weeks):
+  br
+  == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
   br
   - level = current_user.present? ? current_user.current_level : (@view_user.present? ? @view_user.current_level : 1)
