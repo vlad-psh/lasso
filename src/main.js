@@ -21,6 +21,8 @@ function activity() {
   var active; // active interval
   var idle; // idle timeout
   var idleTS = new Date() - 5000;
+  const submitInterval = 30;
+
   ['load', 'mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(function(name) {
     window.addEventListener(name, start, true);
   });
@@ -44,8 +46,9 @@ function activity() {
   }
   function tick() {
     s += 1;
-    if (s === 30) {
-      fetch('/api/activity/search/30');
+    if (s === submitInterval) {
+      const submitUrl = `/api/activity/${typeof activityCategory !== "undefined" ? activityCategory : 'other'}/${submitInterval}`;
+      fetch(submitUrl);
       s = 0;
     }
   }

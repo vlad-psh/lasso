@@ -253,6 +253,11 @@ body {
 
     .bar {
       fill: #e1282e;
+      // https://www.colourlovers.com/palette/4718881/Humming
+      &.search {fill: #6C05A5}
+      &.kanji  {fill: #66A48E}
+      &.kokugo {fill: #F5203E}
+      &.onomat {fill: #FCE35A}
     }
     text {
       text-anchor: middle;

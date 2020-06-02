@@ -171,7 +171,7 @@ end
 get :activity do
   protect!
 
-  halt(405, "Unknown category") unless %w(search kanji kokugo).include?(params[:category])
+  halt(405, "Unknown category") unless %w(search kanji kokugo onomat).include?(params[:category])
   a = Activity.find_or_initialize_by(user: current_user, category: params[:category], date: custom_today)
   a.seconds += params[:seconds].to_i
   a.save

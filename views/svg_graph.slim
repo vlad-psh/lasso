@@ -18,7 +18,7 @@ ruby:
 
 svg.graph viewBox="0 0 #{graph_width} #{_height+30}"
   - gdata.each_with_index do |v,iter|
-    - v_total = (v.inject(0, :+))
+    - v_total = (v.inject(0, :+)).round
     - bar_height = _height * v_total / maxval.to_f
     g transform=("translate(#{iter*_width},10)")
       - height_shift = 0
