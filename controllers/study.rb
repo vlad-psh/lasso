@@ -47,8 +47,8 @@ post :study2 do
   end
 
   params[:answers].each do |i,a|
-    next if a['answer'] == 'burned'
-    a['progress'].answer!(a['answer'])
+    next if a['answer'] == 'burned' # why??
+    a['progress'].answer!(a['answer'], is_drill: params[:drill].present?)
   end
 
   if params[:sentence_id].present?

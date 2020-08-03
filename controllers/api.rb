@@ -136,7 +136,7 @@ get :api_question_drill do
   drill = Drill.find(params[:id])
 
   progress = drill.progresses.left_outer_joins(:srs_progresses).where(srs_progresses: {id: nil}).first ||
-          SrsProgress.includes(:progress).joins(:progress).merge( drill.progresses ).where(learning_type: :reading_question).order('reviewed_at ASC NULLS FIRST').first.progress
+          SrsProgress.includes(:progress).joins(:progress).merge( drill.progresses ).where(learning_type: :reading_question).order('drill_order ASC NULLS FIRST').first.progress
 
   return {
       sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],

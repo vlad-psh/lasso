@@ -5,7 +5,7 @@ class SrsProgress < ActiveRecord::Base
 
   enum learning_type: {reading_question: 0, kanji_question: 1, listening_question: 2}
 
-  def answer!(a)
+  def answer!(a, is_drill = false)
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
@@ -17,6 +17,8 @@ class SrsProgress < ActiveRecord::Base
       self.attributes = attributes_of_soso_answer
     end
 
+    self.attributes = drill_attributes_for_answer(a) if is_drill
+
     Action.create(srs_progress: self, user: user, action_type: a)
 
     self.reviewed_at = DateTime.now
@@ -27,6 +29,23 @@ class SrsProgress < ActiveRecord::Base
     puts "correct:   #{attributes_of_correct_answer}"
     puts "soso:      #{attributes_of_soso_answer}"
     puts "incorrect: #{attributes_of_incorrect_answer}"
+  end
+
+  def drill_attributes_for_answer(answer)
+    _deck = self.drill_deck || 1
+    _order = self.drill_order || SrsProgress.where(user: user).order(:drill_order).first.drill_order || 0
+
+    if answer == :correct
+      _deck += 1 if _deck <= 10
+    elsif answer == :incorrect
+      _deck = 0
+    end
+    _order += 2**_deck
+
+    return {
+      drill_deck: _deck,
+      drill_order: _order,
+    }
   end
 
   def attributes_of_correct_answer

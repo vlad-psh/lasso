@@ -59,8 +59,11 @@ class Progress < ActiveRecord::Base
     self.update(burned_at: DateTime.now)
   end
 
-  def answer!(a, learning_type = 0) # default learning_type is reading_question == 0
+  def answer!(a, opts = {})
     return if burned_at.present? # no action required for
+
+    learning_type = opts[:learning_type] || 0 # default learning_type is reading_question == 0
+    is_drill = opts[:is_drill] || false
 
     a = a.to_sym
     throw StandardError.new("Unknown answer: #{a}") unless [:correct, :incorrect, :soso].include?(a)
@@ -69,7 +72,7 @@ class Progress < ActiveRecord::Base
 
     srs_progress = SrsProgress.find_by(progress: self, learning_type: learning_type) ||
         SrsProgress.create(learning_type: learning_type, progress: self, user: self.user, deck: 0, transition: Date.today)
-    srs_progress.answer!(a)
+    srs_progress.answer!(a, is_drill)
   end
 
   def html_class

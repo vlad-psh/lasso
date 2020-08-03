@@ -49,7 +49,8 @@ javascript:
       english: null,
       j: {},
       f: {selectedWordSentenceIndex: null, submitted: false},
-      editing: #{{options('editing')}}
+      editing: #{{options('editing')}},
+      is_drill: #{{params[:drill_id].present?}},
     },
     computed: {
       allAnswered() {
@@ -103,7 +104,7 @@ javascript:
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
-          data: {sentence_id: app.sentenceId, answers: answers}
+          data: {sentence_id: app.sentenceId, answers: answers, drill: this.is_drill ? true : null}
         }).done(data => {
           if (data == 'ok') {
             app.updateSentence();
@@ -130,7 +131,8 @@ javascript:
                 i.answer = 'burned';
               } else if (k.progress.reviewed_at) {
                 var reviewedAt = new Date(k.progress.reviewed_at);
-                if (reviewedAt.toDateString() == (new Date()).toDateString()) {
+                if (reviewedAt.toDateString() == (new Date()).toDateString() &&
+                        this.sentenceId) {
                   i.answer = k.progress.last_answer;
                 }
               }
