@@ -155,5 +155,22 @@ javascript:
     }, // end of methods
     mounted: function(){
       this.updateSentence();
+      const app = this;
+      document.onkeydown = function(e) {
+        if (app.selectedWord) {
+          if (e.key === "y") {
+            app.answer('correct');
+          } else if (e.key === "n") {
+            app.answer('incorrect');
+          } else if (e.key === "s") {
+            app.answer('soso');
+          }
+        } else {
+          if (e.keyCode === 32) {
+            app.allAnswered ? app.submit() : app.selectWord(0);
+          }
+        }
+      }
+
     }
   });
