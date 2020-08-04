@@ -38,13 +38,13 @@ div.index-page-container
     d = Date.today - days_in_graph + 1
     while d <= Date.today
       gdata_activity << [sh[d].try(:[], 'kokugo') || 0, sh[d].try(:[], 'onomat') || 0,
-            sh[d].try(:[], 'kanji') || 0, sh[d].try(:[], 'search') || 0]
+            sh[d].try(:[], 'kanji') || 0, sh[d].try(:[], 'search') || 0, sh[d].try(:[], 'srs') || 0]
       d += 1
     end
 
   div.hr-title style="margin: 1em 0 1.2em 0": span Activity time (past 3 weeks):
   br
-  == slim :svg_graph, locals: {gdata: gdata_activity, gdesc: gdesc, classes: [:kokugo, :onomat, :kanji, :search]}
+  == slim :svg_graph, locals: {gdata: gdata_activity, gdesc: gdesc, classes: [:kokugo, :onomat, :kanji, :search, :srs]}
 
   br
   div.graph-legend
@@ -56,6 +56,8 @@ div.index-page-container
     = gdata_activity.reduce(0){|acc,i| acc + i[2]}.round
     div.rect.search title="search"
     = gdata_activity.reduce(0){|acc,i| acc + i[3]}.round
+    div.rect.search title="srs"
+    = gdata_activity.reduce(0){|acc,i| acc + i[4]}.round
     = " ・ Σ = #{(gdata_activity.reduce(0){|acc,i| acc + i.sum} / 60).round(1)}h"
 
   div.hr-title style="margin: 1em 0 1.2em 0": span Learning history (past 3 weeks):

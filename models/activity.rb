@@ -6,6 +6,7 @@ class Activity < ActiveRecord::Base
     kanji:  2,
     kokugo: 3,
     onomat: 4,
+    srs:    5,
   }
 end
 

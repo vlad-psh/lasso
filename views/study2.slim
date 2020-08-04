@@ -6,6 +6,10 @@ ruby:
     question_path = path_to(:api_sentence)
   end
 
+- content_for :scripts
+  javascript:
+    const activityCategory = "srs";
+
 div#sentence-quiz-app.study-card
   div.sentence-question
     div style="position: absolute; top: 0; left: 0"
