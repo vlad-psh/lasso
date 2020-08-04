@@ -40,7 +40,8 @@ class SrsProgress < ActiveRecord::Base
     elsif answer == :incorrect
       _deck = 0
     end
-    _order += 2**_deck
+    increment = 2 ** _deck
+    _order += (increment * (rand*0.6+0.7)).round # increment +/- 30%
 
     return {
       drill_deck: _deck,
