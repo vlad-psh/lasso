@@ -157,6 +157,9 @@ javascript:
       this.updateSentence();
       const app = this;
       document.onkeydown = function(e) {
+        const a = document.activeElement;
+        if (a.tagName === "TEXTAREA" || (a.tagName === "INPUT" && a.type === "text"))
+          return true;
         if (app.selectedWord) {
           if (e.key === "y") {
             app.answer('correct');
