@@ -101,7 +101,7 @@ class Collector
   end
 
   def kanji_structure(k)
-    result = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun, :grade, :radnum, :links])
+    result = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun, :grade, :radnum, :links, :similars])
 
     if (w = k.wk_kanji).present?
       result = result.merge({

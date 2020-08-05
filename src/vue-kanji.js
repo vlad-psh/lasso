@@ -54,8 +54,8 @@ Vue.component('vue-kanji', {
     updateProgress(progress) {
       this.j.kanjis.find(i => i.id === this.id).progress = progress;
     },
-    search() {
-      this.$emit('search', this.kanji.title);
+    search(title) {
+      this.$emit('search', title);
     },
     setComment(progress) {
       this.kanji.progress = JSON.parse(progress);
@@ -76,7 +76,7 @@ Vue.component('vue-kanji', {
   template: `
 <div class="vue-kanji">
   <div class="kanji-info-table">
-    <div class="kanji-title no-refocus" :class="htmlClass" @click="search">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
+    <div class="kanji-title no-refocus" :class="htmlClass" @click="search(kanji.title)">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
     <div class="kanji-details">
       <div class="nb" v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</div>
       <div class="nb" v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</div>
@@ -87,6 +87,7 @@ Vue.component('vue-kanji', {
 
       <template v-for="(v, idx) of kanji.on"><div class="nb"><div v-if="idx === 0" class="on-label">音</div>{{v}}</div><template v-if="idx !== kanji.on.length - 1"> · </template></template>
       <template v-for="(v, idx) of kanji.kun"><div class="nb"><div v-if="idx === 0" class="kun-label">訓</div>{{v.split('.')[0]}}<span class="okurigana" v-if="v.split('.').length > 1">{{v.split('.')[1]}}</span></div><template v-if="idx !== kanji.kun.length - 1"> · </template></template>
+      <div class="related-label">関</div><template v-for="(relatedGroup, rgIdx) of kanji.similars"><span v-for="related of relatedGroup" class="related-kanji" @click="search(related.title)" :class="[related.joyo ? 'joyo' : null, related.yomi ? 'yomi' : null]">{{related.title}}</span><span v-if="rgIdx !== kanji.similars.length - 1">※</span></template>
       <div v-if="!readingsFetched" @click="fetchReadings()" class="ajax-link no-refocus same-readings-label">⋯</div>
 
       <div v-if="readingsFetched">

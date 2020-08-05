@@ -55,7 +55,7 @@
     .okurigana {color: #d00;}
   }
 
-  .on-label, .kun-label, .radical-label, .naritachi-label, .same-readings-label {
+  .on-label, .kun-label, .radical-label, .naritachi-label, .same-readings-label, .related-label {
     display: inline-block;
     color: white;
     padding: .1em .2em;
@@ -67,6 +67,17 @@
   .radical-label {background: #333;}
   .naritachi-label {background: #ffe300; color: #5e5042;}
   .same-readings-label {background: #88888815; color: #888;}
+  .related-label {background: #b06ac4;}
+
+  .related-kanji {
+    margin-right: .2em;
+    padding: 0 .2em;
+    border-radius: 3px;
+    cursor: pointer;
+
+    &.yomi {background: #fffc46; color: #333;}
+    &.joyo {color: #d00 !important;}
+  }
 
   .same-readings-table {
     border-collapse: collapse;

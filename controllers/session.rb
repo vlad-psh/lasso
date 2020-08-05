@@ -4,7 +4,7 @@ paths login: '/login', # GET: login form; POST: log in
 
 get :login do
   if current_user.present?
-    flash[:notice] = "Already logged in"
+#    flash[:notice] = "Already logged in"
     redirect path_to(:index)
   else
     slim :login
@@ -19,7 +19,7 @@ post :login do
     throw StandardError.new('User not found') unless user.present?
     throw StandardError.new('Incorrect password') unless user.check_password(params['password'])
 
-    flash[:notice] = "Successfully logged in as #{user.login}!"
+#    flash[:notice] = "Successfully logged in as #{user.login}!"
     session['user_id'] = user.id
     redirect path_to(:index)
   rescue
