@@ -85,7 +85,8 @@ Vue.component('vue-word', {
       <div class="word-krebs expandable-list">
         <div class="expandable-list-item" v-for="kreb of w.krebs">
           <div>
-            <div class="word-kreb no-refocus" :class="[kreb.is_common ? 'common' : null, kreb.progress.learned_at ? 'learned' : null]" @click="openKrebForm(kreb.title)"><vue-pitch-word :word="kreb.title" :pitch="kreb.pitch"></vue-pitch-word><div v-if="kreb.progress.learned_at && false" class="learned-icon">&#x1f514;</div></div>
+            <div class="word-kreb no-refocus" :class="[kreb.is_common ? 'common' : null, kreb.progress.learned_at ? 'learned' : null]" @click="openKrebForm(kreb.title)"><vue-pitch-word :word="kreb.title" :pitch="kreb.pitch"></vue-pitch-word></div>
+            <a :href="'https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + kreb.title" target="_blank" class="jisho-search-link">&#x1f50e;</a>
           </div>
           <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
         </div>
@@ -96,7 +97,6 @@ Vue.component('vue-word', {
     <div class="expandable-list-container word-kreb-expanded" v-if="forms.kreb !== null">
       <div class="center-block">
         <table><tr>
-          <td><a :href="'https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + selectedKreb.title" target="_blank">&#x1f50e;</a></td>
           <td v-if="selectedKreb.pitch">Pitch: {{selectedKreb.pitch}}</td>
           <td><vue-learn-buttons :paths="j.paths" :progress="selectedKrebProgress" :post-data="{id: seq, title: forms.kreb, kind: 'w'}" :editing="editing" v-on:update-progress="updateKrebProgress($event)"></vue-learn-buttons></td>
           <td>Drills: {{selectedKreb.drills.map(i => j.drills.find(k => k.id === i).title)}}; Add:</td>

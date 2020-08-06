@@ -44,7 +44,8 @@ configure do
 #        domain: '172.16.0.11',
 #        path: '/',
         expire_after: 2592000, # 30 days
-        secret: $config['secret']
+        secret: $config['secret'],
+        same_site: :strict
 
   use Rack::Flash
 

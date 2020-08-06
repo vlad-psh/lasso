@@ -41,21 +41,15 @@
           border-bottom-color: green;
           border-bottom-style: dotted;
         }
-        .learned-icon {
-          @include non-selectable;
-          display: block;
-          //color: #ffbc11;
-          //background-color: white;
-          //border-radius: 1em;
-          font-size: 0.5em;
-          width: .8em;
-          height: .8em;
-          position: absolute;
-          top: -.3em;
-          right: -.3em;
-          line-height: .8em;
-        }
       } /* end of .word-kreb */
+
+      .jisho-search-link {
+        @include non-selectable;
+        text-decoration: none;
+        font-size: .9em;
+        &:hover {opacity: .6;}
+      }
+
 
       .expandable-list-arrow {
         display: inline-block;
