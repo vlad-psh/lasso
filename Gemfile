@@ -7,6 +7,7 @@ gem 'sinatra-contrib'
 gem 'slim'
 
 gem 'sinatra-activerecord'
+gem 'activesupport'
 ## db engines
 #gem 'sqlite3'
 #gem 'mysql2'

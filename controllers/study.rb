@@ -1,6 +1,6 @@
 paths study: '/study/:class/:group', # get, post
   study2: '/study2',
-  api_drill_sentence: '/api/drill_sentence'
+  api_question: '/api/question'
 
 get :study do
   protect!
@@ -59,10 +59,8 @@ post :study2 do
   return 'ok'
 end
 
-get :api_drill_sentence do
-  protect!
-
-  drill = Drill.find(params[:id])
+def get_drill_sentence(drill_id)
+  drill = Drill.find(drill_id)
 
   sAT = Sentence.arel_table
   srAT = SentenceReview.arel_table
@@ -89,4 +87,37 @@ get :api_drill_sentence do
       j: Collector.new(current_user, words: Word.where(seq: sentence.words.map(&:seq))).to_hash
   }.to_json
 
+end
+
+def get_drill_word(drill_id, fresh = false, hard = false)
+  drill = Drill.find(drill_id)
+
+  progress = drill.progresses \
+    .left_outer_joins(:srs_progresses) \
+    .where(srs_progresses: {id: nil}, burned_at: nil) \
+    .first if fresh
+
+  progress ||= SrsProgress.includes(:progress) \
+    .joins(:progress) \
+    .merge(drill.progresses) \
+    .where(learning_type: :reading_question) \
+    .where(hard ? nil : SrsProgress.arel_table[:drill_deck].gt(0)) \
+    .order('drill_order ASC NULLS FIRST') \
+    .first.try(:progress)
+
+  return {
+      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
+      english: nil,
+      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
+    }.to_json
+end
+
+get :api_question do
+  protect!
+
+  if params[:type] == 'sentences'
+    get_drill_sentence(params[:drill_id])
+  else
+    get_drill_word(params[:drill_id], params[:fresh].present?, params[:hard].present?)
+  end
 end

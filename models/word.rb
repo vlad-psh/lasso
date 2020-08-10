@@ -1,3 +1,5 @@
+require_relative './progressable.rb'
+
 class Word < ActiveRecord::Base
   has_many :wk_words, primary_key: :seq, foreign_key: :seq
   has_many :word_titles, primary_key: :seq, foreign_key: :seq
@@ -7,28 +9,9 @@ class Word < ActiveRecord::Base
   has_many :sentences_words, primary_key: :seq, foreign_key: :word_seq
   has_many :sentences, through: :sentences_words
 
-  def self.with_progresses(user)
-    elements = all
-    progresses = Progress.joins(:word).where(user: user).merge(elements).hash_me(:seq)
-    elements.each do |e|
-      # word can have multiple progresses per user (different variants of writing/reading)
-      e.user_progresses = progresses[e.seq]
-    end
-  end
+  include Progressable
 
-  def user_progresses=(value)
-    @_user_progresses = value
-  end
-
-  def user_progresses
-    return @_user_progresses if defined?(@_user_progresses)
-    throw StandardError.new("'user_progresses' property can be accessed only when elements have been selected with 'with_progresses' method")
-  end
-
-  def best_user_progress
-    return nil unless @_user_progresses.present?
-    @_user_progresses.sort.last
-  end
+  scope :by_kreb, ->(kreb) {joins(:word_titles).merge(WordTitle.where(title: kreb))}
 
   def krebs # All keb's and reb's
     return [*kebs, *rebs].compact

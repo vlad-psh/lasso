@@ -52,10 +52,10 @@ get :list_level do
   @pagination[:prev] = {href: path_to(:list_level).with(lvl - 1), title: "Level&nbsp;#{lvl - 1}"} if lvl > 1
   @pagination[:next] = {href: path_to(:list_level).with(lvl + 1), title: "Level&nbsp;#{lvl + 1}"} if lvl < 60
 
-  @words = Word.joins(:wk_words).merge(WkWord.where(level: params[:level])).order(:id).with_progresses(@view_user)
-#  @kanji = WkKanji.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
-  @kanji = Kanji.includes(:wk_kanji).joins(:wk_kanji).merge(WkKanji.where(level: params[:level])).order(:id).with_progresses(@view_user)
-  @radicals = WkRadical.where(level: params[:level]).order(id: :asc).with_progresses(@view_user)
+  @words = Word.joins(:wk_words).merge(WkWord.where(level: params[:level])).order(:id).as_for(@view_user)
+#  @kanji = WkKanji.where(level: params[:level]).order(id: :asc).as_for(@view_user)
+  @kanji = Kanji.includes(:wk_kanji).joins(:wk_kanji).merge(WkKanji.where(level: params[:level])).order(:id).as_for(@view_user)
+  @radicals = WkRadical.where(level: params[:level]).order(id: :asc).as_for(@view_user)
 
   @title = "L.#{params[:level]}"
   @separate_list = true
@@ -71,7 +71,7 @@ get :list_nf do
   @pagination[:prev] = {href: path_to(:list_nf).with(lvl - 1), title: "NF&nbsp;##{lvl - 1}"} if lvl > 1
   @pagination[:next] = {href: path_to(:list_nf).with(lvl + 1), title: "NF&nbsp;##{lvl + 1}"} if lvl < 48
 
-  @elements = Word.where(nf: params[:nf]).order(:seq).with_progresses(current_user)
+  @elements = Word.where(nf: params[:nf]).order(:seq).as_for(current_user)
 
   slim :list
 end
@@ -84,7 +84,7 @@ get :list_jlpt_words do
   @pagination[:prev] = {href: path_to(:list_jlpt_words).with(lvl + 1), title: "JLPT&nbsp;N#{lvl + 1}"} if lvl < 5
   @pagination[:next] = {href: path_to(:list_jlpt_words).with(lvl - 1), title: "JLPT&nbsp;N#{lvl - 1}"} if lvl > 1
 
-  @elements = Word.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
+  @elements = Word.where(jlptn: params[:level]).order(:id).as_for(@view_user)
   slim :list
 end
 
@@ -96,7 +96,7 @@ get :list_jlpt_kanji do
   @pagination[:prev] = {href: path_to(:list_jlpt_kanji).with(lvl + 1), title: "JLPT&nbsp;N#{lvl + 1}"} if lvl < 5
   @pagination[:next] = {href: path_to(:list_jlpt_kanji).with(lvl - 1), title: "JLPT&nbsp;N#{lvl - 1}"} if lvl > 1
 
-  @elements = Kanji.where(jlptn: params[:level]).order(:id).with_progresses(@view_user)
+  @elements = Kanji.where(jlptn: params[:level]).order(:id).as_for(@view_user)
   slim :list
 end
 

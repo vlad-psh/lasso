@@ -9,7 +9,7 @@ ruby:
 div class="elements-list"
   - elements.each do |e|
     div.elements-list-item
-      div class="element-block #{(e.kind_of?(Word) ? e.best_user_progress : e.user_progress).try(:html_class) || :pristine}"
+      div class="element-block #{(e.best_progress).try(:html_class) || :pristine}"
         a href=path_to(e.model_name.singular.to_sym).with(e.kind_of?(Word) ? e.seq : e.id)
           div.element
             - if e.kind_of?(WkRadical) && e.title.blank?

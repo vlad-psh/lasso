@@ -1,11 +1,3 @@
-ruby:
-  if params[:drill_id].present?
-    question_path = params[:type] == 'sentences' ? path_to(:api_drill_sentence) : path_to(:api_question_drill)
-    question_path += "?id=#{params[:drill_id]}"
-  else
-    question_path = path_to(:api_sentence)
-  end
-
 - content_for :scripts
   javascript:
     const activityCategory = "srs";
@@ -19,7 +11,9 @@ div#sentence-quiz-app.study-card
       br
       label
         input type="checkbox" v-model="formVars.hard"
-        ' &#x1f621;
+        ' &#x1f4a2;
+      br
+      a.ajax-link @click="updateSentence" &#x1f504;
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
         div v-if="word.answer" @click="selectWord(wordIndex)"
@@ -61,19 +55,20 @@ javascript:
       f: {selectedWordSentenceIndex: null, submitted: false},
       editing: #{{options('editing')}},
       formVars: {
-        drill: #{{params[:drill_id].present?}},
+        drillId: #{{params[:drill_id] || 'null'}},
         fresh: false,
         hard: false,
+        sentences: #{{params[:type] == 'sentences'}}
       },
       is_drill: #{{params[:drill_id].present?}},
     },
     computed: {
-      formData() {
-        return Object.assign({},
-          this.formVars.drill ? {drill: true} : null,
-          this.formVars.fresh ? {fresh: true} : null,
-          this.formVars.hard ? {hard: true} : null,
-        );
+      questionPath() {
+        return "/api/question?" +
+            (this.formVars.drillId ? `&drill_id=${this.formVars.drillId}` : '') +
+            (this.formVars.sentences ? '&type=sentences' : '') +
+            (this.formVars.fresh ? '&fresh=true' : '') +
+            (this.formVars.hard ? '&hard=true' : '');
       },
       allAnswered() {
         var unanswered = this.sentence.filter(i => i.seq && !i.answer);
@@ -126,7 +121,10 @@ javascript:
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
-          data: Object.assign({sentence_id: app.sentenceId, answers: answers}, this.formData)
+          data: Object.assign(
+                {sentence_id: app.sentenceId, answers: answers},
+                this.formVars.drillId ? {drill: true} : null
+          )
         }).done(data => {
           if (data == 'ok') {
             app.updateSentence();
@@ -138,7 +136,7 @@ javascript:
       updateSentence() {
         var app = this;
         $.ajax({
-          url: "#{{question_path}}",
+          url: this.questionPath,
           method: 'GET'
         }).done(data => {
           var j = JSON.parse(data);

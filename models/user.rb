@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   has_many :actions
   has_many :notes
   has_many :user_cards
+  has_many :progresses
 
   def set_password(pwd)
     self.salt = SecureRandom.hex

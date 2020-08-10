@@ -1,26 +1,12 @@
+require_relative './progressable.rb'
+
 class Kanji < ActiveRecord::Base
   self.table_name = 'kanji'
   has_many :progresses
   has_one :wk_kanji
   has_many :kanji_readings, primary_key: :title, foreign_key: :title
 
-  def self.with_progresses(user)
-    elements = all
-    progresses = Progress.joins(:kanji).where(user: user).merge(elements).hash_me(:kanji_id)
-    elements.each do |e|
-      # kanji has only one progress per user
-      e.user_progress = progresses[e.id].try(:first)
-    end
-  end
-
-  def user_progress=(value)
-    @_user_progress = value
-  end
-
-  def user_progress
-    return @_user_progress if defined?(@_user_progress)
-    throw StandardError.new("'user_progress' property can be accessed only when elements have been selected with 'with_progresses' method")
-  end
+  include Progressable
 
   def list_title
     self.title

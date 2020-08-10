@@ -1,5 +1,4 @@
 paths api_sentence: '/api/sentence',
-    api_question_drill: '/api/question/drill',
     word_details: '/api/word', # params: seq
     api_word_autocomplete: '/api/word/autocomplete',
     api_learn:   '/api/word/learn',
@@ -20,7 +19,7 @@ get :api_sentence do
   progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
   main_word = progress.word
   main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
-    unless sentence.words.with_progresses(current_user).map {|w| w.user_progresses.try(:first).try(:learned_at).present?}.include?(false)
+    unless sentence.words.as_for(current_user).map {|w| w.progresses.try(:first).try(:learned_at).present?}.include?(false)
       # If all words in sentence are learned
       @sentence = sentence
       break
@@ -129,30 +128,6 @@ post :drill_add_word do
   drill.progresses << progress
 
   return 'ok'
-end
-
-get :api_question_drill do
-  protect!
-  drill = Drill.find(params[:id])
-
-  progress = drill.progresses
-    .left_outer_joins(:srs_progresses)
-    .where(srs_progresses: {id: nil}, burned_at: nil)
-    .first if params['fresh']
-
-  progress ||= SrsProgress.includes(:progress)
-    .joins(:progress)
-    .merge(drill.progresses)
-    .where(learning_type: :reading_question)
-    .where(params['hard'] ? nil : SrsProgress.arel_table[:drill_deck].gt(0))
-    .order('drill_order ASC NULLS FIRST')
-    .first.progress
-
-  return {
-      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
-      english: nil,
-      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
-    }.to_json
 end
 
 post :kanji_readings do

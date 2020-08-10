@@ -16,6 +16,8 @@ class Progress < ActiveRecord::Base
 
   scope :learned,  ->{where.not(learned_at: nil)}
 
+  scope :by_user, ->(user) {where(user: user)}
+
   include Comparable
   def <=>(anOther)
     sorting_score <=> anOther.sorting_score
