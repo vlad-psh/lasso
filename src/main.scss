@@ -249,6 +249,7 @@ body {
   $kanji: #66A48E;
   $onomat: #FCE35A;
   $search: #6C05A5;
+  $srs: #3d93bd;
 
   svg.graph {
     padding: 8px 12px 4px 12px;
@@ -263,6 +264,7 @@ body {
       &.kanji  {fill: $kanji}
       &.kokugo {fill: $kokugo}
       &.onomat {fill: $onomat}
+      &.srs    {fill: $srs}
     }
     text {
       text-anchor: middle;
@@ -281,6 +283,7 @@ body {
       &.kanji  {background: $kanji}
       &.kokugo {background: $kokugo}
       &.onomat {background: $onomat}
+      &.srs    {background: $srs}
     }
   }
 

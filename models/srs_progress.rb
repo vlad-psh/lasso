@@ -36,11 +36,14 @@ class SrsProgress < ActiveRecord::Base
     _order = self.drill_order || SrsProgress.where(user: user).order(:drill_order).first.drill_order || 0
 
     if answer == :correct
-      _deck += 1 if _deck <= 10
+      _deck += 1 if _deck < 10
+      increment = 2 ** _deck
     elsif answer == :incorrect
       _deck = 0
+      increment = 1
+    elsif answer == :soso
+      increment = 2 ** ((_deck < 10 ? _deck + 1 : _deck) / 2.0)
     end
-    increment = 2 ** _deck
     _order += (increment * (rand*0.6+0.7)).round # increment +/- 30%
 
     return {

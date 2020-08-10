@@ -56,7 +56,7 @@ div.index-page-container
     = gdata_activity.reduce(0){|acc,i| acc + i[2]}.round
     div.rect.search title="search"
     = gdata_activity.reduce(0){|acc,i| acc + i[3]}.round
-    div.rect.search title="srs"
+    div.rect.srs title="srs"
     = gdata_activity.reduce(0){|acc,i| acc + i[4]}.round
     = " ・ Σ = #{(gdata_activity.reduce(0){|acc,i| acc + i.sum} / 60).round(1)}h"
 

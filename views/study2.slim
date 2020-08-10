@@ -13,7 +13,13 @@ ruby:
 div#sentence-quiz-app.study-card
   div.sentence-question
     div style="position: absolute; top: 0; left: 0"
-      input type="button" @click="updateSentence" value="Next"
+      label
+        input type="checkbox" v-model="formVars.fresh"
+        ' &#x1f530;
+      br
+      label
+        input type="checkbox" v-model="formVars.hard"
+        ' &#x1f621;
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
         div v-if="word.answer" @click="selectWord(wordIndex)"
@@ -54,9 +60,21 @@ javascript:
       j: {},
       f: {selectedWordSentenceIndex: null, submitted: false},
       editing: #{{options('editing')}},
+      formVars: {
+        drill: #{{params[:drill_id].present?}},
+        fresh: false,
+        hard: false,
+      },
       is_drill: #{{params[:drill_id].present?}},
     },
     computed: {
+      formData() {
+        return Object.assign({},
+          this.formVars.drill ? {drill: true} : null,
+          this.formVars.fresh ? {fresh: true} : null,
+          this.formVars.hard ? {hard: true} : null,
+        );
+      },
       allAnswered() {
         var unanswered = this.sentence.filter(i => i.seq && !i.answer);
         return unanswered.length === 0 && this.sentence.length !== 0 ? true : false;
@@ -108,7 +126,7 @@ javascript:
         $.ajax({
           url: "#{{path_to(:study2)}}",
           method: 'POST',
-          data: {sentence_id: app.sentenceId, answers: answers, drill: this.is_drill ? true : null}
+          data: Object.assign({sentence_id: app.sentenceId, answers: answers}, this.formData)
         }).done(data => {
           if (data == 'ok') {
             app.updateSentence();
