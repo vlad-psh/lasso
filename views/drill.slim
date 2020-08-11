@@ -17,13 +17,13 @@ input class="word-add-autocomplete" type="text" placeholder="Add short"
 div.hr-title : span Kanji
 
 div class="elements-list"
-  - @elements.shuffle.each do |e|
-    div.elements-list-item : div class="element-block pristine" : a href=e[:href] : div.element : span.japanese = e[:title]
+  - @elements.each do |e|
+    div.elements-list-item : div class="element-block #{e[:html_class]}" : a href=e[:href] : div.element : span.japanese = e[:title]
 
 div.hr-title : span Reading
 
 div class="elements-list"
-  - @elements.shuffle.each do |e|
+  - @elements.each do |e|
     div.elements-list-item : div class="element-block pristine" : a href=e[:href] : div.element : span.japanese = e[:reading]
 
 div.hr-title : span Sentences

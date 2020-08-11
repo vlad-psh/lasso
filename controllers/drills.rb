@@ -20,13 +20,13 @@ get :drill do
   @drill = Drill.find_by(user: current_user, id: params[:id])
   halt(404, "Drill Set not found") if @drill.blank?
 
-  @elements = @drill.progresses.eager_load(:word).map do |p|
+  @elements = @drill.progresses.eager_load(:word, :srs_progresses).map do |p|
     {
       title: p.title,
       reading: p.word.rebs.first,
       description: p.word.list_desc,
-      html_class: p.html_class,
-      href: path_to(:word).with(p.seq)
+      html_class: p.srs_progresses.try(:first).try(:html_class_leitner) || 'pristine',
+      href: path_to(:word).with(p.seq),
     }
   end
 

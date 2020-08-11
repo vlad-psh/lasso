@@ -98,34 +98,34 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
     .merge(drill.progresses) \
     .where(learning_type: :reading_question, leitner_box: nil) \
     .where.not(leitner_last_reviewed_at_session: [current_user.leitner_session, nil, 10]) \
-    .order(id: :asc) \
+    .order('random()') \
     .first.try(:progress)
 
-  if current_user.leitner_fresh < 5 && fresh && !progress.persent?
+  if current_user.leitner_fresh < 5 && fresh && !progress.present?
     progress ||= SrsProgress.includes(:progress) \
       .joins(:progress) \
       .merge(drill.progresses) \
       .where(learning_type: :reading_question, leitner_last_reviewed_at_session: nil) \
-      .order(id: :asc) \
+      .order('random()') \
       .first.try(:progress)
     # Next try to select cards without any SrsProgress records
     progress ||= drill.progresses \
       .left_outer_joins(:srs_progresses) \
       .where(srs_progresses: {id: nil}, burned_at: nil) \
-      .order(id: :asc) \
+      .order('random()') \
       .first
 
     current_user.leitner_fresh += 1 if progress.present?
   end
 
-  session_boxes = [[0,1,5,8],[1,2,6,9],[2,3,7,0],[3,4,8,1],[4,5,9,2],[5,6,0,3],[6,7,1,4],[7,8,2,5],[8,9,3,6],[9,0,4,7]]
+  session_boxes = [[0,2,5,9],[1,3,6,0],[2,4,7,1],[3,5,8,2],[4,6,9,3],[5,7,0,4],[6,8,1,5],[7,9,2,6],[8,0,3,7],[9,1,4,8]]
   # Select cards in one of the boxes for current session
   progress ||= SrsProgress.includes(:progress) \
     .joins(:progress) \
     .merge(drill.progresses) \
     .where(learning_type: :reading_question, leitner_box: session_boxes[current_user.leitner_session]) \
     .where.not(leitner_last_reviewed_at_session: current_user.leitner_session) \
-    .order(id: :asc) \
+    .order('random()') \
     .first.try(:progress)
 
   if !progress.present? && allow_recursion

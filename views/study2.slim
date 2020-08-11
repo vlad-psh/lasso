@@ -52,7 +52,7 @@ javascript:
       editing: #{{options('editing')}},
       formVars: {
         drillId: #{{params[:drill_id] || 'null'}},
-        fresh: false,
+        fresh: true,
         sentences: #{{params[:type] == 'sentences'}}
       },
       is_drill: #{{params[:drill_id].present?}},

@@ -109,6 +109,18 @@ class SrsProgress < ActiveRecord::Base
     }
   end
 
+  def html_class_leitner
+    if leitner_last_reviewed_at_session == nil
+      'pristine'
+    elsif leitner_box == nil
+      'apprentice'
+    elsif leitner_box == 10
+      'master'
+    else
+      'guru'
+    end
+  end
+
   private
   def random_reschedule!
 # Deprecated method
