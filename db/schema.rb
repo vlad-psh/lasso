@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_11_090809) do
+ActiveRecord::Schema.define(version: 2020_08_11_091758) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -171,8 +171,6 @@ ActiveRecord::Schema.define(version: 2020_08_11_090809) do
     t.date "transition"
     t.string "last_answer"
     t.datetime "reviewed_at"
-    t.integer "drill_deck"
-    t.bigint "drill_order"
     t.integer "leitner_box"
     t.integer "leitner_last_reviewed_at_session"
     t.integer "leitner_combo", default: 0
