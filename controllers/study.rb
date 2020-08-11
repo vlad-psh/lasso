@@ -89,27 +89,55 @@ def get_drill_sentence(drill_id)
 
 end
 
-def get_drill_word(drill_id, fresh = false, hard = false)
+def get_drill_word(drill_id, fresh = false, allow_recursion = true)
   drill = Drill.find(drill_id)
 
-  progress = drill.progresses \
-    .left_outer_joins(:srs_progresses) \
-    .where(srs_progresses: {id: nil}, burned_at: nil) \
-    .first if fresh
-
+  # Try to find failed cards
   progress ||= SrsProgress.includes(:progress) \
     .joins(:progress) \
     .merge(drill.progresses) \
-    .where(learning_type: :reading_question) \
-    .where(hard ? nil : SrsProgress.arel_table[:drill_deck].gt(0)) \
-    .order('drill_order ASC NULLS FIRST') \
+    .where(learning_type: :reading_question, leitner_box: nil) \
+    .where.not(leitner_last_reviewed_at_session: [current_user.leitner_session, nil, 10]) \
+    .order(id: :asc) \
     .first.try(:progress)
 
-  return {
-      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
-      english: nil,
-      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
-    }.to_json
+  if current_user.leitner_fresh < 5 && fresh && !progress.persent?
+    progress ||= SrsProgress.includes(:progress) \
+      .joins(:progress) \
+      .merge(drill.progresses) \
+      .where(learning_type: :reading_question, leitner_last_reviewed_at_session: nil) \
+      .order(id: :asc) \
+      .first.try(:progress)
+    # Next try to select cards without any SrsProgress records
+    progress ||= drill.progresses \
+      .left_outer_joins(:srs_progresses) \
+      .where(srs_progresses: {id: nil}, burned_at: nil) \
+      .order(id: :asc) \
+      .first
+
+    current_user.leitner_fresh += 1 if progress.present?
+  end
+
+  session_boxes = [[0,1,5,8],[1,2,6,9],[2,3,7,0],[3,4,8,1],[4,5,9,2],[5,6,0,3],[6,7,1,4],[7,8,2,5],[8,9,3,6],[9,0,4,7]]
+  # Select cards in one of the boxes for current session
+  progress ||= SrsProgress.includes(:progress) \
+    .joins(:progress) \
+    .merge(drill.progresses) \
+    .where(learning_type: :reading_question, leitner_box: session_boxes[current_user.leitner_session]) \
+    .where.not(leitner_last_reviewed_at_session: current_user.leitner_session) \
+    .order(id: :asc) \
+    .first.try(:progress)
+
+  if !progress.present? && allow_recursion
+    current_user.leitner_session += 1
+    current_user.leitner_session %= 10
+    current_user.leitner_fresh = 0
+
+    progress = get_drill_word(drill_id, fresh, false)
+  end
+  current_user.save
+
+  return progress
 end
 
 get :api_question do
@@ -118,6 +146,12 @@ get :api_question do
   if params[:type] == 'sentences'
     get_drill_sentence(params[:drill_id])
   else
-    get_drill_word(params[:drill_id], params[:fresh].present?, params[:hard].present?)
+    progress = get_drill_word(params[:drill_id], params[:fresh].present?)
+
+    {
+      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
+      english: nil,
+      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
+    }.to_json
   end
 end

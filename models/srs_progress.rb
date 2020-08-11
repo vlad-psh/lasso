@@ -32,23 +32,22 @@ class SrsProgress < ActiveRecord::Base
   end
 
   def drill_attributes_for_answer(answer)
-    _deck = self.drill_deck || 1
-    _order = self.drill_order || SrsProgress.where(user: user).order(:drill_order).first.drill_order || 0
-
     if answer == :correct
-      _deck += 1 if _deck < 10
-      increment = 2 ** _deck
+      box = leitner_box == nil ? user.leitner_session : leitner_box
+      combo = leitner_combo + 1
     elsif answer == :incorrect
-      _deck = 0
-      increment = 1
+      box = nil
+      combo = 0
     elsif answer == :soso
-      increment = 2 ** ((_deck < 10 ? _deck + 1 : _deck) / 2.0)
+      box = leitner_box == nil ? user.leitner_session : leitner_box
+      combo = leitner_combo # no change
     end
-    _order += (increment * (rand*0.6+0.7)).round # increment +/- 30%
+    box = 10 if combo > 4 # move to 'retired' deck
 
     return {
-      drill_deck: _deck,
-      drill_order: _order,
+      leitner_box: box,
+      leitner_combo: combo,
+      leitner_last_reviewed_at_session: user.leitner_session,
     }
   end
 

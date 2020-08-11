@@ -9,10 +9,6 @@ div#sentence-quiz-app.study-card
         input type="checkbox" v-model="formVars.fresh"
         ' &#x1f530;
       br
-      label
-        input type="checkbox" v-model="formVars.hard"
-        ' &#x1f4a2;
-      br
       a.ajax-link @click="updateSentence" &#x1f504;
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
@@ -57,7 +53,6 @@ javascript:
       formVars: {
         drillId: #{{params[:drill_id] || 'null'}},
         fresh: false,
-        hard: false,
         sentences: #{{params[:type] == 'sentences'}}
       },
       is_drill: #{{params[:drill_id].present?}},
@@ -67,8 +62,7 @@ javascript:
         return "/api/question?" +
             (this.formVars.drillId ? `&drill_id=${this.formVars.drillId}` : '') +
             (this.formVars.sentences ? '&type=sentences' : '') +
-            (this.formVars.fresh ? '&fresh=true' : '') +
-            (this.formVars.hard ? '&hard=true' : '');
+            (this.formVars.fresh ? '&fresh=true' : '');
       },
       allAnswered() {
         var unanswered = this.sentence.filter(i => i.seq && !i.answer);
