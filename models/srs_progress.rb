@@ -5,7 +5,7 @@ class SrsProgress < ActiveRecord::Base
 
   enum learning_type: {reading_question: 0, kanji_question: 1, listening_question: 2}
 
-  def answer!(a, is_drill = false)
+  def answer!(a, drill = nil)
     # answer should be 'yes', 'no' or 'soso'
     a = a.to_sym
 
@@ -17,7 +17,7 @@ class SrsProgress < ActiveRecord::Base
       self.attributes = attributes_of_soso_answer
     end
 
-    self.attributes = drill_attributes_for_answer(a) if is_drill
+    self.attributes = drill_attributes_for_answer(a, drill) if drill.present?
 
     Action.create(srs_progress: self, user: user, action_type: a)
 
@@ -31,23 +31,22 @@ class SrsProgress < ActiveRecord::Base
     puts "incorrect: #{attributes_of_incorrect_answer}"
   end
 
-  def drill_attributes_for_answer(answer)
+  def drill_attributes_for_answer(answer, drill)
     if answer == :correct
-      box = leitner_box == nil ? user.leitner_session : leitner_box
+      box = leitner_box == nil ? drill.leitner_session : leitner_box
       combo = leitner_combo + 1
     elsif answer == :incorrect
       box = nil
       combo = 0
     elsif answer == :soso
-      box = leitner_box == nil ? user.leitner_session : leitner_box
+      box = leitner_box == nil ? drill.leitner_session : leitner_box
       combo = leitner_combo # no change
     end
-    box = 10 if combo > 4 # move to 'retired' deck
 
     return {
       leitner_box: box,
       leitner_combo: combo,
-      leitner_last_reviewed_at_session: user.leitner_session,
+      leitner_last_reviewed_at_session: drill.leitner_session,
     }
   end
 
@@ -114,7 +113,7 @@ class SrsProgress < ActiveRecord::Base
       'pristine'
     elsif leitner_box == nil
       'apprentice'
-    elsif leitner_box == 10
+    elsif leitner_combo >= 5
       'master'
     else
       'guru'

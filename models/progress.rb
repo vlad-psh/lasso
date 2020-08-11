@@ -65,7 +65,7 @@ class Progress < ActiveRecord::Base
     return if burned_at.present? # no action required for
 
     learning_type = opts[:learning_type] || 0 # default learning_type is reading_question == 0
-    is_drill = opts[:is_drill] || false
+    drill = opts[:drill] || nil
 
     a = a.to_sym
     throw StandardError.new("Unknown answer: #{a}") unless [:correct, :incorrect, :soso].include?(a)
@@ -74,7 +74,7 @@ class Progress < ActiveRecord::Base
 
     srs_progress = SrsProgress.find_by(progress: self, learning_type: learning_type) ||
         SrsProgress.create(learning_type: learning_type, progress: self, user: self.user, deck: 0, transition: Date.today)
-    srs_progress.answer!(a, is_drill)
+    srs_progress.answer!(a, drill)
   end
 
   def html_class

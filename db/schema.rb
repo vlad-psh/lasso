@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_11_091758) do
+ActiveRecord::Schema.define(version: 2020_08_11_145915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 2020_08_11_091758) do
     t.bigint "user_id"
     t.datetime "created_at"
     t.boolean "is_active", default: true
+    t.integer "leitner_session", default: 0
+    t.integer "leitner_fresh", default: 0
     t.index ["user_id"], name: "index_drills_on_user_id"
   end
 
@@ -189,8 +191,6 @@ ActiveRecord::Schema.define(version: 2020_08_11_091758) do
     t.string "salt"
     t.string "pwhash"
     t.jsonb "settings", default: {}
-    t.integer "leitner_session", default: 0
-    t.integer "leitner_fresh", default: 0
   end
 
   create_table "wk_kanji", force: :cascade do |t|

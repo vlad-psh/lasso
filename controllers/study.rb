@@ -48,7 +48,8 @@ post :study2 do
 
   params[:answers].each do |i,a|
     next if a['answer'] == 'burned' # why??
-    a['progress'].answer!(a['answer'], is_drill: params[:drill].present?)
+    drill = Drill.find_by(user: current_user, id: params[:drill_id]) if params[:drill_id]
+    a['progress'].answer!(a['answer'], drill: drill || nil)
   end
 
   if params[:sentence_id].present?
@@ -97,11 +98,11 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
     .joins(:progress) \
     .merge(drill.progresses) \
     .where(learning_type: :reading_question, leitner_box: nil) \
-    .where.not(leitner_last_reviewed_at_session: [current_user.leitner_session, nil, 10]) \
+    .where.not(leitner_last_reviewed_at_session: [drill.leitner_session, nil, 10]) \
     .order('random()') \
     .first.try(:progress)
 
-  if current_user.leitner_fresh < 5 && fresh && !progress.present?
+  if drill.leitner_fresh < 5 && fresh && !progress.present?
     progress ||= SrsProgress.includes(:progress) \
       .joins(:progress) \
       .merge(drill.progresses) \
@@ -115,7 +116,7 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
       .order('random()') \
       .first
 
-    current_user.leitner_fresh += 1 if progress.present?
+    drill.update(leitner_fresh: drill.leitner_fresh + 1) if progress.present?
   end
 
   session_boxes = [[0,2,5,9],[1,3,6,0],[2,4,7,1],[3,5,8,2],[4,6,9,3],[5,7,0,4],[6,8,1,5],[7,9,2,6],[8,0,3,7],[9,1,4,8]]
@@ -123,19 +124,16 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
   progress ||= SrsProgress.includes(:progress) \
     .joins(:progress) \
     .merge(drill.progresses) \
-    .where(learning_type: :reading_question, leitner_box: session_boxes[current_user.leitner_session]) \
-    .where.not(leitner_last_reviewed_at_session: current_user.leitner_session) \
+    .where(learning_type: :reading_question, leitner_box: session_boxes[drill.leitner_session]) \
+    .where.not(leitner_last_reviewed_at_session: drill.leitner_session) \
+    .where(SrsProgress.arel_table[:leitner_combo].lt(5)) \
     .order('random()') \
     .first.try(:progress)
 
   if !progress.present? && allow_recursion
-    current_user.leitner_session += 1
-    current_user.leitner_session %= 10
-    current_user.leitner_fresh = 0
-
+    drill.update(leitner_session: (drill.leitner_session + 1) % 10, leitner_fresh: 0)
     progress = get_drill_word(drill_id, fresh, false)
   end
-  current_user.save
 
   return progress
 end
