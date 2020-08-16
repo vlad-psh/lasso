@@ -71,6 +71,9 @@
       font-size: 0.8em;
     }
   }
+  #vue-modal {
+    height: calc(var(--vh, 1vh) * 100);
+  }
 }}
 
 @media (max-width: 320px) {

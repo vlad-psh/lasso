@@ -34,6 +34,8 @@ html
     div#container
       == yield
 
+    == slim :modal
+
     javascript:
       var _sDevice = "#{{options('device')}}";
 
