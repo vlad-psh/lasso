@@ -18,7 +18,7 @@ require('./vue-pitch-word-nhk.js');
 require('./vue-settings-button.js');
 
 function activity() {
-  var s = 0;
+  var storage = {};
   var active; // active interval
   var idle; // idle timeout
   var idleTS = new Date() - 5000;
@@ -45,12 +45,16 @@ function activity() {
     clearInterval(active);
     active = null;
   }
+  function category() {
+    return typeof window.activityCategory !== "undefined" ? window.activityCategory : 'other';
+  }
   function tick() {
-    s += 1;
-    if (s === submitInterval) {
-      const submitUrl = `/api/activity/${typeof activityCategory !== "undefined" ? activityCategory : 'other'}/${submitInterval}`;
+    const c = category();
+    storage[c] = (storage[c] || 0) + 1;
+    if (storage[c] === submitInterval) {
+      const submitUrl = `/api/activity/${c}/${submitInterval}`;
       fetch(submitUrl);
-      s = 0;
+      storage[c] = 0;
     }
   }
 }

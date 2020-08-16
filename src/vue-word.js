@@ -72,8 +72,8 @@ Vue.component('vue-word', {
     search(query, method) {
       this.$emit('search', query, method);
     },
-    modalOpen(url) {
-      window.vueModal.open(url);
+    modalOpen(term) {
+      window.vueModal.openKokugo(term);
     },
     ...helpers
   }, // end of methods
@@ -89,7 +89,7 @@ Vue.component('vue-word', {
         <div class="expandable-list-item" v-for="kreb of w.krebs">
           <div>
             <div class="word-kreb no-refocus" :class="[kreb.is_common ? 'common' : null, kreb.progress.learned_at ? 'learned' : null]" @click="openKrebForm(kreb.title)"><vue-pitch-word :word="kreb.title" :pitch="kreb.pitch"></vue-pitch-word></div>
-            <a @click.prevent.stop="modalOpen('https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + kreb.title)" class="jisho-search-link" :href="'https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + kreb.title" target="_blank">&#x1f50e;</a>
+            <a @click.prevent.stop="modalOpen(kreb.title)" class="jisho-search-link" :href="'https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + kreb.title" target="_blank">&#x1f50e;</a>
           </div>
           <div class="expandable-list-arrow" v-if="kreb.title === forms.kreb"></div>
         </div>
