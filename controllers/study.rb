@@ -96,7 +96,7 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
   # Try to find failed cards
   progress ||= SrsProgress.includes(:progress) \
     .joins(:progress) \
-    .merge(drill.progresses) \
+    .merge(drill.progresses.where(burned_at: nil)) \
     .where(learning_type: :reading_question, leitner_box: nil) \
     .where.not(leitner_last_reviewed_at_session: [drill.leitner_session, nil, 10]) \
     .order('random()') \
@@ -123,7 +123,7 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
   # Select cards in one of the boxes for current session
   progress ||= SrsProgress.includes(:progress) \
     .joins(:progress) \
-    .merge(drill.progresses) \
+    .merge(drill.progresses.where(burned_at: nil)) \
     .where(learning_type: :reading_question, leitner_box: session_boxes[drill.leitner_session]) \
     .where.not(leitner_last_reviewed_at_session: drill.leitner_session) \
     .where(SrsProgress.arel_table[:leitner_combo].lt(5)) \
