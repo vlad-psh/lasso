@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_11_145915) do
+ActiveRecord::Schema.define(version: 2020_08_17_163451) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,6 +176,7 @@ ActiveRecord::Schema.define(version: 2020_08_11_145915) do
     t.integer "leitner_box"
     t.integer "leitner_last_reviewed_at_session"
     t.integer "leitner_combo", default: 0
+    t.integer "fail_count", default: 0
     t.index ["progress_id"], name: "index_srs_progresses_on_progress_id"
     t.index ["user_id"], name: "index_srs_progresses_on_user_id"
   end

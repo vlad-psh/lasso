@@ -13,6 +13,7 @@ class SrsProgress < ActiveRecord::Base
       self.attributes = attributes_of_correct_answer
     elsif a == :incorrect
       self.attributes = attributes_of_incorrect_answer
+      self.fail_count += 1
     elsif a == :soso
       self.attributes = attributes_of_soso_answer
     end
