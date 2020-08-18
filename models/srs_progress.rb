@@ -1,7 +1,6 @@
 class SrsProgress < ActiveRecord::Base
   belongs_to :user
   belongs_to :progress
-  has_many :actions
 
   enum learning_type: {reading_question: 0, kanji_question: 1, listening_question: 2}
 
@@ -19,8 +18,6 @@ class SrsProgress < ActiveRecord::Base
     end
 
     self.attributes = drill_attributes_for_answer(a, drill) if drill.present?
-
-    Action.create(srs_progress: self, user: user, action_type: a)
 
     self.reviewed_at = DateTime.now
     self.save

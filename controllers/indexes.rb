@@ -1,5 +1,4 @@
 paths dashboard: '/dashboard',
-    current: '/current', # get(redirection)
     list_level: '/level/:level',
     list_nf: '/words/:nf',
     list_jlpt_words: '/words/jlpt/:level',
@@ -38,10 +37,6 @@ get :dashboard do
   end
 
   slim :dashboard
-end
-
-get :current do
-  redirect path_to(:list_level).with(current_user.present? ? current_user.current_level : 1)
 end
 
 get :list_level do

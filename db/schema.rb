@@ -10,22 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_17_163451) do
+ActiveRecord::Schema.define(version: 2020_08_18_013636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "actions", force: :cascade do |t|
-    t.bigint "card_id"
-    t.integer "action_type", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id"
-    t.integer "progress_id"
-    t.bigint "srs_progress_id"
-    t.index ["card_id"], name: "index_actions_on_card_id"
-    t.index ["srs_progress_id"], name: "index_actions_on_srs_progress_id"
-  end
 
   create_table "activities", force: :cascade do |t|
     t.bigint "user_id"

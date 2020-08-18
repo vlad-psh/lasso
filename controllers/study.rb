@@ -105,17 +105,18 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
   if drill.leitner_fresh < 5 && fresh && !progress.present?
     progress ||= SrsProgress.includes(:progress) \
       .joins(:progress) \
-      .merge(drill.progresses) \
+      .merge(drill.progresses.where(burned_at: nil)) \
       .where(learning_type: :reading_question, leitner_last_reviewed_at_session: nil) \
       .order('random()') \
       .first.try(:progress)
     # Next try to select cards without any SrsProgress records
-    progress ||= drill.progresses \
+    progress ||= drill.progresses.where(burned_at: nil) \
       .left_outer_joins(:srs_progresses) \
       .where(srs_progresses: {id: nil}, burned_at: nil) \
       .order('random()') \
       .first
 
+# TODO: if we just reload the page (without answering), 'fresh' counter will still be incremented
     drill.update(leitner_fresh: drill.leitner_fresh + 1) if progress.present?
   end
 

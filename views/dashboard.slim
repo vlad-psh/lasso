@@ -65,7 +65,5 @@ div.index-page-container
   == slim :svg_graph, locals: {gdata: gdata, gdesc: gdesc, classes: [:w, :k, :r]}
 
   br
-  - level = current_user.present? ? current_user.current_level : (@view_user.present? ? @view_user.current_level : 1)
-  a> href=path_to(:list_level).with(level) = "Level #{level}"
   a href=path_to(:notes) Notes
 

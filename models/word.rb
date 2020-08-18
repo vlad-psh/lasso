@@ -24,8 +24,6 @@ class Word < ActiveRecord::Base
     progress.burned_at = DateTime.now
     progress.save
 
-    Action.create(user: user, progress: progress, action_type: :burn)
-
     return true
   end
 

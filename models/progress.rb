@@ -6,7 +6,6 @@ class Progress < ActiveRecord::Base
   has_many :wk_words, primary_key: :seq, foreign_key: :seq
   has_many :wk_kanji, primary_key: :kanji_id, foreign_key: :kanji_id
   belongs_to :wk_radical
-  has_many :actions
   has_and_belongs_to_many :drills
   has_many :srs_progresses
 

@@ -11,13 +11,6 @@ module WakameHelpers
     return @current_user
   end
 
-  def current_level
-    return 1 unless current_user
-
-    @current_level ||= @current_user.current_level
-    return @current_level
-  end
-
   def highlight(text, term)
     return text unless text.present? && term.present?
 
