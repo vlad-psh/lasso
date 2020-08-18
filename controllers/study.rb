@@ -101,6 +101,7 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
     .where.not(leitner_last_reviewed_at_session: [drill.leitner_session, nil, 10]) \
     .order('random()') \
     .first.try(:progress)
+  word_type = :failed if progress.present?
 
   if drill.leitner_fresh < 5 && fresh && !progress.present?
     progress ||= SrsProgress.includes(:progress) \
@@ -116,11 +117,13 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
       .order('random()') \
       .first
 
+    word_type ||= :new if progress.present?
 # TODO: if we just reload the page (without answering), 'fresh' counter will still be incremented
     drill.update(leitner_fresh: drill.leitner_fresh + 1) if progress.present?
   end
 
   session_boxes = [[0,2,5,9],[1,3,6,0],[2,4,7,1],[3,5,8,2],[4,6,9,3],[5,7,0,4],[6,8,1,5],[7,9,2,6],[8,0,3,7],[9,1,4,8]]
+  session_boxes = [[0,1,5,8],[1,2,6,9],[2,3,7,0],[3,4,8,1],[4,5,9,2],[5,6,0,3],[6,7,1,4],[7,8,2,5],[8,9,3,6],[9,0,4,7]]
   # Select cards in one of the boxes for current session
   progress ||= SrsProgress.includes(:progress) \
     .joins(:progress) \
@@ -130,10 +133,14 @@ def get_drill_word(drill_id, fresh = false, allow_recursion = true)
     .where(SrsProgress.arel_table[:leitner_combo].lt(5)) \
     .order('random()') \
     .first.try(:progress)
+  word_type ||= :review if progress.present?
 
   if !progress.present? && allow_recursion
     drill.update(leitner_session: (drill.leitner_session + 1) % 10, leitner_fresh: 0)
     progress = get_drill_word(drill_id, fresh, false)
+  else
+    sp = progress.srs_progresses.first
+    puts "========== Session #{drill.leitner_session} #{session_boxes[drill.leitner_session]} card:'#{word_type}' box:#{sp.leitner_box rescue 'n/a'} combo:#{sp.leitner_combo rescue 'n/a'}/4"
   end
 
   return progress
