@@ -48,9 +48,6 @@ Vue.component('vue-kanji', {
     },
   },
   methods: {
-    radicalById(id) {
-      return this.j.radicals.find(i => i.id === id);
-    },
     updateProgress(progress) {
       this.j.kanjis.find(i => i.id === this.id).progress = progress;
     },
@@ -82,7 +79,6 @@ Vue.component('vue-kanji', {
     <div class="kanji-title no-refocus" :class="htmlClass" @click="search(kanji.title)">{{kanji.title}}<div class="kanji-grade">{{gradeText}}</div></div>
     <div class="kanji-details">
       <div class="nb" v-if="kanji.jlptn">&#x1f4ae; N{{kanji.jlptn}}</div>
-      <div class="nb" v-if="kanji.wk_level">&#x1f980; {{kanji.wk_level}}</div>
       <div class="radical-label">部首</div><span class="nb">{{classicalRadical}}</span>
       <a @click.prevent.stop="openModal(kanji.title)" :href="'https://wakame.fruitcode.net/jiten/?book=kanji&search=' + kanji.title" target="_blank">&#x1f50e;</a>
 
@@ -106,22 +102,6 @@ Vue.component('vue-kanji', {
   </div>
 
   <div v-if="kanji.english">&#x1f1ec;&#x1f1e7; {{kanji.english.join("; ")}}</div>
-
-  <div v-if="false && kanji.wk_level">
-    <div class="hr-title"><span>Meaning</span></div>
-    <div class="mnemonics">
-      <span class="emphasis">{{kanji.wk_meaning}}</span>
-      <span v-html="stripBB(kanji.mmne)"></span>
-      <span class="hint" v-if="kanji.mhnt" v-html="stripBB(kanji.mhnt)"></span>
-    </div>
-
-    <div class="hr-title"><span>Reading</span></div>
-    <div class="mnemonics">
-      <span class="emphasis">{{kanji.wk_readings.join(', ')}}</span>
-      <span v-html="stripBB(kanji.rmne)"></span>
-      <span class="hint" v-if="kanji.rhnt" v-html="stripBB(kanji.rhnt)"></span>
-    </div>
-  </div>
 
   <vue-editable-text class="word-comment-form center-block" :post-url="j.paths.comment" :post-params="{kanji: kanji.title}" :text-data="comment" :editing="editing" placeholder="Add comment" @updated="setComment($event)"></vue-editable-text>
 

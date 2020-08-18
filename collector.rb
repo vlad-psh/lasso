@@ -10,9 +10,7 @@ class Collector
 
     @words    = opts[:words]    if opts[:words]    &&    opts[:words].kind_of?(ActiveRecord::Relation)
     @kanjis   = opts[:kanjis]   if opts[:kanjis]   &&   opts[:kanjis].kind_of?(ActiveRecord::Relation)
-    @radicals = opts[:radicals] if opts[:radicals] && opts[:radicals].kind_of?(ActiveRecord::Relation)
 
-    @need_kanji_summary = opts[:radicals] && opts[:radicals].kind_of?(ActiveRecord::Relation) ? true : false
     @include_drills = opts[:words] && opts[:words].kind_of?(ActiveRecord::Relation) ? true : false
   end
 
@@ -27,29 +25,17 @@ class Collector
 
     kanji_chars = @words.map{|i| i.kanji.try(:split, '') || []}.flatten.uniq
     @kanjis = @kanjis.or(Kanji.where(title: kanji_chars))
-                     .includes(wk_kanji: :wk_radicals)
 
-    radical_ids = @kanjis.map{|i| i.wk_kanji.try(:wk_radicals).try(:map, &:id) || []}.flatten.uniq
-    @radicals = @radicals.or(WkRadical.where(id: radical_ids))
-              .includes(:wk_kanji_radicals)
-
-    wk_kanji_ids = @need_kanji_summary ? @radicals.map{|i| i.wk_kanji_radicals.map(&:wk_kanji_id) }.flatten.uniq : []
-    kanji_summary = WkKanji.where(id: wk_kanji_ids)
-                .select(:id, :title, :meaning, :kanji_id)
-
-    @progresses = Progress.where(user: @user, seq: @words.map(&:seq))
-              .or(Progress.where(user: @user, kanji_id: @kanjis.map(&:id)))
-              .or(Progress.where(user: @user, wk_radical_id: @radicals.map(&:id)))
-              .or(Progress.where(user: @user, kanji_id: kanji_summary.map(&:kanji_id)))
-              .includes(:drills)
+    @progresses = Progress.where(user: @user).where(
+                Progress.arel_table[:seq].in(@words.map(&:seq))
+                .or(Progress.arel_table[:kanji_id].in(@kanjis.map(&:id)))
+              ).eager_load(:drills)
 
     drills = @include_drills ? Drill.where(user: @user) : Drill.none
 
     return {
       words: @words.map{|i| word_structure(i)},
       kanjis: @kanjis.map{|i| kanji_structure(i)},
-      radicals: @radicals.map{|i| radical_structure(i)},
-      kanji_summary: kanji_summary.map{|i| kanji_summary_structure(i)},
       drills: drills.map{|i| {id: i.id, title: i.title, is_active: i.is_active} },
       paths: {
         learn:   path_to(:api_learn),
@@ -102,40 +88,7 @@ class Collector
 
   def kanji_structure(k)
     result = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun, :grade, :radnum, :links, :similars])
-
-    if (w = k.wk_kanji).present?
-      result = result.merge({
-        wk_level: w.level,
-        mmne: w.mmne,
-        mhnt: w.mhnt,
-        rmne: w.rmne,
-        rhnt: w.rhnt,
-        wk_meaning: w.meaning,
-        wk_readings: w.readings.select{|i| i['primary'] == true}.map{|i| i['reading']},
-        radicals: k.wk_kanji.wk_radicals.map(&:id),
-        url: path_to(:kanji).with(k.id)
-      })
-    end
-
     result[:progress] = @progresses.detect{|p| p.kanji_id == k.id}.try(:api_hash) || {}
-    return result
-  end
-
-  def kanji_summary_structure(k)
-    return {
-      wk_id: k.id,
-      title: k.title,
-      meaning: k.meaning.split(',').first,
-      href: path_to(:kanji).with(k.kanji_id),
-      progress: @progresses.detect{|p| p.kanji_id == k.kanji_id}.try(:api_hash) || {}
-    }
-  end
-
-  def radical_structure(r)
-    result = r.serializable_hash(only: [:id, :title, :level, :meaning, :nmne, :svg])
-    result[:kanji_ids] = r.wk_kanji_radicals.map(&:wk_kanji_id)
-    result[:progress] = @progresses.detect{|p| p.wk_radical_id == r.id}.try(:api_hash) || {}
-    result[:href] = path_to(:wk_radical).with(r.id)
     return result
   end
 end
