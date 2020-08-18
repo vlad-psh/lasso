@@ -108,13 +108,13 @@ class SrsProgress < ActiveRecord::Base
 
   def html_class_leitner
     if leitner_last_reviewed_at_session == nil
-      'pristine'
+      :pristine
     elsif leitner_box == nil
-      'apprentice'
+      :apprentice
     elsif leitner_combo >= 5
-      'master'
+      :master
     else
-      'guru'
+      :guru
     end
   end
 
