@@ -3,6 +3,7 @@ paths index: '/',
 
 get :index do
   protect!
+  @modal = true if params[:modal].present?
   slim :search
 end
 

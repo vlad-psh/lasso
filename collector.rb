@@ -31,7 +31,7 @@ class Collector
                 .or(Progress.arel_table[:kanji_id].in(@kanjis.map(&:id)))
               ).eager_load(:drills)
 
-    drills = @include_drills ? Drill.where(user: @user) : Drill.none
+    drills = @include_drills ? Drill.where(user: @user).order(id: :desc) : Drill.none
 
     return {
       words: @words.map{|i| word_structure(i)},

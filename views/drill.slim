@@ -14,7 +14,8 @@ form method="POST" action=path_to(:drill).with(@drill.id)
 
 input class="word-add-autocomplete" type="text" placeholder="Add short"
 - percent = (@elements.filter{|i| i[:html_class] != :pristine}.count / @elements.length.to_f * 100).round(1) rescue 0
-div.hr-title : span = "Kanji (#{percent}%)"
+- percent2 = (@elements.filter{|i| i[:html_class] == :master || i[:html_class] == :burned}.count / @elements.length.to_f * 100).round(1) rescue 0
+div.hr-title : span = "Kanji (#{percent}% / #{percent2}%)"
 
 div class="elements-list"
   - @elements.each do |e|

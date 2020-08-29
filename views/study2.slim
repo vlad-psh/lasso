@@ -8,8 +8,10 @@ div#sentence-quiz-app.study-card
       label
         input type="checkbox" v-model="formVars.fresh"
         ' &#x1f530;
-      br
+      br style="margin-bottom: 1em;"
       a.ajax-link @click="updateSentence" &#x1f504;
+      br style="margin-bottom: 1em;"
+        a.ajax-link v-if="selectedWord" @click="openModal" &#x1f50e;
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
         div v-if="word.answer" @click="selectWord(wordIndex)"
@@ -161,7 +163,10 @@ javascript:
       findKreb(seq, title) {
         var word = this.j.words.find(i => i.seq == seq);
         return (word ? word.krebs.find(i => i.title == title) : null);
-      }
+      },
+      openModal() {
+        window.vueModal.openSearch(this.selectedSentenceWord.text);
+      },
     }, // end of methods
     mounted: function(){
       this.updateSentence();
@@ -180,6 +185,7 @@ javascript:
           }
         } else {
           if (e.keyCode === 32) {
+            e.preventDefault(); // disable unwanted scrolling on 'space'
             app.allAnswered ? app.submit() : app.selectWord(0);
           }
         }

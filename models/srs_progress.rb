@@ -2,6 +2,8 @@ class SrsProgress < ActiveRecord::Base
   belongs_to :user
   belongs_to :progress
 
+  scope :expired, -> {where(SrsProgress.arel_table[:scheduled].lteq(Date.today))}
+
   enum learning_type: {reading_question: 0, kanji_question: 1, listening_question: 2}
 
   def answer!(a, drill = nil)
@@ -109,9 +111,9 @@ class SrsProgress < ActiveRecord::Base
   def html_class_leitner
     if leitner_last_reviewed_at_session == nil
       :pristine
-    elsif leitner_box == nil
+    elsif leitner_box == nil || leitner_combo <= 1
       :apprentice
-    elsif leitner_combo >= 5
+    elsif leitner_combo >= 4
       :master
     else
       :guru

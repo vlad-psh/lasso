@@ -3,29 +3,30 @@ function prepareModal() {
     el: '#vue-modal',
     data: {
       iframe: null,
-      previousCategory: null,
+      prevCategory: null,
     },
     methods: {
-      open(url) {
+      open(url, category) {
         document.body.classList.add('modal-active');
+
+        this.prevCategory = window.activityCategory;
+        window.activityCategory = category;
+
         this.iframe = url;
       },
       openKokugo(term) {
-        this.assignCategory('kokugo');
-        this.open('https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + term);
+        this.open('https://wakame.fruitcode.net/jiten/?book=kokugo&search=' + term, 'kokugo');
       },
       openKanji(term) {
-        this.assignCategory('kanji');
-        this.open('https://wakame.fruitcode.net/jiten/?book=kanji&search=' + term);
+        this.open('https://wakame.fruitcode.net/jiten/?book=kanji&search=' + term, 'kanji');
       },
-      assignCategory(category) {
-        this.previousCategory = window.activityCategory;
-        window.activityCategory = category;
+      openSearch(term) {
+        this.open('/?modal=1&query=' + term, 'search');
       },
       close() {
         document.body.classList.remove('modal-active');
         this.iframe = null;
-        window.activityCategory = this.previousCategory;
+        window.activityCategory = this.prevCategory;
       },
     },
     mounted() {
