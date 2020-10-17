@@ -90,57 +90,31 @@ def get_drill_sentence(drill_id)
 
 end
 
-def get_drill_word(drill_id, fresh = false, allow_recursion = true)
+def get_drill_word(drill_id, learning_type = :reading_question, fresh = false, allow_recursion = true)
   drill = Drill.find(drill_id)
 
   # Try to find failed cards
-  progress ||= SrsProgress.includes(:progress) \
-    .joins(:progress) \
-    .merge(drill.progresses.where(burned_at: nil)) \
-    .where(learning_type: :reading_question, leitner_box: nil) \
-    .where.not(leitner_last_reviewed_at_session: [drill.leitner_session, nil, 10]) \
-    .order('random()') \
-    .first.try(:progress)
-  word_type = :failed if progress.present?
+  progress ||= drill.progresses.srs_failed(learning_type, drill.leitner_session).order('random()').first
 
   if drill.leitner_fresh < 5 && fresh && !progress.present?
-    progress ||= SrsProgress.includes(:progress) \
-      .joins(:progress) \
-      .merge(drill.progresses.where(burned_at: nil)) \
-      .where(learning_type: :reading_question, leitner_last_reviewed_at_session: nil) \
-      .order('random()') \
-      .first.try(:progress)
-    # Next try to select cards without any SrsProgress records
-    progress ||= drill.progresses.where(burned_at: nil) \
-      .left_outer_joins(:srs_progresses) \
-      .where(srs_progresses: {id: nil}, burned_at: nil) \
-      .order('random()') \
-      .first
+    progress ||= drill.progresses.srs_new(learning_type).order('random()').first
+    progress ||= drill.progresses.srs_nil(learning_type).order('random()').first
 
     word_type ||= :new if progress.present?
 # TODO: if we just reload the page (without answering), 'fresh' counter will still be incremented
     drill.update(leitner_fresh: drill.leitner_fresh + 1) if progress.present?
   end
 
-  session_boxes = [[0,2,5,9],[1,3,6,0],[2,4,7,1],[3,5,8,2],[4,6,9,3],[5,7,0,4],[6,8,1,5],[7,9,2,6],[8,0,3,7],[9,1,4,8]]
-  session_boxes = [[0,8,5,1],[1,9,6,2],[2,0,7,3],[3,1,8,4],[4,2,9,5],[5,3,0,6],[6,4,1,7],[7,5,2,8],[8,6,3,9],[9,7,4,0]]
   # Select cards in one of the boxes for current session
-  progress ||= SrsProgress.includes(:progress) \
-    .joins(:progress) \
-    .merge(drill.progresses.where(burned_at: nil)) \
-    .where(learning_type: :reading_question, leitner_box: session_boxes[drill.leitner_session]) \
-    .where.not(leitner_last_reviewed_at_session: drill.leitner_session) \
-    .where(SrsProgress.arel_table[:leitner_combo].lt(4)) \
-    .order('random()') \
-    .first.try(:progress)
+  progress ||= drill.progresses.srs_expired(learning_type, drill.leitner_session).order('random()').first
   word_type ||= :review if progress.present?
 
   if !progress.present? && allow_recursion
     drill.update(leitner_session: (drill.leitner_session + 1) % 10, leitner_fresh: 0)
-    progress = get_drill_word(drill_id, fresh, false)
+    progress = get_drill_word(drill_id, learning_type, fresh, false)
   else
     sp = progress.srs_progresses.first
-    puts "========== #{DateTime.now.strftime('%H:%M:%S')} Session #{drill.leitner_session} #{session_boxes[drill.leitner_session]} card:'#{word_type}' box:#{sp.leitner_box rescue 'n/a'} combo:#{sp.leitner_combo rescue 'n/a'}/4 #{progress.title}"
+    puts "========== #{DateTime.now.strftime('%H:%M:%S')} Session #{drill.leitner_session} #{Progress::LEITNER_BOXES[drill.leitner_session]} card:'#{word_type}' box:#{sp.leitner_box rescue 'n/a'} combo:#{sp.leitner_combo rescue 'n/a'}/4 #{progress.title}"
   end
 
   return progress
@@ -149,11 +123,28 @@ end
 get :api_question do
   protect!
 
-  if params[:type] == 'sentences'
-    get_drill_sentence(params[:drill_id])
-  else
-    progress = get_drill_word(params[:drill_id], params[:fresh].present?)
+# TODO: use logic similar to below to select sentences
+  return get_drill_sentence(params[:drill_id]) if params[:type] == 'sentences'
 
+  learning_type = %w(sentence-kanji).include?(params[:type]) ? :kanji_question : :reading_question
+
+  progress = get_drill_word(params[:drill_id], learning_type, params[:fresh].present?)
+
+  if params[:type] == 'sentence-kanji'
+    sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first
+# TODO: look up SentenceReviews table and take ones who weren't reviewed at all or have not been reviewed recently
+#        .left_outer_joins(:sentence_reviews).order(
+    sentence.swap_kanji_yomi
+  end
+
+  if sentence.present?
+    {
+      sentence_id: sentence.id,
+      sentence: sentence.structure,
+      english: sentence.english,
+      j: Collector.new(current_user, words: Word.where(seq: sentence.words.map(&:seq))).to_hash
+    }.to_json
+  else
     {
       sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
       english: nil,

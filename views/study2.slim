@@ -35,7 +35,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.green @click="answer('correct')"
         ' YES
         div.answer-details = '+ {{selectedKreb.progress.correct}}'
-    vue-word :seq="selectedWord.seq" :j="j" :editing="editing"
+    vue-word :seq="selectedWord.seq" :j="j" :editing="editing" @search="search"
 
   div v-if="allAnswered && !selectedWord && !f.submitted"
     div.answer-buttons v-if="allAnswered"
@@ -55,7 +55,7 @@ javascript:
       formVars: {
         drillId: #{{params[:drill_id] || 'null'}},
         fresh: true,
-        sentences: #{{params[:type] == 'sentences'}}
+        learningType: #{{params[:type].present? ? "\"#{params[:type]}\"" : 'null'}}
       },
       is_drill: #{{params[:drill_id].present?}},
     },
@@ -63,7 +63,7 @@ javascript:
       questionPath() {
         return "/api/question?" +
             (this.formVars.drillId ? `&drill_id=${this.formVars.drillId}` : '') +
-            (this.formVars.sentences ? '&type=sentences' : '') +
+            (this.formVars.learningType ? `&type=${this.formVars.learningType}` : '') +
             (this.formVars.fresh ? '&fresh=true' : '');
       },
       allAnswered() {
@@ -166,6 +166,9 @@ javascript:
       },
       openModal() {
         window.vueModal.openSearch(this.selectedSentenceWord.text);
+      },
+      search(query) {
+        window.vueModal.openSearch(query)
       },
     }, // end of methods
     mounted: function(){

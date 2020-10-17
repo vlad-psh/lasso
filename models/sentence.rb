@@ -4,5 +4,17 @@ class Sentence < ActiveRecord::Base
   belongs_to :user
   belongs_to :drill
   has_many :sentence_reviews
+
+  def swap_kanji_yomi
+    self.structure = self.structure.map do |i|
+      if i['seq'].present?
+        yomi = i['reading']
+        i['reading'] = i['text']
+        i['text'] = yomi
+      end
+      i
+    end
+    self
+  end
 end
 

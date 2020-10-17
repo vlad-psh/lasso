@@ -17,6 +17,39 @@ class Progress < ActiveRecord::Base
 
   scope :by_user, ->(user) {where(user: user)}
 
+  LEITNER_BOXES = [[0,8,5,1],[1,9,6,2],[2,0,7,3],[3,1,8,4],[4,2,9,5],[5,3,0,6],[6,4,1,7],[7,5,2,8],[8,6,3,9],[9,7,4,0]]
+  scope :srs_expired, ->(learning_type, current_leitner_session) {
+    joins(:srs_progresses) \
+    .where(srs_progresses: {learning_type: learning_type, leitner_box: LEITNER_BOXES[current_leitner_session]}) \
+    .where(burned_at: nil) \
+    .where(SrsProgress.arel_table[:leitner_combo].lt(4)) \
+    .where.not(srs_progresses: {leitner_last_reviewed_at_session: current_leitner_session})
+  }
+  scope :srs_failed, ->(learning_type, current_leitner_session) {
+    joins(:srs_progresses) \
+    .where(srs_progresses: {learning_type: learning_type, leitner_box: nil}) \
+    .where(burned_at: nil) \
+    .where.not(srs_progresses: {leitner_last_reviewed_at_session: [current_leitner_session, nil, 10]})
+  }
+  # with empty leitner* (drill) progress (ie. has SrsProgress object, but never answered in drill scope)
+  scope :srs_new, ->(learning_type) {
+    joins(:srs_progresses) \
+    .where(srs_progresses: {learning_type: learning_type, leitner_last_reviewed_at_session: nil}) \
+    .where(burned_at: nil)
+  }
+  # without any SrsProgress records (with corresponding learning_type)
+  scope :srs_nil, ->(learning_type) {
+    aSrs = SrsProgress.arel_table
+    aProg = Progress.arel_table
+    join_on = aSrs.create_on(
+      aSrs[:learning_type] \
+        .eq(learning_type) \
+        .and(aSrs[:progress_id].eq(aProg[:id]))
+    )
+    outer_join = aProg.create_join(aSrs, join_on, Arel::Nodes::OuterJoin)
+    joins(outer_join).where(srs_progresses: {id: nil}, burned_at: nil)
+  }
+
   include Comparable
   def <=>(anOther)
     sorting_score <=> anOther.sorting_score
