@@ -46,10 +46,12 @@ post :study2 do
     a['progress'] = Progress.find_or_initialize_by(seq: a['seq'], title: a['base'], user: current_user)
   end
 
+  learning_type = params[:type] =~ /kanji/ ? :kanji_question : :reading_question
+
   params[:answers].each do |i,a|
     next if a['answer'] == 'burned' # why??
     drill = Drill.find_by(user: current_user, id: params[:drill_id]) if params[:drill_id]
-    a['progress'].answer!(a['answer'], drill: drill || nil)
+    a['progress'].answer!(a['answer'], drill: drill || nil, learning_type: learning_type)
   end
 
   if params[:sentence_id].present?

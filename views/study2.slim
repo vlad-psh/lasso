@@ -119,7 +119,8 @@ javascript:
           method: 'POST',
           data: Object.assign(
                 {sentence_id: app.sentenceId, answers: answers},
-                this.formVars.drillId ? {drill_id: this.formVars.drillId} : null
+                this.formVars.drillId ? {drill_id: this.formVars.drillId} : null,
+                this.formVars.learningType ? {type: this.formVars.learningType} : null,
           )
         }).done(data => {
           if (data == 'ok') {
