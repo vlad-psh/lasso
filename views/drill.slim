@@ -13,13 +13,21 @@ form method="POST" action=path_to(:drill).with(@drill.id)
         div.description = "{{e.description}}"
 
 input class="word-add-autocomplete" type="text" placeholder="Add short"
-- percent = (@elements.filter{|i| i[:html_class] != :pristine}.count / @elements.length.to_f * 100).round(1) rescue 0
-- percent2 = (@elements.filter{|i| i[:html_class] == :master || i[:html_class] == :burned}.count / @elements.length.to_f * 100).round(1) rescue 0
-div.hr-title : span = "Kanji (#{percent}% / #{percent2}%)"
+- percent = (@elements.filter{|i| i[:reading_class] != :pristine}.count / @elements.length.to_f * 100).round(1) rescue 0
+- percent2 = (@elements.filter{|i| i[:reading_class] == :master || i[:reading_class] == :burned}.count / @elements.length.to_f * 100).round(1) rescue 0
 
+div.hr-title style="margin: .5em 0" : span = "Reading (#{percent}% / #{percent2}%)"
 div class="elements-list"
   - @elements.each do |e|
-    div.elements-list-item : div class="element-block #{e[:html_class]}" : a href=e[:href] : div.element : span.japanese = e[:title]
+    div.elements-list-item : div class="element-block #{e[:reading_class]}" : a href=e[:href] : div.element : span.japanese = e[:title]
+
+- percent = (@elements.filter{|i| i[:kanji_class] != :pristine}.count / @elements.length.to_f * 100).round(1) rescue 0
+- percent2 = (@elements.filter{|i| i[:kanji_class] == :master || i[:kanji_class] == :burned}.count / @elements.length.to_f * 100).round(1) rescue 0
+
+div.hr-title style="margin: .5em 0" : span = "Writing (#{percent}% / #{percent2}%)"
+div class="elements-list"
+  - @elements.each do |e|
+    div.elements-list-item : div class="element-block #{e[:kanji_class]}" : a href=e[:href] : div.element : span.japanese = e[:title]
 
 div.hr-title : span Sentences
 ul

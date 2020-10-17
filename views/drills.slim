@@ -10,7 +10,7 @@ table
         == d.is_active ? '&#x2705;' : ''
         a href=path_to(:drill).with(d.id) = d.title
       td = d.created_at
-      td: a href=(path_to(:study2) + "?drill_id=#{d.id}") Study
-      td: a href=(path_to(:study2) + "?drill_id=#{d.id}&type=sentences") Sentences
-      td: a href=(path_to(:study2) + "?drill_id=#{d.id}&type=sentence-kanji") Sentences/kanji
+      td: a href=(path_to(:study2) + "?drill_id=#{d.id}") ドリル
+      td: a href=(path_to(:study2) + "?drill_id=#{d.id}&type=sentences") 文読
+      td: a href=(path_to(:study2) + "?drill_id=#{d.id}&type=sentence-kanji") 文書
 

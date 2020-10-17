@@ -25,7 +25,10 @@ get :drill do
       title: p.title,
       reading: p.word.rebs.first,
       description: p.word.list_desc,
-      html_class: p.burned_at ? :burned : p.srs_progresses.try(:first).try(:html_class_leitner) || :pristine,
+      reading_class: p.burned_at ? :burned : p.srs_progresses.detect{|i|
+          i.learning_type == 'reading_question'}.try(:html_class_leitner) || :pristine,
+      kanji_class: p.burned_at ? :burned : p.srs_progresses.detect{|i|
+          i.learning_type == 'kanji_question'}.try(:html_class_leitner) || :pristine,
       href: path_to(:word).with(p.seq),
     }
   end
