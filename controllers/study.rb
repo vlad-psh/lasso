@@ -43,6 +43,7 @@ post :study2 do
 
   progresses = {}
   params[:answers].each do |i, a|
+    next unless a['answer'].present? # some words can be left unanswered (only 'main' word is necessary)
     a['progress'] = Progress.find_or_initialize_by(seq: a['seq'], title: a['base'], user: current_user)
   end
 
@@ -50,6 +51,7 @@ post :study2 do
 
   params[:answers].each do |i,a|
     next if a['answer'] == 'burned' # why??
+    next unless a['answer'].present?
     drill = Drill.find_by(user: current_user, id: params[:drill_id]) if params[:drill_id]
     a['progress'].answer!(a['answer'], drill: drill || nil, learning_type: learning_type)
   end
@@ -125,18 +127,17 @@ end
 get :api_question do
   protect!
 
-# TODO: use logic similar to below to select sentences
-  return get_drill_sentence(params[:drill_id]) if params[:type] == 'sentences'
-
+  # params[:type] = nil | sentence | sentence-kanji
   learning_type = %w(sentence-kanji).include?(params[:type]) ? :kanji_question : :reading_question
 
   progress = get_drill_word(params[:drill_id], learning_type, params[:fresh].present?)
 
-  if params[:type] == 'sentence-kanji'
+  if params[:type] =~ /sentence/
     sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first
 # TODO: look up SentenceReviews table and take ones who weren't reviewed at all or have not been reviewed recently
 #        .left_outer_joins(:sentence_reviews).order(
-    sentence.swap_kanji_yomi
+    sentence.swap_kanji_yomi if learning_type == :kanji_question
+    sentence.highlight_word(progress.seq)
   end
 
   if sentence.present?

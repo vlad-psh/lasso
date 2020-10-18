@@ -18,7 +18,7 @@ div#sentence-quiz-app.study-card
           div.sentence-word-tooltip :class="'answer-' + word.answer" = '{{word.answer}}'
           div.sentence-word.word-question-answered = "{{word.text}}"
         div v-else-if="word.seq"
-          div.sentence-word-tooltip ?
+          div.sentence-word-tooltip = "{{word.highlight ? '\u2b50' : '?'}}"
           div.sentence-word class="word-question" @click="selectWord(wordIndex)" = "{{word.text}}"
         div.sentence-word v-else="true" = "{{word.text}}"
 
@@ -67,8 +67,10 @@ javascript:
             (this.formVars.fresh ? '&fresh=true' : '');
       },
       allAnswered() {
-        var unanswered = this.sentence.filter(i => i.seq && !i.answer);
-        return unanswered.length === 0 && this.sentence.length !== 0 ? true : false;
+        //var unanswered = this.sentence.filter(i => i.seq && !i.answer);
+        //return unanswered.length === 0 && this.sentence.length !== 0 ? true : false;
+        const mainWord = this.sentence.find(i => i.highlight === true);
+        return mainWord !== undefined && mainWord.answer !== null ? true : false;
       },
       selectedKreb() {
         if (!this.selectedWord) return null;

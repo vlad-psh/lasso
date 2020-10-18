@@ -16,5 +16,12 @@ class Sentence < ActiveRecord::Base
     end
     self
   end
+
+  def highlight_word(seq)
+    seq = seq.to_s
+    self.structure.each do |i|
+      i['highlight'] = true if i['seq'] == seq
+    end
+  end
 end
 
