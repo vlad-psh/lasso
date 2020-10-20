@@ -67,10 +67,13 @@ javascript:
             (this.formVars.fresh ? '&fresh=true' : '');
       },
       allAnswered() {
-        //var unanswered = this.sentence.filter(i => i.seq && !i.answer);
-        //return unanswered.length === 0 && this.sentence.length !== 0 ? true : false;
         const mainWord = this.sentence.find(i => i.highlight === true);
-        return mainWord !== undefined && mainWord.answer !== null ? true : false;
+        if (mainWord !== undefined) {
+            return mainWord.answer !== null ? true : false;
+        } else {
+            const unanswered = this.sentence.filter(i => i.seq && !i.answer);
+            return unanswered.length === 0 && this.sentence.length !== 0 ? true : false;
+        }
       },
       selectedKreb() {
         if (!this.selectedWord) return null;
