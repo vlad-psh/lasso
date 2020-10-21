@@ -6,10 +6,11 @@ form method="POST" action=path_to(:drills)
 table
   - @drill_sets.each do |d|
     tr
+      td == d.is_active ? '&#x2705;' : ''
       td
-        == d.is_active ? '&#x2705;' : ''
         a href=path_to(:drill).with(d.id) = d.title
-      td = d.created_at
+        br
+        span style="opacity: .7; font-size: .75em;" = d.created_at
       td: a href=(path_to(:study2) + "?drill_id=#{d.id}") ドリル
       td: a href=(path_to(:study2) + "?drill_id=#{d.id}&type=sentences") 文読
       td: a href=(path_to(:study2) + "?drill_id=#{d.id}&type=sentence-kanji") 文書

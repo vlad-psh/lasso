@@ -136,24 +136,11 @@ get :api_question do
     sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first
 # TODO: look up SentenceReviews table and take ones who weren't reviewed at all or have not been reviewed recently
 #        .left_outer_joins(:sentence_reviews).order(
-    if sentence.present?
-      sentence.swap_kanji_yomi if learning_type == :kanji_question
-      sentence.highlight_word(progress.seq)
-    end
+    sentence.highlight_word(progress.seq) if sentence.present?
   end
 
-  if sentence.present?
-    {
-      sentence_id: sentence.id,
-      sentence: sentence.structure,
-      english: sentence.english,
-      j: Collector.new(current_user, words: Word.where(seq: sentence.words.map(&:seq))).to_hash
-    }.to_json
-  else
-    {
-      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
-      english: nil,
-      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
-    }.to_json
-  end
+  sentence ||= progress.to_sentence
+  sentence.swap_kanji_yomi if learning_type == :kanji_question
+
+  return sentence.study_hash(current_user).to_json
 end

@@ -133,5 +133,11 @@ class Progress < ActiveRecord::Base
   def api_json
     self.api_hash.to_json
   end
+
+  def to_sentence
+    Sentence.new(
+      structure: [{'seq' => self.seq, 'text' => self.title, 'base' => self.title}],
+    )
+  end
 end
 

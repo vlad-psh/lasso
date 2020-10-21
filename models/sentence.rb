@@ -5,6 +5,15 @@ class Sentence < ActiveRecord::Base
   belongs_to :drill
   has_many :sentence_reviews
 
+  def study_hash(user)
+    return {
+      sentence_id: id,
+      sentence: structure,
+      english: english,
+      j: Collector.new(user, words: Word.where(seq: words.map(&:seq))).to_hash
+    }
+  end
+
   def swap_kanji_yomi
     self.structure = self.structure.map do |i|
       if i['seq'].present?
