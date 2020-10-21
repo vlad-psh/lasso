@@ -64,39 +64,7 @@ post :study2 do
   return 'ok'
 end
 
-def get_drill_sentence(drill_id)
-  drill = Drill.find(drill_id)
-
-  sAT = Sentence.arel_table
-  srAT = SentenceReview.arel_table
-
-  # Left outer join with two conditions:
-  #      L-O-JOIN ON s.id = sr.sentence_id AND sr.user_id == current_user.id WHERE sr 'is empty'
-  sentence_without_any_reviews = drill.sentences.joins(
-    sAT.create_join(
-       srAT,
-       sAT.create_on(  srAT[:sentence_id].eq(sAT[:id]).and(srAT[:user_id].eq(current_user.id))  ),
-       Arel::Nodes::OuterJoin
-    )
-  ).where(sentence_reviews: {id: nil}).sample
-
-  sentence = sentence_without_any_reviews ||
-    SentenceReview.joins(:sentence).merge( Sentence.where(drill: drill) ).where(user: current_user).order(reviewed_at: :asc).first.try(:sentence)
-
-  halt(400, 'Element not found') unless sentence.present?
-
-  return {
-      sentence_id: sentence.id,
-      sentence: sentence.structure,
-      english: sentence.english,
-      j: Collector.new(current_user, words: Word.where(seq: sentence.words.map(&:seq))).to_hash
-  }.to_json
-
-end
-
-def get_drill_word(drill_id, learning_type = :reading_question, fresh = false, allow_recursion = true)
-  drill = Drill.find(drill_id)
-
+def get_drill_word(drill, init_session, learning_type = :reading_question, fresh = false)
   # Try to find failed cards
   progress ||= drill.progresses.srs_failed(learning_type, drill.leitner_session).order('random()').first
 
@@ -113,9 +81,9 @@ def get_drill_word(drill_id, learning_type = :reading_question, fresh = false, a
   progress ||= drill.progresses.srs_expired(learning_type, drill.leitner_session).order('random()').first
   word_type ||= :review if progress.present?
 
-  if !progress.present? && allow_recursion
+  if !progress.present?
     drill.update(leitner_session: (drill.leitner_session + 1) % 10, leitner_fresh: 0)
-    progress = get_drill_word(drill_id, learning_type, fresh, false)
+    progress = get_drill_word(drill, init_session, learning_type, fresh) unless drill.leitner_session == init_session
   else
     sp = progress.srs_progresses.first
     puts "========== #{DateTime.now.strftime('%H:%M:%S')} Session #{drill.leitner_session} #{Progress::LEITNER_BOXES[drill.leitner_session]} card:'#{word_type}' box:#{sp.leitner_box rescue 'n/a'} combo:#{sp.leitner_combo rescue 'n/a'}/4 #{progress.title}"
@@ -130,7 +98,8 @@ get :api_question do
   # params[:type] = nil | sentence | sentence-kanji
   learning_type = %w(sentence-kanji).include?(params[:type]) ? :kanji_question : :reading_question
 
-  progress = get_drill_word(params[:drill_id], learning_type, params[:fresh].present?)
+  drill = Drill.find_by(id: params[:drill_id], user: current_user)
+  progress = get_drill_word(drill, drill.leitner_session, learning_type, params[:fresh].present?)
 
   if params[:type] =~ /sentence/
     sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first

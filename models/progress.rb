@@ -136,7 +136,7 @@ class Progress < ActiveRecord::Base
 
   def to_sentence
     Sentence.new(
-      structure: [{'seq' => self.seq, 'text' => self.title, 'base' => self.title}],
+      structure: [{'seq' => self.seq, 'text' => self.title, 'base' => self.title, 'reading' => self.word.rebs.first}],
     )
   end
 end
