@@ -1,9 +1,9 @@
-form method="POST" action=path_to(:drill).with(@drill.id)
-  input type="hidden" name="_method" value="patch"
-  input type="hidden" name="is_active" value=(@drill.is_active ? 'false' : 'true')
+div id="drill-controls-app"
   h1
     = @drill.title
-    input type="submit" value=(@drill.is_active ? 'Disable' : 'Enable')
+    vue-toggle-button name="enabled" value=(@drill.is_active ? 0 : 1) url=path_to(:drill).with(@drill.id) text=(@drill.is_active ? 'Disable' : 'Enable')
+    vue-toggle-button name="reset" value="reading" url=path_to(:drill).with(@drill.id) text="Reset 読み"
+    vue-toggle-button name="reset" value="kanji" url=path_to(:drill).with(@drill.id) text="Reset 書き"
 
 /div class="elements-list" id="vue-list"
   div.elements-list-item v-for="e in elements"
@@ -43,30 +43,7 @@ ul
 
 javascript:
   var app = new Vue({
-    el: '#vue-list',
+    el: '#drill-controls-app',
     data: {
-      elements: #{{@elements.to_json}}
     }
   });
-
-  var autocompleteSelect = function(event, ui) {
-    // ui.item.id, ui.item.title, ui.item.href
-
-    $.ajax({
-      url: "#{{path_to(:drill_add_word)}}",
-      method: 'POST',
-      data: {drill_id: #{{@drill.id}}, id: ui.item.id}
-    }).done(data => {
-      console.log(data);
-      $(this).val('');
-    });
-
-    return false;
-  };
-
-  $('.word-add-autocomplete').autocomplete({
-    source: "#{{path_to(:api_word_autocomplete)}}",
-    minLength: 1,
-    select: autocompleteSelect
-  });
-

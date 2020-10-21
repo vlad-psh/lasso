@@ -42,10 +42,18 @@ patch :drill do
   drill = Drill.find(params[:id])
   halt(403, "Access denied") if drill.user_id != current_user.id
 
-  if params[:is_active]
-    drill.update_attribute(:is_active, params[:is_active] == 'true' ? true : false)
+  if params[:enabled].present?
+    drill.update(is_active: params[:enabled] == '0' ? false : true)
+    return {
+      text: params[:enabled] == '0' ? 'Enable' : 'Disable',
+      value: params[:enabled] == '0' ? 1 : 0
+    }.to_json
+  elsif params[:reset] == 'reading'
+    drill.reset_leitner(:reading_question)
+  elsif params[:reset] == 'kanji'
+    drill.reset_leitner(:kanji_question)
   end
 
-  redirect path_to(:drill).with(drill.id)
+  return '{}'
 end
 
