@@ -47,3 +47,25 @@ javascript:
     data: {
     }
   });
+
+  var autocompleteSelect = function(event, ui) {
+    // ui.item.id, ui.item.title, ui.item.href
+
+    $.ajax({
+      url: "#{{path_to(:drill_add_word)}}",
+      method: 'POST',
+      data: {drill_id: #{{@drill.id}}, id: ui.item.id}
+    }).done(data => {
+      console.log(data);
+      $(this).val('');
+    });
+
+    return false;
+  };
+
+  $('.word-add-autocomplete').autocomplete({
+    source: "#{{path_to(:api_word_autocomplete)}}",
+    minLength: 1,
+    select: autocompleteSelect
+  });
+
