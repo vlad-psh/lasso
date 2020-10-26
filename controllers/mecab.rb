@@ -20,6 +20,13 @@ def base_reading(element)
   return "#{reading}#{base_split[1]}" # append okurigana from base
 end
 
+def ignore_word(feature)
+  return true if feature[0] == '記号'
+  return true if %w(連体化 格助詞 接続助詞).include?(feature[1])
+  return true if feature[4] =~ /特殊/
+  return false
+end
+
 def mecab_parse(sentence)
   tagger = MeCab::Light::Tagger.new('')
   mecab_result = tagger.parse(sentence)
@@ -27,14 +34,18 @@ def mecab_parse(sentence)
   result = []
   mecab_result.each do |e|
     feature = e.feature.split(',')
-    result << {
-      text: e.surface,
-      reading: feature[7].try(:hiragana),
-      base: feature[6]
-    }
+    #puts "------------- #{feature.inspect}"
+    if ignore_word(feature)
+      result << {text: e.surface}
+    else
+      result << {
+        text: e.surface,
+        reading: feature[7].try(:hiragana),
+        base: feature[6]
+      }
+    end
   end
 
-  word_titles = WordTitle.where(title: result.map{|i|i[:base]}).uniq
   word_titles_hash = {}
   WordTitle.where(title: result.map{|i|i[:base]}).uniq.each do |wt|
     word_titles_hash[wt.title] ||= []
