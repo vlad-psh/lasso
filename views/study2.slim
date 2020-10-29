@@ -14,12 +14,11 @@ div#sentence-quiz-app.study-card
         a.ajax-link v-if="selectedWord" @click="openModal" &#x1f50e;
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
-        div v-if="word.answer" @click="selectWord(wordIndex)"
-          div.sentence-word-tooltip :class="'answer-' + word.answer" = '{{word.answer}}'
-          div.sentence-word.word-question-answered = "{{word.text}}"
-        div v-else-if="word.seq"
-          div.sentence-word-tooltip = "{{word.highlight ? '\u2b50' : '?'}}"
-          div.sentence-word class="word-question" @click="selectWord(wordIndex)" = "{{word.text}}"
+        div v-if="word.seq"
+          div.sentence-word-tooltip :class="word.answer ? 'answer-' + word.answer : null"
+            span v-if="word.index" class="word-index" = "{{word.index}}"
+            = "{{word.answer || (word.highlight ? '\u2b50' : '')}}"
+          div.sentence-word :class="word.answered ? 'word-question-answered' : 'word-question'" @click="selectWord(wordIndex)" = "{{word.text}}"
         div.sentence-word v-else="true" = "{{word.text}}"
 
   div v-if="selectedWord"
@@ -105,6 +104,14 @@ javascript:
           this.f.selectedWordSentenceIndex = sentenceIndex;
         }
       },
+      selectIndex(index) {
+        const i = this.sentence.findIndex(s => s.index == index);
+        if (i !== -1) this.selectWord(i);
+      },
+      selectHighlighted() {
+        const i = this.sentence.findIndex(s => s.highlight == true);
+        if (i !== -1) this.selectWord(i);
+      },
       answer(answerText) {
         this.sentence[this.f.selectedWordSentenceIndex].answer = answerText;
         this.f.selectedWordSentenceIndex = null;
@@ -142,6 +149,7 @@ javascript:
           method: 'GET'
         }).done(data => {
           var j = JSON.parse(data);
+          var index = 1;
           app.j = j.j;
           app.english = j.english;
           app.sentenceId = j.sentence_id;
@@ -158,6 +166,7 @@ javascript:
                   i.answer = k.progress.last_answer;
                 }
               }
+              i.index = index++;
             }
             return i;
           });
@@ -191,9 +200,15 @@ javascript:
             app.answer('incorrect');
           } else if (e.key === "s") {
             app.answer('soso');
+          } else if (e.key == "Escape") {
+            app.f.selectedWordSentenceIndex = null;
           }
         } else {
-          if (e.keyCode === 32) {
+          if (e.keyCode >= 49 && e.keyCode <= 57) { // numbers from 1 to 9
+            app.selectIndex(e.keyCode - 48);
+          } else if (e.keyCode === 192) { // tilde
+            app.selectHighlighted();
+          } else if (e.keyCode === 32) {
             e.preventDefault(); // disable unwanted scrolling on 'space'
             app.allAnswered ? app.submit() : app.selectWord(0);
           }

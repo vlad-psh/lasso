@@ -28,6 +28,17 @@
         border-bottom: 2px solid rgba(255,255,255,0);
         margin: 0 2px;
         color: #878764;
+
+        .word-index {
+          padding: 0 .2em;
+          margin: .2em;
+          display: inline-block;
+          font-size: .9em;
+          border-radius: .2em;
+          color: #0007;
+          background: #fff7;
+          box-shadow: 1px 1px 0 #7777;
+        }
       }
       .answer-correct   {border-bottom: 2px solid #4caf50;}
       .answer-incorrect {border-bottom: 2px solid #e51c23;}

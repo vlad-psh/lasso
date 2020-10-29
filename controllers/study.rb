@@ -85,8 +85,9 @@ def get_drill_word(drill, init_session, learning_type = :reading_question, fresh
     drill.update(leitner_session: (drill.leitner_session + 1) % 10, leitner_fresh: 0)
     progress = get_drill_word(drill, init_session, learning_type, fresh) unless drill.leitner_session == init_session
   else
-    sp = progress.srs_progresses.first
+    sp = progress.srs_progresses.where(learning_type: learning_type).first
     puts "========== #{DateTime.now.strftime('%H:%M:%S')} Session #{drill.leitner_session} #{Progress::LEITNER_BOXES[drill.leitner_session]} card:'#{word_type}' box:#{sp.leitner_box rescue 'n/a'} combo:#{sp.leitner_combo rescue 'n/a'}/4 #{progress.title}"
+    puts "==== #{sp.inspect}"
   end
 
   return progress
@@ -102,7 +103,11 @@ get :api_question do
   progress = get_drill_word(drill, drill.leitner_session, learning_type, params[:fresh].present?)
 
   if params[:type] =~ /sentence/
+# TODO: подобный выбор позволяет выбрать предложения, содержащие не нужный нам KREB (допустим,
+# неверный вариант написания или написание каной вместо кандзей) если мы ошиблись при создании предложения
+# (выбрали неправильный base для слова) То-есть здесь нам тоже нужно проверять пару Seq/Title (как для объектов Progress)
     sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first
+    sentence = nil if sentence.present? && sentence.structure.detect{|i| i['base'] == progress.title}.blank?
 # TODO: look up SentenceReviews table and take ones who weren't reviewed at all or have not been reviewed recently
 #        .left_outer_joins(:sentence_reviews).order(
     sentence.highlight_word(progress.seq) if sentence.present?
