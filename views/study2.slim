@@ -34,7 +34,7 @@ div#sentence-quiz-app.study-card
       div.answer-button.green @click="answer('correct')"
         ' YES
         div.answer-details = '+ {{selectedKreb.progress.correct}}'
-    vue-word :seq="selectedWord.seq" :j="j" :editing="editing" @search="search"
+    vue-word :seq="selectedWord.seq" :j="j" :editing="editing" :key="selectedWord.seq" @search="search"
 
   div v-if="allAnswered && !selectedWord && !f.submitted"
     div.answer-buttons v-if="allAnswered"
@@ -110,7 +110,7 @@ javascript:
       },
       selectHighlighted() {
         const i = this.sentence.findIndex(s => s.highlight == true);
-        if (i !== -1) this.selectWord(i);
+        this.selectWord(i !== -1 ? i : 0); // select highlighted or first
       },
       answer(answerText) {
         this.sentence[this.f.selectedWordSentenceIndex].answer = answerText;
@@ -210,7 +210,7 @@ javascript:
             app.selectHighlighted();
           } else if (e.keyCode === 32) {
             e.preventDefault(); // disable unwanted scrolling on 'space'
-            app.allAnswered ? app.submit() : app.selectWord(0);
+            app.allAnswered ? app.submit() : app.selectHighlighted();
           }
         }
       }

@@ -140,7 +140,26 @@ Vue.component('vue-sentence-form', {
         this.structure[section][prop] = this.selection.word[prop];
       }
       this.selection.word.index = null;
-    }
+    },
+    stretchSelectedWord() {
+      const idx = this.selection.word.index;
+      const nextWord = this.structure[idx + 1];
+      // return if this is the last word in sentence or if next word is a word object (not a simple text)
+      if (!nextWord || nextWord.seq || nextWord.text.length === 0) return;
+      this.structure[idx].reading += nextWord.text[0];
+      this.structure[idx].text += nextWord.text[0];
+      nextWord.text = nextWord.text.substr(1); // cut first letter
+      this.editWord(idx);
+    },
+    shrinkSelectedWord() {
+      const idx = this.selection.word.index;
+      const nextWord = this.structure[idx + 1];
+      if (!nextWord || nextWord.seq) return;
+      nextWord.text = this.structure[idx].text.substr(-1) + nextWord.text;
+      this.structure[idx].reading = this.structure[idx].reading.slice(0,-1);
+      this.structure[idx].text = this.structure[idx].text.slice(0,-1);
+      this.editWord(idx);
+    },
   }, // end of methods
   updated() {
     var app = this;
@@ -192,6 +211,7 @@ Vue.component('vue-sentence-form', {
           <div v-if="selection.word.index !== null" class="word-settings">
             <div><input type="button" value="Clear" @click="resetSegment(selection.word.index)"></div>
             <div><input type="text" v-model="selection.word.reading" placeholder="reading"><br>{{selection.word.text}}</div>
+            <div><input type="button" value="-" @click="shrinkSelectedWord"><input type="button" value="+" @click="stretchSelectedWord"></div>
             <div><input type="text" class="search" v-model="selection.word.base" placeholder="search..."><br>#{{selection.word.seq}} - {{selection.word.gloss}}</div>
             <div><input type="button" value="Update" @click="updateWord()"></div>
           </div>
