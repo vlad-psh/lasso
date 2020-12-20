@@ -4,14 +4,6 @@
 
 div#sentence-quiz-app.study-card
   div.sentence-question
-    div style="position: absolute; top: 0; left: 0"
-      label
-        input type="checkbox" v-model="formVars.fresh"
-        ' &#x1f530;
-      br style="margin-bottom: 1em;"
-      a.ajax-link @click="updateSentence" &#x1f504;
-      br style="margin-bottom: 1em;"
-        a.ajax-link v-if="selectedWord" @click="openModal" &#x1f50e;
     div.center-block
       div.sentence-word-container v-for="(word, wordIndex) of sentence"
         div v-if="word.seq"
@@ -20,6 +12,13 @@ div#sentence-quiz-app.study-card
             = "{{word.answer || (word.highlight ? '\u2b50' : '')}}"
           div.sentence-word :class="word.answered ? 'word-question-answered' : 'word-question'" @click="selectWord(wordIndex)" = "{{word.text}}"
         div.sentence-word v-else="true" = "{{word.text}}"
+    div style="display: flex; justify-content: space-evenly; position: absolute; width: 100%; bottom: 0;"
+      label
+        input type="checkbox" v-model="formVars.fresh"
+        ' &#x1f530;
+      a.ajax-link @click="updateSentence" &#x1f504;
+      a.ajax-link v-if="selectedWord" @click="openModal" &#x1f50e;
+      vue-sentence-audio v-if="sentenceId" :id="sentenceId" :key="sentenceId"
 
   div v-if="selectedWord"
     div.answer-buttons v-if="selectedSentenceWord.answer"

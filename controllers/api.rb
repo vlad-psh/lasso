@@ -1,3 +1,5 @@
+require 'aws-sdk-polly'
+
 paths api_sentence: '/api/sentence',
     word_details: '/api/word', # params: seq
     api_word_autocomplete: '/api/word/autocomplete',
@@ -6,7 +8,8 @@ paths api_sentence: '/api/sentence',
     api_comment: '/api/comment',
     drill_add_word: '/drill/word',
     kanji_readings: '/api/kanji_readings',
-    activity: '/api/activity/:category/:seconds'
+    activity: '/api/activity/:category/:seconds',
+    api_sentence_audio: '/api/sentence/:id/audio'
 
 get :word_details do
   protect!
@@ -162,4 +165,27 @@ get :activity do
   a.save
 
   a.seconds.to_s
+end
+
+get :api_sentence_audio do
+  protect!
+
+  sentence = Sentence.find_by(id: params[:id], user: current_user)
+  halt(404, "Sentence not found") unless sentence.present?
+
+  polly_client = Aws::Polly::Client.new(
+    region: $config['aws_region'],
+    credentials: Aws::Credentials.new($config['aws_access_key'], $config['aws_secret_key'])
+  )
+
+  polly_resp = polly_client.synthesize_speech({
+    output_format: "mp3",
+    sample_rate: "22050",
+    text: sentence.japanese,
+    text_type: "text",
+    voice_id: "Mizuki",
+  })
+
+  content_type 'audio/mpeg'
+  polly_resp.audio_stream.read
 end

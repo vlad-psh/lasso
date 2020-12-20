@@ -17,6 +17,7 @@ require('./vue-pitch-word.js');
 require('./vue-pitch-word-nhk.js');
 require('./vue-settings-button.js');
 require('./vue-toggle-button.js');
+require('./vue-sentence-audio.js');
 
 function activity() {
   var storage = {};

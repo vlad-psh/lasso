@@ -1,7 +1,6 @@
 ---
-secret: xxx
+secret: SECRET
+aws_region: ap-northeast-1
+aws_access_key: ACCESS_KEY
+aws_secret_key: SECRET_KEY
 pictures: /srv/data/wakame_pictures
-admins:
-  login1: password1
-guests:
-  login2: password2
