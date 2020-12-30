@@ -1,4 +1,4 @@
-# wakame-frontend
+# jisho-client
 
 ## Build Setup
 
