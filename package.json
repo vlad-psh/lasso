@@ -16,8 +16,10 @@
     "nuxt": "^2.14.6"
   },
   "devDependencies": {
+    "@nuxtjs/color-mode": "^2.0.2",
     "@nuxtjs/eslint-config": "^3.1.0",
     "@nuxtjs/eslint-module": "^2.0.0",
+    "@nuxtjs/svg": "^0.1.12",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^7.1.0",

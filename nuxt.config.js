@@ -26,6 +26,8 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
+    '@nuxtjs/color-mode',
+    '@nuxtjs/svg',
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -35,10 +37,12 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {
-    browserBaseURL: process.env.AXIOS_BASE_URL,
-  },
+  axios: {},
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  colorMode: {
+    preference: 'light', // disable system
+  },
 }

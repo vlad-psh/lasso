@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  font-size: 12pt;
+  font-weight: 300;
+  height: 100vh;
+
+  #__nuxt,
+  #__layout,
+  #__layout_inner {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+html[class='dark-mode'] body {
+  $bgcolor: #16202a; // #0d192b
+  $bgcolor2: #1c2939; // top menu bg, etc; little bit lighter
+  $fgcolor: #ccc; // main text color
+  $fgcolor2: #8799a5; // little bit darker text
+  $lightborder: rgba(128, 128, 128, 0.2);
+
+  background: $bgcolor;
+  color: $fgcolor;
+
+  #main-menu {
+    background-color: $bgcolor2;
+  }
+}
