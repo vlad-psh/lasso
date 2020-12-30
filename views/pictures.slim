@@ -1,9 +1,0 @@
-form method="POST" action=path_to(:pictures_upload) enctype="multipart/form-data"
-  input type="file" name="file"
-  input type="submit" value="upload"
-
-ul
-  - Picture.where(user: current_user).order(created_at: :desc).limit(10).each do |p|
-    li
-      img src=path_to(:picture).with(:thumb, p.sid)
-      = p.filepath(:thumb)
