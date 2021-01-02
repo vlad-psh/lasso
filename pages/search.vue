@@ -8,6 +8,8 @@
           placeholder="Search..."
           @input="$store.dispatch('search/searchDebounce', searchQuery)"
           @keydown.enter="$store.dispatch('search/search', searchQuery)"
+          @keydown.down="nextResult()"
+          @keydown.up="previousResult()"
         />
         <div
           v-if="$store.state.search.axiosSearchToken"
@@ -20,9 +22,10 @@
       </div>
       <div class="search-results">
         <CandidateItem
-          v-for="result in $store.state.search.searchResults"
-          :key="result[0]"
-          :result="result"
+          v-for="(item, index) in $store.state.search.searchResults"
+          :key="item[0]"
+          :item="item"
+          :is-selected="index === $store.state.search.highlightedWordIndex"
         />
       </div>
     </div>
@@ -47,7 +50,16 @@ export default {
   },
   computed: {},
   mounted() {},
-  methods: {},
+  methods: {
+    nextResult() {
+      this.$store.commit('search/SEL_IDX_INCR')
+      // this.openWordDebounced()
+    },
+    previousResult() {
+      this.$store.commit('search/SEL_IDX_DECR')
+      // this.openWordDebounced()
+    },
+  },
 }
 </script>
 

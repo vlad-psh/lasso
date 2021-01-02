@@ -1,30 +1,23 @@
 <template>
-  <div
-    class="candidate-item no-refocus"
-    :class="{ selected: isSelected }"
-    @click="openWord(resultIndex)"
-  >
+  <div class="candidate-item no-refocus" :class="{ selected: isSelected }">
     <div class="title">
-      <div class="common-icon" :class="result[4] ? 'common' : 'uncommon'">
+      <div class="common-icon" :class="item[4] ? 'common' : 'uncommon'">
         &#x2b50;
       </div>
-      <div class="text">{{ result[1] }}</div>
-      <div v-if="result[5]" class="learned-icon"></div>
+      <div class="text">{{ item[1] }}</div>
+      <div v-if="item[5]" class="learned-icon"></div>
     </div>
-    <div class="details">{{ result[2] }}・{{ result[3] }}</div>
+    <div class="details">{{ item[2] }}・{{ item[3] }}</div>
   </div>
 </template>
 
 <script>
 export default {
   props: {
-    result: { type: Array, required: true },
+    item: { type: Array, required: true },
+    isSelected: { type: Boolean },
   },
-  computed: {
-    isSelected() {
-      return this.$store.state.search.selectedSeq === this.result[0]
-    },
-  },
+  computed: {},
 }
 </script>
 

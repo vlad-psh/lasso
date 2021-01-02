@@ -2,13 +2,13 @@
   <div id="main-menu">
     <div class="center">
       <div class="main-menu-item">
-        <a class="icon" href="/"><SearchIcon /></a>
+        <NuxtLink class="icon" to="/"><SearchIcon /></NuxtLink>
       </div>
       <div class="main-menu-item">
-        <a class="icon" href="/drills"><BookmarkIcon /></a>
+        <NuxtLink class="icon" to="/drills"><BookmarkIcon /></NuxtLink>
       </div>
       <div class="main-menu-item">
-        <a class="icon" href="/sentences"><TypewriterIcon /></a>
+        <NuxtLink class="icon" to="/sentences"><TypewriterIcon /></NuxtLink>
       </div>
       <div class="main-menu-item">
         <VueThemeButton />

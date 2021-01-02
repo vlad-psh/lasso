@@ -22,7 +22,7 @@ export const state = () => ({
   searchResults: [],
   selectedSeq: null,
   words: [],
-  highlightedWordIndex: null,
+  highlightedWordIndex: -1,
   axiosCancelHandler: null,
 })
 
@@ -40,6 +40,21 @@ export const mutations = {
     state.highlightedWordIndex = null
     state.searchResults = results
     state.previousQuery = query
+  },
+  SET_SEL_IDX(state, val) {
+    state.highlightedWordIndex = val
+  },
+  SEL_IDX_INCR(state) {
+    state.highlightedWordIndex =
+      state.highlightedWordIndex >= state.searchResults.length - 1
+        ? 0
+        : state.highlightedWordIndex + 1
+  },
+  SEL_IDX_DECR(state) {
+    state.highlightedWordIndex =
+      state.highlightedWordIndex === 0
+        ? state.searchResults.length - 1
+        : state.highlightedWordIndex - 1
   },
 }
 
@@ -70,9 +85,9 @@ export const actions = {
       }
       document.title = query
 
-      // if (resp.data.length > 0 && openWordAtIndex !== -1) {
-      //   app.openWord(openWordAtIndex || 0)
-      // }
+      if (resp.data.length > 0) {
+        ctx.commit('SET_SEL_IDX', openWordAtIndex || 0)
+      }
     })
   },
 }
