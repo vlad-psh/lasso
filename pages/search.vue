@@ -8,17 +8,11 @@
           placeholder="Search..."
           @input="pushSearchQueryLater()"
           @keydown.enter="pushSearchQuery()"
+          @keydown.esc="clearInputField()"
           @keydown.down="nextResult()"
           @keydown.up="previousResult()"
         />
-        <div
-          v-if="$store.state.search.axiosSearchToken"
-          class="loading-circles"
-        >
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+        <LoadingCircles v-if="$store.state.search.axiosCancelHandler" />
       </div>
       <div class="search-results">
         <CandidateItem
@@ -40,10 +34,7 @@ export default {
   async middleware({ store, query, $axios }) {
     // Store isn't accesible inside fetch, that's why we're using middleware
     // https://github.com/nuxt/nuxt.js/issues/7232
-    const queryStr = query.query
-    if (!queryStr) return
-    const { data } = await $axios.post('/api/search', { query: queryStr })
-    store.commit('search/SET_RESULTS', { query: queryStr, results: data })
+    await store.dispatch('search/search', query.query)
     // TODO: set sel idx
   },
   data() {
@@ -68,6 +59,10 @@ export default {
     previousResult() {
       this.$store.commit('search/SEL_IDX_DECR')
       // this.openWordDebounced()
+    },
+    clearInputField() {
+      this.searchQuery = ''
+      // this.previousQuery = ''
     },
   },
 }
@@ -98,11 +93,6 @@ $borderColor: rgba(192, 192, 192, 0.3);
         padding: 0.4em 0.6em 0.5em 0.6em;
         box-sizing: border-box;
         width: 100%;
-      }
-      .loading-circles {
-        position: absolute;
-        right: 1em;
-        top: 0.8em;
       }
     }
     .search-results {
