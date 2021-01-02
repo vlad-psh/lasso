@@ -37,12 +37,24 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: 'http://jisho.fc/',
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
 
   colorMode: {
     preference: 'light', // disable system
+  },
+
+  router: {
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: 'index',
+        path: '/',
+        component: 'pages/search.vue',
+      })
+    },
   },
 }
