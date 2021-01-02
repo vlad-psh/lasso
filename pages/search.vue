@@ -31,19 +31,36 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
-  async middleware({ store, query, $axios }) {
+  async middleware({ store, query }) {
     // Store isn't accesible inside fetch, that's why we're using middleware
     // https://github.com/nuxt/nuxt.js/issues/7232
-    await store.dispatch('search/search', query.query)
-    // TODO: set sel idx
+    await store.dispatch('search/search', {
+      query: query.query,
+      index: Number.parseInt(query.index),
+    })
   },
   data() {
     return {
       searchQuery: this.$store.state.search.previousQuery,
+      historyTransition: false,
     }
   },
   computed: {},
-  mounted() {},
+  watch: {
+    $route(to, from) {
+      // We only need to update searchQuery only if we're going back/fwd in browser's history
+      // (see 'window.onpopstate' in mounted() hook)
+      // We don't need to update after calling '$router.push' manually
+      if (this.historyTransition === true) {
+        this.historyTransition = false
+        this.searchQuery = to.query.query || ''
+        document.title = this.searchQuery
+      }
+    },
+  },
+  mounted() {
+    window.onpopstate = () => (this.historyTransition = true)
+  },
   methods: {
     pushSearchQueryLater: debounce(function () {
       this.pushSearchQuery()
@@ -52,17 +69,27 @@ export default {
       this.$router.push({ query: { query: this.searchQuery } })
       document.title = this.searchQuery
     },
+    replaceSearchQuery() {
+      this.$router.replace({
+        query: {
+          query: this.searchQuery,
+          index: this.$store.state.search.highlightedWordIndex,
+        },
+      })
+    },
     nextResult() {
       this.$store.commit('search/SEL_IDX_INCR')
+      this.replaceSearchQuery()
       // this.openWordDebounced()
     },
     previousResult() {
       this.$store.commit('search/SEL_IDX_DECR')
+      this.replaceSearchQuery()
       // this.openWordDebounced()
     },
     clearInputField() {
+      // TODO: cancel current search request
       this.searchQuery = ''
-      // this.previousQuery = ''
     },
   },
 }

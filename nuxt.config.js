@@ -57,4 +57,9 @@ export default {
       })
     },
   },
+
+  // Customizing progress bar
+  loading: {
+    color: '#008ace',
+  },
 }

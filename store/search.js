@@ -42,7 +42,7 @@ export const mutations = {
 }
 
 export const actions = {
-  async search(ctx, query, { openWordAtIndex = null } = {}) {
+  async search(ctx, { query, index = null }) {
     // Prevent request while composing japanese text using IME
     // Otherwise, same (unchanged) request will be sent after each key press
     if (!query) return
@@ -68,7 +68,7 @@ export const actions = {
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
       if (resp.data.length > 0) {
-        ctx.commit('SET_SEL_IDX', openWordAtIndex || 0)
+        ctx.commit('SET_SEL_IDX', index || 0)
       }
     } catch (e) {
       // If request was canceled or failed
