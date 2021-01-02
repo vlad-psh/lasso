@@ -42,24 +42,17 @@ export default {
   data() {
     return {
       searchQuery: this.$store.state.search.previousQuery,
-      historyTransition: false,
     }
   },
   computed: {},
-  watch: {
-    $route(to, from) {
-      // We only need to update searchQuery only if we're going back/fwd in browser's history
-      // (see 'window.onpopstate' in mounted() hook)
-      // We don't need to update after calling '$router.push' manually
-      if (this.historyTransition === true) {
-        this.historyTransition = false
-        this.searchQuery = to.query.query || ''
-        document.title = this.searchQuery
-      }
-    },
-  },
   mounted() {
-    window.onpopstate = () => (this.historyTransition = true)
+    // onpopstate invokes only when we're going back/fwd in browser's history
+    // It doesn't invokes after calling '$router.push' manually
+    window.onpopstate = () => {
+      // We don't have access to updated $route.query yet (onpopstate)
+      const u = new URLSearchParams(location.search)
+      this.searchQuery = u.get('query') || ''
+    }
   },
   methods: {
     pushSearchQueryLater: debounce(function () {
