@@ -6,8 +6,8 @@
           v-model="searchQuery"
           type="text"
           placeholder="Search..."
-          @input="$store.dispatch('search/searchDebounce', searchQuery)"
-          @keydown.enter="$store.dispatch('search/search', searchQuery)"
+          @input="pushSearchQueryLater()"
+          @keydown.enter="pushSearchQuery()"
           @keydown.down="nextResult()"
           @keydown.up="previousResult()"
         />
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import debounce from '@/js/debouncer.js'
+
 export default {
   async middleware({ store, query, $axios }) {
     // Store isn't accesible inside fetch, that's why we're using middleware
@@ -42,6 +44,7 @@ export default {
     if (!queryStr) return
     const { data } = await $axios.post('/api/search', { query: queryStr })
     store.commit('search/SET_RESULTS', { query: queryStr, results: data })
+    // TODO: set sel idx
   },
   data() {
     return {
@@ -51,6 +54,13 @@ export default {
   computed: {},
   mounted() {},
   methods: {
+    pushSearchQueryLater: debounce(function () {
+      this.pushSearchQuery()
+    }, 250),
+    pushSearchQuery() {
+      this.$router.push({ query: { query: this.searchQuery } })
+      document.title = this.searchQuery
+    },
     nextResult() {
       this.$store.commit('search/SEL_IDX_INCR')
       // this.openWordDebounced()

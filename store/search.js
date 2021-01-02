@@ -1,22 +1,5 @@
 import axios from 'axios'
 
-const debounce = function (func, wait, immediate) {
-  let timeout
-  return function () {
-    const context = this
-    const args = arguments
-    const callNow = immediate && !timeout
-    clearTimeout(timeout)
-    timeout = setTimeout(function () {
-      timeout = null
-      if (!immediate) {
-        func.apply(context, args)
-      }
-    }, wait)
-    if (callNow) func.apply(context, args)
-  }
-}
-
 export const state = () => ({
   previousQuery: '',
   searchResults: [],
@@ -59,10 +42,7 @@ export const mutations = {
 }
 
 export const actions = {
-  searchDebounce: debounce(function (ctx, query, options = {}) {
-    ctx.dispatch('search', query, options)
-  }, 250),
-  search(ctx, query, { openWordAtIndex = null, popHistory = true } = {}) {
+  search(ctx, query, { openWordAtIndex = null } = {}) {
     // Prevent request while composing japanese text using IME
     // Otherwise, same (unchanged) request will be sent after each key press
     if (query === ctx.state.previousQuery) return
@@ -79,11 +59,6 @@ export const actions = {
       // Continue if input field hasn't been changed while we're trying to get results
       ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
       ctx.commit('SET_RESULTS', { query, results: resp.data })
-
-      if (popHistory) {
-        history.pushState({}, query, '?query=' + query)
-      }
-      document.title = query
 
       if (resp.data.length > 0) {
         ctx.commit('SET_SEL_IDX', openWordAtIndex || 0)
