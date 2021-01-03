@@ -12,7 +12,6 @@
           @keydown.down="nextCandidate()"
           @keydown.up="previousCandidate()"
         />
-        <LoadingCircles v-if="$store.state.search.axiosCancelHandler" />
       </div>
       <div class="search-results">
         <CandidateItem
