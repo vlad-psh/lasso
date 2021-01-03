@@ -6,11 +6,11 @@
           v-model="searchQuery"
           type="text"
           placeholder="Search..."
-          @input="pushSearchQueryLater()"
-          @keydown.enter="pushSearchQuery()"
+          @input="pushRouteLater()"
+          @keydown.enter="pushRoute()"
           @keydown.esc="clearInputField()"
-          @keydown.down="nextResult()"
-          @keydown.up="previousResult()"
+          @keydown.down="nextCandidate()"
+          @keydown.up="previousCandidate()"
         />
         <LoadingCircles v-if="$store.state.search.axiosCancelHandler" />
       </div>
@@ -21,10 +21,17 @@
           :item="item"
           :index="index"
           :is-selected="index === $store.state.search.selectedIdx"
+          :on-click="selectCandidate"
         />
       </div>
     </div>
-    <ContentsPanel />
+    <div class="contents-panel">
+      <Word
+        v-for="seq of $store.state.cache.wordIds"
+        :key="seq"
+        :seq="seq"
+      ></Word>
+    </div>
   </div>
 </template>
 
@@ -32,9 +39,10 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
-  async middleware({ store, query }) {
+  async middleware(ctx) {
     // Store isn't accesible inside fetch, that's why we're using middleware
     // https://github.com/nuxt/nuxt.js/issues/7232
+    const { store, query } = ctx
     await store.dispatch('search/search', {
       query: query.query,
       index: Number.parseInt(query.index),
@@ -57,14 +65,14 @@ export default {
     }
   },
   methods: {
-    pushSearchQueryLater: debounce(function () {
-      this.pushSearchQuery()
+    pushRouteLater: debounce(function () {
+      this.pushRoute()
     }, 250),
-    pushSearchQuery() {
+    pushRoute() {
       this.$router.push({ query: { query: this.searchQuery } })
       document.title = this.searchQuery
     },
-    replaceSearchQuery() {
+    replaceRoute() {
       this.$router.replace({
         query: {
           query: this.searchQuery,
@@ -72,18 +80,21 @@ export default {
         },
       })
     },
-    nextResult() {
+    nextCandidate() {
       this.$store.commit('search/SEL_IDX_INCR')
-      this.replaceSearchQuery()
-      // this.openWordDebounced()
+      this.replaceRoute()
     },
-    previousResult() {
+    previousCandidate() {
       this.$store.commit('search/SEL_IDX_DECR')
-      this.replaceSearchQuery()
-      // this.openWordDebounced()
+      this.replaceRoute()
+    },
+    selectCandidate(idx) {
+      this.$store.commit('search/SELECT_IDX', idx)
+      this.replaceRoute()
+      // TODO: Scroll to word
     },
     clearInputField() {
-      // TODO: cancel current search request
+      this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
       this.searchQuery = ''
     },
   },
@@ -123,5 +134,10 @@ $borderColor: rgba(192, 192, 192, 0.3);
       background: #f7f7f7;
     }
   } // .browse-panel
+
+  .contents-panel {
+    height: 100%;
+    overflow-y: auto;
+  }
 }
 </style>
