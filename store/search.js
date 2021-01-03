@@ -1,9 +1,9 @@
 export const state = () => ({
-  previousQuery: '',
-  searchResults: [],
+  query: '', // query value for completed search
+  results: [], // candidates array
+  selectedIdx: -1,
   selectedSeq: null,
-  words: [],
-  highlightedWordIndex: -1,
+  words: [], // detailed info for opened words
   axiosCancelHandler: null,
 })
 
@@ -20,24 +20,24 @@ export const mutations = {
     state.axiosCancelHandler = val
   },
   SET_RESULTS(state, { query, results }) {
-    state.highlightedWordIndex = null
-    state.searchResults = results
-    state.previousQuery = query
+    state.selectedIdx = null
+    state.results = results
+    state.query = query
   },
-  SET_SEL_IDX(state, val) {
-    state.highlightedWordIndex = val
+  SELECT_IDX(state, val) {
+    const sel = state.results[val]
+    if (sel) {
+      state.selectedIdx = val
+      state.selectedSeq = sel[0]
+    }
   },
   SEL_IDX_INCR(state) {
-    state.highlightedWordIndex =
-      state.highlightedWordIndex >= state.searchResults.length - 1
-        ? 0
-        : state.highlightedWordIndex + 1
+    state.selectedIdx =
+      state.selectedIdx >= state.results.length - 1 ? 0 : state.selectedIdx + 1
   },
   SEL_IDX_DECR(state) {
-    state.highlightedWordIndex =
-      state.highlightedWordIndex === 0
-        ? state.searchResults.length - 1
-        : state.highlightedWordIndex - 1
+    state.selectedIdx =
+      state.selectedIdx === 0 ? state.results.length - 1 : state.selectedIdx - 1
   },
 }
 
@@ -46,7 +46,7 @@ export const actions = {
     // Prevent request while composing japanese text using IME
     // Otherwise, same (unchanged) request will be sent after each key press
     if (!query) return
-    if (query === ctx.state.previousQuery) return
+    if (query === ctx.state.query) return
     if (query.trim() === '') return
 
     const axiosCancelHandler = this.$axios.CancelToken.source()
@@ -68,7 +68,7 @@ export const actions = {
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
       if (resp.data.length > 0) {
-        ctx.commit('SET_SEL_IDX', index || 0)
+        ctx.commit('SELECT_IDX', index || 0)
       }
     } catch (e) {
       // If request was canceled or failed

@@ -16,10 +16,10 @@
       </div>
       <div class="search-results">
         <CandidateItem
-          v-for="(item, index) in $store.state.search.searchResults"
+          v-for="(item, index) in $store.state.search.results"
           :key="item[0]"
           :item="item"
-          :is-selected="index === $store.state.search.highlightedWordIndex"
+          :is-selected="index === $store.state.search.selectedIdx"
         />
       </div>
     </div>
@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-      searchQuery: this.$store.state.search.previousQuery,
+      searchQuery: this.$store.state.search.query,
     }
   },
   computed: {},
@@ -66,7 +66,7 @@ export default {
       this.$router.replace({
         query: {
           query: this.searchQuery,
-          index: this.$store.state.search.highlightedWordIndex,
+          index: this.$store.state.search.selectedIdx,
         },
       })
     },
@@ -121,14 +121,5 @@ $borderColor: rgba(192, 192, 192, 0.3);
       background: #f7f7f7;
     }
   } // .browse-panel
-}
-
-@keyframes blink-highlight {
-  from {
-    background-color: rgba(255, 255, 0, 0.3);
-  }
-  to {
-    background-color: transparent;
-  }
 }
 </style>
