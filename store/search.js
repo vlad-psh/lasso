@@ -1,9 +1,8 @@
 export const state = () => ({
   query: '', // query value for completed search
-  results: [], // candidates array
+  results: [], // candidates array (short info)
   selectedIdx: -1,
   selectedSeq: null,
-  words: [], // detailed info for opened words
   axiosCancelHandler: null,
 })
 
@@ -32,12 +31,14 @@ export const mutations = {
     }
   },
   SEL_IDX_INCR(state) {
-    state.selectedIdx =
+    const idx =
       state.selectedIdx >= state.results.length - 1 ? 0 : state.selectedIdx + 1
+    this.commit('search/SELECT_IDX', idx)
   },
   SEL_IDX_DECR(state) {
-    state.selectedIdx =
+    const idx =
       state.selectedIdx === 0 ? state.results.length - 1 : state.selectedIdx - 1
+    this.commit('search/SELECT_IDX', idx)
   },
 }
 

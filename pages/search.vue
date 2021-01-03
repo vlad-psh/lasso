@@ -19,6 +19,7 @@
           v-for="(item, index) in $store.state.search.results"
           :key="item[0]"
           :item="item"
+          :index="index"
           :is-selected="index === $store.state.search.selectedIdx"
         />
       </div>
@@ -38,6 +39,7 @@ export default {
       query: query.query,
       index: Number.parseInt(query.index),
     })
+    await store.dispatch('cache/loadWord', store.state.search.selectedSeq)
   },
   data() {
     return {

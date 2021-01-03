@@ -1,5 +1,9 @@
 <template>
-  <div class="candidate-item no-refocus" :class="{ selected: isSelected }">
+  <div
+    class="candidate-item no-refocus"
+    :class="{ selected: isSelected }"
+    @click="loadWord"
+  >
     <div class="title">
       <div class="common-icon" :class="item[4] ? 'common' : 'uncommon'">
         &#x2b50;
@@ -15,9 +19,16 @@
 export default {
   props: {
     item: { type: Array, required: true },
+    index: { type: Number, required: true },
     isSelected: { type: Boolean },
   },
   computed: {},
+  methods: {
+    loadWord() {
+      this.$store.commit('search/SELECT_IDX', this.index)
+      this.$store.dispatch('cache/loadWord', this.item[0])
+    },
+  },
 }
 </script>
 
