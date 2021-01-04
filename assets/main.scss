@@ -1,4 +1,7 @@
 body {
+  --expander-color: #0b486b;
+  --expander-bg: #a8dba8; // #a8dba8 (green)
+
   margin: 0;
   font-size: 12pt;
   font-weight: 300;
@@ -13,16 +16,18 @@ body {
 }
 
 html[class='dark-mode'] body {
-  $bgcolor: #16202a; // #0d192b
-  $bgcolor2: #1c2939; // top menu bg, etc; little bit lighter
-  $fgcolor: #ccc; // main text color
-  $fgcolor2: #8799a5; // little bit darker text
-  $lightborder: rgba(128, 128, 128, 0.2);
+  --color: #ccc; // main text color
+  --color-secondary: #8799a5; // little bit darker text
 
-  background: $bgcolor;
-  color: $fgcolor;
+  --bg: #16202a; // #0d192b
+  --bg-secondary: #1c2939; // top menu bg, etc; little bit lighter
+
+  --border-color: rgba(128, 128, 128, 0.2); // $lightborder
+
+  background: var(--bg);
+  color: var(--color);
 
   #main-menu {
-    background-color: $bgcolor2;
+    background-color: var(--bg-secondary);
   }
 }

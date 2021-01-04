@@ -14,7 +14,7 @@
         />
       </div>
       <div class="search-results">
-        <CandidateItem
+        <SearchCandidateItem
           v-for="(item, index) in $store.state.search.results"
           :key="item[0]"
           :item="item"
@@ -69,6 +69,7 @@ export default {
     }, 250),
     pushRoute() {
       this.$router.push({ query: { query: this.searchQuery } })
+      // TODO: Set title on SSR
       document.title = this.searchQuery
     },
     replaceRoute() {
