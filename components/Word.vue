@@ -99,7 +99,7 @@ export default {
         margin: 2px 0 0 -5px;
         content: ' ';
         border: 5px solid transparent;
-        border-bottom-color: var(--expander-bg);
+        // border-bottom-color: var(--expander-bg);
       }
 
       .level {
@@ -119,8 +119,7 @@ export default {
   } /* end of .expandable-list */
 
   .expandable-list-container {
-    background-color: var(--expander-bg);
-    background-image: url('~assets/backgrounds/little-pluses.png');
+    background: var(--expander-bg);
     color: var(--expander-color);
     padding: 0.5em 0;
     margin-top: 5px;

@@ -102,7 +102,6 @@ export default {
 </script>
 
 <style lang="scss">
-$borderColor: rgba(192, 192, 192, 0.3);
 #search-app {
   height: calc(100vh - 33px);
   display: grid;
@@ -110,7 +109,7 @@ $borderColor: rgba(192, 192, 192, 0.3);
   grid-template-rows: 100%;
 
   .browse-panel {
-    border: 0px solid $borderColor;
+    border: 0px solid var(--border-color);
     border-right-width: 1px;
     height: 100%;
     display: grid;
@@ -122,7 +121,7 @@ $borderColor: rgba(192, 192, 192, 0.3);
       input[type='text'] {
         background: none;
         border: none;
-        border-bottom: 1px solid $borderColor;
+        border-bottom: 1px solid var(--border-color);
         padding: 0.4em 0.6em 0.5em 0.6em;
         box-sizing: border-box;
         width: 100%;
@@ -131,7 +130,7 @@ $borderColor: rgba(192, 192, 192, 0.3);
     .search-results {
       height: 100%;
       overflow-y: auto;
-      background: #f7f7f7;
+      background: #0001;
     }
   } // .browse-panel
 

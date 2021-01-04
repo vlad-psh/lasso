@@ -1,6 +1,7 @@
 body {
+  --border-color: rgba(192, 192, 192, 0.3);
   --expander-color: #0b486b;
-  --expander-bg: #a8dba8; // #a8dba8 (green)
+  --expander-bg: url('~assets/backgrounds/little-pluses.png') #a8dba8; // #a8dba8 (green)
 
   margin: 0;
   font-size: 12pt;
@@ -18,14 +19,21 @@ body {
 html[class='dark-mode'] body {
   --color: #ccc; // main text color
   --color-secondary: #8799a5; // little bit darker text
-
   --bg: #16202a; // #0d192b
   --bg-secondary: #1c2939; // top menu bg, etc; little bit lighter
-
   --border-color: rgba(128, 128, 128, 0.2); // $lightborder
+  --expander-color: var(--color-secondary);
+  --expander-bg: var(--bg-secondary);
 
   background: var(--bg);
   color: var(--color);
+
+  input[type='text'],
+  textarea {
+    background: var(--bg-secondary);
+    color: var(--color);
+    border: none;
+  }
 
   #main-menu {
     background-color: var(--bg-secondary);

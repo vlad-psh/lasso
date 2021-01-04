@@ -29,7 +29,7 @@ export default {
 <style lang="scss">
 .candidate-item {
   padding: 0.2em 0.4em;
-  border-bottom: 1px solid rgba(192, 192, 192, 0.3);
+  border-bottom: 1px solid var(--border-color);
   cursor: pointer;
 
   &.selected {
