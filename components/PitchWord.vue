@@ -1,20 +1,27 @@
 <template>
-  <span class="vue-pitch-word">
-    <template v-if="structure.length > 0">
-      <span v-for="(part, idx) of structure" :key="idx" :class="part[1]">{{
-        part[0]
-      }}</span
-      ><span class="pitch-number">{{ pitchNumber }}</span>
-    </template>
-    <template v-else>{{ word }}</template>
-  </span>
+  <div
+    class="word-kreb no-refocus"
+    :class="[
+      kreb.is_common ? 'common' : null,
+      kreb.progress.learned_at ? 'learned' : null,
+    ]"
+  >
+    <span class="vue-pitch-word">
+      <template v-if="structure.length > 0">
+        <span v-for="(part, idx) of structure" :key="idx" :class="part[1]">{{
+          part[0]
+        }}</span
+        ><span class="pitch-number">{{ pitchNumber }}</span>
+      </template>
+      <template v-else>{{ kreb.title }}</template>
+    </span>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
-    word: { type: String, required: true },
-    pitch: { type: String, default: '' },
+    kreb: { type: Object, required: true },
   },
   data() {
     return {
@@ -22,6 +29,9 @@ export default {
     }
   },
   computed: {
+    pitch() {
+      return this.kreb.pitch || ''
+    },
     pitchNumber() {
       return this.pitch.replace(/\(.*?\)/g, '')
     },
@@ -33,7 +43,7 @@ export default {
 
       const w = []
       // split by moras
-      for (const letter of this.word.split('')) {
+      for (const letter of this.kreb.title.split('')) {
         if (digraphs.includes(letter)) {
           w[w.length - 1] = w[w.length - 1] + letter
         } else {
