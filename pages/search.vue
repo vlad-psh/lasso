@@ -4,6 +4,7 @@
       <div class="search-field">
         <input
           v-model="searchQuery"
+          v-shortkey.focus="['esc']"
           type="text"
           placeholder="Search..."
           @input="pushRouteLater()"
