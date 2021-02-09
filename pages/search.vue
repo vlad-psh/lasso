@@ -7,11 +7,11 @@
           v-shortkey.focus="['esc']"
           type="text"
           placeholder="Search..."
-          @input="pushRouteLater()"
-          @keydown.enter="pushRoute()"
-          @keydown.esc="clearInputField()"
-          @keydown.down="nextCandidate()"
-          @keydown.up="previousCandidate()"
+          @input="searchLater"
+          @keydown.enter="search"
+          @keydown.esc="clearInputField"
+          @keydown.down="selectCandidate('incr')"
+          @keydown.up="selectCandidate('decr')"
         />
       </div>
       <div class="search-results">
@@ -39,16 +39,6 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
-  async middleware(ctx) {
-    // Store isn't accesible inside fetch, that's why we're using middleware
-    // https://github.com/nuxt/nuxt.js/issues/7232
-    const { store, query } = ctx
-    await store.dispatch('search/search', {
-      query: query.query,
-      index: Number.parseInt(query.index),
-    })
-    await store.dispatch('cache/loadWord', store.state.search.selectedSeq)
-  },
   data() {
     return {
       searchQuery: this.$store.state.search.query,
@@ -57,23 +47,31 @@ export default {
   computed: {},
   mounted() {
     // onpopstate invokes only when we're going back/fwd in browser's history
-    // It doesn't invokes after calling '$router.push' manually
+    // and doesn't invokes at $router.push() etc
+    // That's why we're using it instead of just watching for '$route.query'
     window.onpopstate = () => {
       // We don't have access to updated $route.query yet (onpopstate)
       const u = new URLSearchParams(location.search)
       this.searchQuery = u.get('query') || ''
+      this.$store.dispatch('search/search', {
+        query: this.searchQuery,
+        index: 0,
+      })
     }
   },
   methods: {
-    pushRouteLater: debounce(function () {
-      this.pushRoute()
+    searchLater: debounce(function () {
+      this.search()
     }, 250),
-    pushRoute() {
+    search() {
+      this.$store.dispatch('search/search', {
+        query: this.searchQuery,
+        index: 0,
+      })
       this.$router.push({ query: { query: this.searchQuery } })
-      // TODO: Set title on SSR
-      document.title = this.searchQuery
     },
-    replaceRoute() {
+    selectCandidate(idx) {
+      this.$store.dispatch('search/selectIndex', idx)
       this.$router.replace({
         query: {
           query: this.searchQuery,
@@ -81,23 +79,13 @@ export default {
         },
       })
     },
-    nextCandidate() {
-      this.$store.commit('search/SEL_IDX_INCR')
-      this.replaceRoute()
-    },
-    previousCandidate() {
-      this.$store.commit('search/SEL_IDX_DECR')
-      this.replaceRoute()
-    },
-    selectCandidate(idx) {
-      this.$store.commit('search/SELECT_IDX', idx)
-      this.replaceRoute()
-      // TODO: Scroll to word
-    },
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
       this.searchQuery = ''
     },
+  },
+  head() {
+    return { title: this.searchQuery }
   },
 }
 </script>

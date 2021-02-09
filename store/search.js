@@ -23,22 +23,12 @@ export const mutations = {
     state.results = results
     state.query = query
   },
-  SELECT_IDX(state, val) {
+  SET_IDX(state, val) {
     const sel = state.results[val]
     if (sel) {
       state.selectedIdx = val
       state.selectedSeq = sel[0]
     }
-  },
-  SEL_IDX_INCR(state) {
-    const idx =
-      state.selectedIdx >= state.results.length - 1 ? 0 : state.selectedIdx + 1
-    this.commit('search/SELECT_IDX', idx)
-  },
-  SEL_IDX_DECR(state) {
-    const idx =
-      state.selectedIdx === 0 ? state.results.length - 1 : state.selectedIdx - 1
-    this.commit('search/SELECT_IDX', idx)
   },
 }
 
@@ -69,12 +59,27 @@ export const actions = {
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
       if (resp.data.length > 0) {
-        ctx.commit('SELECT_IDX', index || 0)
+        await ctx.dispatch('selectIndex', index || 0)
       }
     } catch (e) {
       // If request was canceled or failed
       if (ctx.state.axiosCancelHandler !== axiosCancelHandler)
         ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
     }
+  },
+  async selectIndex(ctx, idx) {
+    if (idx === 'incr') {
+      idx =
+        ctx.state.selectedIdx >= ctx.state.results.length - 1
+          ? 0
+          : ctx.state.selectedIdx + 1
+    } else if (idx === 'decr') {
+      idx =
+        ctx.state.selectedIdx === 0
+          ? ctx.state.results.length - 1
+          : ctx.state.selectedIdx - 1
+    }
+    ctx.commit('SET_IDX', idx)
+    await ctx.dispatch('cache/loadWord', ctx.state.selectedSeq, { root: true })
   },
 }
