@@ -24,22 +24,19 @@ export default {
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    // https://go.nuxtjs.dev/eslint
-    '@nuxtjs/eslint-module',
+    '@nuxtjs/eslint-module', // https://go.nuxtjs.dev/eslint
     '@nuxtjs/color-mode',
     '@nuxtjs/svg',
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
-    // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
+    '@nuxtjs/axios', // https://go.nuxtjs.dev/axios
+    '@nuxtjs/proxy',
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {
-    baseURL: 'http://jisho.fc/',
-  },
+  axios: {},
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
@@ -56,6 +53,10 @@ export default {
         component: 'pages/search.vue',
       })
     },
+  },
+
+  proxy: {
+    '/api': 'http://localhost:9292/',
   },
 
   // Customizing progress bar
