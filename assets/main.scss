@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital@0;1&display=swap');
+
 body {
   --bg: #fff;
   --bg-secondary: #f0f0f0;
@@ -6,7 +8,8 @@ body {
   --expander-bg: url('~assets/backgrounds/little-pluses.png') #a8dba8; // #a8dba8 (green)
 
   margin: 0;
-  font-size: 12pt;
+  font-family: 'PT Serif', serif;
+  font-size: 14pt;
   font-weight: 300;
   height: 100vh;
 
