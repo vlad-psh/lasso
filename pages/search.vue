@@ -39,6 +39,7 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
+  middleware: ['auth'],
   data() {
     return {
       searchQuery: this.$store.state.search.query,

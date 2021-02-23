@@ -30,7 +30,7 @@ export default {
       return this.$store.state.cache.words[this.seq]
     },
     kanji() {
-      return this.word.kanji
+      return (this.word.kanji || '')
         .split('')
         .map((k) => this.$store.state.cache.kanji[k])
     },

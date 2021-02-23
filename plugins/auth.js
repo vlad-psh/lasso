@@ -1,7 +1,8 @@
-export default (context, inject) => {
-  const { store, redirect, $axios } = context
+export default async (context, inject) => {
+  const { store, $axios, next } = context
   inject('auth', {
     async getSession() {
+      if (store.state.env.user) return
       try {
         const resp = await $axios.get('/api/session')
         store.commit('env/SET_USER', resp.data)
@@ -14,7 +15,7 @@ export default (context, inject) => {
         await $axios.delete('/api/session')
         store.commit('env/SET_USER', null)
       } catch {}
-      redirect('/login')
+      next('/login')
     },
     async login({ username, password }) {
       try {
@@ -24,8 +25,8 @@ export default (context, inject) => {
         })
         store.commit('env/SET_USER', resp.data)
       } catch {}
-      redirect('/')
+      next('/')
     },
   })
-  context.$auth.getSession()
+  await context.$auth.getSession()
 }
