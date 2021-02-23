@@ -62,6 +62,9 @@ export default {
     '/api': {
       target: 'http://127.0.0.1:9292/',
       headers: { Connection: 'keep-alive' },
+      secure: false,
+      changeOrigin: true,
+      logLevel: 'debug',
     },
   },
 

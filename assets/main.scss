@@ -19,6 +19,13 @@ body {
     display: grid;
     grid-template-rows: auto 1fr;
   }
+
+  a {
+    color: #008ace;
+    &:hover {
+      color: #c00;
+    }
+  }
 }
 
 html[class='dark-mode'] body {

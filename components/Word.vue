@@ -10,7 +10,9 @@
     <WordCards :cards="word.cards || []" />
 
     <!-- vue editable text -->
-    <!-- kanji list -->
+    <div class="kanji-list">
+      <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
+    </div>
     <div class="tear-line" />
   </div>
 </template>
@@ -26,6 +28,11 @@ export default {
   computed: {
     word() {
       return this.$store.state.cache.words[this.seq]
+    },
+    kanji() {
+      return this.word.kanji
+        .split('')
+        .map((k) => this.$store.state.cache.kanji[k])
     },
   },
 }
