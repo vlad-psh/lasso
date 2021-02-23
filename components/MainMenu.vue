@@ -37,10 +37,8 @@ export default {
 <style lang="scss">
 #main-menu {
   background-color: #222;
-  margin: 0;
   color: white;
   font-family: Segoe UI, Helvetica Neue, sans-serif;
-  width: 100%;
 
   & > div.center,
   & > div.right {

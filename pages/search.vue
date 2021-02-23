@@ -92,10 +92,10 @@ export default {
 
 <style lang="scss">
 #search-app {
-  height: calc(100vh - 33px);
   display: grid;
   grid-template-columns: 22em 1fr;
   grid-template-rows: 100%;
+  overflow: hidden;
 
   .browse-panel {
     border: 0px solid var(--border-color);
