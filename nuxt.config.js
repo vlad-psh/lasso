@@ -20,6 +20,7 @@ export default {
   plugins: [
     '@/plugins/vue-shortkey.client.js',
     '@/plugins/preload-search.server.js',
+    '@/plugins/auth.js',
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

@@ -15,10 +15,14 @@
       </div>
     </div>
     <div class="right">
-      <div class="main-menu-item">
-        <a href="/logout">
-          <span class="username">USERNAME</span>
-        </a>
+      <div class="main-menu-item username">
+        <template v-if="$store.state.env.user">
+          {{ $store.state.env.user.login }}
+          <a @click="$auth.logout">logout</a>
+        </template>
+        <template v-else>
+          <NuxtLink to="/login">login</NuxtLink>
+        </template>
       </div>
     </div>
   </div>
@@ -68,7 +72,7 @@ export default {
         height: 16px;
       }
     }
-    .username {
+    &.username {
       font-size: 0.7em;
     }
   }
