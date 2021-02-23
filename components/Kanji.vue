@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import radicalsList from '@/js/radicals_list.js'
+
 export default {
   props: {
     payload: { type: Object, required: true },
@@ -80,6 +82,9 @@ export default {
       } else {
         return '表外'
       }
+    },
+    classicalRadical() {
+      return radicalsList[this.radnum - 1]
     },
   },
   created() {
@@ -178,10 +183,6 @@ export default {
 
   .okurigana {
     color: #d00;
-  }
-
-  .kanji-grade {
-    color: white;
   }
 }
 </style>
