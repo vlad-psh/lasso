@@ -10,6 +10,7 @@
     <WordCards :cards="word.cards || []" />
 
     <!-- vue editable text -->
+    <div class="tear-line" />
     <div class="kanji-list">
       <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
     </div>
@@ -115,5 +116,6 @@ export default {
   background-repeat: repeat-x;
   background-size: 10px 16px;
   background-image: url('~assets/backgrounds/tear-line.svg');
+  margin-top: 1em;
 }
 </style>

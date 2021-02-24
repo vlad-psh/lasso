@@ -77,4 +77,17 @@ export default {
     }
   }
 } /* end of #main-menu */
+
+@media (max-width: 568px) {
+  body {
+    #main-menu {
+      text-align: left;
+
+      & > div.center {
+        margin-left: 0.4em;
+        justify-content: flex-start;
+      }
+    }
+  }
+}
 </style>

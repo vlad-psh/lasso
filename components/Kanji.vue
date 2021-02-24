@@ -185,4 +185,15 @@ export default {
     color: #d00;
   }
 }
+
+@media (max-width: 568px) {
+  body {
+    .kanji-title {
+      font-size: 2.5em;
+    }
+    .kanji-details-string {
+      font-size: 0.7em;
+    }
+  }
+}
 </style>

@@ -120,6 +120,7 @@ export default {
     .search-results {
       height: 100%;
       overflow-y: auto;
+      overflow-x: clip;
       background: #0001;
     }
   } // .browse-panel
@@ -127,6 +128,49 @@ export default {
   .contents-panel {
     height: 100%;
     overflow-y: auto;
+  }
+}
+
+@media (max-width: 568px) {
+  body {
+    #search-app {
+      grid-template-columns: 1fr 7.5em;
+      // height: calc(100vh - 33px); // fallback value
+      // Proper height: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
+      // --vh value is calculated in javascript on search page
+      // height: calc(var(--vh, 1vh) * 100 - 33px);
+
+      .browse-panel {
+        grid-row: 1;
+        grid-column: 2;
+        border-right-width: 0;
+        border-left-width: 1px;
+
+        .search-results .candidate-item {
+          padding: 0.12em 0.2em;
+          .title {
+            font-size: 0.7em;
+            .common-icon,
+            .learned-icon {
+              font-size: 0.7em;
+            }
+          }
+          .details {
+            width: 13em;
+            padding-left: 0;
+            font-size: 0.55em;
+          }
+        }
+        .search-method {
+          font-size: 0.7em;
+        }
+      }
+      .contents-panel {
+        grid-row: 1;
+        grid-column: 1;
+        font-size: 0.8em;
+      }
+    }
   }
 }
 </style>
