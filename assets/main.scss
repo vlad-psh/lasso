@@ -108,3 +108,9 @@ html[class='dark-mode'] body {
     background-color: var(--bg-secondary);
   }
 }
+
+@media (max-width: 568px) {
+  body {
+    font-size: 10pt;
+  }
+}

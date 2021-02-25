@@ -135,7 +135,7 @@ export default {
 @media (max-width: 568px) {
   body {
     #search-app {
-      grid-template-columns: 1fr 7.5em;
+      grid-template-columns: 1fr 10em;
       // height: calc(100vh - 33px); // fallback value
       // Proper height: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
       // --vh value is calculated in javascript on search page
@@ -150,26 +150,26 @@ export default {
         .search-results .candidate-item {
           padding: 0.12em 0.2em;
           .title {
-            font-size: 0.7em;
+            font-size: 0.9em;
             .common-icon,
             .learned-icon {
               font-size: 0.7em;
             }
           }
           .details {
-            width: 13em;
+            width: 14em;
             padding-left: 0;
-            font-size: 0.55em;
+            font-size: 0.7em;
           }
         }
         .search-method {
-          font-size: 0.7em;
+          font-size: 0.8em;
         }
       }
       .contents-panel {
         grid-row: 1;
         grid-column: 1;
-        font-size: 0.8em;
+        font-size: 1em;
       }
     }
   }
