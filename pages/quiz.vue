@@ -35,6 +35,13 @@
           <div v-else class="sentence-word">{{ word.text }}</div>
         </div>
       </div>
+      <div class="action-buttons">
+        <SentenceAudio
+          v-if="sentence.id"
+          :id="sentence.id"
+          :key="sentence.id"
+        />
+      </div>
     </div>
 
     <div v-if="selectedWord">
@@ -194,15 +201,24 @@ export default {
   .sentence-question {
     background-color: #ffec83;
     text-align: center;
-    padding: 1.5em 0 0 0;
     position: relative;
     max-height: 12em;
-    overflow-y: scroll;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 1fr;
 
-    &::after {
-      height: 2.2em;
-      display: block;
-      content: '';
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      & > * {
+        margin: 0.3em;
+      }
+    }
+    .center-block {
+      padding: 1.5em 0 2.2em 0;
+      overflow-y: auto;
     }
 
     .sentence-word-container {
