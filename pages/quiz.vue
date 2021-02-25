@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <Word :seq="selectedWord.seq" :word-data="selectedWord" />
+      <Word :seq="selectedWord.seq" />
     </div>
 
     <div v-if="allAnswered && !selectedWord">
@@ -81,6 +81,12 @@
 
 <script>
 export default {
+  middleware: [
+    'auth',
+    ({ store }) => {
+      store.commit('env/SET_ACTIVITY_GROUP', 'srs')
+    },
+  ],
   async fetch() {
     const { store, route } = this.$nuxt.context
     const resp = await this.$axios.get('/api/question', {

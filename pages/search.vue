@@ -40,7 +40,12 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
-  middleware: ['auth'],
+  middleware: [
+    'auth',
+    ({ store }) => {
+      store.commit('env/SET_ACTIVITY_GROUP', 'search')
+    },
+  ],
   data() {
     return {
       searchQuery: this.$store.state.search.query,
