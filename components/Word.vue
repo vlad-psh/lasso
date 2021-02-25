@@ -14,7 +14,6 @@
     <div class="kanji-list">
       <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
     </div>
-    <div class="tear-line" />
   </div>
 </template>
 

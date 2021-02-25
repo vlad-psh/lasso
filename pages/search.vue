@@ -31,6 +31,7 @@
         :key="seq"
         :seq="seq"
       ></Word>
+      <div class="tear-line" />
     </div>
   </div>
 </template>

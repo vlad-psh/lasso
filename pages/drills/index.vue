@@ -8,8 +8,16 @@
           <NuxtLink :to="'/drills/' + drill.id">{{ drill.title }}</NuxtLink>
           <div class="created-at">{{ drill.created_at }}</div>
         </div>
-        <div><NuxtLink :to="'/drills/' + drill.id">文読</NuxtLink></div>
-        <div><NuxtLink :to="'/drills/' + drill.id">文書</NuxtLink></div>
+        <div>
+          <NuxtLink :to="`/quiz?drill_id=${drill.id}&type=sentences`"
+            >文読</NuxtLink
+          >
+        </div>
+        <div>
+          <NuxtLink :to="`/quiz?drill_id=${drill.id}&type=sentence-kanji`"
+            >文書</NuxtLink
+          >
+        </div>
       </div>
     </div>
   </div>

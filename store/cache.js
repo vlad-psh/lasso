@@ -13,6 +13,7 @@ export const mutations = {
       this._vm.$delete(state.words, word.seq)
     }
     // Keep only 10 recent words
+    // TODO: if we're pushing words from quiz's sentence, we might have more than 10 words
     if (state.wordIds.length >= 10) {
       // TODO: also remove unused kanji
       const removedSeq = state.wordIds.pop()

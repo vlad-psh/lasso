@@ -25,6 +25,35 @@ body {
       color: #c00;
     }
   }
+
+  .blue {
+    background-color: #2196f3;
+    color: white;
+  }
+  .green {
+    background-color: #4caf50;
+    color: white;
+  }
+  .purple {
+    background-color: #aa00ff;
+    color: white;
+  }
+  .yellow {
+    background-color: #ff9800;
+    color: white;
+  }
+  .red {
+    background-color: #e51c23;
+    color: white;
+  }
+  .lime {
+    background-color: #aaff00;
+    color: white;
+  }
+  .pink {
+    background-color: #ff00aa;
+    color: white;
+  }
 }
 
 html[class='dark-mode'] body {
@@ -38,6 +67,35 @@ html[class='dark-mode'] body {
 
   background: var(--bg);
   color: var(--color);
+
+  .blue {
+    background-color: var(--bg-secondary);
+    border: 0px solid #2196f3;
+  }
+  .green {
+    background-color: #0a3f39;
+    border: 0px solid #4caf50;
+  }
+  .purple {
+    background-color: #53155e;
+    border: 0px solid #9c27b0;
+  }
+  .yellow {
+    background-color: #c97a04;
+    border: 0px solid #ff9800;
+  }
+  .red {
+    background-color: #56181a;
+    border: 0px solid #e51c23;
+  }
+  .lime {
+    background-color: #629300;
+    border: 0px solid #aaff00;
+  }
+  .pink {
+    background-color: #89005b;
+    border: 0px solid #ff00aa;
+  }
 
   input[type='text'],
   textarea {
