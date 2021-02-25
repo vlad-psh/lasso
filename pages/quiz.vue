@@ -1,5 +1,15 @@
 <template>
-  <div id="sentence-quiz-app" class="study-card">
+  <div
+    id="sentence-quiz-app"
+    v-shortkey="{
+      correct: ['y'],
+      incorrect: ['n'],
+      esc: ['esc'],
+      space: ['space'],
+    }"
+    class="study-card"
+    @shortkey="shortkey"
+  >
     <div class="sentence-question">
       <div class="center-block">
         <div
@@ -13,9 +23,11 @@
               {{ word.answer || (word.highlight ? '\u2b50' : '') }}
             </div>
             <div
+              v-shortkey="[word.index]"
               class="sentence-word word-question"
               :class="{ answered: !!word.answer }"
               @click="selectWord(wordIndex)"
+              @shortkey="selectWord(wordIndex)"
             >
               {{ word.text }}
             </div>
@@ -75,7 +87,13 @@ export default {
       store.commit('cache/PUSH_WORD', word)
     for (const kanji of resp.data.payload.kanjis)
       store.commit('cache/ADD_KANJI', kanji)
-    for (const segment of resp.data.structure) segment.answer = null
+
+    let componentIndex = 1
+    for (const segment of resp.data.structure)
+      if (segment.seq) {
+        segment.answer = null
+        segment.index = componentIndex++
+      }
 
     this.sentence = resp.data
   },
@@ -116,12 +134,26 @@ export default {
     },
   },
   methods: {
+    shortkey(event) {
+      if (this.selectedSegment) {
+        if (event.srcKey === 'correct' || event.srcKey === 'incorrect') {
+          this.setAnswer(event.srcKey)
+        } else if (event.srcKey === 'esc') this.selectedIndex = null
+      }
+      if (event.srcKey === 'space') {
+        this.allAnswered ? this.submit() : this.selectHighlighted()
+      }
+    },
     selectWord(sentenceIndex) {
       this.selectedIndex =
         this.selectedWord &&
         this.selectedWord.seq === this.segments[sentenceIndex].seq
           ? null
           : sentenceIndex
+    },
+    selectHighlighted() {
+      const i = this.segments.findIndex((s) => s.highlight === true)
+      this.selectWord(i !== -1 ? i : 0) // select highlighted or first
     },
     setAnswer(answerText) {
       this.selectedSegment.answer = answerText
