@@ -1,7 +1,7 @@
 export default (context) => {
-  const { store, redirect } = context
-  const user = store.state.env.user
-  if (!user) {
-    redirect('/login')
-  }
+  const { redirect, route, $auth } = context
+
+  if (route.name === 'login') {
+    if ($auth.loggedIn()) redirect('/')
+  } else if (!$auth.loggedIn()) redirect('/login')
 }

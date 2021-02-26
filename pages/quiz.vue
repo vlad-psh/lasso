@@ -81,12 +81,9 @@
 
 <script>
 export default {
-  middleware: [
-    'auth',
-    ({ store }) => {
-      store.commit('env/SET_ACTIVITY_GROUP', 'srs')
-    },
-  ],
+  middleware: ({ store }) => {
+    store.commit('env/SET_ACTIVITY_GROUP', 'srs')
+  },
   async fetch() {
     const { store, route } = this.$nuxt.context
     const resp = await this.$axios.get('/api/question', {

@@ -25,7 +25,6 @@
 
 <script>
 export default {
-  middleware: ['auth'],
   async asyncData({ $axios }) {
     const resp = await $axios.get('/api/drills')
     return { drills: resp.data }

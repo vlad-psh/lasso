@@ -58,7 +58,7 @@ export default {
         component: 'pages/search.vue',
       })
     },
-    middleware: 'activity_group',
+    middleware: ['auth', 'activity_group'],
   },
 
   proxy: {

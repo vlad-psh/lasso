@@ -11,9 +11,6 @@
 
 <script>
 export default {
-  middleware({ $auth, redirect }) {
-    if ($auth.loggedIn()) redirect('/')
-  },
   data() {
     return {
       username: null,
