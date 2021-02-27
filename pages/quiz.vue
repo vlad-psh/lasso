@@ -68,7 +68,7 @@
       <Word :key="selectedWord.seq" :seq="selectedWord.seq" />
     </div>
 
-    <div v-if="allAnswered && !selectedWord">
+    <div v-if="allAnswered && !selectedWord && !loading">
       <div v-if="allAnswered" class="answer-buttons">
         <div class="answer-button blue" @click="submit">SUBMIT</div>
       </div>
@@ -106,6 +106,7 @@ export default {
       }
 
     this.sentence = resp.data
+    this.loading = false
   },
   data() {
     return { sentence: {}, selectedIndex: null, loading: false }
