@@ -43,10 +43,19 @@ export default {
   },
   async fetch() {
     const { store, query } = this.$nuxt.context
-    await store.dispatch('search/search', {
-      query: query.query,
-      seq: +query.seq,
-    })
+    if (process.server) {
+      await store.dispatch('search/search', {
+        query: query.query,
+        seq: +query.seq,
+      })
+    } else {
+      this.$router.replace({
+        query: {
+          query: this.searchQuery,
+          seq: store.getters['search/selectedSeq'],
+        },
+      })
+    }
   },
   data() {
     return {

@@ -58,7 +58,8 @@ export const actions = {
       // Check if cancelHandler is still the same (haven't overwritten by new search request)
       if (ctx.state.axiosCancelHandler !== axiosCancelHandler) return
 
-      // ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
+      // Reset cancel handler is important on server side so we don't try to send it to client
+      ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
       if (resp.data.length > 0) {
