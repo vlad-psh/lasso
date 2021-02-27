@@ -34,11 +34,6 @@ export default {
 </script>
 
 <style lang="scss">
-.middle-content {
-  overflow-y: scroll;
-  padding: 0 calc((100vw - 40em) / 2);
-  text-align: center;
-}
 .drills-list {
   .table {
     display: table;
