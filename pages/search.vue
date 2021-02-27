@@ -41,6 +41,13 @@ export default {
   middleware: ({ store }) => {
     store.commit('env/SET_ACTIVITY_GROUP', 'search')
   },
+  async fetch() {
+    const { store, query } = this.$nuxt.context
+    await store.dispatch('search/search', {
+      query: query.query,
+      seq: +query.seq,
+    })
+  },
   data() {
     return {
       searchQuery: this.$store.state.search.query,
