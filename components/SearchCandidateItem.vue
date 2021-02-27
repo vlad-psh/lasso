@@ -2,7 +2,7 @@
   <div
     class="candidate-item no-refocus"
     :class="{ selected: isSelected }"
-    @click="onClick(index)"
+    @click="onClick(item[0])"
   >
     <div class="title">
       <div class="common-icon" :class="item[4] ? 'common' : 'uncommon'">
@@ -19,7 +19,6 @@
 export default {
   props: {
     item: { type: Array, required: true },
-    index: { type: Number, required: true },
     isSelected: { type: Boolean },
     onClick: { type: Function, required: true },
   },

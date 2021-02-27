@@ -10,8 +10,8 @@
           @input="searchLater"
           @keydown.enter="search"
           @keydown.esc="clearInputField"
-          @keydown.down="selectCandidate('incr')"
-          @keydown.up="selectCandidate('decr')"
+          @keydown.down="switchCandidate('next')"
+          @keydown.up="switchCandidate('prev')"
         />
       </div>
       <div class="search-results">
@@ -19,7 +19,6 @@
           v-for="(item, index) in $store.state.search.results"
           :key="item[0]"
           :item="item"
-          :index="index"
           :is-selected="index === $store.state.search.selectedIdx"
           :on-click="selectCandidate"
         />
@@ -27,11 +26,10 @@
     </div>
     <div class="contents-panel">
       <Word
-        v-for="seq of $store.state.cache.wordIds"
-        :key="seq"
-        :seq="seq"
-      ></Word>
-      <div class="tear-line" />
+        v-if="$store.state.search.selected"
+        :key="$store.state.search.selected.seq"
+        :seq="$store.state.search.selected.seq"
+      />
     </div>
   </div>
 </template>
@@ -59,7 +57,7 @@ export default {
       this.searchQuery = u.get('query') || ''
       this.$store.dispatch('search/search', {
         query: this.searchQuery,
-        index: 0,
+        seq: u.get('seq'),
       })
     }
   },
@@ -70,18 +68,24 @@ export default {
     search() {
       this.$store.dispatch('search/search', {
         query: this.searchQuery,
-        index: 0,
       })
       this.$router.push({ query: { query: this.searchQuery } })
     },
-    selectCandidate(idx) {
-      this.$store.dispatch('search/selectIndex', idx)
-      this.$router.replace({
-        query: {
-          query: this.searchQuery,
-          index: this.$store.state.search.selectedIdx,
-        },
-      })
+    selectCandidate(seq) {
+      if (this.$store.getters['search/selectedSeq'] !== seq) {
+        this.$store.dispatch('search/selectSeq', seq)
+        this.$store.commit('cache/ADD_HISTORY', { type: 'word', seq })
+        this.$router.replace({
+          query: { query: this.searchQuery, seq },
+        })
+      }
+    },
+    switchCandidate(direction) {
+      const results = this.$store.state.search.results
+      let idx = this.$store.state.search.selectedIdx
+      if (direction === 'prev' && idx > 0) idx--
+      else if (direction === 'next' && idx < results.length) idx++
+      this.selectCandidate(results[idx][0])
     },
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
@@ -94,86 +98,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-#search-app {
-  display: grid;
-  grid-template-columns: 22em 1fr;
-  grid-template-rows: 100%;
-  overflow: hidden;
-
-  .browse-panel {
-    border: 0px solid var(--border-color);
-    border-right-width: 1px;
-    height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr;
-
-    .search-field {
-      position: relative;
-
-      input[type='text'] {
-        background: none;
-        border: none;
-        border-bottom: 1px solid var(--border-color);
-        padding: 0.4em 0.6em 0.5em 0.6em;
-        box-sizing: border-box;
-        width: 100%;
-      }
-    }
-    .search-results {
-      height: 100%;
-      overflow-y: auto;
-      overflow-x: clip;
-      background: #0001;
-    }
-  } // .browse-panel
-
-  .contents-panel {
-    height: 100%;
-    overflow-y: auto;
-  }
-}
-
-@media (max-width: 568px) {
-  body {
-    #search-app {
-      grid-template-columns: 1fr 10em;
-      // height: calc(100vh - 33px); // fallback value
-      // Proper height: https://css-tricks.com/the-trick-to-viewport-units-on-mobile/
-      // --vh value is calculated in javascript on search page
-      // height: calc(var(--vh, 1vh) * 100 - 33px);
-
-      .browse-panel {
-        grid-row: 1;
-        grid-column: 2;
-        border-right-width: 0;
-        border-left-width: 1px;
-
-        .search-results .candidate-item {
-          padding: 0.12em 0.2em;
-          .title {
-            font-size: 0.9em;
-            .common-icon,
-            .learned-icon {
-              font-size: 0.7em;
-            }
-          }
-          .details {
-            width: 14em;
-            padding-left: 0;
-            font-size: 0.7em;
-          }
-        }
-        .search-method {
-          font-size: 0.8em;
-        }
-      }
-      .contents-panel {
-        grid-row: 1;
-        grid-column: 1;
-        font-size: 1em;
-      }
-    }
-  }
-}
-</style>
+<style lang="scss"></style>

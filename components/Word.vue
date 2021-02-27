@@ -1,19 +1,21 @@
 <template>
   <div class="vue-word word-card" :data-seq="seq">
-    <WordKrebs :krebs="word.krebs" />
+    <template v-if="word">
+      <WordKrebs :krebs="word.krebs" />
 
-    <WordGloss :glosses="word.en || []" flag="🇬🇧" />
-    <WordGloss :glosses="word.ru || []" flag="🇷🇺" />
+      <WordGloss :glosses="word.en || []" flag="🇬🇧" />
+      <WordGloss :glosses="word.ru || []" flag="🇷🇺" />
 
-    <PitchWordNhk :payload="word.nhk_data" />
+      <PitchWordNhk :payload="word.nhk_data" />
 
-    <WordCards :cards="word.cards || []" />
+      <WordCards :cards="word.cards || []" />
 
-    <!-- vue editable text -->
-    <div class="tear-line" />
-    <div class="kanji-list">
-      <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
-    </div>
+      <!-- vue editable text -->
+      <div class="tear-line" />
+      <div class="kanji-list">
+        <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -22,13 +24,13 @@ export default {
   props: {
     seq: { type: Number, required: true },
   },
+  async fetch() {
+    this.word = await this.$store.dispatch('cache/loadWord', this.seq)
+  },
   data() {
-    return {}
+    return { word: null }
   },
   computed: {
-    word() {
-      return this.$store.state.cache.words[this.seq]
-    },
     kanji() {
       return (this.word.kanji || '')
         .split('')

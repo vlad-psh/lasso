@@ -2,7 +2,7 @@ export const state = () => ({
   query: '', // query value for completed search
   results: [], // candidates array (short info)
   selectedIdx: -1,
-  selectedSeq: null,
+  selected: null,
   axiosCancelHandler: null,
 })
 
@@ -27,13 +27,16 @@ export const mutations = {
     const sel = state.results[val]
     if (sel) {
       state.selectedIdx = val
-      state.selectedSeq = sel[0]
+      state.selected = {
+        type: 'word',
+        seq: sel[0],
+      }
     }
   },
 }
 
 export const actions = {
-  async search(ctx, { query, index = null }) {
+  async search(ctx, { query, seq = null }) {
     // Prevent request while composing japanese text using IME
     // Otherwise, same (unchanged) request will be sent after each key press
     if (!query) return
@@ -55,31 +58,24 @@ export const actions = {
       // Check if cancelHandler is still the same (haven't overwritten by new search request)
       if (ctx.state.axiosCancelHandler !== axiosCancelHandler) return
 
-      ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
+      // ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
       if (resp.data.length > 0) {
-        await ctx.dispatch('selectIndex', index || 0)
+        await ctx.dispatch('selectSeq', seq || resp.data[0][0])
       }
     } catch (e) {
       // If request was canceled or failed
-      if (ctx.state.axiosCancelHandler !== axiosCancelHandler)
-        ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
     }
   },
-  async selectIndex(ctx, idx) {
-    if (idx === 'incr') {
-      idx =
-        ctx.state.selectedIdx >= ctx.state.results.length - 1
-          ? 0
-          : ctx.state.selectedIdx + 1
-    } else if (idx === 'decr') {
-      idx =
-        ctx.state.selectedIdx === 0
-          ? ctx.state.results.length - 1
-          : ctx.state.selectedIdx - 1
-    }
-    ctx.commit('SET_IDX', idx)
-    await ctx.dispatch('cache/loadWord', ctx.state.selectedSeq, { root: true })
+  selectSeq(ctx, seq) {
+    const idx = ctx.state.results.findIndex((i) => i[0] === seq)
+    ctx.commit('SET_IDX', idx === -1 ? 0 : idx)
+  },
+}
+
+export const getters = {
+  selectedSeq(state) {
+    return state.results[state.selectedIdx][0]
   },
 }

@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <Word :seq="selectedWord.seq" />
+      <Word :key="selectedWord.seq" :seq="selectedWord.seq" />
     </div>
 
     <div v-if="allAnswered && !selectedWord">
