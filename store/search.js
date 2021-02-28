@@ -77,6 +77,6 @@ export const actions = {
 
 export const getters = {
   selectedSeq(state) {
-    return state.results[state.selectedIdx][0]
+    return (state.results[state.selectedIdx] || [])[0]
   },
 }

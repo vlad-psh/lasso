@@ -19,6 +19,7 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '@/plugins/auth.js',
+    '@/plugins/query.js',
     '@/plugins/activity.client.js',
     '@/plugins/vue-shortkey.client.js',
   ],

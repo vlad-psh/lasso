@@ -2,7 +2,7 @@
   <div id="main-menu">
     <div class="center">
       <div class="main-menu-item">
-        <NuxtLink class="icon" to="/"><SearchIcon /></NuxtLink>
+        <NuxtLink class="icon" :to="$query.searchPath"><SearchIcon /></NuxtLink>
       </div>
       <div class="main-menu-item">
         <NuxtLink class="icon" to="/drills"><BookmarkIcon /></NuxtLink>
