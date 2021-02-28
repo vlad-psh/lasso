@@ -19,6 +19,7 @@
         <SearchCandidateItem
           v-for="(item, index) in $store.state.search.results"
           :key="item[0]"
+          ref="candidates"
           :item="item"
           :is-selected="index === $store.state.search.selectedIdx"
           :on-click="selectCandidate"
@@ -45,7 +46,7 @@ export default {
   async fetch() {
     const { store, route } = this.$nuxt.context
     // if (process.server) {
-    this.searchQuery = route.params.query
+    this.searchQuery = route.params.query // for some reason, later overrides by default value (null)
     await store.dispatch('search/search', route.params)
   },
   data() {
@@ -99,6 +100,11 @@ export default {
       if (direction === 'prev' && idx > 0) idx--
       else if (direction === 'next' && idx < results.length) idx++
       this.selectCandidate(results[idx][0])
+      this.$refs.candidates[idx].$el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'nearest',
+      })
     },
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
