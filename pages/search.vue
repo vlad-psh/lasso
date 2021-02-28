@@ -45,12 +45,14 @@ export default {
   },
   async fetch() {
     const { store, route } = this.$nuxt.context
-    // if (process.server) {
-    this.searchQuery = route.params.query // for some reason, later overrides by default value (null)
+    if (process.server) this.searchQuery = route.params.query
     await store.dispatch('search/search', route.params)
   },
   data() {
-    return { searchQuery: null }
+    // FIX until https://github.com/nuxt/nuxt.js/pull/5188/files/85ec562c6bdfff6ff97fcb9a8a95c2747b56ee31 is clarified
+    if (this.$data) return this.$data
+
+    return { searchQuery: this.$store.state.search.query }
   },
   computed: {},
   watch: {
@@ -76,9 +78,6 @@ export default {
       this.search()
     }, 250),
     search() {
-      this.$store.dispatch('search/search', {
-        query: this.searchQuery,
-      })
       this.$router.push(
         this.$query.buildSearchPath({ query: this.searchQuery })
       )

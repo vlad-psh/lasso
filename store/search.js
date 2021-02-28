@@ -63,7 +63,7 @@ export const actions = {
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
       if (resp.data.length > 0) {
-        await ctx.dispatch('selectSeq', seq || resp.data[0][0])
+        ctx.dispatch('selectSeq', seq || resp.data[0][0])
       }
     } catch (e) {
       // If request was canceled or failed

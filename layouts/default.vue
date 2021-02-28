@@ -1,7 +1,7 @@
 <template>
   <div id="__layout_inner">
     <MainMenu />
-    <Nuxt />
+    <Nuxt keep-alive :keep-alive-props="{ include: 'search' }" />
   </div>
 </template>
 
