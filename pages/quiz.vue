@@ -47,7 +47,10 @@
     <div v-if="selectedWord">
       <div v-if="selectedSegment.answer" class="answer-buttons">
         <div class="answer-button yellow" @click="resetAnswer">
-          Answered: {{ selectedSegment.answer }}; RESET
+          RESET
+          <div class="answer-details">
+            Answered: {{ selectedSegment.answer }}
+          </div>
         </div>
       </div>
       <div v-else class="answer-buttons">
@@ -60,7 +63,7 @@
         <div class="answer-button green" @click="setAnswer('correct')">
           YES
           <div class="answer-details">
-            + {{ selectedKreb.progress.correct }}'
+            + {{ selectedKreb.progress.correct }}
           </div>
         </div>
       </div>

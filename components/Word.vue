@@ -1,6 +1,6 @@
 <template>
   <div class="vue-word word-card" :data-seq="seq">
-    <template v-if="word">
+    <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" />
 
       <WordGloss :glosses="word.en || []" flag="🇬🇧" />
@@ -9,13 +9,14 @@
       <PitchWordNhk :payload="word.nhk_data" />
 
       <WordCards :cards="word.cards || []" />
-
       <!-- vue editable text -->
-      <div class="tear-line" />
+    </div>
+
+    <div class="kanji-info">
       <div class="kanji-list">
         <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -32,7 +33,7 @@ export default {
   },
   computed: {
     kanji() {
-      return (this.word.kanji || '')
+      return (this.word ? this.word.kanji : '')
         .split('')
         .map((k) => this.$store.state.cache.kanji[k])
     },
@@ -44,6 +45,8 @@ export default {
 // TODO: fix 'non-selectable'
 .word-card {
   padding: 0.6em 0;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
 
   .word-details {
     text-align: justify;
@@ -97,10 +100,10 @@ export default {
   } /* end of .word-comment-form */
 
   .vue-kanji {
-    width: calc(50% - 0.5em);
+    max-width: 25em;
     display: inline-block;
     vertical-align: top;
-    margin-top: 1em;
+    margin-bottom: 1.5em;
     &:nth-child(odd) {
       margin-right: 0.5em;
     }
