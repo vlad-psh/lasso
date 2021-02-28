@@ -69,6 +69,7 @@ export default {
         seq: u.get('seq'),
       })
     }
+    this.scrollToIndex(this.$store.state.search.selectedIdx)
   },
   methods: {
     searchLater: debounce(function () {
@@ -100,6 +101,9 @@ export default {
       if (direction === 'prev' && idx > 0) idx--
       else if (direction === 'next' && idx < results.length) idx++
       this.selectCandidate(results[idx][0])
+      this.scrollToIndex(idx)
+    },
+    scrollToIndex(idx) {
       this.$refs.candidates[idx].$el.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
