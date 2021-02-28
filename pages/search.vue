@@ -7,6 +7,7 @@
           v-shortkey.focus="['esc']"
           type="text"
           placeholder="Search..."
+          autofocus
           @input="searchLater"
           @keydown.enter="search"
           @keydown.esc="clearInputField"
@@ -48,11 +49,12 @@ export default {
     await store.dispatch('search/search', route.params)
   },
   data() {
-    return {
-      searchQuery: this.$store.state.search.query,
-    }
+    return { searchQuery: null }
   },
   computed: {},
+  watch: {
+    '$route.params': '$fetch',
+  },
   mounted() {
     // onpopstate invokes only when we're going back/fwd in browser's history
     // and doesn't invokes at $router.push() etc
@@ -84,7 +86,10 @@ export default {
         this.$store.dispatch('search/selectSeq', seq)
         this.$store.commit('cache/ADD_HISTORY', { type: 'word', seq })
         this.$router.replace(
-          this.$query.buildSearchPath({ query: this.searchQuery, seq })
+          this.$query.buildSearchPath({
+            query: this.$store.state.search.query,
+            seq,
+          })
         )
       }
     },
