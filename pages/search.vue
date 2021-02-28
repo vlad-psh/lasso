@@ -38,18 +38,14 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
-  middleware: ({ store }) => {
-    store.commit('env/SET_ACTIVITY_GROUP', 'search')
+  middleware: (ctx) => {
+    ctx.store.commit('env/SET_ACTIVITY_GROUP', 'search')
   },
   async fetch() {
-    const { store, query } = this.$nuxt.context
-    if (process.server) {
-      this.searchQuery = query.query
-      await store.dispatch('search/search', {
-        query: query.query,
-        seq: +query.seq,
-      })
-    }
+    const { store, route } = this.$nuxt.context
+    // if (process.server) {
+    this.searchQuery = route.params.query
+    await store.dispatch('search/search', route.params)
   },
   data() {
     return {
@@ -79,15 +75,17 @@ export default {
       this.$store.dispatch('search/search', {
         query: this.searchQuery,
       })
-      this.$router.push({ query: { query: this.searchQuery } })
+      this.$router.push(
+        this.$query.buildSearchPath({ query: this.searchQuery })
+      )
     },
     selectCandidate(seq) {
       if (this.$store.getters['search/selectedSeq'] !== seq) {
         this.$store.dispatch('search/selectSeq', seq)
         this.$store.commit('cache/ADD_HISTORY', { type: 'word', seq })
-        this.$router.replace({
-          query: { query: this.searchQuery, seq },
-        })
+        this.$router.replace(
+          this.$query.buildSearchPath({ query: this.searchQuery, seq })
+        )
       }
     },
     switchCandidate(direction) {

@@ -1,7 +1,7 @@
 <template>
   <div class="vue-kanji">
     <div class="kanji-title no-refocus" :class="htmlClass">
-      {{ title }}
+      <NuxtLink :to="searchRoute" replace>{{ title }}</NuxtLink>
     </div>
 
     <div class="kanji-details-string">
@@ -65,6 +65,9 @@ export default {
     return {}
   },
   computed: {
+    searchRoute() {
+      return this.$query.buildSearchPath({ query: this.title })
+    },
     learned() {
       return !!this.progress.learned_at
     },
@@ -107,6 +110,11 @@ export default {
   background: url('~assets/backgrounds/kanji-grid.svg');
   background-size: 68px 68px;
   background-position: center;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 .kanji-details-string {
   div {

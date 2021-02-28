@@ -70,6 +70,7 @@ export const actions = {
     }
   },
   selectSeq(ctx, seq) {
+    seq = +seq
     const idx = ctx.state.results.findIndex((i) => i[0] === seq)
     ctx.commit('SET_IDX', idx === -1 ? 0 : idx)
   },

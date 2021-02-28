@@ -27,12 +27,8 @@
 
         <PitchWord :kreb="kreb" />
       </Modal>
-      <a
-        class="jisho-search-link"
-        :href="'/jiten/?book=kokugo&search=' + kreb.title"
-        target="_blank"
-        @click.prevent.stop="modalOpen(kreb.title)"
-        >&#x1f50e;</a
+      <NuxtLink class="jisho-search-link" :to="searchRoute(kreb)"
+        >&#x1f50e;</NuxtLink
       >
       <div
         v-if="kreb.title === selectedKreb.title"
@@ -51,6 +47,11 @@ export default {
     return {
       selectedKreb: {},
     }
+  },
+  methods: {
+    searchRoute(kreb) {
+      return { name: 'search-query', params: { query: kreb.title } }
+    },
   },
 }
 </script>

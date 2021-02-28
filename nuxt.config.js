@@ -56,6 +56,16 @@ export default {
         path: '/',
         component: 'pages/search.vue',
       })
+      routes.push({
+        name: 'search-query',
+        path: '/search/:query',
+        component: 'pages/search.vue',
+      })
+      routes.push({
+        name: 'search-query-seq',
+        path: '/search/:query/:seq',
+        component: 'pages/search.vue',
+      })
     },
     middleware: ['auth', 'activity_group'],
   },
