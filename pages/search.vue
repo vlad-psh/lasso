@@ -44,9 +44,9 @@ export default {
     ctx.store.commit('env/SET_ACTIVITY_GROUP', 'search')
   },
   async fetch() {
-    const { store, route } = this.$nuxt.context
+    const { route } = this.$nuxt.context
     if (process.server) this.searchQuery = route.params.query
-    await store.dispatch('search/search', route.params)
+    await this.$search.execute(route.params)
   },
   data() {
     // FIX until https://github.com/nuxt/nuxt.js/pull/5188/files/85ec562c6bdfff6ff97fcb9a8a95c2747b56ee31 is clarified
@@ -56,7 +56,9 @@ export default {
   },
   computed: {},
   watch: {
-    '$route.params': '$fetch',
+    '$route.params'() {
+      this.searchQuery = this.$route.params.query || ''
+    },
   },
   mounted() {
     // onpopstate invokes only when we're going back/fwd in browser's history
@@ -64,12 +66,8 @@ export default {
     // That's why we're using it instead of just watching for '$route.query'
     window.onpopstate = () => {
       // We don't have access to updated $route.query yet (onpopstate)
-      const u = new URLSearchParams(location.search)
-      this.searchQuery = u.get('query') || ''
-      this.$store.dispatch('search/search', {
-        query: this.searchQuery,
-        seq: u.get('seq'),
-      })
+      const params = this.$router.match(location.pathname).params
+      this.$search.execute(params)
     }
     this.scrollToIndex(this.$store.state.search.selectedIdx)
   },
@@ -78,21 +76,10 @@ export default {
       this.search()
     }, 250),
     search() {
-      this.$router.push(
-        this.$query.buildSearchPath({ query: this.searchQuery })
-      )
+      this.$search.execute({ query: this.searchQuery, popRoute: true })
     },
     selectCandidate(seq) {
-      if (this.$store.getters['search/selectedSeq'] !== seq) {
-        this.$store.dispatch('search/selectSeq', seq)
-        this.$store.commit('cache/ADD_HISTORY', { type: 'word', seq })
-        this.$router.replace(
-          this.$query.buildSearchPath({
-            query: this.$store.state.search.query,
-            seq,
-          })
-        )
-      }
+      this.$search.execute({ query: this.searchQuery, seq })
     },
     switchCandidate(direction) {
       const results = this.$store.state.search.results
@@ -103,6 +90,7 @@ export default {
       this.scrollToIndex(idx)
     },
     scrollToIndex(idx) {
+      if (!this.$refs.candidates) return
       this.$refs.candidates[idx].$el.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',

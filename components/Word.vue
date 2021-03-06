@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     kanji() {
-      return (this.word ? this.word.kanji : '')
+      return (this.word ? this.word.kanji || '' : '')
         .split('')
         .map((k) => this.$store.state.cache.kanji[k])
     },

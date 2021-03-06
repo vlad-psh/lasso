@@ -1,7 +1,7 @@
 <template>
   <div class="vue-kanji">
     <div class="kanji-title no-refocus" :class="htmlClass">
-      <NuxtLink :to="searchRoute" replace>{{ title }}</NuxtLink>
+      <a @click="search">{{ title }}</a>
     </div>
 
     <div class="kanji-details-string">
@@ -65,9 +65,6 @@ export default {
     return {}
   },
   computed: {
-    searchRoute() {
-      return this.$query.buildSearchPath({ query: this.title })
-    },
     learned() {
       return !!this.progress.learned_at
     },
@@ -95,6 +92,11 @@ export default {
       this[k] = this.payload[k]
     }
   },
+  methods: {
+    search() {
+      this.$search.execute({ query: this.title, popRoute: true })
+    },
+  },
 }
 </script>
 
@@ -114,6 +116,7 @@ export default {
   a {
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
   }
 }
 .kanji-details-string {

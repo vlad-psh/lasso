@@ -36,12 +36,12 @@ export const mutations = {
 }
 
 export const actions = {
-  async search(ctx, { query, seq = null }) {
+  async search(ctx, query) {
     // Prevent request while composing japanese text using IME
     // Otherwise, same (unchanged) request will be sent after each key press
-    if (!query) return
-    if (query === ctx.state.query) return
-    if (query.trim() === '') return
+    if (!query) return false
+    if (query === ctx.state.query) return true
+    if (query.trim() === '') return false
 
     const axiosCancelHandler = this.$axios.CancelToken.source()
     const cancelToken = axiosCancelHandler.token
@@ -56,17 +56,16 @@ export const actions = {
         { cancelToken }
       )
       // Check if cancelHandler is still the same (haven't overwritten by new search request)
-      if (ctx.state.axiosCancelHandler !== axiosCancelHandler) return
+      if (ctx.state.axiosCancelHandler !== axiosCancelHandler) return false
 
       // Reset cancel handler is important on server side so we don't try to send it to client
       ctx.commit('RESET_AXIOS_CANCEL_HANDLER')
       ctx.commit('SET_RESULTS', { query, results: resp.data })
 
-      if (resp.data.length > 0) {
-        ctx.dispatch('selectSeq', seq || resp.data[0][0])
-      }
+      return true
     } catch (e) {
       // If request was canceled or failed
+      return false
     }
   },
   selectSeq(ctx, seq) {
