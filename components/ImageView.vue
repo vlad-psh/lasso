@@ -6,13 +6,24 @@
 
 <script>
 export default {
+  props: {
+    payload: { type: Object, required: true },
+  },
   computed: {
     imgSrc() {
-      const current = this.$search.current
-      if (!current) return null
-      const page = '0000'.slice(current.page.toString().length) + current.page
-      return `/jiten/data/${current.book}/${page}.png`
+      const i = this.payload
+      if (!i) return null
+      const page = '0000'.slice(i.page.toString().length) + i.page
+      return `/jiten/data/${i.dict}/${page}.png`
     },
   },
 }
 </script>
+
+<style lang="scss">
+.image-view {
+  img {
+    width: 100%;
+  }
+}
+</style>

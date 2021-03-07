@@ -30,13 +30,22 @@ export default (context, inject) => {
           seq: store.getters['search/selectedSeq'],
         })
       },
+      isJmdict() {
+        return this.current && this.current.dict === 'jmdict'
+      },
+      isPaperDict() {
+        return (
+          this.current &&
+          ['kokugo', 'kanji', 'onomat'].includes(this.current.dict)
+        )
+      },
     },
     methods: {
       kanji({ query }) {
         const result = kanjiDic.find((i) => new RegExp(query).test(i))
         if (result)
           this.current = {
-            book: 'kanji',
+            dict: 'kanji',
             page: Number.parseInt(result.split(' ')[0]),
             query,
           }
@@ -46,14 +55,14 @@ export default (context, inject) => {
         const w = kanaProcess(query)
         const wp = kokugoDic.findIndex((i) => i >= w)
         // console.log('Search result for', w, `is ${kokugoDic[wp]} > ${w}`)
-        if (wp !== -1) this.current = { book: 'kokugo', page: wp + 1, query }
+        if (wp !== -1) this.current = { dict: 'kokugo', page: wp + 1, query }
         return wp !== -1
       },
       onomat({ query }) {
         const w = kanaProcess(query)
         const wp = onomatDic.findIndex((i) => i >= w)
         // console.log('Search result for', w, `is ${onomatDic[wp]} > ${w}`)
-        if (wp !== -1) this.current = { book: 'onomat', page: wp + 1, query }
+        if (wp !== -1) this.current = { dict: 'onomat', page: wp + 1, query }
         return wp !== -1
       },
       async jmdict(params) {
@@ -62,6 +71,12 @@ export default (context, inject) => {
         if (searchResult) {
           if (params.seq) store.dispatch('search/selectSeq', params.seq)
           else store.commit('search/SET_IDX', 0)
+          this.current = {
+            dict: 'jmdict',
+            query: params.query,
+            seq: store.getters['search/selectedSeq'],
+          }
+          console.log('seq', store.getters['search/selectedSeq'])
           return true
         }
         return false

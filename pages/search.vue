@@ -38,11 +38,11 @@
     </div>
     <div class="contents-panel">
       <Word
-        v-if="$store.state.search.selected"
+        v-if="$search.isJmdict"
         :key="$store.state.search.selected.seq"
         :seq="$store.state.search.selected.seq"
       />
-      <ImageView />
+      <ImageView v-else-if="$search.isPaperDict" :payload="$search.current" />
     </div>
   </div>
 </template>
