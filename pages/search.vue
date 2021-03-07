@@ -56,8 +56,9 @@ export default {
   },
   async fetch() {
     const { route } = this.$nuxt.context
-    if (process.server) this.searchQuery = route.params.query
-    await this.$search.execute(route.params)
+    // if (process.server)
+    this.searchQuery = route.params.query
+    await this.$search.fromRoute(route)
   },
   data() {
     // FIX until https://github.com/nuxt/nuxt.js/pull/5188/files/85ec562c6bdfff6ff97fcb9a8a95c2747b56ee31 is clarified

@@ -66,6 +66,11 @@ export default {
             path: '/search/:query/:seq',
             component: 'pages/search.vue',
           },
+          {
+            name: 'search-jiten',
+            path: '/jiten/:dict/:query',
+            component: 'pages/search.vue',
+          },
         ],
       })
     },

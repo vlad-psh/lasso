@@ -8,7 +8,9 @@ export default (context, inject) => {
   const { store, app } = context
 
   function searchName(params) {
-    if (params.query && params.seq) {
+    if (['kokugo', 'kanji', 'onomat'].includes(params.dict)) {
+      return 'search-jiten'
+    } else if (params.query && params.seq) {
       return 'search-query-seq'
     } else if (params.query) {
       return 'search-query'
@@ -38,37 +40,48 @@ export default (context, inject) => {
             page: Number.parseInt(result.split(' ')[0]),
             query,
           }
+        return !!result
       },
       kokugo({ query }) {
         const w = kanaProcess(query)
         const wp = kokugoDic.findIndex((i) => i >= w)
         // console.log('Search result for', w, `is ${kokugoDic[wp]} > ${w}`)
         if (wp !== -1) this.current = { book: 'kokugo', page: wp + 1, query }
+        return wp !== -1
       },
       onomat({ query }) {
         const w = kanaProcess(query)
         const wp = onomatDic.findIndex((i) => i >= w)
         // console.log('Search result for', w, `is ${onomatDic[wp]} > ${w}`)
         if (wp !== -1) this.current = { book: 'onomat', page: wp + 1, query }
+        return wp !== -1
       },
       async jmdict(params) {
         const searchResult = await store.dispatch('search/search', params.query)
         // this.$store.commit('cache/ADD_HISTORY', { type: 'word', seq })
         if (searchResult) {
-          if (process.browser) {
-            const route = this.buildSearchPath(params)
-            // TODO: possible redundant navigation (on browser back/fwd button)
-            // or on NuxtLink click
-            if (params.popRoute) app.router.push(route)
-            else app.router.replace(route)
-          }
-
           if (params.seq) store.dispatch('search/selectSeq', params.seq)
           else store.commit('search/SET_IDX', 0)
+          return true
         }
+        return false
       },
       async execute(params) {
-        await this[params.dict || 'jmdict'](params)
+        const result = await this[params.dict || 'jmdict'](params)
+        if (result && process.browser) {
+          const route = this.buildSearchPath(params)
+          // TODO: possible redundant navigation (on browser back/fwd button)
+          // or on NuxtLink click
+          if (params.popRoute) app.router.push(route)
+          else app.router.replace(route)
+        }
+      },
+      async fromRoute(route) {
+        await this.execute({
+          dict: route.params.dict || 'jmdict',
+          query: route.params.query,
+          seq: route.params.seq,
+        })
       },
       buildSearchPath(params) {
         return { name: searchName(params), params }
