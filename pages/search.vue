@@ -8,12 +8,22 @@
           type="text"
           placeholder="Search..."
           autofocus
-          @input="searchLater"
           @keydown.enter="search"
+          @keydown.tab.prevent="switchDictionary"
           @keydown.esc="clearInputField"
           @keydown.down="switchCandidate('next')"
           @keydown.up="switchCandidate('prev')"
         />
+      </div>
+      <div class="search-mode">
+        <div
+          v-for="(d, dIdx) of dicts"
+          :key="'dict' + dIdx"
+          :class="[d.id, dictIndex === dIdx ? 'selected' : null]"
+          @click="dictIndex = dIdx"
+        >
+          {{ d.title }}
+        </div>
       </div>
       <div class="search-results">
         <SearchCandidateItem
@@ -32,6 +42,7 @@
         :key="$store.state.search.selected.seq"
         :seq="$store.state.search.selected.seq"
       />
+      <ImageView />
     </div>
   </div>
 </template>
@@ -52,9 +63,22 @@ export default {
     // FIX until https://github.com/nuxt/nuxt.js/pull/5188/files/85ec562c6bdfff6ff97fcb9a8a95c2747b56ee31 is clarified
     if (this.$data) return this.$data
 
-    return { searchQuery: this.$store.state.search.query }
+    return {
+      searchQuery: this.$store.state.search.query,
+      dicts: [
+        { id: 'jmdict', title: '探す' },
+        { id: 'kokugo', title: '国語' },
+        { id: 'kanji', title: '漢字' },
+        { id: 'onomat', title: 'ｵﾉﾏﾄ' },
+      ],
+      dictIndex: 0,
+    }
   },
-  computed: {},
+  computed: {
+    dictionary() {
+      return this.dicts[this.dictIndex]
+    },
+  },
   watch: {
     '$route.params'() {
       this.searchQuery = this.$route.params.query || ''
@@ -76,7 +100,11 @@ export default {
       this.search()
     }, 250),
     search() {
-      this.$search.execute({ query: this.searchQuery, popRoute: true })
+      this.$search.execute({
+        query: this.searchQuery,
+        popRoute: true,
+        dict: this.dictionary.id,
+      })
     },
     selectCandidate(seq) {
       this.$search.execute({ query: this.searchQuery, seq })
@@ -100,6 +128,9 @@ export default {
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
       this.searchQuery = ''
+    },
+    switchDictionary() {
+      this.dictIndex = (this.dictIndex + 1) % this.dicts.length
     },
   },
   head() {

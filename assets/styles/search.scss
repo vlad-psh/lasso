@@ -9,7 +9,7 @@
     border-right-width: 1px;
     height: 100%;
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
 
     .search-field {
       position: relative;
@@ -21,6 +21,40 @@
         padding: 0.4em 0.6em 0.5em 0.6em;
         box-sizing: border-box;
         width: 100%;
+      }
+    }
+    .search-mode {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      height: 1.3em;
+
+      & > div {
+        text-align: center;
+        font-size: 0.8em;
+        cursor: pointer;
+        background: var(--bg-secondary);
+        color: var(--color-secondary);
+
+        &:hover,
+        &.selected {
+          background: var(--bg-secondary);
+          color: white;
+          font-weight: bold;
+
+          &.jmdict {
+            background: #6c05a5;
+          }
+          &.kokugo {
+            background: #f5203e;
+          }
+          &.kanji {
+            background: #66a48e;
+          }
+          &.onomat {
+            background: #fce35a;
+            color: #665616;
+          }
+        }
       }
     }
     .search-results {
