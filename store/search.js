@@ -1,9 +1,13 @@
 export const state = () => ({
   query: '', // query value for completed search
   results: [], // candidates array (short info)
-  selectedIdx: -1,
-  selected: null,
+  history: [],
   axiosCancelHandler: null,
+  current: {
+    mode: 'primary', // kokugo, kanji, onomat
+    query: null,
+    seq: null,
+  },
 })
 
 export const mutations = {
@@ -26,12 +30,16 @@ export const mutations = {
   SET_IDX(state, val) {
     const sel = state.results[val]
     if (sel) {
-      state.selectedIdx = val
-      state.selected = {
-        type: 'word',
+      state.current = {
+        mode: 'primary',
+        // query: sel[1],
+        query: state.query,
         seq: sel[0],
       }
     }
+  },
+  SET_CURRENT(state, val) {
+    state.current = val
   },
 }
 
@@ -76,7 +84,8 @@ export const actions = {
 }
 
 export const getters = {
-  selectedSeq(state) {
-    return (state.results[state.selectedIdx] || [])[0]
+  currentIndex(state) {
+    if (!state.current.seq) return -1
+    return state.results.findIndex((i) => i[0] === state.current.seq)
   },
 }

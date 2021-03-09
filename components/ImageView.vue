@@ -14,7 +14,7 @@ export default {
       const i = this.payload
       if (!i) return null
       const page = '0000'.slice(i.page.toString().length) + i.page
-      return `/jiten/data/${i.dict}/${page}.png`
+      return `/jiten/data/${i.mode}/${page}.png`
     },
   },
 }

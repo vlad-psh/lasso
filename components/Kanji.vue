@@ -9,10 +9,7 @@
       <div v-if="jlptn">&#x1f4ae; N{{ jlptn }}</div>
       <div class="deco black">部首</div>
       <span>{{ classicalRadical }}</span>
-      <a
-        :href="'/jiten/?book=kanji&search=' + title"
-        target="_blank"
-        @click.prevent.stop="openModal(title)"
+      <a :href="'/jiten/kanji/' + title" @click.prevent="searchBook"
         >&#x1f50e;</a
       >
 
@@ -96,6 +93,9 @@ export default {
     search() {
       this.$search.execute({ query: this.title, popRoute: true })
     },
+    searchBook() {
+      this.$search.execute({ query: this.title, dict: 'kanji', popRoute: true })
+    },
   },
 }
 </script>
@@ -122,6 +122,9 @@ export default {
 .kanji-details-string {
   div {
     display: inline-block;
+  }
+  a {
+    cursor: pointer;
   }
 
   .separate + .separate {

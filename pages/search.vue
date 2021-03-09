@@ -17,32 +17,32 @@
       </div>
       <div class="search-mode">
         <div
-          v-for="(d, dIdx) of dicts"
-          :key="'dict' + dIdx"
-          :class="[d.id, dictIndex === dIdx ? 'selected' : null]"
-          @click="dictIndex = dIdx"
+          v-for="(mode, modeId) of $search.modes"
+          :key="'dict-' + modeId"
+          :class="[modeId, modeId === selectedMode ? 'selected' : null]"
+          @click="selectedMode = modeId"
         >
-          {{ d.title }}
+          {{ mode.title }}
         </div>
       </div>
       <div class="search-results">
         <SearchCandidateItem
-          v-for="(item, index) in $store.state.search.results"
+          v-for="item in $store.state.search.results"
           :key="item[0]"
           ref="candidates"
           :item="item"
-          :is-selected="index === $store.state.search.selectedIdx"
+          :is-selected="item[0] === current.seq"
           :on-click="selectCandidate"
         />
       </div>
     </div>
     <div class="contents-panel">
       <Word
-        v-if="$search.isJmdict"
-        :key="$store.state.search.selected.seq"
-        :seq="$store.state.search.selected.seq"
-      />
-      <ImageView v-else-if="$search.isPaperDict" :payload="$search.current" />
+        v-if="current.mode === 'primary'"
+        :key="current.seq"
+        :seq="current.seq"
+      ></Word>
+      <ImageView v-else :payload="current"></ImageView>
     </div>
   </div>
 </template>
@@ -66,18 +66,12 @@ export default {
 
     return {
       searchQuery: this.$store.state.search.query,
-      dicts: [
-        { id: 'jmdict', title: '探す' },
-        { id: 'kokugo', title: '国語' },
-        { id: 'kanji', title: '漢字' },
-        { id: 'onomat', title: 'ｵﾉﾏﾄ' },
-      ],
-      dictIndex: 0,
+      selectedMode: this.$store.state.search.current.mode,
     }
   },
   computed: {
-    dictionary() {
-      return this.dicts[this.dictIndex]
+    current() {
+      return this.$store.state.search.current
     },
   },
   watch: {
@@ -94,7 +88,9 @@ export default {
       const params = this.$router.match(location.pathname).params
       this.$search.execute(params)
     }
-    this.scrollToIndex(this.$store.state.search.selectedIdx)
+    this.$nextTick(() =>
+      this.scrollToIndex(this.$store.getters['search/currentIndex'])
+    )
   },
   methods: {
     searchLater: debounce(function () {
@@ -104,7 +100,7 @@ export default {
       this.$search.execute({
         query: this.searchQuery,
         popRoute: true,
-        dict: this.dictionary.id,
+        mode: this.selectedMode,
       })
     },
     selectCandidate(seq) {
@@ -112,14 +108,14 @@ export default {
     },
     switchCandidate(direction) {
       const results = this.$store.state.search.results
-      let idx = this.$store.state.search.selectedIdx
+      let idx = results.findIndex((i) => i[0] === this.current.seq)
       if (direction === 'prev' && idx > 0) idx--
       else if (direction === 'next' && idx < results.length) idx++
       this.selectCandidate(results[idx][0])
       this.scrollToIndex(idx)
     },
     scrollToIndex(idx) {
-      if (!this.$refs.candidates) return
+      if (!(this.$refs.candidates && this.$refs.candidates[idx])) return
       this.$refs.candidates[idx].$el.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
@@ -131,7 +127,9 @@ export default {
       this.searchQuery = ''
     },
     switchDictionary() {
-      this.dictIndex = (this.dictIndex + 1) % this.dicts.length
+      const modes = Object.keys(this.$search.modes)
+      const idx = modes.findIndex((i) => i === this.selectedMode)
+      this.selectedMode = modes[(idx + 1) % modes.length]
     },
   },
   head() {

@@ -34,6 +34,8 @@
         cursor: pointer;
         background: var(--bg-secondary);
         color: var(--color-secondary);
+        margin: 1px;
+        border-radius: 3px;
 
         &:hover,
         &.selected {
@@ -41,7 +43,7 @@
           color: white;
           font-weight: bold;
 
-          &.jmdict {
+          &.primary {
             background: #6c05a5;
           }
           &.kokugo {

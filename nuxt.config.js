@@ -57,18 +57,13 @@ export default {
         component: 'pages/search.vue',
         children: [
           {
-            name: 'search-query',
-            path: '/search/:query',
+            name: 'search-sub',
+            path: '/search/:query/:seq?',
             component: 'pages/search.vue',
           },
           {
-            name: 'search-query-seq',
-            path: '/search/:query/:seq',
-            component: 'pages/search.vue',
-          },
-          {
-            name: 'search-jiten',
-            path: '/jiten/:dict/:query',
+            name: 'jiten',
+            path: '/jiten/:mode/:query',
             component: 'pages/search.vue',
           },
         ],

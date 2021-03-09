@@ -15,6 +15,8 @@ const hiraganaOutput = 'あいうえおやゆよつかきくけこさしすせ�
 export default (word) => {
   let sub
   let result = ''
+  word = word.toLowerCase()
+
   while (word !== '') {
     sub = romajiDouble.findIndex((i) => word.indexOf(i) === 0)
     if (sub !== -1) {
