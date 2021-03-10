@@ -11,7 +11,7 @@ export default (context, inject) => {
     if (['kokugo', 'kanji', 'onomat'].includes(params.mode)) {
       return 'jiten'
     } else if (params.query) {
-      return 'search-sub'
+      return 'sub-search'
     } else {
       return 'index'
     }

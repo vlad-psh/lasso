@@ -51,23 +51,30 @@ export default {
 
   router: {
     extendRoutes(routes, resolve) {
-      routes.push({
-        name: 'index',
-        path: '/',
-        component: 'pages/search.vue',
-        children: [
-          {
-            name: 'search-sub',
-            path: '/search/:query/:seq?',
-            component: 'pages/search.vue',
-          },
-          {
-            name: 'jiten',
-            path: '/jiten/:mode/:query',
-            component: 'pages/search.vue',
-          },
-        ],
-      })
+      routes.push(
+        {
+          name: 'index',
+          path: '/',
+          component: 'pages/search.vue',
+          children: [
+            {
+              name: 'sub-search',
+              path: '/search/:query/:seq?',
+              component: 'pages/search.vue',
+            },
+            {
+              name: 'jiten',
+              path: '/jiten/:mode/:query',
+              component: 'pages/search.vue',
+            },
+          ],
+        },
+        {
+          name: 'sub-quiz',
+          path: '/quiz/:drill_id/:type',
+          component: 'pages/quiz.vue',
+        }
+      )
     },
     middleware: ['auth', 'activity_group'],
   },

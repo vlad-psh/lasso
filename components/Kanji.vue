@@ -84,7 +84,7 @@ export default {
       return radicalsList[this.radnum - 1]
     },
     searchRoute() {
-      return { name: 'search-sub', params: { query: this.title } }
+      return { name: 'sub-search', params: { query: this.title } }
     },
     bookSearchRoute() {
       return { name: 'jiten', params: { query: this.title, mode: 'kanji' } }

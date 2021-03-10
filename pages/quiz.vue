@@ -84,15 +84,16 @@
 
 <script>
 export default {
-  middleware: ({ store }) => {
+  middleware: ({ store, route }) => {
     store.commit('env/SET_ACTIVITY_GROUP', 'srs')
+    store.commit('env/SET_QUIZ_PARAMS', route.params)
   },
   async fetch() {
     const { store, route } = this.$nuxt.context
     const resp = await this.$axios.get('/api/question', {
       params: {
-        drill_id: route.query.drill_id,
-        type: route.query.type,
+        drill_id: route.params.drill_id,
+        type: route.params.type,
       },
     })
 
@@ -186,8 +187,8 @@ export default {
 
       try {
         await this.$axios.post('/api/quiz', {
-          drill_id: this.$route.query.drill_id,
-          type: this.$route.query.type,
+          drill_id: this.$route.params.drill_id,
+          type: this.$route.params.type,
           sentence_id: this.sentence.id,
           answers,
         })

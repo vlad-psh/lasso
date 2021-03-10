@@ -62,9 +62,6 @@ export default {
     this.selectedMode = store.state.search.current.mode || 'primary'
   },
   data() {
-    // FIX until https://github.com/nuxt/nuxt.js/pull/5188/files/85ec562c6bdfff6ff97fcb9a8a95c2747b56ee31 is clarified
-    if (this.$data) return this.$data
-
     return {
       searchQuery: this.$store.state.search.query,
       selectedMode: 'primary',

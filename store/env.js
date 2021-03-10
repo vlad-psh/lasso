@@ -2,6 +2,7 @@ export const state = () => ({
   device: 'pc',
   user: null,
   activityGroup: 'other',
+  quizParams: null,
 })
 
 export const mutations = {
@@ -10,5 +11,8 @@ export const mutations = {
   },
   SET_ACTIVITY_GROUP(state, val) {
     state.activityGroup = val
+  },
+  SET_QUIZ_PARAMS(state, val) {
+    state.quizParams = val
   },
 }

@@ -1,7 +1,6 @@
 export const state = () => ({
   query: '', // query value for completed search
   results: [], // candidates array (short info)
-  history: [],
   axiosCancelHandler: null,
   current: {
     mode: null, // primary, kokugo, kanji, onomat

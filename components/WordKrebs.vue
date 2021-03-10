@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     searchRoute(kreb) {
-      return { name: 'search-sub', params: { query: kreb.title } }
+      return { name: 'sub-search', params: { query: kreb.title } }
     },
     search(kreb) {
       this.$search.execute({

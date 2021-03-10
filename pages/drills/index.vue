@@ -9,12 +9,20 @@
           <div class="created-at">{{ drill.created_at }}</div>
         </div>
         <div>
-          <NuxtLink :to="`/quiz?drill_id=${drill.id}&type=sentences`"
+          <NuxtLink
+            :to="{
+              name: 'sub-quiz',
+              params: { drill_id: drill.id, type: 'sentences' },
+            }"
             >文読</NuxtLink
           >
         </div>
         <div>
-          <NuxtLink :to="`/quiz?drill_id=${drill.id}&type=sentence-kanji`"
+          <NuxtLink
+            :to="{
+              name: 'sub-quiz',
+              params: { drill_id: drill.id, type: 'sentence-kanji' },
+            }"
             >文書</NuxtLink
           >
         </div>

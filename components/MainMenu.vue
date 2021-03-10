@@ -7,6 +7,12 @@
       <div class="main-menu-item">
         <NuxtLink class="icon" to="/drills"><BookmarkIcon /></NuxtLink>
       </div>
+      <div v-if="$store.state.env.quizParams" class="main-menu-item">
+        <NuxtLink
+          :to="{ name: 'sub-quiz', params: $store.state.env.quizParams }"
+          ><QAIcon
+        /></NuxtLink>
+      </div>
       <div class="main-menu-item">
         <NuxtLink class="icon" to="/sentences"><TypewriterIcon /></NuxtLink>
       </div>
@@ -32,9 +38,10 @@
 import SearchIcon from '@/assets/icons/search.svg?inline'
 import BookmarkIcon from '@/assets/icons/bookmark.svg?inline'
 import TypewriterIcon from '@/assets/icons/typewriter.svg?inline'
+import QAIcon from '@/assets/icons/qa.svg?inline'
 
 export default {
-  components: { SearchIcon, BookmarkIcon, TypewriterIcon },
+  components: { SearchIcon, BookmarkIcon, TypewriterIcon, QAIcon },
 }
 </script>
 
