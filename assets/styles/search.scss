@@ -61,7 +61,7 @@
     .search-results {
       height: 100%;
       overflow-y: auto;
-      overflow-x: clip;
+      overflow-x: hidden;
       background: #0001;
     }
   } // .browse-panel
