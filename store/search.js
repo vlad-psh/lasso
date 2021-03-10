@@ -4,7 +4,7 @@ export const state = () => ({
   history: [],
   axiosCancelHandler: null,
   current: {
-    mode: 'primary', // kokugo, kanji, onomat
+    mode: null, // primary, kokugo, kanji, onomat
     query: null,
     seq: null,
   },

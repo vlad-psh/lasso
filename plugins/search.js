@@ -39,26 +39,34 @@ export default (context, inject) => {
       },
       kanji({ query }) {
         const result = kanjiDic.find((i) => new RegExp(query).test(i))
-        if (result)
+        if (result) {
           this.setCurrent({
             dict: 'kanji',
             page: Number.parseInt(result.split(' ')[0]),
             query,
           })
+          store.commit('env/SET_ACTIVITY_GROUP', 'kanji')
+        }
         return !!result
       },
       kokugo({ query }) {
         const w = kanaProcess(query)
         const wp = kokugoDic.findIndex((i) => i >= w)
         // console.log('Search result for', w, `is ${kokugoDic[wp]} > ${w}`)
-        if (wp !== -1) this.setCurrent({ mode: 'kokugo', page: wp + 1, query })
+        if (wp !== -1) {
+          this.setCurrent({ mode: 'kokugo', page: wp + 1, query })
+          store.commit('env/SET_ACTIVITY_GROUP', 'kokugo')
+        }
         return wp !== -1
       },
       onomat({ query }) {
         const w = kanaProcess(query)
         const wp = onomatDic.findIndex((i) => i >= w)
         // console.log('Search result for', w, `is ${onomatDic[wp]} > ${w}`)
-        if (wp !== -1) this.setCurrent({ mode: 'onomat', page: wp + 1, query })
+        if (wp !== -1) {
+          this.setCurrent({ mode: 'onomat', page: wp + 1, query })
+          store.commit('env/SET_ACTIVITY_GROUP', 'onomat')
+        }
         return wp !== -1
       },
       async primarySearch(params) {
@@ -72,6 +80,7 @@ export default (context, inject) => {
           //   query: params.query,
           //   seq: store.getters['search/selectedSeq'],
           // })
+          store.commit('env/SET_ACTIVITY_GROUP', 'search')
           return true
         }
         return false

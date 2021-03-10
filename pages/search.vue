@@ -38,11 +38,14 @@
     </div>
     <div class="contents-panel">
       <Word
-        v-if="current.mode === 'primary'"
+        v-if="currentMode === 'primary'"
         :key="current.seq"
         :seq="current.seq"
       ></Word>
-      <ImageView v-else :payload="current"></ImageView>
+      <ImageView
+        v-else-if="currentMode === 'jiten'"
+        :payload="current"
+      ></ImageView>
     </div>
   </div>
 </template>
@@ -51,14 +54,12 @@
 import debounce from '@/js/debouncer.js'
 
 export default {
-  middleware: (ctx) => {
-    ctx.store.commit('env/SET_ACTIVITY_GROUP', 'search')
-  },
   async fetch() {
-    const { route } = this.$nuxt.context
+    const { route, store } = this.$nuxt.context
     // if (process.server)
     this.searchQuery = route.params.query
     await this.$search.fromRoute(route)
+    this.selectedMode = store.state.search.current.mode || 'primary'
   },
   data() {
     // FIX until https://github.com/nuxt/nuxt.js/pull/5188/files/85ec562c6bdfff6ff97fcb9a8a95c2747b56ee31 is clarified
@@ -66,12 +67,17 @@ export default {
 
     return {
       searchQuery: this.$store.state.search.query,
-      selectedMode: this.$store.state.search.current.mode,
+      selectedMode: 'primary',
     }
   },
   computed: {
     current() {
       return this.$store.state.search.current
+    },
+    currentMode() {
+      if (this.current.mode)
+        return this.current.mode === 'primary' ? 'primary' : 'jiten'
+      return null
     },
   },
   watch: {
