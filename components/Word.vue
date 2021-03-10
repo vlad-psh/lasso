@@ -122,4 +122,19 @@ export default {
   background-image: url('~assets/backgrounds/tear-line.svg');
   margin-top: 1em;
 }
+
+@media (max-width: 568px) {
+  body {
+    .word-card {
+      display: block;
+
+      .kanji-info .kanji-list {
+        margin-top: 1.5em;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: auto;
+      }
+    }
+  }
+}
 </style>
