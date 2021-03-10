@@ -27,7 +27,10 @@
 
         <PitchWord :kreb="kreb" />
       </Modal>
-      <NuxtLink class="jisho-search-link" :to="searchRoute(kreb)"
+      <NuxtLink
+        class="jisho-search-link"
+        :to="searchRoute(kreb)"
+        @click.native="search(kreb)"
         >&#x1f50e;</NuxtLink
       >
       <div
@@ -50,7 +53,14 @@ export default {
   },
   methods: {
     searchRoute(kreb) {
-      return { name: 'search-query', params: { query: kreb.title } }
+      return { name: 'search-sub', params: { query: kreb.title } }
+    },
+    search(kreb) {
+      this.$search.execute({
+        query: kreb.title,
+        popRoute: true,
+        mode: 'kokugo',
+      })
     },
   },
 }

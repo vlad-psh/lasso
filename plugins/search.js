@@ -41,7 +41,7 @@ export default (context, inject) => {
         const result = kanjiDic.find((i) => new RegExp(query).test(i))
         if (result) {
           this.setCurrent({
-            dict: 'kanji',
+            mode: 'kanji',
             page: Number.parseInt(result.split(' ')[0]),
             query,
           })

@@ -1,7 +1,7 @@
 <template>
   <div class="vue-kanji">
     <div class="kanji-title no-refocus" :class="htmlClass">
-      <a @click="search">{{ title }}</a>
+      <NuxtLink :to="searchRoute" @click.native="search">{{ title }}</NuxtLink>
     </div>
 
     <div class="kanji-details-string">
@@ -9,8 +9,8 @@
       <div v-if="jlptn">&#x1f4ae; N{{ jlptn }}</div>
       <div class="deco black">部首</div>
       <span>{{ classicalRadical }}</span>
-      <a :href="'/jiten/kanji/' + title" @click.prevent="searchBook"
-        >&#x1f50e;</a
+      <NuxtLink :to="bookSearchRoute" @click.native="searchBook"
+        >&#x1f50e;</NuxtLink
       >
 
       <template v-if="links"
@@ -83,6 +83,12 @@ export default {
     classicalRadical() {
       return radicalsList[this.radnum - 1]
     },
+    searchRoute() {
+      return { name: 'search-sub', params: { query: this.title } }
+    },
+    bookSearchRoute() {
+      return { name: 'jiten', params: { query: this.title, mode: 'kanji' } }
+    },
   },
   created() {
     for (const k of Object.keys(this.payload)) {
@@ -91,10 +97,18 @@ export default {
   },
   methods: {
     search() {
-      this.$search.execute({ query: this.title, popRoute: true })
+      this.$search.execute({
+        query: this.title,
+        mode: 'primary',
+        popRoute: true,
+      })
     },
     searchBook() {
-      this.$search.execute({ query: this.title, dict: 'kanji', popRoute: true })
+      this.$search.execute({
+        query: this.title,
+        mode: 'kanji',
+        popRoute: true,
+      })
     },
   },
 }
