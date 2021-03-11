@@ -1,5 +1,6 @@
 paths \
     session:  '/api/session', # GET/POST/DELETE
+    signup:   '/api/signup',
     settings: '/api/settings'
 
 get :session do
@@ -20,6 +21,22 @@ end
 delete :session do
   session.delete('user_id')
   {status: :ok}.to_json
+end
+
+post :signup do
+  u = User.find_by(invite_token: params[:token])
+  halt(404, 'Invite token not found') unless u.present?
+
+  login = params[:username].strip
+  halt(400, 'Invalid username') if login.blank?
+  halt(400, 'Username already exists') if User.where(login: login).present?
+
+  u.login = login
+  u.password = params[:password]
+  u.invite_token = nil
+  u.save
+
+  return
 end
 
 post :settings do
