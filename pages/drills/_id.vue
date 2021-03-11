@@ -57,6 +57,18 @@ export default {
 </script>
 
 <style lang="scss">
+.drill-details {
+  h1 {
+    a {
+      text-decoration: none;
+      opacity: 0.6;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+}
 .elements-list {
   display: flex;
   flex-flow: row wrap;
@@ -86,11 +98,11 @@ export default {
     .pristine {
       background-color: rgba(157, 157, 157, 0.1); /*#f5f5f5*/
       color: #638686;
-      border-color: #b4c6c6;
+      border-color: #3164647d;
     }
     .apprentice {
-      background-color: #a8dba8; /* #dd0093; */
-      color: #357878; /* master border */
+      background-color: #a8dba8;
+      color: #357878;
       border-color: #96c496;
     }
     .guru {
@@ -118,4 +130,12 @@ export default {
     }
   }
 } /* end of .elements-list */
+
+html[class='dark-mode'] body .elements-list .element-container {
+  .pristine {
+    background-color: rgba(72, 72, 72, 0.14);
+    color: #8799a5;
+    border-color: #5da8c61f;
+  }
+}
 </style>

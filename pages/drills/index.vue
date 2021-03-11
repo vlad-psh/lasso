@@ -63,6 +63,15 @@ export default {
         opacity: 0.7;
         font-size: 0.75em;
       }
+
+      a.quiz-link {
+        opacity: 0.6;
+        text-decoration: none;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
     }
   }
 }
