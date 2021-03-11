@@ -1,10 +1,11 @@
-paths drills: '/drills',
-    drill: '/drill/:id'
+paths \
+    drills: '/api/drills',
+    drill: '/api/drill/:id'
 
 get :drills do
   protect!
-  @drill_sets = Drill.where(user: current_user).order(created_at: :desc)
-  slim :drills
+  drills = Drill.where(user: current_user).order(created_at: :desc)
+  drills.map(&:to_h).to_json
 end
 
 post :drills do
@@ -17,23 +18,25 @@ end
 
 get :drill do
   protect!
-  @drill = Drill.find_by(user: current_user, id: params[:id])
-  halt(404, "Drill Set not found") if @drill.blank?
+  drill = Drill.find_by(user: current_user, id: params[:id])
+  halt(404, "Drill Set not found") if drill.blank?
 
-  @elements = @drill.progresses.eager_load(:word, :srs_progresses).order(:id).map do |p|
+  words = drill.progresses.eager_load(:word, :srs_progresses).order(:id).map do |p|
     {
+      seq: p.seq,
       title: p.title,
       reading: p.word.rebs.first,
       description: p.word.list_desc,
-      reading_class: p.burned_at ? :burned : p.srs_progresses.detect{|i|
-          i.learning_type == 'reading_question'}.try(:html_class_leitner) || :pristine,
-      kanji_class: p.burned_at ? :burned : p.srs_progresses.detect{|i|
-          i.learning_type == 'kanji_question'}.try(:html_class_leitner) || :pristine,
-      href: path_to(:word).with(p.seq),
+      progress: {
+        reading: p.burned_at ? :burned : p.srs_progresses.detect{|i|
+          i.learning_type == 'reading'}.try(:html_class_leitner) || :pristine,
+        writing: p.burned_at ? :burned : p.srs_progresses.detect{|i|
+          i.learning_type == 'writing'}.try(:html_class_leitner) || :pristine,
+      },
     }
   end
 
-  slim :drill
+  {drill: drill, words: words}.to_json
 end
 
 patch :drill do
@@ -49,9 +52,9 @@ patch :drill do
       value: params[:enabled] == '0' ? 1 : 0
     }.to_json
   elsif params[:reset] == 'reading'
-    drill.reset_leitner(:reading_question)
+    drill.reset_leitner(:reading)
   elsif params[:reset] == 'kanji'
-    drill.reset_leitner(:kanji_question)
+    drill.reset_leitner(:writing)
   end
 
   return '{}'

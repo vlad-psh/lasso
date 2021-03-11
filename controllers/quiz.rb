@@ -1,70 +1,40 @@
-paths study: '/study/:class/:group', # get, post
-  study2: '/study2',
-  api_question: '/api/question'
+paths \
+  quiz: '/api/quiz',
+  question: '/api/question'
 
-get :study do
-  protect!
-
-  progresses = Progress.public_send(safe_group(params[:group])).
-                        public_send(safe_type(params[:class])).
-                        where(user: current_user)
-  @count = progresses.count
-  @progress = progresses.order('RANDOM()').first
-
-  if @progress.present?
-    @title = @progress.title
-    slim :study
-  else
-    flash[:notice] = "No more #{params[:class]} in \"#{params[:group]}\" group"
-    redirect path_to(:index)
-  end
-end
-
-post :study do
-  protect!
-
-  p = Progress.find(params[:id])
-  halt(403, 'Forbidden') if p.user_id != current_user.id
-  halt(400, 'Element not found') unless p.present?
-
-  p.answer!(params[:answer])
-
-  redirect path_to(:study).with(safe_type(params[:class]), safe_group(params[:group]))
-end
-
-get :study2 do
+get :quiz do
   protect!
 
   slim :study2
 end
 
-post :study2 do
+post :quiz do
   protect!
 
   progresses = {}
-  params[:answers].each do |i, a|
+  params['answers'].each do |a|
     next unless a['answer'].present? # some words can be left unanswered (only 'main' word is necessary)
     a['progress'] = Progress.find_or_initialize_by(seq: a['seq'], title: a['base'], user: current_user)
   end
 
-  learning_type = params[:type] =~ /kanji/ ? :kanji_question : :reading_question
+  learning_type = params['type']
 
-  params[:answers].each do |i,a|
+  params['answers'].each do |a|
     next if a['answer'] == 'burned' # why??
     next unless a['answer'].present?
-    drill = Drill.find_by(user: current_user, id: params[:drill_id]) if params[:drill_id]
+    drill = Drill.find_by(user: current_user, id: params['drill_id']) if params['drill_id']
     a['progress'].answer!(a['answer'], drill: drill || nil, learning_type: learning_type)
   end
 
-  if params[:sentence_id].present?
-    review = SentenceReview.find_or_initialize_by(sentence_id: params[:sentence_id], user: current_user)
+  if params['sentence_id'].present?
+    review = SentenceReview.find_or_initialize_by(sentence_id: params['sentence_id'], user: current_user)
     review.update(reviewed_at: DateTime.now)
   end
 
   return 'ok'
 end
 
-def get_drill_word(drill, init_session, learning_type = :reading_question, fresh = false)
+def get_drill_word(drill, init_session, learning_type = 'reading', fresh = false)
   # Try to find failed cards
   progress ||= drill.progresses.srs_failed(learning_type, drill.leitner_session).order('random()').first
 
@@ -93,28 +63,24 @@ def get_drill_word(drill, init_session, learning_type = :reading_question, fresh
   return progress
 end
 
-get :api_question do
+get :question do
   protect!
 
-  # params[:type] = nil | sentence | sentence-kanji
-  learning_type = %w(sentence-kanji).include?(params[:type]) ? :kanji_question : :reading_question
-
+  learning_type = params[:type]
   drill = Drill.find_by(id: params[:drill_id], user: current_user)
   progress = get_drill_word(drill, drill.leitner_session, learning_type, params[:fresh].present?)
 
-  if params[:type] =~ /sentence/
 # TODO: подобный выбор позволяет выбрать предложения, содержащие не нужный нам KREB (допустим,
 # неверный вариант написания или написание каной вместо кандзей) если мы ошиблись при создании предложения
 # (выбрали неправильный base для слова) То-есть здесь нам тоже нужно проверять пару Seq/Title (как для объектов Progress)
-    sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first
-    sentence = nil if sentence.present? && sentence.structure.detect{|i| i['base'] == progress.title}.blank?
+  sentence = progress.word.sentences.where(drill_id: params[:drill_id]).first
+  sentence = nil if sentence.present? && sentence.structure.detect{|i| i['base'] == progress.title}.blank?
 # TODO: look up SentenceReviews table and take ones who weren't reviewed at all or have not been reviewed recently
 #        .left_outer_joins(:sentence_reviews).order(
-    sentence.highlight_word(progress.seq) if sentence.present?
-  end
+  sentence.highlight_word(progress.seq) if sentence.present?
 
   sentence ||= progress.to_sentence
-  sentence.swap_kanji_yomi if learning_type == :kanji_question
+  sentence.swap_kanji_yomi if learning_type == 'writing'
 
   return sentence.study_hash(current_user).to_json
 end

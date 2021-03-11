@@ -1,15 +1,17 @@
 require 'aws-sdk-polly'
 
-paths api_sentence: '/api/sentence',
+# paths with indent: already in use with new frontent
+paths \
     word_details: '/api/word', # params: seq
-    api_word_autocomplete: '/api/word/autocomplete',
-    api_learn:   '/api/word/learn',
-    api_burn:    '/api/word/burn',
-    api_comment: '/api/comment',
-    drill_add_word: '/drill/word',
-    kanji_readings: '/api/kanji_readings',
-    activity: '/api/activity/:category/:seconds',
-    api_sentence_audio: '/api/sentence/:id/audio'
+api_sentence: '/api/sentence',
+api_word_autocomplete: '/api/word/autocomplete',
+api_learn:   '/api/word/learn',
+api_burn:    '/api/word/burn',
+api_comment: '/api/comment',
+drill_add_word: '/drill/word',
+kanji_readings: '/api/kanji_readings',
+activity: '/api/activity/:category/:seconds',
+api_sentence_audio: '/api/sentence/:id/audio'
 
 get :word_details do
   protect!

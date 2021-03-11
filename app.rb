@@ -3,9 +3,8 @@ require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'sinatra/content_for'
 require 'sinatra-snap'
-require 'slim'
+require 'rack/contrib'
 
-require 'rack-flash'
 require 'yaml'
 require 'mojinizer'
 require 'open-uri'
@@ -35,19 +34,17 @@ paths cards: '/cards',
     sentence: '/sentence/:id' # DELETE
 
 configure do
-  puts '---> init <---'
-
   $config = YAML.load(File.open('config/application.yml'))
 
+  use Rack::JSONBodyParser
   use Rack::Session::Cookie,
-#        key: 'fcs.app',
-#        domain: '172.16.0.11',
+        key: 'wakame',
+#        domain: 'localhost:3000',
 #        path: '/',
         expire_after: 2592000, # 30 days
         secret: $config['secret'],
-        same_site: :strict
-
-  use Rack::Flash
+        same_site: :strict,
+        httponly: true # cookies shouldn't be sent from JS
 
   DEGREES = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
   INFODIC = {

@@ -15,4 +15,8 @@ class Drill < ActiveRecord::Base
       SrsProgress.where(id: ids).update_all(leitner_box: box)
     end
   end
+
+  def to_h
+    self.serializable_hash(only: [:id, :title, :is_active, :created_at])
+  end
 end

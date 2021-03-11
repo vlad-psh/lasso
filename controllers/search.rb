@@ -1,11 +1,4 @@
-paths index: '/',
-  search: '/search'
-
-get :index do
-  protect!
-  @modal = true if params[:modal].present?
-  slim :search
-end
+paths search: '/api/search'
 
 post :search do
   protect!
@@ -15,7 +8,7 @@ post :search do
 
   if q.length == 1 && q.kanji? # this condition shoud be before 'fwd search' condition
     return search_kanji(q)
-  elsif q.hiragana.japanese? # any russian words is detected as japanese, lol
+  elsif q.hiragana.japanese? # russian words are being detected as japanese, lol
     return search_fwd(q)
   else
     return search_english(q)

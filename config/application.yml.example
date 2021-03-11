@@ -3,4 +3,3 @@ secret: SECRET
 aws_region: ap-northeast-1
 aws_access_key: ACCESS_KEY
 aws_secret_key: SECRET_KEY
-pictures: /srv/data/wakame_pictures

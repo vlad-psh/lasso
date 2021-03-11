@@ -1,37 +1,25 @@
-paths login: '/login', # GET: login form; POST: log in
-    logout: '/logout', # DELETE: logout
-    settings: '/settings'
+paths \
+    session:  '/api/session', # GET/POST/DELETE
+    settings: '/api/settings'
 
-get :login do
-  if current_user.present?
-#    flash[:notice] = "Already logged in"
-    redirect path_to(:index)
-  else
-    slim :login
-  end
+get :session do
+  halt(401, 'Access denied') unless current_user.present?
+  current_user.to_h.to_json
 end
 
-post :login do
-  begin
-    throw StandardError.new('Blank login or password') if params['username'].blank? || params['password'].blank?
+post :session do
+  halt(400, 'Blank login or password') if params['username'].blank? || params['password'].blank?
 
-    user = User.find_by(login: params['username'])
-    throw StandardError.new('User not found') unless user.present?
-    throw StandardError.new('Incorrect password') unless user.check_password(params['password'])
+  user = User.find_by(login: params['username'])
+  halt(403, 'Access denied') unless user.present? && user.check_password(params['password'])
 
-#    flash[:notice] = "Successfully logged in as #{user.login}!"
-    session['user_id'] = user.id
-    redirect path_to(:index)
-  rescue
-    flash[:error] = "Incorrect username or password :("
-    redirect path_to(:login)
-  end
+  session['user_id'] = user.id
+  user.to_h.to_json
 end
 
-delete :logout do
+delete :session do
   session.delete('user_id')
-  flash[:notice] = "Successfully logged out"
-  redirect path_to(:index)
+  {status: :ok}.to_json
 end
 
 post :settings do
@@ -49,6 +37,6 @@ post :settings do
   end
   current_user.save
 
-  'ok'
+  {status: :ok}.to_json
 end
 

@@ -7,10 +7,10 @@ class Sentence < ActiveRecord::Base
 
   def study_hash(user)
     return {
-      sentence_id: id,
-      sentence: structure,
+      id: id,
+      structure: structure,
       english: english,
-      j: Collector.new(user, words: Word.where(seq: structure.map{|i|i['seq']}.compact)).to_hash
+      payload: Collector.new(user, words: Word.where(seq: structure.map{|i|i['seq']}.compact)).to_hash
     }
   end
 
@@ -27,7 +27,6 @@ class Sentence < ActiveRecord::Base
   end
 
   def highlight_word(seq)
-    seq = seq.to_s
     self.structure.each do |i|
       i['highlight'] = true if i['seq'] == seq
     end

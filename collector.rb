@@ -10,8 +10,6 @@ class Collector
 
     @words    = opts[:words]    if opts[:words]    &&    opts[:words].kind_of?(ActiveRecord::Relation)
     @kanjis   = opts[:kanjis]   if opts[:kanjis]   &&   opts[:kanjis].kind_of?(ActiveRecord::Relation)
-
-    @include_drills = opts[:words] && opts[:words].kind_of?(ActiveRecord::Relation) ? true : false
   end
 
   def to_json
@@ -29,21 +27,11 @@ class Collector
     @progresses = Progress.where(user: @user).where(
                 Progress.arel_table[:seq].in(@words.map(&:seq))
                 .or(Progress.arel_table[:kanji_id].in(@kanjis.map(&:id)))
-              ).eager_load(:drills)
-
-    drills = @include_drills ? Drill.where(user: @user).order(id: :desc) : Drill.none
+              ) #.eager_load(:drills)
 
     return {
       words: @words.map{|i| word_structure(i)},
       kanjis: @kanjis.map{|i| kanji_structure(i)},
-      drills: drills.map{|i| {id: i.id, title: i.title, is_active: i.is_active} },
-      paths: {
-        learn:   path_to(:api_learn),
-        burn:    path_to(:api_burn),
-        comment: path_to(:api_comment),
-        drill:   path_to(:drill_add_word),
-        autocomplete: path_to(:api_word_autocomplete)
-      }
     }
   end
 
@@ -55,7 +43,7 @@ class Collector
   end
 
   def word_structure(w)
-    result = w.serializable_hash(only: [:seq, :jlptn, :nf, :en, :ru, :nhk_data])
+    result = w.serializable_hash(only: [:seq, :jlptn, :nf, :en, :ru, :nhk_data, :kanji])
     result[:comment] = @word_details.detect{|i| i.seq == w.seq}.try(:comment)
 
     result[:krebs] = w.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
@@ -80,7 +68,7 @@ class Collector
           pos:   c.pos,
           mmne:  c.mmne,
           rmne:  c.rmne,
-          sentences: c.sentences
+          sentences: c.sentences,
         }
       }
     })

@@ -4,7 +4,7 @@ class SrsProgress < ActiveRecord::Base
 
   scope :expired, -> {where(SrsProgress.arel_table[:scheduled].lteq(Date.today))}
 
-  enum learning_type: {reading_question: 0, kanji_question: 1, listening_question: 2}
+  enum learning_type: {reading: 0, writing: 1, listening: 2}
 
   def answer!(a, drill = nil)
     # answer should be 'yes', 'no' or 'soso'
