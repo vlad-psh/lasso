@@ -1,6 +1,10 @@
 <template>
   <div class="drill-details middle-content">
-    <h1>{{ drill.title }}</h1>
+    <h1>
+      {{ drill.title }}
+      <NuxtLink :to="readingQuiz">📰</NuxtLink>
+      <NuxtLink :to="writingQuiz">✍️</NuxtLink>
+    </h1>
 
     <h3>
       reading
@@ -12,7 +16,7 @@
         :key="'word' + idx"
         class="element-container"
       >
-        <div :class="word.reading_class" class="element">
+        <div :class="word.progress.reading" class="element">
           {{ word.title }}
         </div>
       </div>
@@ -28,7 +32,7 @@
         :key="'word' + idx"
         class="element-container"
       >
-        <div :class="word.kanji_class" class="element">
+        <div :class="word.progress.writing" class="element">
           {{ word.title }}
         </div>
       </div>
@@ -43,6 +47,20 @@ export default {
   async asyncData({ $axios, params }) {
     const resp = await $axios.get(`/api/drill/${params.id}`)
     return resp.data
+  },
+  computed: {
+    readingQuiz() {
+      return {
+        name: 'sub-quiz',
+        params: { drill_id: this.drill.id, type: 'reading' },
+      }
+    },
+    writingQuiz() {
+      return {
+        name: 'sub-quiz',
+        params: { drill_id: this.drill.id, type: 'writing' },
+      }
+    },
   },
   methods: {
     async reset(group) {

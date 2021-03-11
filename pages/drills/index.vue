@@ -1,6 +1,7 @@
 <template>
   <div class="drills-list middle-content">
     <h1>Drills</h1>
+
     <div class="table">
       <div v-for="drill of drills" :key="drill.id" class="drill">
         <div>{{ drill.is_active ? '✏️' : null }}</div>
@@ -12,18 +13,20 @@
           <NuxtLink
             :to="{
               name: 'sub-quiz',
-              params: { drill_id: drill.id, type: 'sentences' },
+              params: { drill_id: drill.id, type: 'reading' },
             }"
-            >文読</NuxtLink
+            class="quiz-link"
+            >📰</NuxtLink
           >
         </div>
         <div>
           <NuxtLink
             :to="{
               name: 'sub-quiz',
-              params: { drill_id: drill.id, type: 'sentence-kanji' },
+              params: { drill_id: drill.id, type: 'writing' },
             }"
-            >文書</NuxtLink
+            class="quiz-link"
+            >✍️</NuxtLink
           >
         </div>
       </div>
@@ -33,9 +36,14 @@
 
 <script>
 export default {
-  async asyncData({ $axios }) {
-    const resp = await $axios.get('/api/drills')
-    return { drills: resp.data }
+  async fetch() {
+    const resp = await this.$axios.get('/api/drills')
+    this.drills = resp.data
+  },
+  data() {
+    return {
+      drills: [],
+    }
   },
   methods: {},
 }
