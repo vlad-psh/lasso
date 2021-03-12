@@ -3,8 +3,9 @@
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" />
 
-      <WordGloss :glosses="word.en || []" flag="🇬🇧" />
-      <WordGloss :glosses="word.ru || []" flag="🇷🇺" />
+      <WordGloss :glosses="word.en || []" flag="uk" />
+      <WordGloss :glosses="word.ru || []" flag="ru" />
+      <WordGloss :glosses="word.az || []" flag="az" />
 
       <PitchWordNhk :payload="word.nhk_data" />
 

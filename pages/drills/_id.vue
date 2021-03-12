@@ -116,7 +116,7 @@ export default {
     .pristine {
       background-color: rgba(157, 157, 157, 0.1); /*#f5f5f5*/
       color: #638686;
-      border-color: #3164647d;
+      border-color: #b4c6c6;
     }
     .apprentice {
       background-color: #a8dba8;
