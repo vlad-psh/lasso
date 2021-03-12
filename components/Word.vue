@@ -3,9 +3,10 @@
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" />
 
-      <WordGloss :glosses="word.en || []" flag="uk" />
-      <WordGloss :glosses="word.ru || []" flag="ru" />
-      <WordGloss :glosses="word.az || []" flag="az" />
+      <WordGloss v-if="word.en" :glosses="word.en || []" flag="uk" />
+      <WordGloss v-if="word.ru" :glosses="word.ru || []" flag="ru" />
+      <WordGloss v-if="word.az" :glosses="word.az || []" flag="az" />
+      <WordGloss v-if="word.meikyo" :glosses="word.meikyo" flag="jp" />
 
       <PitchWordNhk :payload="word.nhk_data" />
 
@@ -48,6 +49,11 @@ export default {
   padding: 0.6em 0;
   display: grid;
   grid-template-columns: 3fr 2fr;
+
+  .word-info,
+  .kanji-info {
+    margin: 0 0.5em;
+  }
 
   .word-details {
     text-align: justify;
