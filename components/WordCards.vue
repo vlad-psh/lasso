@@ -1,6 +1,6 @@
 <template>
   <div v-if="cards.length > 0" class="word-details wk-info center-block">
-    <div class="icon">&#x1f980;</div>
+    <CrabIcon class="svg-icon" />
 
     <Modal v-for="card of cards" :key="card.meaning" class="no-refocus">
       <div class="wk-element">
@@ -42,7 +42,10 @@
 </template>
 
 <script>
+import CrabIcon from '@/assets/icons/crab.svg?inline'
+
 export default {
+  components: { CrabIcon },
   props: { cards: { type: Array, required: true } },
 }
 </script>

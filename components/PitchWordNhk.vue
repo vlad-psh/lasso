@@ -1,6 +1,6 @@
 <template>
   <div v-if="payload" class="word-details center-block">
-    <div class="icon-nhk"></div>
+    <div class="icon-nhk"><NHKIcon /></div>
     <span class="vue-pitch-word">
       <span v-for="(word, wordIdx) of words" :key="wordIdx" class="word">
         <span
@@ -15,7 +15,10 @@
 </template>
 
 <script>
+import NHKIcon from '@/assets/icons/nhk.svg?inline'
+
 export default {
+  components: { NHKIcon },
   props: {
     payload: { type: Object, default: null },
   },
@@ -44,3 +47,14 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.icon-nhk {
+  display: inline-block;
+  svg {
+    width: 3em;
+    height: 1em;
+    vertical-align: sub;
+  }
+}
+</style>

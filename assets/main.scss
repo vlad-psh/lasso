@@ -63,6 +63,12 @@ body {
     padding: 0 calc((100vw - 40em) / 2);
     text-align: center;
   }
+
+  svg.svg-icon {
+    height: 1.5em;
+    width: 1.5em;
+    margin-bottom: -0.4em;
+  }
 }
 
 html[class='dark-mode'] body {

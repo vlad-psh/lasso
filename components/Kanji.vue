@@ -47,14 +47,19 @@
       :payload="similar"
     />
 
-    <div v-if="english">&#x1f1ec;&#x1f1e7; {{ english.join('; ') }}</div>
+    <div v-if="english">
+      <FlagUK class="svg-icon" />
+      {{ english.join('; ') }}
+    </div>
   </div>
 </template>
 
 <script>
 import radicalsList from '@/js/radicals_list.js'
+import FlagUK from '@/assets/icons/flag-uk.svg?inline'
 
 export default {
+  components: { FlagUK },
   props: {
     payload: { type: Object, required: true },
   },

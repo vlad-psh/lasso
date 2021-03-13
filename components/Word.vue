@@ -2,13 +2,12 @@
   <div class="vue-word word-card" :data-seq="seq">
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" />
+      <PitchWordNhk :payload="word.nhk_data" />
 
       <WordGloss v-if="word.en" :glosses="word.en || []" flag="uk" />
       <WordGloss v-if="word.ru" :glosses="word.ru || []" flag="ru" />
       <WordGloss v-if="word.az" :glosses="word.az || []" flag="az" />
       <WordGloss v-if="word.meikyo" :glosses="word.meikyo" flag="jp" />
-
-      <PitchWordNhk :payload="word.nhk_data" />
 
       <WordCards :cards="word.cards || []" />
       <!-- vue editable text -->

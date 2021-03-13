@@ -1,11 +1,10 @@
 <template>
   <div v-if="glosses.length > 0" class="word-details center-block">
-    <div class="flag-icon">
-      <FlagUK v-if="flag === 'uk'" />
-      <FlagRU v-if="flag === 'ru'" />
-      <FlagAZ v-if="flag === 'az'" />
-      <FlagJP v-if="flag === 'jp'" />
-    </div>
+    <FlagUK v-if="flag === 'uk'" class="svg-icon" />
+    <FlagRU v-if="flag === 'ru'" class="svg-icon" />
+    <FlagAZ v-if="flag === 'az'" class="svg-icon" />
+    <FlagJP v-if="flag === 'jp'" class="svg-icon" />
+
     <span v-for="(gloss, glossIndex) of glosses" :key="glossIndex">
       <span v-if="glosses.length > 1">{{ bullets[glossIndex] }} </span>
       <span v-if="gloss.pos" class="pos"
@@ -45,14 +44,6 @@ export default {
 </script>
 
 <style lang="scss">
-.flag-icon {
-  display: inline-block;
-  svg {
-    width: 1.5em;
-    height: 1.5em;
-    vertical-align: bottom;
-  }
-}
 .word-details {
   .gloss-line + .gloss-line {
     &:before {
