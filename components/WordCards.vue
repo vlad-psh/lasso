@@ -2,42 +2,15 @@
   <div v-if="cards.length > 0" class="word-details wk-info center-block">
     <CrabIcon class="svg-icon" />
 
-    <Modal v-for="card of cards" :key="card.meaning" class="no-refocus">
-      <div class="wk-element">
-        <span class="level">{{ card.level }}</span>
-        {{ card.title }} ({{ card.meaning.split(',')[0] }})
-      </div>
-
-      <div slot="title">
-        <span class="level">{{ card.level }}</span>
-        <span
-          >{{ card.title }} · {{ card.meaning.split(',')[0] }} ({{
-            card.pos
-          }})</span
-        >
-      </div>
-
-      <div slot="content">
-        <div class="hr-title"><span>Meaning</span></div>
-        <div class="mnemonics">
-          <span class="emphasis">{{ card.meaning }}</span>
-          <span>{{ card.mmne }}</span>
-        </div>
-
-        <div class="hr-title"><span>Reading</span></div>
-        <div class="mnemonics">
-          <span class="emphasis">{{ card.reading }}</span>
-          <span>{{ card.rmne }}</span>
-        </div>
-
-        <div class="hr-title"><span>Example sentences</span></div>
-        <ul>
-          <li v-for="(sentence, idx) in card.sentences" :key="idx">
-            {{ sentence.ja }}<br />{{ sentence.en }}
-          </li>
-        </ul>
-      </div>
-    </Modal>
+    <div v-for="card of cards" :key="card" class="wk-element">
+      <span class="level">{{ card.level }}</span>
+      {{ card.title }} ・ {{ card.meaning.split(',')[0] }}
+      <ul>
+        <li v-for="(sentence, idx) in card.sentences" :key="idx">
+          {{ sentence.ja }}<br />{{ sentence.en }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -51,17 +24,13 @@ export default {
 </script>
 
 <style lang="scss">
-.wk-element {
-  display: inline-block;
-  cursor: pointer;
-  border-bottom: 1px dashed #008ace;
-  color: #008ace;
-
-  &:hover {
-    color: #c00;
-    border-bottom-color: #c00;
+.wk-info {
+  .svg-icon {
+    float: left;
+    margin-right: 0.5em;
   }
-
+}
+.wk-element {
   .level {
     // @include non-selectable;
     display: inline-block;
@@ -74,6 +43,16 @@ export default {
     height: 1.6em;
     text-align: center;
     vertical-align: middle;
+  }
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.9em;
+    line-height: initial;
+    li {
+      margin: 0.3em 0 0.3em 0;
+    }
   }
 }
 
