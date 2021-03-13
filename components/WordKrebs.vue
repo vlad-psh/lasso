@@ -28,6 +28,7 @@
         <PitchWord :kreb="kreb" />
       </Modal>
       <NuxtLink
+        v-if="!kreb.is_kanji"
         class="jisho-search-link"
         :to="searchRoute(kreb)"
         @click.native="search(kreb)"
@@ -71,6 +72,7 @@ export default {
   display: inline-block;
   // margin: 0 0.6em 0 -0.3em;
   margin-right: 0.6em;
+  margin-bottom: 0.3em;
   border-bottom: none;
 }
 .word-kreb {
