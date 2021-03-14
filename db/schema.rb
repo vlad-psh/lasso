@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_11_124237) do
+ActiveRecord::Schema.define(version: 2021_03_12_130307) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -266,6 +266,8 @@ ActiveRecord::Schema.define(version: 2021_03_11_124237) do
     t.string "searchable_en"
     t.string "searchable_ru"
     t.jsonb "nhk_data"
+    t.json "az"
+    t.json "meikyo"
     t.index ["seq"], name: "index_words_on_seq"
   end
 

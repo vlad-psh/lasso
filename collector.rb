@@ -43,11 +43,11 @@ class Collector
   end
 
   def word_structure(w)
-    result = w.serializable_hash(only: [:seq, :jlptn, :nf, :en, :ru, :nhk_data, :kanji])
+    result = w.serializable_hash(only: [:seq, :jlptn, :nf, :en, :ru, :az, :meikyo, :nhk_data, :kanji])
     result[:comment] = @word_details.detect{|i| i.seq == w.seq}.try(:comment)
 
     result[:krebs] = w.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
-      k = {title: t.title, is_common: t.is_common}
+      k = {title: t.title, is_common: t.is_common, is_kanji: t.is_kanji}
       k[:pitch] = t.pitch if t.pitch
       kreb_progress = @progresses.detect{|p| p.title == t.title && p.seq == w.seq}
       k[:progress] = kreb_progress.present? ? kreb_progress.api_hash : {}

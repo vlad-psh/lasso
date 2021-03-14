@@ -34,7 +34,7 @@ post :quiz do
   return 'ok'
 end
 
-def get_drill_word(drill, init_session, learning_type = 'reading', fresh = false)
+def get_drill_word(drill, init_session, learning_type = 'reading', fresh = true)
   # Try to find failed cards
   progress ||= drill.progresses.srs_failed(learning_type, drill.leitner_session).order('random()').first
 
@@ -68,7 +68,7 @@ get :question do
 
   learning_type = params[:type]
   drill = Drill.find_by(id: params[:drill_id], user: current_user)
-  progress = get_drill_word(drill, drill.leitner_session, learning_type, params[:fresh].present?)
+  progress = get_drill_word(drill, drill.leitner_session, learning_type)
 
 # TODO: подобный выбор позволяет выбрать предложения, содержащие не нужный нам KREB (допустим,
 # неверный вариант написания или написание каной вместо кандзей) если мы ошиблись при создании предложения

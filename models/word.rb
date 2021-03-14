@@ -39,5 +39,25 @@ class Word < ActiveRecord::Base
   def kreb_min_length
     rebs.present? ? rebs.map{|i|i.length}.min : 100
   end
+
+  def meikyo
+    read_attribute(:meikyo).map do |i|
+      {
+        gloss: i['gloss'].map{|str| mecab_light(str)},
+        pos: i['pos'],
+      }
+    end
+  end
+
+  private
+  def mecab_light(str)
+    mecab_parse(str).each_with_object([]) do |i,a|
+      if i[:seq].blank? && a.last && a.last[:seq].blank?
+        a[a.length - 1][:text] += i[:text]
+      else
+        a << i.slice(:text, :seq, :base)
+      end
+    end
+  end
 end
 
