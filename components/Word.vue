@@ -3,7 +3,7 @@
     <WordLoading v-if="!word" />
 
     <div v-if="word" class="word-info">
-      <WordKrebs :krebs="word.krebs" />
+      <WordKrebs :krebs="word.krebs" :seq="seq" />
       <PitchWordNhk :payload="word.nhk_data" />
 
       <WordGloss

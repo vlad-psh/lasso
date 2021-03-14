@@ -19,7 +19,11 @@
                 {{ selectedKreb.drills }}
               </td>
               <td>
-                <input type="button" value="Add" @click="addKrebToDrill()" />
+                <input
+                  type="button"
+                  value="Add"
+                  @click="addKrebToDrill(kreb)"
+                />
               </td>
             </tr>
           </table>
@@ -46,6 +50,7 @@
 export default {
   props: {
     krebs: { type: Array, required: true },
+    seq: { type: Number, required: true },
   },
   data() {
     return {
@@ -62,6 +67,9 @@ export default {
         popRoute: true,
         mode: 'kokugo',
       })
+    },
+    addKrebToDrill(kreb) {
+      this.$axios.post('/api/drill/word', { title: kreb.title, seq: this.seq })
     },
   },
 }
