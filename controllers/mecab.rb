@@ -1,6 +1,8 @@
 require 'mecab/light'
 
-path mecab: '/mecab'
+paths \
+    mecab: '/mecab',
+    mecab_word: '/api/mecab/word/:seq'
 
 def split_okurigana(word)
   base = ''
@@ -96,3 +98,7 @@ post :mecab do
   end
 end
 
+get :mecab_word do
+  w = Word.find_by(seq: params[:seq])
+  w.meikyo_mecab.to_json
+end
