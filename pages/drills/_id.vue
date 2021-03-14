@@ -25,6 +25,22 @@
         </NuxtLink>
       </div>
     </div>
+
+    <h3>sentences</h3>
+    <ul>
+      <li v-for="(sentence, idx) of sentences" :key="`s${idx}`">
+        <span
+          v-for="(word, wordIdx) of sentence.structure"
+          :key="`s${idx}-${wordIdx}`"
+          ><NuxtLink
+            v-if="word.seq"
+            :to="searchPath(word)"
+            @click.native="search(word)"
+            >{{ word.text }}</NuxtLink
+          ><template v-else>{{ word.text }}</template></span
+        >
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -61,12 +77,12 @@ export default {
     searchPath(word) {
       return {
         name: 'sub-search',
-        params: { query: word.title, seq: word.seq },
+        params: { query: word.title || word.text, seq: word.seq },
       }
     },
     search(word) {
       this.$search.execute({
-        query: word.title,
+        query: word.title || word.text,
         seq: word.seq,
         mode: 'primary',
         pushRoute: true,
@@ -87,6 +103,10 @@ export default {
         opacity: 1;
       }
     }
+  }
+
+  ul {
+    text-align: left;
   }
 }
 .elements-list {
