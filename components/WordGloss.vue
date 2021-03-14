@@ -50,13 +50,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.word-details {
-  .gloss-line + .gloss-line {
-    &:before {
-      content: '';
-      display: block;
-    }
-  }
-}
-</style>
+<style lang="scss"></style>

@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div v-if="selectedWord">
+    <div v-if="selectedSeq">
       <div v-if="selectedSegment.answer" class="answer-buttons">
         <div class="answer-button yellow" @click="resetAnswer">
           RESET
@@ -54,24 +54,14 @@
         </div>
       </div>
       <div v-else class="answer-buttons">
-        <div class="answer-button red" @click="setAnswer('incorrect')">
-          NO
-          <div class="answer-details">
-            + 3 + {{ selectedKreb.progress.incorrect }}
-          </div>
-        </div>
-        <div class="answer-button green" @click="setAnswer('correct')">
-          YES
-          <div class="answer-details">
-            + {{ selectedKreb.progress.correct }}
-          </div>
-        </div>
+        <div class="answer-button red" @click="setAnswer('incorrect')">NO</div>
+        <div class="answer-button green" @click="setAnswer('correct')">YES</div>
       </div>
 
-      <Word :key="selectedWord.seq" :seq="selectedWord.seq" />
+      <Word :key="selectedSeq" :seq="selectedSeq" />
     </div>
 
-    <div v-if="allAnswered && !selectedWord && !loading">
+    <div v-if="allAnswered && !selectedSeq && !loading">
       <div v-if="allAnswered" class="answer-buttons">
         <div class="answer-button blue" @click="submit">SUBMIT</div>
       </div>
@@ -89,18 +79,13 @@ export default {
     store.commit('env/SET_QUIZ_PARAMS', route.params)
   },
   async fetch() {
-    const { store, route } = this.$nuxt.context
+    const { route } = this.$nuxt.context
     const resp = await this.$axios.get('/api/question', {
       params: {
         drill_id: route.params.drill_id,
         type: route.params.type,
       },
     })
-
-    for (const word of resp.data.payload.words)
-      store.commit('cache/PUSH_WORD', word)
-    for (const kanji of resp.data.payload.kanjis)
-      store.commit('cache/ADD_KANJI', kanji)
 
     let componentIndex = 1
     for (const segment of resp.data.structure)
@@ -124,19 +109,8 @@ export default {
         ? this.segments[this.selectedIndex]
         : null
     },
-    selectedWord() {
-      return this.selectedSegment
-        ? this.sentence.payload.words.find(
-            (i) => i.seq === this.selectedSegment.seq
-          )
-        : null
-    },
-    selectedKreb() {
-      return this.selectedWord
-        ? this.selectedWord.krebs.find(
-            (i) => i.title === this.selectedSegment.base
-          )
-        : null
+    selectedSeq() {
+      return this.selectedSegment ? this.selectedSegment.seq : null
     },
     allAnswered() {
       const mainWord = this.segments.find((i) => i.highlight === true)
@@ -161,8 +135,8 @@ export default {
     },
     selectWord(sentenceIndex) {
       this.selectedIndex =
-        this.selectedWord &&
-        this.selectedWord.seq === this.segments[sentenceIndex].seq
+        this.selectedSeq &&
+        this.selectedSeq === this.segments[sentenceIndex].seq
           ? null
           : sentenceIndex
     },

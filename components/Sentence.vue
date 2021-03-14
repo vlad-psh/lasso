@@ -33,6 +33,14 @@ export default {
     text-decoration: none;
     color: var(--color);
     background: var(--bg-secondary);
+    margin: 0 1px;
+  }
+
+  .gloss-line + .gloss-line {
+    &:before {
+      content: '';
+      display: block;
+    }
   }
 }
 </style>

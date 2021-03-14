@@ -2,7 +2,7 @@
   <div v-if="cards.length > 0" class="word-details wk-info center-block">
     <CrabIcon class="svg-icon" />
 
-    <div v-for="card of cards" :key="card" class="wk-element">
+    <div v-for="card of cards" :key="card.title" class="wk-element">
       <span class="level">{{ card.level }}</span>
       {{ card.title }} ・ {{ card.meaning.split(',')[0] }}
       <ul>
