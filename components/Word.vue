@@ -1,5 +1,7 @@
 <template>
   <div class="vue-word word-card" :data-seq="seq">
+    <WordLoading v-if="!word" />
+
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" />
       <PitchWordNhk :payload="word.nhk_data" />
