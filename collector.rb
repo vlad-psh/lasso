@@ -43,7 +43,8 @@ class Collector
   end
 
   def word_structure(w)
-    result = w.serializable_hash(only: [:seq, :jlptn, :nf, :en, :ru, :az, :meikyo, :nhk_data, :kanji])
+    languages = [:meikyo, :en] | (@user.settings['lang'] || [])
+    result = w.serializable_hash(only: languages | [:seq, :jlptn, :nf, :nhk_data, :kanji])
     result[:comment] = @word_details.detect{|i| i.seq == w.seq}.try(:comment)
 
     result[:krebs] = w.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
