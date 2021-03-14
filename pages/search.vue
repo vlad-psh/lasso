@@ -28,7 +28,7 @@
       <div class="search-results">
         <SearchCandidateItem
           v-for="item in $store.state.search.results"
-          :key="item[0]"
+          :key="$store.state.search.query + item[0]"
           ref="candidates"
           :item="item"
           :is-selected="item[0] === current.seq"
@@ -113,7 +113,7 @@ export default {
       const results = this.$store.state.search.results
       let idx = results.findIndex((i) => i[0] === this.current.seq)
       if (direction === 'prev' && idx > 0) idx--
-      else if (direction === 'next' && idx < results.length) idx++
+      else if (direction === 'next' && idx + 1 < results.length) idx++
       this.selectCandidate(results[idx][0])
       this.scrollToIndex(idx)
     },
