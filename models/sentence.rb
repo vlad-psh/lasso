@@ -10,7 +10,6 @@ class Sentence < ActiveRecord::Base
       id: id,
       structure: structure,
       english: english,
-      payload: Collector.new(user, words: Word.where(seq: structure.map{|i|i['seq']}.compact)).to_hash
     }
   end
 

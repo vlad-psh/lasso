@@ -41,6 +41,8 @@ class Word < ActiveRecord::Base
   end
 
   def meikyo
+    return nil if read_attribute(:meikyo).blank?
+
     cache = MecabCache.find_by(key: "w/#{seq}")
     return cache.data if cache.present? && cache.data
 
