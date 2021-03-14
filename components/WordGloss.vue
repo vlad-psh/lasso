@@ -18,11 +18,7 @@
       </template>
 
       <template v-else>
-        <Sentence
-          v-for="(gloss, glossIndex) of sense.gloss"
-          :key="`s${senseIndex}-g${glossIndex}`"
-          :payload="gloss"
-        ></Sentence>
+        <Sentence :plain-text="sense.gloss" :seq="seq"></Sentence>
       </template>
     </span>
   </div>
@@ -39,6 +35,7 @@ export default {
   props: {
     payload: { type: Array, required: true },
     lang: { type: String, required: true },
+    seq: { type: Number, default: null },
   },
   data() {
     return {

@@ -1,20 +1,47 @@
 <template>
   <span class="vue-sentence">
-    <span v-for="(word, idx) of payload" :key="`w${idx}`"
-      ><NuxtLink
-        v-if="word.seq"
-        :to="path(word.base, word.seq)"
-        @click.native="search(word.base, word.seq)"
-        >{{ word.text }}</NuxtLink
-      ><template v-else>{{ word.text }}</template></span
-    >
+    <template v-if="sentence">
+      <span
+        v-for="(line, lineIdx) of sentence"
+        :key="`l${lineIdx}`"
+        class="gloss-line"
+      >
+        <span v-for="(word, wordIdx) of line" :key="`w${wordIdx}`"
+          ><NuxtLink
+            v-if="word.seq"
+            :to="path(word.base, word.seq)"
+            @click.native="search(word.base, word.seq)"
+            >{{ word.text }}</NuxtLink
+          ><template v-else>{{ word.text }}</template></span
+        >
+      </span>
+    </template>
+
+    <template v-else>
+      <span
+        v-for="(line, lineIdx) of plainText"
+        :key="`l${lineIdx}`"
+        class="gloss-line"
+        >{{ line }}</span
+      >
+    </template>
   </span>
 </template>
 
 <script>
 export default {
   props: {
-    payload: { type: Array, required: true },
+    plainText: { type: Array, required: true },
+    seq: { type: Number, required: true },
+  },
+  async fetch() {
+    const resp = await this.$axios.get(`/api/mecab/word/${this.seq}`)
+    this.sentence = resp.data[0].gloss
+  },
+  data() {
+    return {
+      sentence: null,
+    }
   },
   methods: {
     path(query, seq) {
@@ -33,7 +60,8 @@ export default {
     text-decoration: none;
     color: var(--color);
     background: var(--bg-secondary);
-    margin: 0 1px;
+    margin: 0 -1px;
+    border: 1px solid var(--bg);
   }
 
   .gloss-line + .gloss-line {
