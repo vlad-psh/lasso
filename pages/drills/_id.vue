@@ -6,35 +6,23 @@
       <NuxtLink :to="writingQuiz">✍️</NuxtLink>
     </h1>
 
-    <h3>
-      reading
-      <DoubleClickButton @click="reset('reading')"> reset </DoubleClickButton>
-    </h3>
-    <div class="elements-list">
-      <div
-        v-for="(word, idx) of words"
-        :key="'word' + idx"
-        class="element-container"
-      >
-        <div :class="word.progress.reading" class="element">
-          {{ word.title }}
-        </div>
-      </div>
-    </div>
-
-    <h3>
-      writing
-      <DoubleClickButton @click="reset('kanji')"> reset </DoubleClickButton>
-    </h3>
-    <div class="elements-list">
-      <div
-        v-for="(word, idx) of words"
-        :key="'word' + idx"
-        class="element-container"
-      >
-        <div :class="word.progress.writing" class="element">
-          {{ word.title }}
-        </div>
+    <div v-for="groupName of ['reading', 'writing']" :key="groupName">
+      <h3>
+        {{ groupName }}
+        <DoubleClickButton @click="reset(groupName)"> reset </DoubleClickButton>
+      </h3>
+      <div class="elements-list">
+        <NuxtLink
+          v-for="(word, idx) of words"
+          :key="'word' + idx"
+          :to="searchPath(word)"
+          class="element-container"
+          @click.native="search(word)"
+        >
+          <div :class="word.progress[groupName]" class="element">
+            {{ word.title }}
+          </div>
+        </NuxtLink>
       </div>
     </div>
   </div>
@@ -70,6 +58,20 @@ export default {
       const data = await this.$options.asyncData(this.$root.$options.context)
       Object.assign(this.$data, data)
     },
+    searchPath(word) {
+      return {
+        name: 'sub-search',
+        params: { query: word.title, seq: word.seq },
+      }
+    },
+    search(word) {
+      this.$search.execute({
+        query: word.title,
+        seq: word.seq,
+        mode: 'primary',
+        pushRoute: true,
+      })
+    },
   },
 }
 </script>
@@ -103,6 +105,7 @@ export default {
     font-size: 0.7em;
     font-weight: 100;
     flex: auto;
+    text-decoration: none;
 
     .element {
       padding: 0.4em 0.3em;

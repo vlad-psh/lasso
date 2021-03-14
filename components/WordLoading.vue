@@ -33,7 +33,7 @@
     height: 2em;
   }
   .details div {
-    width: 100%;
+    width: calc(100% - 1em);
     height: 1.3em;
   }
 }
