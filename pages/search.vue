@@ -3,6 +3,7 @@
     <div class="browse-panel">
       <div class="search-field">
         <input
+          ref="searchField"
           v-model="searchQuery"
           v-shortkey.focus="['esc']"
           type="text"
@@ -14,6 +15,9 @@
           @keydown.down="switchCandidate('next')"
           @keydown.up="switchCandidate('prev')"
         />
+        <div class="clear-button" @click="clearInputField">
+          <ClearIcon />
+        </div>
       </div>
       <div class="search-mode">
         <div
@@ -52,8 +56,10 @@
 
 <script>
 import debounce from '@/js/debouncer.js'
+import ClearIcon from '@/assets/icons/clear.svg?inline'
 
 export default {
+  components: { ClearIcon },
   async fetch() {
     const { route, store } = this.$nuxt.context
     // if (process.server)
@@ -128,6 +134,7 @@ export default {
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
       this.searchQuery = ''
+      this.$refs.searchField.focus()
     },
     switchDictionary() {
       const modes = Object.keys(this.$search.modes)

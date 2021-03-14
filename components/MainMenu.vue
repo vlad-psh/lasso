@@ -86,9 +86,10 @@ export default {
     #main-menu {
       text-align: left;
 
-      & > div.center {
+      & > div.right {
+        left: 0;
+        right: initial;
         margin-left: 0.4em;
-        justify-content: flex-start;
       }
     }
   }
