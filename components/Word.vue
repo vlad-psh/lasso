@@ -4,10 +4,10 @@
       <WordKrebs :krebs="word.krebs" />
       <PitchWordNhk :payload="word.nhk_data" />
 
-      <WordGloss v-if="word.en" :glosses="word.en || []" flag="uk" />
-      <WordGloss v-if="word.ru" :glosses="word.ru || []" flag="ru" />
-      <WordGloss v-if="word.az" :glosses="word.az || []" flag="az" />
-      <WordGloss v-if="word.meikyo" :glosses="word.meikyo" flag="jp" />
+      <WordGloss v-if="word.meikyo" :payload="word.meikyo" lang="jp" />
+      <WordGloss v-if="word.en" :payload="word.en || []" lang="uk" />
+      <WordGloss v-if="word.ru" :payload="word.ru || []" lang="ru" />
+      <WordGloss v-if="word.az" :payload="word.az || []" lang="az" />
 
       <WordCards :cards="word.cards || []" />
       <!-- vue editable text -->

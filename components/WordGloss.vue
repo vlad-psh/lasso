@@ -1,22 +1,29 @@
 <template>
-  <div v-if="glosses.length > 0" class="word-details center-block">
-    <FlagUK v-if="flag === 'uk'" class="svg-icon" />
-    <FlagRU v-if="flag === 'ru'" class="svg-icon" />
-    <FlagAZ v-if="flag === 'az'" class="svg-icon" />
-    <FlagJP v-if="flag === 'jp'" class="svg-icon" />
+  <div v-if="payload.length > 0" class="word-details center-block">
+    <FlagUK v-if="lang === 'uk'" class="svg-icon" />
+    <FlagRU v-if="lang === 'ru'" class="svg-icon" />
+    <FlagAZ v-if="lang === 'az'" class="svg-icon" />
+    <FlagJP v-if="lang === 'jp'" class="svg-icon" />
 
-    <span v-for="(gloss, glossIndex) of glosses" :key="glossIndex">
-      <span v-if="glosses.length > 1">{{ bullets[glossIndex] }} </span>
-      <span v-if="gloss.pos" class="pos"
-        >{{ gloss.pos.map((i) => i.replace(/^.(.*).$/, '$1')).join(', ') }}
+    <span v-for="(sense, senseIndex) of payload" :key="senseIndex">
+      <span v-if="payload.length > 1">{{ bullets[senseIndex] }} </span>
+      <span v-if="sense.pos" class="pos"
+        >{{ sense.pos.map((i) => i.replace(/^.(.*).$/, '$1')).join(', ') }}
       </span>
-      <span
-        v-for="(line, lineIndex) of gloss.gloss.join(', ').split('\n')"
-        :key="'g' + glossIndex + lineIndex"
-        class="gloss-line"
-      >
-        {{ line }}
-      </span>
+
+      <template v-if="lang !== 'jp'">
+        <span>
+          {{ sense.gloss.join(', ') }}
+        </span>
+      </template>
+
+      <template v-else>
+        <Sentence
+          v-for="(gloss, glossIndex) of sense.gloss"
+          :key="`s${senseIndex}-g${glossIndex}`"
+          :payload="gloss"
+        ></Sentence>
+      </template>
     </span>
   </div>
 </template>
@@ -30,8 +37,8 @@ import FlagJP from '@/assets/icons/flag-jp.svg?inline'
 export default {
   components: { FlagUK, FlagRU, FlagAZ, FlagJP },
   props: {
-    glosses: { type: Array, required: true },
-    flag: { type: String, required: true },
+    payload: { type: Array, required: true },
+    lang: { type: String, required: true },
   },
   data() {
     return {
