@@ -41,12 +41,17 @@ class Word < ActiveRecord::Base
   end
 
   def meikyo
-    read_attribute(:meikyo).map do |i|
+    cache = MecabCache.find_by(key: "w/#{seq}")
+    return cache.data if cache.present? && cache.data
+
+    data = read_attribute(:meikyo).map do |i|
       {
         gloss: i['gloss'].map{|str| mecab_light(str)},
         pos: i['pos'],
       }
     end
+    MecabCache.create(key: "w/#{seq}", data: data)
+    data
   end
 
   private

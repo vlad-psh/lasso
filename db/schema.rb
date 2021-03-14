@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_12_130307) do
+ActiveRecord::Schema.define(version: 2021_03_14_055916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,11 @@ ActiveRecord::Schema.define(version: 2021_03_12_130307) do
     t.string "title"
     t.string "reading"
     t.integer "kind"
+  end
+
+  create_table "mecab_cache", force: :cascade do |t|
+    t.string "key"
+    t.json "data"
   end
 
   create_table "notes", force: :cascade do |t|
