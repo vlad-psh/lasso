@@ -7,11 +7,11 @@
         class="gloss-line"
       >
         <span v-for="(word, wordIdx) of line" :key="`w${wordIdx}`"
-          ><NuxtLink
+          ><a
             v-if="word.seq"
-            :to="path(word.base, word.seq)"
-            @click.native="search(word.base, word.seq)"
-            >{{ word.text }}</NuxtLink
+            :href="path(word.base, word.seq)"
+            @click.prevent="search(word.base, word.seq)"
+            >{{ word.text }}</a
           ><template v-else>{{ word.text }}</template></span
         >
       </span>
@@ -45,7 +45,10 @@ export default {
   },
   methods: {
     path(query, seq) {
-      return { name: 'sub-search', params: { query, seq } }
+      return this.$router.resolve({
+        name: 'sub-search',
+        params: { query, seq },
+      }).href
     },
     search(query, seq) {
       this.$search.execute({ query, seq, mode: 'primary', popRoute: true })
