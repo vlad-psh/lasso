@@ -36,7 +36,11 @@ get :drill do
     }
   end
 
-  {drill: drill, words: words}.to_json
+  {
+    drill: drill,
+    words: words,
+    sentences: drill.sentences.map{|i| i.study_hash(current_user)},
+  }.to_json
 end
 
 patch :drill do
@@ -53,7 +57,7 @@ patch :drill do
     }.to_json
   elsif params[:reset] == 'reading'
     drill.reset_leitner(:reading)
-  elsif params[:reset] == 'kanji'
+  elsif params[:reset] == 'writing'
     drill.reset_leitner(:writing)
   end
 

@@ -3,48 +3,33 @@ require 'aws-sdk-polly'
 # paths with indent: already in use with new frontent
 paths \
     word_details: '/api/word', # params: seq
-api_sentence: '/api/sentence',
+    drill_add_word: '/api/drill/word',
+    activity: '/api/activity/:category/:seconds',
 api_word_autocomplete: '/api/word/autocomplete',
 api_learn:   '/api/word/learn',
 api_burn:    '/api/word/burn',
 api_comment: '/api/comment',
-drill_add_word: '/drill/word',
-kanji_readings: '/api/kanji_readings',
-activity: '/api/activity/:category/:seconds',
-api_sentence_audio: '/api/sentence/:id/audio'
+kanji_readings: '/api/kanji_readings'
 
 get :word_details do
   protect!
   return Collector.new(current_user, words: Word.where(seq: params[:seq])).to_json
 end
 
-get :api_sentence do
+post :drill_add_word do
   protect!
-  # TODO: smarter selection of expired words
-  progress = Progress.words.expired.where(user: current_user).order('RANDOM()').first
-  main_word = progress.word
-  main_word.sentences.where.not(structure: nil).order('RANDOM()').each do |sentence|
-    unless sentence.words.as_for(current_user).map {|w| w.progresses.try(:first).try(:learned_at).present?}.include?(false)
-      # If all words in sentence are learned
-      @sentence = sentence
-      break
-    end
-  end
 
-  if @sentence.blank?
-    # Compose (without saving) sentence with only one word
-    return {
-      sentence: [{'seq' => progress.seq, 'text' => progress.title, 'base' => progress.title}],
-      english: nil,
-      j: Collector.new(current_user, words: Word.where(seq: progress.seq)).to_hash
-    }.to_json
-  else
-    return {
-      sentence: @sentence.structure,
-      english: @sentence.english,
-      j: Collector.new(current_user, words: Word.where(seq: @sentence.words.map(&:seq))).to_hash
-    }.to_json
-  end
+  drill = Drill.where(user: current_user).order(id: :desc).first
+  halt(404, "Drill list not found") if drill.blank?
+
+  word_title = params[:title] || Word.find_by(seq: params[:seq]).krebs.first
+  progress = Progress.find_or_initialize_by(seq: params[:seq], title: word_title, user: current_user)
+  progress.flagged = true
+  progress.save
+
+  drill.progresses << progress
+
+  return 'ok'
 end
 
 get :api_word_autocomplete do
@@ -119,22 +104,6 @@ post :api_comment do
   end
 end
 
-post :drill_add_word do
-  protect!
-
-  drill = Drill.find_by(id: params[:drill_id], user: current_user)
-  halt(404, "Drill list not found") if drill.blank?
-
-  word_title = params[:title] || Word.find_by(seq: params[:id]).krebs.first
-  progress = find_or_init_progress({kind: :w, id: params[:id], title: word_title})
-  progress.flagged = true
-  progress.save
-
-  drill.progresses << progress
-
-  return 'ok'
-end
-
 post :kanji_readings do
   protect!
 
@@ -158,7 +127,7 @@ post :kanji_readings do
   return result.to_json
 end
 
-get :activity do
+post :activity do
   protect!
 
   halt(405, "Unknown category") unless %w(search srs kanji kokugo onomat).include?(params[:category])
@@ -169,25 +138,3 @@ get :activity do
   a.seconds.to_s
 end
 
-get :api_sentence_audio do
-  protect!
-
-  sentence = Sentence.find_by(id: params[:id], user: current_user)
-  halt(404, "Sentence not found") unless sentence.present?
-
-  polly_client = Aws::Polly::Client.new(
-    region: $config['aws_region'],
-    credentials: Aws::Credentials.new($config['aws_access_key'], $config['aws_secret_key'])
-  )
-
-  polly_resp = polly_client.synthesize_speech({
-    output_format: "mp3",
-    sample_rate: "22050",
-    text: sentence.japanese,
-    text_type: "text",
-    voice_id: "Mizuki",
-  })
-
-  content_type 'audio/mpeg'
-  polly_resp.audio_stream.read
-end

@@ -1,7 +1,7 @@
 require 'mecab/light'
 
 paths \
-    mecab: '/mecab',
+    mecab_text: '/api/mecab/text',
     mecab_word: '/api/mecab/word/:seq'
 
 def split_okurigana(word)
@@ -79,7 +79,7 @@ def mecab_parse(sentence)
   return result
 end
 
-post :mecab do
+post :mecab_text do
   protect!
 
   wt = WordTitle.where(title: params[:sentence]).pluck(:seq).uniq

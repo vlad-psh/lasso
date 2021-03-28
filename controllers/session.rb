@@ -11,7 +11,7 @@ end
 post :session do
   halt(400, 'Blank login or password') if params['username'].blank? || params['password'].blank?
 
-  user = User.find_by(login: params['username'])
+  user = User.find_by(login: params['username'].downcase)
   halt(403, 'Access denied') unless user.present? && user.check_password(params['password'])
 
   session['user_id'] = user.id
@@ -27,7 +27,7 @@ post :signup do
   u = User.find_by(invite_token: params[:token])
   halt(404, 'Invite token not found') unless u.present?
 
-  login = params[:username].strip
+  login = params[:username].strip.downcase
   halt(400, 'Invalid username') if login.blank?
   halt(400, 'Username already exists') if User.where(login: login).present?
 

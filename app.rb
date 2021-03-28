@@ -22,17 +22,6 @@ also_reload './collector.rb'
 
 helpers WakameHelpers
 
-paths cards: '/cards',
-    notes: '/notes',
-    note: '/note/:id',
-# Element's pages
-    word: '/word/:id',
-    kanji: '/kanji/:id',
-    wk_radical: '/wk_radical/:id',
-# Other API
-    sentences: '/sentences', # POST
-    sentence: '/sentence/:id' # DELETE
-
 configure do
   $config = YAML.load(File.open('config/application.yml'))
 
@@ -54,88 +43,4 @@ configure do
   }
   SRS_RANGES = [0, 3, 7, 14, 30, 60, 120, 240]
 end
-
-get :notes do
-  protect!
-  @title = "📘"
-
-  @notes = current_user.notes.order(created_at: :desc)
-  slim :notes
-end
-
-post :notes do
-  protect!
-
-  note = Note.create(content: params[:content], user: current_user)
-  redirect path_to(:notes)
-end
-
-delete :note do
-  protect!
-
-  note = Note.find_by(id: params[:id], user_id: current_user.id)
-  note.destroy
-
-  flash[:notice] = "Note with id = #{params[:id]} was successfully deleted"
-  redirect path_to(:notes)
-end
-
-get :word do
-  protect!
-
-  slim :word
-end
-
-get :sentences do
-  protect!
-
-  @sentences = Sentence.where(user: current_user).order(created_at: :desc).limit(50)
-
-  slim :sentences
-end
-
-post :sentences do
-  protect!
-
-  drill = Drill.find_by(user: current_user, id: params['drill_id'])
-
-  s = Sentence.new({
-    japanese: params['japanese'],
-    english: params['english'],
-#    russian: params[''],
-    structure: params['structure'].map{|k,v| v},
-    drill: drill,
-    user: current_user
-  })
-  s.save
-
-  s.words = Word.where(seq: s.structure.map{|i| i['seq']}.compact.uniq)
-
-  return 'OK'
-end
-
-delete :sentence do
-  protect!
-
-  s = Sentence.find(params[:id])
-  s.destroy
-
-  return 'ok'
-end
-
-get :wk_radical do
-  protect!
-  @radical = WkRadical.find(params[:id])
-  slim :wk_radical
-end
-
-get :kanji do
-  protect!
-  @kanji = Kanji.find(params[:id])
-  if @kanji.wk_kanji.present?
-    @words = Word.joins(:wk_words).merge(@kanji.wk_kanji.wk_words).as_for(current_user)
-  end
-  slim :kanji
-end
-
 
