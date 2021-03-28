@@ -27,6 +27,7 @@
     </div>
 
     <h3>sentences</h3>
+    <SentenceForm :drill-id="drill.id" />
     <ul>
       <li v-for="(sentence, idx) of sentences" :key="`s${idx}`">
         <span

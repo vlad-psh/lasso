@@ -36,7 +36,7 @@ export default ({ store }, inject) => {
     storage[aGroup] = (storage[aGroup] || 0) + 1
     if (storage[aGroup] === submitInterval) {
       const submitUrl = `/api/activity/${aGroup}/${submitInterval}`
-      fetch(submitUrl, { credentials: 'same-origin' })
+      fetch(submitUrl, { method: 'POST', credentials: 'same-origin' })
       storage[aGroup] = 0
     }
   }
