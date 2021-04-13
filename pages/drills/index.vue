@@ -3,7 +3,11 @@
     <h1>Drills</h1>
 
     <div class="table">
-      <div v-for="drill of drills" :key="drill.id" class="drill">
+      <div
+        v-for="drill of $store.state.cache.drills"
+        :key="drill.id"
+        class="drill"
+      >
         <div>{{ drill.is_active ? '✏️' : null }}</div>
         <div>
           <NuxtLink :to="'/drills/' + drill.id">{{ drill.title }}</NuxtLink>
@@ -37,13 +41,7 @@
 <script>
 export default {
   async fetch() {
-    const resp = await this.$axios.get('/api/drills')
-    this.drills = resp.data
-  },
-  data() {
-    return {
-      drills: [],
-    }
+    await this.$store.dispatch('cache/loadDrills')
   },
   methods: {},
 }

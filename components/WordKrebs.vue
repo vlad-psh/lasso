@@ -1,36 +1,15 @@
 <template>
   <div class="word-krebs">
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
-      <Modal :title="kreb.title">
-        <div slot="content">
-          <table>
-            <tr>
-              <td v-if="selectedKreb.pitch">Pitch: {{ selectedKreb.pitch }}</td>
-              <!-- <td>
-              <vue-learn-buttons
-                :progress="selectedKreb.progress"
-                :post-data="{ id: seq, title: selectedKreb, kind: 'w' }"
-                :editing="editing"
-                @update-progress="updateKrebProgress($event)"
-              ></vue-learn-buttons>
-            </td> -->
-              <td>
-                Drills:
-                {{ selectedKreb.drills }}
-              </td>
-              <td>
-                <input
-                  type="button"
-                  value="Add"
-                  @click="addKrebToDrill(kreb)"
-                />
-              </td>
-            </tr>
-          </table>
+      <Popper trigger="clickToToggle">
+        <div class="popper">
+          <DrillSelect :active-drills="kreb.drills"></DrillSelect>
         </div>
+        <span slot="reference">
+          <PitchWord :kreb="kreb" />
+        </span>
+      </Popper>
 
-        <PitchWord :kreb="kreb" />
-      </Modal>
       <NuxtLink
         v-if="!kreb.is_kanji"
         class="jisho-search-link"
@@ -47,7 +26,11 @@
 </template>
 
 <script>
+import Popper from 'vue-popperjs'
+import 'vue-popperjs/dist/vue-popper.css'
+
 export default {
+  components: { Popper },
   props: {
     krebs: { type: Array, required: true },
     seq: { type: Number, required: true },
@@ -105,6 +88,35 @@ export default {
   font-size: 0.9em;
   &:hover {
     opacity: 0.6;
+  }
+}
+body .popper {
+  box-shadow: #555 0 0 100px 0;
+  padding: 0.5em 0;
+  border-radius: 0.5em;
+  border: none;
+
+  .popper__arrow {
+    border: none;
+    width: 25px;
+    height: 11px;
+    background-color: white;
+    mask-size: 25px 11px;
+  }
+
+  &[x-placement^='bottom'] {
+    margin-top: 22px;
+    .popper__arrow {
+      top: -11px;
+      mask-image: url('assets/icons/popover-arrow-bottom.svg');
+    }
+  }
+  &[x-placement^='top'] {
+    margin-bottom: 22px;
+    .popper__arrow {
+      bottom: -11px;
+      mask-image: url('assets/icons/popover-arrow-top.svg');
+    }
   }
 }
 </style>

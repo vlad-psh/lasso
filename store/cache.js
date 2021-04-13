@@ -1,7 +1,7 @@
 export const state = () => ({
   words: {},
   kanji: {},
-  drills: {},
+  drills: null,
   history: [],
 })
 
@@ -17,6 +17,9 @@ export const mutations = {
   ADD_HISTORY(state, val) {
     state.history.unshift(val)
   },
+  SET_DRILLS(state, val) {
+    state.drills = val
+  },
 }
 
 export const actions = {
@@ -29,5 +32,14 @@ export const actions = {
         for (const kanji of resp.data.kanjis) ctx.commit('ADD_KANJI', kanji)
       } catch (e) {}
     return ctx.state.words[seq]
+  },
+  async loadDrills(ctx, force = false) {
+    if (ctx.state.drills === null || force) {
+      try {
+        ctx.state.drills = []
+        const resp = await this.$axios.get('/api/drills')
+        ctx.commit('SET_DRILLS', resp.data)
+      } catch (e) {}
+    }
   },
 }
