@@ -107,14 +107,14 @@ body .popper {
   &[x-placement^='bottom'] {
     margin-top: 22px;
     .popper__arrow {
-      top: -11px;
+      top: -10.5px;
       mask-image: url('assets/icons/popover-arrow-bottom.svg');
     }
   }
   &[x-placement^='top'] {
     margin-bottom: 22px;
     .popper__arrow {
-      bottom: -11px;
+      bottom: -10.5px;
       mask-image: url('assets/icons/popover-arrow-top.svg');
     }
   }

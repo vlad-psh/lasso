@@ -48,11 +48,14 @@ export default {
 .drill-select {
   border-radius: 0.5em;
   overflow: hidden;
+  z-index: 500;
+  position: relative;
 
   .table-wrapper {
     max-height: 20em;
     overflow-y: auto;
     scrollbar-width: thin;
+    scrollbar-color: #7775 transparent;
   }
   .table {
     text-align: left;
@@ -73,6 +76,9 @@ export default {
         .title,
         .status {
           border-color: transparent;
+        }
+        .status .selected {
+          background: white;
         }
       }
       .margin {
@@ -98,8 +104,9 @@ export default {
       .status .selected {
         width: 1em;
         height: 0.9em;
-        background: url('assets/icons/checkmark.svg') no-repeat;
-        background-size: 1em 1em;
+        mask-image: url('assets/icons/checkmark.svg');
+        mask-size: 1em 1em;
+        background-color: #3173d7;
       }
     }
   }
@@ -107,6 +114,10 @@ export default {
 @media (max-width: 568px) {
   .drill-select {
     font-size: 0.8em;
+
+    .table-wrapper {
+      scrollbar-width: auto;
+    }
   }
 }
 </style>
