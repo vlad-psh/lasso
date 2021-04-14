@@ -25,10 +25,12 @@ export default {
       return (this.$store.state.cache.drills || [])
         .filter((a) => a.is_active || this.activeDrills.includes(a.id))
         .sort((a, b) => {
-          if (this.activeDrills.includes(b.id)) {
-            return this.activeDrills.includes(a.id) ? 0 : 1
+          const activeA = this.activeDrills.includes(a.id)
+          const activeB = this.activeDrills.includes(b.id)
+          if (activeB) {
+            return activeA ? 0 : 1
           } else {
-            return b.id - a.id
+            return activeA ? -1 : b.id - a.id
           }
         })
     },
