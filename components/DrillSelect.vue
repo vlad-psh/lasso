@@ -1,13 +1,15 @@
 <template>
   <div class="drill-select">
-    <div class="drills-list">
-      <div v-for="drill of drills" :key="drill.id" class="drill-item">
-        <div class="margin"></div>
-        <div class="title">{{ drill.title }}</div>
-        <div class="selected">
-          {{ activeDrills.includes(drill.id) ? '✅' : '' }}
+    <div class="table-wrapper">
+      <div class="table">
+        <div v-for="drill of drills" :key="drill.id" class="item">
+          <div class="margin"></div>
+          <div class="title">{{ drill.title }}</div>
+          <div class="status">
+            <div v-if="activeDrills.includes(drill.id)" class="selected"></div>
+          </div>
+          <div class="margin"></div>
         </div>
-        <div class="margin"></div>
       </div>
     </div>
   </div>
@@ -42,14 +44,20 @@ export default {
 
 <style lang="scss">
 .drill-select {
-  .drills-list {
+  border-radius: 0.5em;
+  overflow: hidden;
+
+  .table-wrapper {
     max-height: 20em;
     overflow-y: auto;
+    scrollbar-width: thin;
+  }
+  .table {
     text-align: left;
     display: table;
     border-collapse: collapse;
 
-    .drill-item {
+    .item {
       margin: 0.4em 0;
       cursor: pointer;
       display: table-row;
@@ -58,9 +66,10 @@ export default {
         display: table-cell;
       }
       &:hover {
-        background: #87d9f9;
+        background: #008ace;
+        color: white;
         .title,
-        .selected {
+        .status {
           border-color: transparent;
         }
       }
@@ -70,23 +79,32 @@ export default {
       .title {
         white-space: nowrap;
         line-height: 2.5em;
-      }
-      .selected {
-        padding-left: 0.5em;
+        padding-right: 0.5em;
       }
       .title,
-      .selected {
+      .status {
         border-style: solid none none none;
         border-width: 1px;
-        border-color: #7775;
+        border-color: #7773;
       }
       &:first-child {
         .title,
-        .selected {
-          border-color: transparent;
+        .status {
+          border-top: none;
         }
       }
+      .status .selected {
+        width: 1em;
+        height: 0.9em;
+        background: url('assets/icons/checkmark.svg') no-repeat;
+        background-size: 1em 1em;
+      }
     }
+  }
+}
+@media (max-width: 568px) {
+  .drill-select {
+    font-size: 0.8em;
   }
 }
 </style>

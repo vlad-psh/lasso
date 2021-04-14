@@ -92,7 +92,7 @@ export default {
 }
 body .popper {
   box-shadow: #555 0 0 100px 0;
-  padding: 0.5em 0;
+  padding: 0;
   border-radius: 0.5em;
   border: none;
 
