@@ -119,4 +119,13 @@ body .popper {
     }
   }
 }
+
+html[class='dark-mode'] body .popper {
+  box-shadow: #000 0 0 100px 0;
+  &,
+  .popper__arrow {
+    background-color: var(--bg-secondary);
+    color: var(--color);
+  }
+}
 </style>
