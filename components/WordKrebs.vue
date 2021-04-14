@@ -3,7 +3,11 @@
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
       <Popper trigger="clickToToggle">
         <div class="popper">
-          <DrillSelect :active-drills="kreb.drills"></DrillSelect>
+          <DrillSelect
+            :active-drills="kreb.drills"
+            :kreb-title="kreb.title"
+            :seq="seq"
+          ></DrillSelect>
         </div>
         <span slot="reference">
           <PitchWord :kreb="kreb" />
@@ -51,9 +55,6 @@ export default {
         mode: 'kokugo',
       })
     },
-    addKrebToDrill(kreb) {
-      this.$axios.post('/api/drill/word', { title: kreb.title, seq: this.seq })
-    },
   },
 }
 </script>
@@ -91,6 +92,7 @@ export default {
   }
 }
 body .popper {
+  background-color: #fff;
   box-shadow: #555 0 0 100px 0;
   padding: 0;
   border-radius: 0.5em;

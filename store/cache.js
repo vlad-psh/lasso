@@ -36,7 +36,7 @@ export const actions = {
   async loadDrills(ctx, force = false) {
     if (ctx.state.drills === null || force) {
       try {
-        ctx.state.drills = []
+        ctx.commit('SET_DRILLS', [])
         const resp = await this.$axios.get('/api/drills')
         ctx.commit('SET_DRILLS', resp.data)
       } catch (e) {}

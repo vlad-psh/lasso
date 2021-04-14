@@ -2,11 +2,19 @@
   <div class="drill-select">
     <div class="table-wrapper">
       <div class="table">
-        <div v-for="drill of drills" :key="drill.id" class="item">
+        <div
+          v-for="drill of drills"
+          :key="drill.id"
+          class="item"
+          @click="submit(drill.id)"
+        >
           <div class="margin"></div>
           <div class="title">{{ drill.title }}</div>
           <div class="status">
-            <div v-if="activeDrills.includes(drill.id)" class="selected"></div>
+            <div
+              v-if="selectedDrills.includes(drill.id)"
+              class="selected"
+            ></div>
           </div>
           <div class="margin"></div>
         </div>
@@ -19,6 +27,13 @@
 export default {
   props: {
     activeDrills: { type: Array, required: true },
+    krebTitle: { type: String, required: true },
+    seq: { type: Number, required: true },
+  },
+  data() {
+    return {
+      selectedDrills: [],
+    }
   },
   computed: {
     drills() {
@@ -40,6 +55,21 @@ export default {
     // But we should get drills list only once. Right now we have simple protetion
     // condition in store/cache. Think how possibly we can improve it.
     this.$store.dispatch('cache/loadDrills')
+    this.selectedDrills = [...this.activeDrills]
+  },
+  methods: {
+    async submit(drillId) {
+      const resp = await this.$axios.post('/api/drills/words', {
+        drill_id: drillId,
+        title: this.krebTitle,
+        seq: this.seq,
+      })
+      if (resp.data.result === 'added') {
+        this.selectedDrills.push(drillId)
+      } else if (resp.data.result === 'removed') {
+        this.selectedDrills = this.selectedDrills.filter((i) => i !== drillId)
+      }
+    },
   },
 }
 </script>
@@ -52,7 +82,7 @@ export default {
   position: relative;
 
   .table-wrapper {
-    max-height: 20em;
+    max-height: 20.5em;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #7775 transparent;
