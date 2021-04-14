@@ -3,7 +3,6 @@ require 'aws-sdk-polly'
 # paths with indent: already in use with new frontent
 paths \
     word_details: '/api/word', # params: seq
-    drill_add_word: '/api/drill/word',
     activity: '/api/activity/:category/:seconds',
 api_word_autocomplete: '/api/word/autocomplete',
 api_learn:   '/api/word/learn',
@@ -14,22 +13,6 @@ kanji_readings: '/api/kanji_readings'
 get :word_details do
   protect!
   return Collector.new(current_user, words: Word.where(seq: params[:seq])).to_json
-end
-
-post :drill_add_word do
-  protect!
-
-  drill = Drill.where(user: current_user).order(id: :desc).first
-  halt(404, "Drill list not found") if drill.blank?
-
-  word_title = params[:title] || Word.find_by(seq: params[:seq]).krebs.first
-  progress = Progress.find_or_initialize_by(seq: params[:seq], title: word_title, user: current_user)
-  progress.flagged = true
-  progress.save
-
-  drill.progresses << progress
-
-  return 'ok'
 end
 
 get :api_word_autocomplete do

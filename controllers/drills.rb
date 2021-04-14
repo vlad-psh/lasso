@@ -1,5 +1,6 @@
 paths \
     drills: '/api/drills',
+    drills_words: '/api/drills/words',
     drill: '/api/drill/:id'
 
 get :drills do
@@ -64,3 +65,22 @@ patch :drill do
   return '{}'
 end
 
+post :drills_words do
+  protect!
+
+  drill = Drill.find_by(id: params[:drill_id], user: current_user)
+  halt(404, "Drill list not found") if drill.blank?
+
+  word_title = params[:title] || Word.find_by(seq: params[:seq]).krebs.first
+  progress = Progress.find_or_create_by(seq: params[:seq], title: word_title, user: current_user)
+
+  if drill.progresses.include?(progress)
+    drill.progresses.delete(progress)
+    progress.update(flagged: false) if progress.drills.blank?
+    return {result: :removed}.to_json
+  else
+    drill.progresses << progress
+    progress.update(flagged: true)
+    return {result: :added}.to_json
+  end
+end
