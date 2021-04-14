@@ -35,12 +35,6 @@ configure do
         same_site: :strict,
         httponly: true # cookies shouldn't be sent from JS
 
-  DEGREES = ['快 Pleasant', '苦 Painful', '死 Death', '地獄 Hell', '天堂 Paradise', '現実 REALITY']
-  INFODIC = {
-    :r => {singular: :radical, plural: :radicals, japanese: '部首'},
-    :k => {singular: :kanji, plural: :kanji, japanese: '漢字'},
-    :w => {singular: :word, plural: :words, japanese: '言葉'}
-  }
   SRS_RANGES = [0, 3, 7, 14, 30, 60, 120, 240]
 end
 

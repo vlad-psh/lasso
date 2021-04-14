@@ -7,9 +7,6 @@ gem 'rack-contrib'
 
 gem 'sinatra-activerecord'
 gem 'activesupport'
-## db engines
-#gem 'sqlite3'
-#gem 'mysql2'
 gem 'pg'#, '<1.0'
 
 gem 'puma'
