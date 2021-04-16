@@ -76,7 +76,7 @@ class Collector
   end
 
   def kanji_structure(k)
-    result = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun, :grade, :radnum, :links, :similars])
+    result = k.serializable_hash(only: [:id, :title, :jlptn, :english, :on, :kun, :grade, :radnum, :links, :similars, :jp])
     result[:progress] = @progresses.detect{|p| p.kanji_id == k.id}.try(:api_hash) || {}
     return result
   end

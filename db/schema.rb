@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_14_055916) do
+ActiveRecord::Schema.define(version: 2021_04_16_061047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,8 @@ ActiveRecord::Schema.define(version: 2021_03_14_055916) do
     t.integer "radnum"
     t.jsonb "links"
     t.jsonb "similars"
+    t.string "jp"
+    t.string "jp_url"
   end
 
   create_table "kanji_readings", force: :cascade do |t|
