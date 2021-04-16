@@ -103,6 +103,7 @@ body .popper {
     width: 25px;
     height: 11px;
     background-color: white;
+    mask-image: url('assets/icons/popover-arrow.svg');
     mask-size: 25px 11px;
   }
 
@@ -110,14 +111,13 @@ body .popper {
     margin-top: 22px;
     .popper__arrow {
       top: -10.5px;
-      mask-image: url('assets/icons/popover-arrow-bottom.svg');
     }
   }
   &[x-placement^='top'] {
     margin-bottom: 22px;
     .popper__arrow {
       bottom: -10.5px;
-      mask-image: url('assets/icons/popover-arrow-top.svg');
+      transform: rotate(180deg);
     }
   }
 }

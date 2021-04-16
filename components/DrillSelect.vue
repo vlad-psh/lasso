@@ -146,7 +146,7 @@ export default {
     font-size: 0.8em;
 
     .table-wrapper {
-      scrollbar-width: auto;
+      scrollbar-width: initial;
     }
   }
 }
