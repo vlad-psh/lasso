@@ -47,7 +47,12 @@
       :payload="similar"
     />
 
-    <div v-if="english">
+    <div v-if="jp" class="definition">
+      <FlagJP class="svg-icon" />
+      {{ jp }}
+    </div>
+
+    <div v-if="english" class="definition">
       <FlagUK class="svg-icon" />
       {{ english.join('; ') }}
     </div>
@@ -56,10 +61,11 @@
 
 <script>
 import radicalsList from '@/js/radicals_list.js'
+import FlagJP from '@/assets/icons/flag-jp.svg?inline'
 import FlagUK from '@/assets/icons/flag-uk.svg?inline'
 
 export default {
-  components: { FlagUK },
+  components: { FlagJP, FlagUK },
   props: {
     payload: { type: Object, required: true },
   },
@@ -120,6 +126,12 @@ export default {
 </script>
 
 <style lang="scss">
+.vue-kanji {
+  .definition {
+    line-height: 1.6em;
+    padding: 0.3em 0;
+  }
+}
 .kanji-title {
   font-size: 3em;
   line-height: 1em;
