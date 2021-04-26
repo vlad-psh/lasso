@@ -8,7 +8,6 @@
           v-shortkey.focus="['esc']"
           type="text"
           placeholder="Search..."
-          autofocus
           @keydown.enter="search"
           @keydown.tab.prevent="switchDictionary"
           @keydown.esc="clearInputField"
