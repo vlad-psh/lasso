@@ -14,6 +14,9 @@
         </span>
       </Popper>
 
+      <div v-if="kreb.drills.length > 0" class="drills-counter">
+        {{ kreb.drills.length }}
+      </div>
       <NuxtLink
         v-if="!kreb.is_kanji"
         class="jisho-search-link"
@@ -21,10 +24,6 @@
         @click.native="search(kreb)"
         >&#x1f50e;</NuxtLink
       >
-      <div
-        v-if="kreb.title === selectedKreb.title"
-        class="expandable-list-arrow"
-      ></div>
     </div>
   </div>
 </template>
@@ -38,11 +37,6 @@ export default {
   props: {
     krebs: { type: Array, required: true },
     seq: { type: Number, required: true },
-  },
-  data() {
-    return {
-      selectedKreb: {},
-    }
   },
   methods: {
     searchRoute(kreb) {
@@ -66,6 +60,20 @@ export default {
   margin-right: 0.6em;
   margin-bottom: 0.3em;
   border-bottom: none;
+
+  .drills-counter {
+    display: inline-block;
+    background: #febb10;
+    color: #59430a;
+    border-radius: 1em;
+    width: 1.3em;
+    height: 1.3em;
+    text-align: center;
+    vertical-align: sub;
+    font-size: 0.65em;
+    line-height: 1.3em;
+    margin-left: -0.5em;
+  }
 }
 .word-kreb {
   font-size: 1.4em;
