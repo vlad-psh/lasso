@@ -137,10 +137,8 @@ export default {
     max-width: 25em;
     display: inline-block;
     vertical-align: top;
-    margin-bottom: 1.5em;
-    &:nth-child(odd) {
-      margin-right: 0.5em;
-    }
+    margin-bottom: 1em;
+
     .vue-editable-text {
       margin: 0 -0.6em;
       font-size: 0.9em;
@@ -162,11 +160,8 @@ export default {
     .word-card {
       display: block;
 
-      .kanji-info .kanji-list {
-        margin-top: 1.5em;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-auto-rows: auto;
+      .kanji-list {
+        margin-top: 1em;
       }
     }
   }
