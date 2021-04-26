@@ -24,7 +24,7 @@
           v-for="(mode, modeId) of $search.modes"
           :key="'dict-' + modeId"
           :class="[modeId, modeId === selectedMode ? 'selected' : null]"
-          @click="selectedMode = modeId"
+          @click="searchModeClick(modeId)"
         >
           {{ mode.title }}
         </div>
@@ -140,6 +140,10 @@ export default {
       const modes = Object.keys(this.$search.modes)
       const idx = modes.findIndex((i) => i === this.selectedMode)
       this.selectedMode = modes[(idx + 1) % modes.length]
+    },
+    searchModeClick(modeId) {
+      if (this.selectedMode === modeId) this.search()
+      else this.selectedMode = modeId
     },
   },
   head() {
