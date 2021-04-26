@@ -16,8 +16,13 @@
       <WordGloss v-if="word.ru" :payload="word.ru || []" lang="ru" />
       <WordGloss v-if="word.az" :payload="word.az || []" lang="az" />
 
+      <EditableText
+        :text-data="word.comment"
+        placeholder="Add comment..."
+        @save="saveComment"
+      ></EditableText>
+
       <WordCards :cards="word.cards || []" />
-      <!-- vue editable text -->
     </div>
 
     <div class="kanji-info">
@@ -44,6 +49,22 @@ export default {
       return (this.word ? this.word.kanji || '' : '')
         .split('')
         .map((k) => this.$store.state.cache.kanji[k])
+    },
+  },
+  methods: {
+    saveComment(text, cb) {
+      this.$axios
+        .post(`/api/word/${this.seq}/comment`, { comment: text })
+        .then((resp) => {
+          this.$store.commit('cache/UPDATE_WORD_COMMENT', {
+            seq: this.seq,
+            text,
+          })
+          cb.resolve()
+        })
+        .catch((e) => {
+          cb.reject(e.message)
+        })
     },
   },
 }

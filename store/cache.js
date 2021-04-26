@@ -20,6 +20,10 @@ export const mutations = {
   SET_DRILLS(state, val) {
     state.drills = val
   },
+  UPDATE_WORD_COMMENT(state, { seq, text }) {
+    const w = state.words[seq]
+    if (w) w.comment = text
+  },
 }
 
 export const actions = {
