@@ -3,11 +3,12 @@ require 'aws-sdk-polly'
 # paths with indent: already in use with new frontent
 paths \
     word_details: '/api/word', # params: seq
+    word_comment: '/api/word/:seq/comment',
     activity: '/api/activity/:category/:seconds',
+kanji_comment: '/api/kanji/:kanji/comment',
 api_word_autocomplete: '/api/word/autocomplete',
 api_learn:   '/api/word/learn',
 api_burn:    '/api/word/burn',
-api_comment: '/api/comment',
 kanji_readings: '/api/kanji_readings'
 
 get :word_details do
@@ -67,24 +68,26 @@ post :api_burn do
   return progress.api_json
 end
 
-post :api_comment do
+post :word_comment do
+  protect!
+
+  wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
+  comment = params[:comment].strip
+  wd.update_attribute(:comment, comment.present? ? comment : nil)
+
+  return wd.comment
+end
+
+post :kanji_comment do
   protect!
 
   comment = params[:comment].strip
+  kanji = Kanji.find_by(title: params[:kanji])
+  halt(404, "Kanji not found") if kanji.blank?
+  progress = find_or_init_progress({kind: :k, id: kanji.id})
+  progress.update(comment: comment.present? ? comment : nil)
 
-  if params[:seq].present?
-    wd = WordDetail.find_or_create_by(user: current_user, seq: params[:seq])
-    wd.update_attribute(:comment, comment.present? ? comment : nil)
-
-    return wd.comment
-  elsif params[:kanji].present?
-    kanji = Kanji.find_by(title: params[:kanji])
-    halt(404, "Kanji not found") if kanji.blank?
-    progress = find_or_init_progress({kind: :k, id: kanji.id})
-    progress.update(comment: comment.present? ? comment : nil)
-
-    return progress.api_json
-  end
+  return progress.api_json
 end
 
 post :kanji_readings do
