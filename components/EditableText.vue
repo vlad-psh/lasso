@@ -15,7 +15,7 @@
         <pre>{{ textData }}</pre>
       </template>
       <template v-else>
-        <p style="font-style: italic; color: rgba(128, 128, 128, 0.7)">
+        <p class="placeholder">
           {{ placeholder }}
         </p>
       </template>
@@ -63,7 +63,7 @@ export default {
 <style lang="scss">
 .editable-text {
   padding: 0.3em 0.6em;
-  margin: 0.3em -0.6em;
+  margin: 0.3em 0;
 
   &:hover {
     background-color: rgba(128, 128, 128, 0.2);
@@ -74,16 +74,21 @@ export default {
     font-family: inherit;
     margin: 0;
     border-left: 3px solid #17a0ca;
-    margin-left: 0.3em;
     padding-left: 0.5em;
   }
-  p {
+  p.placeholder {
     margin: 0;
+    padding-left: 0.5em;
+    font-style: italic;
+    color: rgba(128, 128, 128, 0.7);
+    border-left: 3px solid #7774;
   }
   textarea {
     width: 100%;
     height: 8em;
     resize: vertical;
+    font-family: inherit;
+    font-size: inherit;
   }
   .error {
     float: right;

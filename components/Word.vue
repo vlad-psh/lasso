@@ -162,6 +162,9 @@ export default {
 
       .kanji-list {
         margin-top: 1em;
+        .vue-kanji {
+          max-width: unset;
+        }
       }
     }
   }
