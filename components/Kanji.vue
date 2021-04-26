@@ -134,10 +134,10 @@ export default {
     },
     saveComment(text, cb) {
       this.$axios
-        .post(`/api/kanji/${this.title}/comment`, { comment: text })
+        .post(`/api/kanji/${this.payload.title}/comment`, { comment: text })
         .then((resp) => {
           this.$store.commit('cache/UPDATE_KANJI_COMMENT', {
-            kanji: this.title,
+            kanji: this.payload.title,
             text,
           })
           cb.resolve()

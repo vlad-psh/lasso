@@ -12,6 +12,7 @@ export const mutations = {
     // TODO: If we're pushing words from quiz's sentence, we might have more than 10 words
   },
   ADD_KANJI(state, kanji) {
+    if (!kanji.progress.comment) kanji.progress.comment = null
     this._vm.$set(state.kanji, kanji.title, kanji)
   },
   ADD_HISTORY(state, val) {
