@@ -6,34 +6,34 @@ post :search do
   q = params['query'].strip.downcase
   return if q.blank?
 
-  if q.length == 1 && q.kanji? # this condition shoud be before 'fwd search' condition
+  if q.length == 1 && q.kanji? # this condition shoud be before 'substr search' condition
     return search_kanji(q)
   elsif q.hiragana.japanese? # russian words are being detected as japanese, lol
-    return search_fwd(q)
+    return search_substr(q)
   else
     return search_english(q)
   end
 end
 
-def search_fwd(q)
+def search_substr(q)
   qk = q.katakana
   q = q.hiragana unless q.japanese?
 
   # Kinda simple deflector
   if q =~ /(って|った)$/
     base = q.gsub(/(って|った)$/, '')
-    qstr = "(#{q}%|#{base}う|#{base}つ|#{base}る)"
+    qstr = "%(#{q}%|#{base}う|#{base}つ|#{base}る)%"
   elsif q =~ /(んで|んだ)$/
     base = q.gsub(/(んで|んだ)$/, '')
-    qstr = "(#{q}%|#{base}ぬ|#{base}む|#{base}ぶ)"
+    qstr = "%(#{q}%|#{base}ぬ|#{base}む|#{base}ぶ)%"
   elsif q =~ /(いて|いた)$/
     base = q.gsub(/(いて|いた)$/, '')
-    qstr = "(#{q}%|#{base}く)"
+    qstr = "%(#{q}%|#{base}く)%"
   elsif q =~ /(いで|いだ)$/
     base = q.gsub(/(いで|いだ)$/, '')
-    qstr = "(#{q}%|#{base}ぐ)"
+    qstr = "%(#{q}%|#{base}ぐ)%"
   else
-    qstr = "(#{q}|#{qk})%"
+    qstr = "%(#{q}|#{qk})%"
   end
 
   word_titles = WordTitle.includes(:word).where("title SIMILAR TO ?", qstr).order(nf: :asc, id: :asc).limit(1000).sort do |a,b|
