@@ -56,6 +56,12 @@
       <FlagUK class="svg-icon" />
       {{ english.join('; ') }}
     </div>
+
+    <EditableText
+      :text-data="progress.comment"
+      placeholder="Add comment..."
+      @save="saveComment"
+    ></EditableText>
   </div>
 </template>
 
@@ -120,6 +126,20 @@ export default {
         mode: 'kanji',
         popRoute: true,
       })
+    },
+    saveComment(text, cb) {
+      this.$axios
+        .post(`/api/kanji/${this.title}/comment`, { comment: text })
+        .then((resp) => {
+          this.$store.commit('cache/UPDATE_KANJI_COMMENT', {
+            kanji: this.title,
+            text,
+          })
+          cb.resolve()
+        })
+        .catch((e) => {
+          cb.reject(e.message)
+        })
     },
   },
 }

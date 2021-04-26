@@ -24,6 +24,10 @@ export const mutations = {
     const w = state.words[seq]
     if (w) w.comment = text
   },
+  UPDATE_KANJI_COMMENT(state, { kanji, text }) {
+    const k = state.kanji[kanji]
+    if (k) k.progress.comment = text
+  },
 }
 
 export const actions = {
