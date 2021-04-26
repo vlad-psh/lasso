@@ -1,37 +1,41 @@
 <template>
   <div class="vue-kanji">
     <div class="kanji-title no-refocus" :class="htmlClass">
-      <NuxtLink :to="searchRoute" @click.native="search">{{ title }}</NuxtLink>
+      <NuxtLink :to="searchRoute" @click.native="search">{{
+        payload.title
+      }}</NuxtLink>
     </div>
 
     <div class="kanji-details-string">
       <div class="deco" :class="htmlClass">{{ gradeText }}</div>
-      <div v-if="jlptn">&#x1f4ae; N{{ jlptn }}</div>
+      <div v-if="payload.jlptn">&#x1f4ae; N{{ payload.jlptn }}</div>
       <div class="deco black">部首</div>
       <span>{{ classicalRadical }}</span>
       <NuxtLink :to="bookSearchRoute" @click.native="searchBook"
         >&#x1f50e;</NuxtLink
       >
 
-      <template v-if="links"
+      <template v-if="payload.links"
         ><div class="deco yellow">成立</div>
         <a
-          v-for="urlHash of links.ishiseiji"
+          v-for="urlHash of payload.links.ishiseiji"
           :key="urlHash"
           :href="'https://blog.goo.ne.jp/ishiseiji/e/' + urlHash"
           target="_blank"
-          >{{ title }}</a
+          >{{ payload.title }}</a
         ></template
       >
 
-      <template v-if="on && on.length > 0">
+      <template v-if="payload.on && payload.on.length > 0">
         <div class="deco pink">音</div>
-        <div v-for="v of on" :key="v" class="separate">{{ v }}<wbr /></div>
+        <div v-for="v of payload.on" :key="v" class="separate">
+          {{ v }}<wbr />
+        </div>
       </template>
 
-      <template v-if="kun && kun.length > 0">
+      <template v-if="payload.kun && payload.kun.length > 0">
         <div class="deco blue">訓</div>
-        <div v-for="v of kun" :key="v" class="separate">
+        <div v-for="v of payload.kun" :key="v" class="separate">
           <span v-text="v.split('.')[0]" /><span
             v-if="v.split('.').length > 1"
             class="okurigana"
@@ -42,23 +46,23 @@
     </div>
 
     <SimilarKanji
-      v-for="(similar, idx) of similars"
+      v-for="(similar, idx) of payload.similars"
       :key="'similar' + idx"
       :payload="similar"
     />
 
-    <div v-if="jp" class="definition">
+    <div v-if="payload.jp" class="definition">
       <FlagJP class="svg-icon" />
-      {{ jp }}
+      {{ payload.jp }}
     </div>
 
-    <div v-if="english" class="definition">
+    <div v-if="payload.english" class="definition">
       <FlagUK class="svg-icon" />
-      {{ english.join('; ') }}
+      {{ payload.english.join('; ') }}
     </div>
 
     <EditableText
-      :text-data="progress.comment"
+      :text-data="payload.progress.comment"
       placeholder="Add comment..."
       @save="saveComment"
     ></EditableText>
@@ -80,10 +84,13 @@ export default {
   },
   computed: {
     learned() {
-      return !!this.progress.learned_at
+      return !!this.payload.progress.learned_at
     },
     htmlClass() {
-      return ['grade-' + (this.grade || 'no'), this.learned ? 'learned' : null]
+      return [
+        'grade-' + (this.payload.grade || 'no'),
+        this.payload.learned ? 'learned' : null,
+      ]
     },
     gradeText() {
       const grade = this.payload.grade
@@ -98,31 +105,29 @@ export default {
       }
     },
     classicalRadical() {
-      return radicalsList[this.radnum - 1]
+      return radicalsList[this.payload.radnum - 1]
     },
     searchRoute() {
-      return { name: 'sub-search', params: { query: this.title } }
+      return { name: 'sub-search', params: { query: this.payload.title } }
     },
     bookSearchRoute() {
-      return { name: 'jiten', params: { query: this.title, mode: 'kanji' } }
+      return {
+        name: 'jiten',
+        params: { query: this.payload.title, mode: 'kanji' },
+      }
     },
-  },
-  created() {
-    for (const k of Object.keys(this.payload)) {
-      this[k] = this.payload[k]
-    }
   },
   methods: {
     search() {
       this.$search.execute({
-        query: this.title,
+        query: this.payload.title,
         mode: 'primary',
         popRoute: true,
       })
     },
     searchBook() {
       this.$search.execute({
-        query: this.title,
+        query: this.payload.title,
         mode: 'kanji',
         popRoute: true,
       })
