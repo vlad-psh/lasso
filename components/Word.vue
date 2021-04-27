@@ -73,18 +73,14 @@ export default {
 <style lang="scss">
 // TODO: fix 'non-selectable'
 .word-card {
-  padding: 0.6em 0;
+  padding: 0.6em;
   display: grid;
   grid-template-columns: 3fr 2fr;
-
-  .word-info,
-  .kanji-info {
-    margin: 0 0.5em;
-  }
+  grid-column-gap: 0.6em;
 
   .word-details {
     text-align: justify;
-    padding: 0.3em;
+    padding: 0.3em 0;
     line-height: 1.6em;
 
     .icon {

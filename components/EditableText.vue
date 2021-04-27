@@ -62,7 +62,7 @@ export default {
 
 <style lang="scss">
 .editable-text {
-  padding: 0.3em 0.6em;
+  padding: 0.3em 0.12em;
   margin: 0.3em 0;
 
   &:hover {
@@ -88,7 +88,8 @@ export default {
     height: 8em;
     resize: vertical;
     font-family: inherit;
-    font-size: inherit;
+    font-size: 0.9em;
+    box-sizing: border-box;
   }
   .error {
     float: right;

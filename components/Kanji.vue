@@ -156,9 +156,6 @@ export default {
     line-height: 1.6em;
     padding: 0.3em 0;
   }
-  .editable-text {
-    padding: 0.3em 0;
-  }
 }
 .kanji-title {
   font-size: 3em;
