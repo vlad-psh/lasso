@@ -18,7 +18,7 @@
       </template>
 
       <template v-else>
-        <Sentence :plain-text="sense.gloss" :seq="seq"></Sentence>
+        <Sentence :payload="sense.gloss"></Sentence>
       </template>
     </span>
   </div>
