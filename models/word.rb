@@ -40,21 +40,6 @@ class Word < ActiveRecord::Base
     rebs.present? ? rebs.map{|i|i.length}.min : 100
   end
 
-  def meikyo_mecab
-    return nil if read_attribute(:meikyo).blank?
-
-    cache_key = "w/#{seq}/v2"
-    cache = MecabCache.find_by(key: cache_key)
-    return cache.data if cache.present? && cache.data
-
-    plain = meikyo
-    data = [{
-      gloss: plain[0][:gloss].map{|i| mecab_light(i)}
-    }]
-    MecabCache.create(key: cache_key, data: data)
-    data
-  end
-
   def meikyo
     return nil if read_attribute(:meikyo).blank?
 
@@ -62,18 +47,13 @@ class Word < ActiveRecord::Base
       sense['gloss'].map{|gloss| gloss.split("\n")}
     end.flatten
 
-    [{gloss: glosses}]
-  end
-
-  private
-  def mecab_light(str)
-    mecab_parse(str).each_with_object([]) do |i,a|
-      if i[:seq].blank? && a.last && a.last[:seq].blank?
-        a[a.length - 1][:text] += i[:text]
-      else
-        a << i.slice(:text, :seq, :base)
+    [{
+      gloss: glosses.map do |i|
+        MecabParser.light_parse(i).map do |j|
+          [j[:text], j[:base], j[:base_reading]].compact
+        end
       end
-    end
+    }]
   end
 end
 
