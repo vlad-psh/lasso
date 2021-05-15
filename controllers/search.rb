@@ -3,16 +3,28 @@ paths search: '/api/search'
 post :search do
   protect!
 
-  q = params['query'].strip.downcase
-  return if q.blank?
+  results = nil
+  terms = params['query'].strip.downcase \
+      .split('+') \
+      .map{|q| q.strip} \
+      .sort{|a,b| a.length <=> b.length} \
+      .reverse
+  return if terms.length == 0
 
-  if q.length == 1 && q.kanji? # this condition shoud be before 'substr search' condition
-    return search_kanji(q)
-  elsif q.hiragana.japanese? # russian words are being detected as japanese, lol
-    return search_substr(q)
-  else
-    return search_english(q)
+  terms.each do |q|
+    seqs =
+      if q.length == 1 && q.kanji? # this condition shoud be before 'substr search' condition
+        search_kanji(q)
+      elsif q.hiragana.japanese? # russian words are being detected as japanese, lol
+        search_substr(q)
+      else
+        search_english(q)
+      end
+    results = results ? (seqs & results) : seqs
+    break if results && results.length == 0
   end
+
+  return search_result_from_seqs(results).to_json
 end
 
 def search_substr(q)
@@ -46,8 +58,7 @@ def search_substr(q)
     end
   end
 
-  seqs = word_titles.map{|i|i.seq}.uniq
-  return search_result_from_seqs(seqs).to_json
+  word_titles.map{|i|i.seq}.uniq
 end
 
 def search_result_from_seqs(seqs, word_titles = nil)
@@ -83,12 +94,12 @@ def search_kanji(q)
     end
   end.map {|i| i.seq}
 
-  return search_result_from_seqs(seqs1 | seqs2).to_json
+  return (seqs1 | seqs2)
 end
 
 def search_english(q)
   q = q.gsub(/\.$/, '')
   seqs = Word.where('searchable_en ILIKE ? OR searchable_ru ILIKE ?', "%#{q}%", "%#{q}%").order(:is_common, :id).limit(1000).map{|i| i.seq} # .sort{|a,b| a.kreb_min_length <=> b.kreb_min_length}
 
-  return search_result_from_seqs(seqs).to_json
+  return seqs
 end
