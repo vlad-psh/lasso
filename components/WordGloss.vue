@@ -5,22 +5,30 @@
     <FlagAZ v-if="lang === 'az'" class="svg-icon" />
     <FlagJP v-if="lang === 'jp'" class="svg-icon" />
 
-    <span v-for="(sense, senseIndex) of payload" :key="senseIndex">
-      <span v-if="payload.length > 1">{{ bullets[senseIndex] }} </span>
-      <span v-if="sense.pos" class="pos"
-        >{{ sense.pos.map((i) => i.replace(/^.(.*).$/, '$1')).join(', ') }}
-      </span>
-
-      <template v-if="lang !== 'jp'">
-        <span>
-          {{ sense.gloss.join(', ') }}
+    <template v-if="lang === 'jp'">
+      <DefinitionNode
+        v-for="(line, lineIdx) of payload"
+        :key="`l${lineIdx}`"
+        class="gloss-line"
+        node-name="line"
+        :children="line"
+      >
+      </DefinitionNode>
+    </template>
+    <template v-else>
+      <span v-for="(sense, senseIndex) of payload" :key="senseIndex">
+        <span v-if="payload.length > 1">{{ bullets[senseIndex] }} </span>
+        <span v-if="sense.pos" class="pos"
+          >{{ sense.pos.map((i) => i.replace(/^.(.*).$/, '$1')).join(', ') }}
         </span>
-      </template>
 
-      <template v-else>
-        <Sentence :payload="sense.gloss"></Sentence>
-      </template>
-    </span>
+        <template v-if="lang !== 'jp'">
+          <span>
+            {{ sense.gloss.join(', ') }}
+          </span>
+        </template>
+      </span>
+    </template>
   </div>
 </template>
 
@@ -47,4 +55,34 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.definition-node {
+  line-height: 1.7em;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg);
+  }
+
+  &.gloss-line + &.gloss-line {
+    display: block;
+    &:before {
+      content: '';
+      display: inline-block;
+      width: 1em;
+    }
+  }
+  &.subscript {
+    vertical-align: super;
+    color: #ca1717;
+    font-size: 0.7em;
+    line-height: 0.5em;
+  }
+  &.decoration {
+    font-weight: bold;
+    color: #ca1717;
+  }
+}
+</style>
