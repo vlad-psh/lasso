@@ -39,21 +39,5 @@ class Word < ActiveRecord::Base
   def kreb_min_length
     rebs.present? ? rebs.map{|i|i.length}.min : 100
   end
-
-  def meikyo
-    return nil if read_attribute(:meikyo).blank?
-
-    glosses = read_attribute(:meikyo).map do |sense|
-      sense['gloss'].map{|gloss| gloss.split("\n")}
-    end.flatten
-
-    [{
-      gloss: glosses.map do |i|
-        MecabParser.light_parse(i).map do |j|
-          [j[:text], j[:base], j[:base_reading]].compact
-        end
-      end
-    }]
-  end
 end
 

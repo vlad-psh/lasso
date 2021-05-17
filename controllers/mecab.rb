@@ -19,7 +19,7 @@ post :mecab_text do
         seq: wt[0]
     }].to_json
   else
-    return MecabParser.parse(params[:sentence]).to_json
+    return MecabParser.parse_sentence(params[:sentence]).to_json
   end
 end
 

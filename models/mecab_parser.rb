@@ -1,5 +1,5 @@
 class MecabParser
-  def self.light_parse(sentence)
+  def self.parse(sentence)
     tagger = MeCab::Light::Tagger.new('')
     mecab_result = tagger.parse(sentence)
     # result.map(&:surface)
@@ -32,8 +32,21 @@ class MecabParser
     return result
   end
 
-  def self.parse(sentence)
-    result = light_parse(sentence)
+  def self.parse_definitions(definitions)
+    # TODO: is there an efficient way to make mecab ignore some symbols
+    # at parsing, by return them back to text afterwards?
+    # Eg.: 足が付・く, that middle dot screws our output a little bit
+
+    definitions.map{|i| i.split("\uE001")} \
+      .flatten \
+      .map {|line| parse(line).map {|i|
+          i[:base].present? ? i : i[:text].split('')
+        }.flatten } \
+      .map {|line| DefinitionNode.new(line, :line) }
+  end
+
+  def self.parse_sentence(sentence)
+    result = parse(sentence)
   
     word_titles_hash = {}
     WordTitle.where(title: result.map{|i|i[:base]}).uniq.each do |wt|

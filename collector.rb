@@ -43,8 +43,9 @@ class Collector
   end
 
   def word_structure(w)
-    languages = [:meikyo, :en] | (@user.settings['lang'] || [])
+    languages = [:en] | (@user.settings['lang'] || [])
     result = w.serializable_hash(only: languages | [:seq, :jlptn, :nf, :nhk_data, :kanji])
+    result[:meikyo] = MecabParser.parse_definitions(w.meikyo) if w.meikyo.present?
     result[:comment] = @word_details.detect{|i| i.seq == w.seq}.try(:comment)
 
     result[:krebs] = w.word_titles.sort{|a,b| a.id <=> b.id}.map do |t|
