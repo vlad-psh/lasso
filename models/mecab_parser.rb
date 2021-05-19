@@ -37,14 +37,13 @@ class MecabParser
     # at parsing, by return them back to text afterwards?
     # Eg.: 足が付・く, that middle dot screws our output a little bit
 
-    definitions[0].gsub!(/^[\s\uE001\uE002]*/, '')
-    definitions[definitions.length - 1].gsub!(/[\s\uE001\uE002]*$/, '')
-
     definitions.map{|i| i.split("\uE001")} \
       .flatten \
-      .map {|line| parse(line).map {|i|
-          i[:base].present? ? i : i[:text].split('')
-        }.flatten } \
+      .map do |line|
+        line = line.gsub(/^[\s\uE001\uE002]*/, '') \
+          .gsub(/[\s\uE001\uE002]*$/, '')
+        parse(line).map {|i| i[:base].present? ? i : i[:text].split('')}.flatten
+      end \
       .map {|line| DefinitionNode.new(line, :line) }
   end
 
