@@ -37,3 +37,33 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.definition-node {
+  line-height: 1.7em;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-secondary);
+    border: 1px solid var(--bg);
+  }
+
+  &.gloss-line + &.gloss-line {
+    display: block;
+    min-height: 1em;
+    text-indent: -1em;
+    margin-left: 1em;
+  }
+  &.subscript {
+    vertical-align: super;
+    color: #ca1717;
+    font-size: 0.7em;
+    line-height: 0.5em;
+  }
+  &.decoration {
+    font-weight: bold;
+    color: #ca1717;
+  }
+}
+</style>

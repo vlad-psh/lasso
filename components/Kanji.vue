@@ -53,7 +53,12 @@
 
     <div v-if="payload.jp" class="definition">
       <FlagJP class="svg-icon" />
-      {{ payload.jp }}
+      <DefinitionNode
+        class="gloss-line"
+        :node-name="payload.jp[0].name"
+        :children="payload.jp[0]"
+      >
+      </DefinitionNode>
     </div>
 
     <div v-if="payload.english" class="definition">

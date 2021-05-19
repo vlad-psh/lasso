@@ -81,13 +81,12 @@ export default {
   display: inline-block;
   cursor: pointer;
   border: none;
-  padding: 0 0.3em 0.2em 0.3em; // bottom padding needed so that bottom border will not intersects with pitch accent
-  /* transparent border; so that height is equal with common words with visible border*/
-  border-bottom: 2px solid rgba(255, 255, 255, 0);
+  padding: 0.1em 0.3em;
 
-  &.common {
-    border-bottom-color: green;
-    border-bottom-style: dotted;
+  &.common:before {
+    content: '❂';
+    color: #dd6800;
+    font-size: 0.8em;
   }
 }
 .jisho-search-link {
