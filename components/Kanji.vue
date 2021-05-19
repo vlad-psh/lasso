@@ -56,7 +56,7 @@
       <DefinitionNode
         class="gloss-line"
         :node-name="payload.jp[0].name"
-        :children="payload.jp[0]"
+        :children="payload.jp[0].items"
       >
       </DefinitionNode>
     </div>

@@ -11,7 +11,7 @@
         :key="`l${lineIdx}`"
         class="gloss-line"
         node-name="line"
-        :children="line"
+        :children="line.items"
       >
       </DefinitionNode>
     </template>

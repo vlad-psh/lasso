@@ -1,10 +1,10 @@
 <template>
   <span class="definition-node" :class="nodeName">
-    <template v-for="(c, idx) of children.items">
+    <template v-for="(c, idx) of children">
       <template v-if="c.items">
         <DefinitionNode
           :key="`d${idx}`"
-          :children="c"
+          :children="c.items"
           :node-name="c.name"
         ></DefinitionNode>
       </template>
