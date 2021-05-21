@@ -52,8 +52,7 @@ export default {
   &.gloss-line + &.gloss-line {
     display: block;
     min-height: 1em;
-    text-indent: -1em;
-    margin-left: 1em;
+    text-indent: 1em;
   }
   &.subscript {
     vertical-align: super;

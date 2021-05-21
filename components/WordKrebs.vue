@@ -72,7 +72,6 @@ export default {
     vertical-align: sub;
     font-size: 0.65em;
     line-height: 1.3em;
-    margin-left: -0.5em;
   }
 }
 .word-kreb {
@@ -81,12 +80,13 @@ export default {
   display: inline-block;
   cursor: pointer;
   border: none;
-  padding: 0.1em 0.3em;
+  padding: 0.2em 0.3em;
+  border-radius: 0.15em;
+  box-shadow: inset 1px 1px 10px 1px #62626240;
 
-  &.common:before {
-    content: '❂';
-    color: #dd6800;
-    font-size: 0.8em;
+  &.common {
+    box-shadow: inset 1px 1px 8px 1px #0277465c;
+    background: #3bc83b0f;
   }
 }
 .jisho-search-link {
