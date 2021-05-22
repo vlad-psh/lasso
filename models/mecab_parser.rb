@@ -62,7 +62,7 @@ class MecabParser
       if seqs.present? && seqs.length > 1
         # More than one results found (eg.: 石)
         # Find one with correct reading
-        reading = base_reading(e)
+        reading = base_reading(e[:text], e[:base], e[:reading])
         seqs = WordTitle.where(title: reading, seq: seqs).pluck(:seq).uniq
       end
   
@@ -82,24 +82,6 @@ class MecabParser
   end
 
   private
-  def self.split_okurigana(word)
-    base = ''
-    okurigana = ''
-    still_okurigana = true
-    word.reverse.split('').each do |c|
-      (c.hiragana? ? okurigana += c : still_okurigana = false) if still_okurigana
-      base += c if still_okurigana == false
-    end
-    return [base.reverse, okurigana.reverse]
-  end
-
-  def self.base_reading(element)
-    base_split = split_okurigana(element[:base])
-    text_split = split_okurigana(element[:text])
-    reading = element[:reading].gsub(/#{text_split[1]}$/, '') # subtract okurigana from reading
-    return "#{reading}#{base_split[1]}" # append okurigana from base
-  end
-
   def self.ignore_word(surface, feature)
     return true if %w(記号 助動詞 接頭詞).include?(feature[0])
     return true if %w(連体化 格助詞 接続助詞 終助詞).include?(feature[1])
@@ -112,8 +94,11 @@ class MecabParser
   def self.base_reading(surface, base, reading)
     return reading if surface == base
 
-    (0..(base.length-1)).each do |i|
-      break reading.gsub(/#{surface[i..-1]}$/, base[i..-1]) if base[i] != surface[i]
+    i = 0
+    while i < base.length - 1
+      break if base[i] != surface[i]
+      i += 1
     end
+    return reading.gsub(/#{surface[i..-1]}$/, base[i..-1])
   end
 end
