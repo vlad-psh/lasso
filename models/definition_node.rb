@@ -14,6 +14,8 @@ class DefinitionNode
           idx = sub_node(items, "\uE103", idx, :subscript)
         elsif i == "\uE100" # begin_decoration
           idx = sub_node(items, "\uE101", idx, :decoration)
+        elsif i == "\uE104" # begin_badge
+          idx = sub_node(items, "\uE105", idx, :badge)
         else
           i = case items[idx]
           when "\uE002" then '　'

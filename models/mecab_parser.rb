@@ -6,7 +6,6 @@ class MecabParser
     result = []
     mecab_result.each do |e|
       feature = e.feature.split(',')
-      # puts "------------- #{feature.inspect}"
       if ignore_word(e.surface, feature)
         result << {text: e.surface}
       else
