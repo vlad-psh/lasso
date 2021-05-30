@@ -64,5 +64,19 @@ export default {
     font-weight: bold;
     color: #ca1717;
   }
+  &.badge {
+    font-size: 0.9em;
+    font-weight: bold;
+    border-radius: 0.15em;
+    padding: 0 0.15em;
+    margin: 0 0.15em;
+
+    &,
+    & a {
+      border: none;
+      background: var(--color);
+      color: var(--bg);
+    }
+  }
 }
 </style>
