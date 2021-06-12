@@ -1,6 +1,7 @@
 class Drill < ActiveRecord::Base
   belongs_to :user
   has_and_belongs_to_many :progresses
+  has_many :drills_progresses
   has_many :sentences
 
   def reset_leitner(learning_type)

@@ -22,19 +22,23 @@ get :drill do
   drill = Drill.find_by(user: current_user, id: params[:id])
   halt(404, "Drill Set not found") if drill.blank?
 
-  words = drill.progresses.eager_load(:word, :srs_progresses).order(:id).map do |p|
-    {
-      seq: p.seq,
-      title: p.title,
-      reading: p.word.rebs.first,
-      description: p.word.list_desc,
-      progress: {
-        reading: p.burned_at ? :burned : p.srs_progresses.detect{|i|
-          i.learning_type == 'reading'}.try(:html_class_leitner) || :pristine,
-        writing: p.burned_at ? :burned : p.srs_progresses.detect{|i|
-          i.learning_type == 'writing'}.try(:html_class_leitner) || :pristine,
-      },
-    }
+  words = drill.drills_progresses. \
+    eager_load(progress: [:word, :srs_progresses]). \
+    order(created_at: :asc).map do |dp|
+      p = dp.progress
+      w = p.word
+      {
+        seq: p.seq,
+        title: p.title,
+        reading: w.rebs.first,
+        description: w.list_desc,
+        progress: {
+          reading: p.burned_at ? :burned : p.srs_progresses.detect{|i|
+            i.learning_type == 'reading'}.try(:html_class_leitner) || :pristine,
+          writing: p.burned_at ? :burned : p.srs_progresses.detect{|i|
+            i.learning_type == 'writing'}.try(:html_class_leitner) || :pristine,
+        },
+      }
   end
 
   {
