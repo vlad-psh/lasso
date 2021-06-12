@@ -50,19 +50,15 @@ patch :drill do
   drill = Drill.find(params[:id])
   halt(403, "Access denied") if drill.user_id != current_user.id
 
-  if params[:enabled].present?
-    drill.update(is_active: params[:enabled] == '0' ? false : true)
-    return {
-      text: params[:enabled] == '0' ? 'Enable' : 'Disable',
-      value: params[:enabled] == '0' ? 1 : 0
-    }.to_json
-  elsif params[:reset] == 'reading'
-    drill.reset_leitner(:reading)
-  elsif params[:reset] == 'writing'
-    drill.reset_leitner(:writing)
-  end
+  drill.title = params[:title] if params[:title].present?
+  drill.is_active = params[:enabled] == '0' ? false : true if params[:enabled].present?
 
-  return '{}'
+  drill.reset_leitner(:reading) if params[:reset] == 'reading'
+  drill.reset_leitner(:writing) if params[:reset] == 'writing'
+
+  drill.save
+
+  return drill.to_h.to_json
 end
 
 post :drills_words do
