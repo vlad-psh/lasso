@@ -29,6 +29,12 @@ export const mutations = {
     const k = state.kanji[kanji]
     if (k) k.progress.comment = text
   },
+  UPDATE_DRILL(state, drill) {
+    const index = state.drills.findIndex((i) => i.id === drill.id)
+    if (index !== -1) {
+      this._vm.$set(state.drills, index, drill)
+    }
+  },
 }
 
 export const actions = {

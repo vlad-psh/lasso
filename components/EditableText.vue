@@ -1,7 +1,14 @@
 <template>
-  <div class="editable-text">
+  <div :class="mode" class="editable-text">
     <div v-if="formOpened">
+      <input
+        v-if="mode === 'compact'"
+        v-model="textCache"
+        type="text"
+        @keyup.esc="closeForm()"
+      />
       <textarea
+        v-else
         id="word-comment-textarea"
         v-model="textCache"
         @keyup.esc="closeForm()"
@@ -28,6 +35,7 @@ export default {
   props: {
     placeholder: { type: String, default: '' },
     textData: { type: String, default: '' },
+    mode: { type: String, default: 'large' },
   },
   data() {
     return {
@@ -62,38 +70,63 @@ export default {
 
 <style lang="scss">
 .editable-text {
-  padding: 0.3em 0.12em;
-  margin: 0.3em 0;
-
   &:hover {
     background-color: rgba(128, 128, 128, 0.2);
     cursor: pointer;
   }
+  &.compact {
+    display: inline-block;
+
+    input[type='text'],
+    input[type='button'] {
+      font-size: 0.9em;
+      font-family: inherit;
+    }
+  } // end of &.compact
+
+  &.large {
+    padding: 0.3em 0.12em;
+    margin: 0.3em 0;
+
+    textarea {
+      width: 100%;
+      height: 8em;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 0.9em;
+      box-sizing: border-box;
+    }
+
+    pre {
+      border-left: 3px solid #17a0ca;
+      padding-left: 0.5em;
+    }
+
+    p.placeholder {
+      border-left: 3px solid #7774;
+      padding-left: 0.5em;
+    }
+
+    .error {
+      float: right;
+    }
+  } // end of &.large
+
   pre {
     white-space: pre-wrap;
     font-family: inherit;
     margin: 0;
-    border-left: 3px solid #17a0ca;
-    padding-left: 0.5em;
   }
+
   p.placeholder {
     margin: 0;
-    padding-left: 0.5em;
     font-style: italic;
     color: rgba(128, 128, 128, 0.7);
-    border-left: 3px solid #7774;
   }
-  textarea {
-    width: 100%;
-    height: 8em;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 0.9em;
-    box-sizing: border-box;
-  }
+
   .error {
-    float: right;
     color: #d00;
+    font-size: initial;
   }
 }
 </style>

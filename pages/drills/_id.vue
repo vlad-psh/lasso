@@ -1,7 +1,12 @@
 <template>
   <div class="drill-details middle-content">
     <h1>
-      {{ drill.title }}
+      <EditableText
+        :text-data="drill.title"
+        placeholder="Title..."
+        mode="compact"
+        @save="saveTitle"
+      ></EditableText>
       <NuxtLink :to="readingQuiz">📰</NuxtLink>
       <NuxtLink :to="writingQuiz">✍️</NuxtLink>
     </h1>
@@ -88,6 +93,18 @@ export default {
         mode: 'primary',
         pushRoute: true,
       })
+    },
+    saveTitle(newTitle, cb) {
+      this.$axios
+        .patch(`/api/drill/${this.drill.id}`, { title: newTitle })
+        .then((resp) => {
+          this.$store.commit('cache/UPDATE_DRILL', resp.data)
+          this.drill.title = resp.data.title
+          cb.resolve()
+        })
+        .catch((e) => {
+          cb.reject(e.message)
+        })
     },
   },
 }
