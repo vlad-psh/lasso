@@ -5,8 +5,8 @@ paths \
     word_details: '/api/word', # params: seq
     word_comment: '/api/word/:seq/comment',
     activity: '/api/activity/:category/:seconds',
+    autocomplete_word: '/api/autocomplete/word',
 kanji_comment: '/api/kanji/:kanji/comment',
-api_word_autocomplete: '/api/word/autocomplete',
 api_learn:   '/api/word/learn',
 api_burn:    '/api/word/burn',
 kanji_readings: '/api/kanji_readings'
@@ -16,19 +16,16 @@ get :word_details do
   return Collector.new(current_user, words: Word.where(seq: params[:seq])).to_json
 end
 
-get :api_word_autocomplete do
+post :autocomplete_word do
   protect!
 
-  ww = Word.where(seq: WordTitle.where(title: params['term']).pluck(:seq)).map{|i|
-        {
-            id: i.seq,
-            value: "#{i.krebs[0]}: #{i.en[0]['gloss'][0]}",
-            title: i.krebs[0],
-            gloss: i.en[0]['gloss'][0],
-            href: path_to(:word).with(i.seq)
-        }
-  }
-  return ww.to_json
+  Word.joins(:word_titles).merge(WordTitle.where(title: params['query'])).order(:seq).uniq.map do |i|
+    {
+      seq: i.seq,
+      krebs: i.krebs,
+      gloss: i.en[0]['gloss'][0],
+    }
+  end.to_json
 end
 
 def find_or_init_progress(p)
@@ -123,4 +120,3 @@ post :activity do
 
   a.seconds.to_s
 end
-
