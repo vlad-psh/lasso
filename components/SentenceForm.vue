@@ -89,7 +89,7 @@
                   @select="selectWord"
                   @search="searchWord"
                 />
-                <br />#{{ selection.word.seq }}: {{ selection.word.base }}
+                #{{ selection.word.seq }}: {{ selection.word.base }}
                 {{ selection.word.gloss }}
               </div>
               <div>
@@ -397,6 +397,12 @@ export default {
   }
   input[type='text'] {
     width: 8em;
+  }
+  input {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: normal;
+    min-width: 2em;
   }
 }
 

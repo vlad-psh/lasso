@@ -55,7 +55,7 @@ export default {
 .autocomplete {
   position: relative;
   text-align: left;
-  font-family: sans-serif;
+  font-family: inherit;
   font-size: 0.9em;
 
   input[type='text'],
@@ -99,15 +99,15 @@ export default {
       .title {
         font-size: 0.8em;
         opacity: 0.7;
-        margin-left: 1em;
+        margin-left: 0.6em;
       }
       .krebs {
         display: flex;
         flex-flow: column;
-        margin-left: 1.5em;
+        margin-top: 0.2em;
 
         .kreb {
-          padding: 0.2em 0.5em;
+          padding: 0.2em 0 0.2em 1.5em;
 
           &:hover {
             background: #41b883;
