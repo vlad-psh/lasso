@@ -83,7 +83,7 @@ export default {
     searchPath(word) {
       return {
         name: 'sub-search',
-        params: { query: word.title || word.text, seq: word.seq },
+        params: { query: word.base || word.text, seq: word.seq },
       }
     },
     search(word) {

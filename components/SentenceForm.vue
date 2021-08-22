@@ -2,8 +2,7 @@
   <div class="vue-sentence-form-app">
     <table>
       <tr>
-        <td>&#x1f1ef;&#x1f1f5;</td>
-        <!-- JP flag -->
+        <td><FlagJP class="svg-icon" /></td>
         <td>
           <template v-if="editMode">
             <div class="sentence-composer">
@@ -74,7 +73,7 @@
                 <input
                   v-model="selection.word.reading"
                   type="text"
-                  placeholder="reading"
+                  placeholder="Reading"
                 /><br />{{ selection.word.text }}
               </div>
               <div>
@@ -84,13 +83,14 @@
                   @click="shrinkSelectedWord"
                 /><input type="button" value="+" @click="stretchSelectedWord" />
               </div>
-              <div>
-                <input
-                  v-model="selection.word.base"
-                  type="text"
-                  class="search"
-                  placeholder="search..."
-                /><br />#{{ selection.word.seq }} - {{ selection.word.gloss }}
+              <div style="width: 200px">
+                <Autocomplete
+                  placeholder="Search..."
+                  @select="selectWord"
+                  @search="searchWord"
+                />
+                <br />#{{ selection.word.seq }}: {{ selection.word.base }}
+                {{ selection.word.gloss }}
               </div>
               <div>
                 <input type="button" value="Update" @click="updateWord()" />
@@ -117,8 +117,7 @@
         </td>
       </tr>
       <tr>
-        <td>&#x1f1ec;&#x1f1e7;</td>
-        <!-- UK flag -->
+        <td><FlagUK class="svg-icon" /></td>
         <td><input v-model="enSentence" class="ensentence" type="text" /></td>
         <td>
           <input
@@ -134,7 +133,11 @@
 </template>
 
 <script>
+import FlagJP from '@/assets/icons/flag-jp.svg?inline'
+import FlagUK from '@/assets/icons/flag-uk.svg?inline'
+
 export default {
+  components: { FlagJP, FlagUK },
   props: {
     drillId: { type: Number, required: true },
   },
@@ -160,6 +163,15 @@ export default {
     }
   }, // end of methods
   methods: {
+    selectWord(item, kreb) {
+      this.selection.word.seq = item.seq
+      this.selection.word.gloss = item.gloss
+      this.selection.word.base = kreb
+    },
+    async searchWord(query, cb) {
+      const resp = await this.$axios.post('/api/autocomplete/word', { query })
+      cb(resp.data)
+    },
     async processRawSentence() {
       this.editMode = true
 

@@ -33,13 +33,13 @@
 </template>
 
 <script>
+import FlagJP from '@/assets/icons/flag-jp.svg?inline'
 import FlagUK from '@/assets/icons/flag-uk.svg?inline'
 import FlagRU from '@/assets/icons/flag-ru.svg?inline'
 import FlagAZ from '@/assets/icons/flag-az.svg?inline'
-import FlagJP from '@/assets/icons/flag-jp.svg?inline'
 
 export default {
-  components: { FlagUK, FlagRU, FlagAZ, FlagJP },
+  components: { FlagJP, FlagUK, FlagRU, FlagAZ },
   props: {
     payload: { type: Array, required: true },
     lang: { type: String, required: true },
