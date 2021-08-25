@@ -1,7 +1,7 @@
 paths \
     drills: '/api/drills',
-    drills_words: '/api/drills/words',
-    drill: '/api/drill/:id'
+    drill: '/api/drill/:id',
+    drills_words: '/api/drills/words'
 
 get :drills do
   protect!
@@ -12,9 +12,9 @@ end
 post :drills do
   protect!
 
-  drill = Drill.create(title: params[:title], user: current_user)
-
-  redirect path_to(:drill).with(drill.id)
+  Drill.create!(title: params[:title], user: current_user).to_json
+rescue StandardError => e
+  halt(400, "Unable to create record: #{e}")
 end
 
 get :drill do
@@ -48,6 +48,12 @@ get :drill do
   }.to_json
 end
 
+# Change drill list
+#
+# params[:id] [Number] Drill ID
+# params[:title] [String] Optional. New title for drill
+# params[:enabled] [String] Optional. Use it to enable/disable drill list. '0' stands for 'false'
+# params[:reset] [String] Optional. Use it to reset progresses. Values: 'reading' or 'writing'
 patch :drill do
   protect!
 
@@ -65,6 +71,11 @@ patch :drill do
   return drill.to_h.to_json
 end
 
+# Add/remove word from drill list
+#
+# params[:drill_id] [Number]
+# params[:seq] [Number] Word seq
+# params[:title] [String] Kreb title
 post :drills_words do
   protect!
 
