@@ -2,6 +2,8 @@
   <div class="drills-list middle-content">
     <h1>Drills</h1>
 
+    <DrillCreateNew />
+
     <div class="table">
       <div
         v-for="drill of $store.state.cache.drills"
@@ -43,7 +45,6 @@ export default {
   async fetch() {
     await this.$store.dispatch('cache/loadDrills')
   },
-  methods: {},
 }
 </script>
 

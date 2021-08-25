@@ -35,6 +35,9 @@ export const mutations = {
       this._vm.$set(state.drills, index, drill)
     }
   },
+  ADD_DRILL(state, drill) {
+    state.drills.unshift(drill)
+  },
 }
 
 export const actions = {
