@@ -58,7 +58,7 @@
         <div class="answer-button green" @click="setAnswer('correct')">YES</div>
       </div>
 
-      <Word :key="selectedSeq" :seq="selectedSeq" />
+      <WordComponent :key="selectedSeq" :seq="selectedSeq" />
     </div>
 
     <div v-if="allAnswered && !selectedSeq && !loading">

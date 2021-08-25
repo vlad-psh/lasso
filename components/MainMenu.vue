@@ -14,7 +14,7 @@
         /></NuxtLink>
       </div>
       <div class="main-menu-item">
-        <VueThemeButton />
+        <ThemeButton />
       </div>
     </div>
     <div class="right">

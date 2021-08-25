@@ -4,7 +4,7 @@
 
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" :seq="seq" />
-      <PitchWordNhk :payload="word.nhk_data" />
+      <WordPitchNhk :payload="word.nhk_data" />
 
       <WordGloss
         v-if="word.meikyo"
@@ -22,12 +22,12 @@
         @save="saveComment"
       ></EditableText>
 
-      <WordCards :cards="word.cards || []" />
+      <WordWK :cards="word.cards || []" />
     </div>
 
     <div class="kanji-info">
       <div class="kanji-list">
-        <Kanji v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
+        <KanjiComponent v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
       </div>
     </div>
   </div>

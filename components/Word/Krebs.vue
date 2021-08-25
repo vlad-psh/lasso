@@ -3,14 +3,14 @@
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
       <Popper trigger="clickToToggle">
         <div class="popper">
-          <DrillSelect
+          <DrillPopup
             :active-drills="kreb.drills"
             :kreb-title="kreb.title"
             :seq="seq"
-          ></DrillSelect>
+          ></DrillPopup>
         </div>
         <span slot="reference">
-          <PitchWord :kreb="kreb" />
+          <WordPitch :kreb="kreb" />
         </span>
       </Popper>
 

@@ -69,7 +69,7 @@ export default {
 </script>
 
 <style lang="scss">
-// TODO: this class is also used in PitchWordNhk component
+// TODO: this class is also used in WordInfoPitchNhk component
 .vue-pitch-word {
   $pitch-color: #d00;
   .br {

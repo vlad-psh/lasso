@@ -53,7 +53,7 @@ export default {
   .table {
     display: table;
     text-align: left;
-    margin: 0 auto;
+    margin: 1em auto;
 
     .drill {
       display: table-row;

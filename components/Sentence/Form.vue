@@ -84,7 +84,7 @@
                 /><input type="button" value="+" @click="stretchSelectedWord" />
               </div>
               <div style="width: 200px">
-                <Autocomplete
+                <SentenceAutocompleteWord
                   placeholder="Search..."
                   @select="selectWord"
                   @search="searchWord"

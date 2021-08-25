@@ -45,7 +45,7 @@
       </template>
     </div>
 
-    <SimilarKanji
+    <KanjiSimilars
       v-for="(similar, idx) of payload.similars"
       :key="'similar' + idx"
       :payload="similar"

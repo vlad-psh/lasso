@@ -4,17 +4,23 @@
       v-if="!expanded"
       type="button"
       value="Add new"
-      class="new-list-button"
-      @click="expanded = true"
+      class="expand-button"
+      @click="expand"
     />
     <div v-else>
       <input
+        ref="inputField"
         v-model="drillName"
         type="text"
         placeholder="Drill name"
         @keydown.esc="expanded = false"
       />
-      <input type="button" value="Create" @click="submit" />
+      <input
+        type="button"
+        value="Create"
+        class="submit-button"
+        @click="submit"
+      />
       <div class="error">{{ error }}</div>
     </div>
   </div>
@@ -44,6 +50,12 @@ export default {
         this.error = e.response.data
       }
     },
+    expand() {
+      this.expanded = true
+      this.$nextTick(() => {
+        this.$refs.inputField.focus()
+      })
+    },
   },
 }
 </script>
@@ -55,6 +67,7 @@ input[type='button'] {
   color: inherit;
   border-radius: 3px;
   cursor: pointer;
+  padding: 0.2em 0.4em;
 
   &:hover {
     opacity: 0.7;
@@ -64,7 +77,7 @@ input[type='button'] {
   }
 }
 
-.new-list-button {
+.expand-button {
   width: 15em;
 }
 

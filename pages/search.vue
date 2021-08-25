@@ -40,15 +40,12 @@
       </div>
     </div>
     <div class="contents-panel">
-      <Word
+      <WordComponent
         v-if="currentMode === 'primary'"
         :key="current.seq"
         :seq="current.seq"
-      ></Word>
-      <ImageView
-        v-else-if="currentMode === 'jiten'"
-        :payload="current"
-      ></ImageView>
+      />
+      <JitenImage v-else-if="currentMode === 'jiten'" :payload="current" />
     </div>
   </div>
 </template>
