@@ -399,8 +399,6 @@ export default {
     width: 8em;
   }
   input {
-    font-family: inherit;
-    font-size: inherit;
     font-weight: normal;
     min-width: 2em;
   }

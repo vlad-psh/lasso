@@ -70,6 +70,13 @@ body {
     width: 1.5em;
     margin-bottom: -0.4em;
   }
+
+  input,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+  }
 }
 
 html[class='dark-mode'] body {

@@ -80,7 +80,6 @@ export default {
     input[type='text'],
     input[type='button'] {
       font-size: 0.9em;
-      font-family: inherit;
     }
   } // end of &.compact
 
@@ -92,7 +91,6 @@ export default {
       width: 100%;
       height: 8em;
       resize: vertical;
-      font-family: inherit;
       font-size: 0.9em;
       box-sizing: border-box;
     }

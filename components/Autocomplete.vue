@@ -55,7 +55,6 @@ export default {
 .autocomplete {
   position: relative;
   text-align: left;
-  font-family: inherit;
   font-size: 0.9em;
 
   input[type='text'],
@@ -66,8 +65,6 @@ export default {
   }
 
   input[type='text'] {
-    font-size: inherit;
-    font-family: inherit;
     padding: 0.3em 0.7em;
     width: 100%;
     border-radius: 3px;
