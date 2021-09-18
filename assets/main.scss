@@ -19,6 +19,7 @@ body {
 
   #__layout_inner {
     height: 100vh;
+    height: var(--vh, 1vh);
     display: grid;
     grid-template-rows: auto 1fr;
   }
@@ -132,7 +133,7 @@ html[class='dark-mode'] body {
   }
 }
 
-@media (max-width: 568px) {
+@media (max-width: 950px) {
   body {
     font-size: 10pt;
   }

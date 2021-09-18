@@ -21,6 +21,7 @@ export default {
     '@/plugins/auth.js',
     '@/plugins/search.js',
     '@/plugins/activity.client.js',
+    '@/plugins/viewport.client.js',
     '@/plugins/vue-shortkey.client.js',
   ],
 
