@@ -77,7 +77,7 @@ export default {
         }
       )
     },
-    middleware: ['auth', 'activity_group'],
+    middleware: ['activity_group'],
   },
 
   // Customizing progress bar
