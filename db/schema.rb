@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_15_085042) do
+ActiveRecord::Schema.define(version: 2022_02_12_091828) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,15 +21,6 @@ ActiveRecord::Schema.define(version: 2021_05_15_085042) do
     t.integer "category"
     t.bigint "seconds", default: 0
     t.index ["user_id"], name: "index_activities_on_user_id"
-  end
-
-  create_table "cards", force: :cascade do |t|
-    t.string "element_type"
-    t.integer "level"
-    t.string "title"
-    t.jsonb "detailsb"
-    t.integer "seq"
-    t.boolean "is_disabled", default: false
   end
 
   create_table "cards_relations", force: :cascade do |t|
@@ -88,23 +79,6 @@ ActiveRecord::Schema.define(version: 2021_05_15_085042) do
     t.integer "user_id"
   end
 
-  create_table "picture_areas", force: :cascade do |t|
-    t.bigint "picture_id"
-    t.string "symbol"
-    t.index ["picture_id"], name: "index_picture_areas_on_picture_id"
-  end
-
-  create_table "pictures", force: :cascade do |t|
-    t.string "filename"
-    t.string "sid"
-    t.string "tool"
-    t.string "source"
-    t.bigint "user_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_pictures_on_user_id"
-  end
-
   create_table "progresses", force: :cascade do |t|
     t.bigint "card_id"
     t.bigint "user_id"
@@ -119,10 +93,6 @@ ActiveRecord::Schema.define(version: 2021_05_15_085042) do
     t.index ["card_id"], name: "index_progresses_on_card_id"
     t.index ["seq"], name: "index_progresses_on_seq"
     t.index ["user_id"], name: "index_progresses_on_user_id"
-  end
-
-  create_table "russian_words", force: :cascade do |t|
-    t.string "title"
   end
 
   create_table "sentence_reviews", force: :cascade do |t|
