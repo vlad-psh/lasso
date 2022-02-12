@@ -25,12 +25,6 @@ class SrsProgress < ActiveRecord::Base
     self.save
   end
 
-  def print_attrs
-    puts "correct:   #{attributes_of_correct_answer}"
-    puts "soso:      #{attributes_of_soso_answer}"
-    puts "incorrect: #{attributes_of_incorrect_answer}"
-  end
-
   def drill_attributes_for_answer(answer, drill)
     if answer == :correct
       box = leitner_box == nil ? drill.leitner_session : leitner_box
@@ -120,47 +114,4 @@ class SrsProgress < ActiveRecord::Base
     end
   end
 
-  private
-  def random_reschedule!
-# Deprecated method
-# Can be useful in future
-    variation_days = ((self.scheduled - Date.today) * 0.15).to_i
-    range_from = self.scheduled - variation_days
-    range_to   = self.scheduled + variation_days
-
-    # make 'day: cards count' hash
-    day_cards = {}
-    (range_from..range_to).each {|d| day_cards[d.strftime()] = 0}
-    # There was a strange bug when I've used 'Date' objects as key of day_cards hash
-    # sometimes, in following loop/block, day_cards[d] returned nil (but the value was
-    # definitely there! (and it even was non-zero)
-    # That's why we using strings as keys in this hash
-    counts = SrsProgress.where(user: self.user, scheduled: range_from..range_to).group(:scheduled).order('count_all').count
-    counts.each {|d,c| day_cards[d.strftime()] += c}
-
-    # transpose hash to 'cards count: [days]'
-    cards_days = {}
-    day_cards.each do |k,v|
-      if cards_days[v]
-        cards_days[v] << k
-      else
-        cards_days[v] = [k]
-      end
-    end
-
-    # select days with minimal cards count
-    vacant_days = cards_days[cards_days.keys.min]
-    selected_day = Date.parse(vacant_days[0])
-    vacant_days.each do |d_str|
-      d = Date.parse(d_str)
-      if (d - self.scheduled).abs < (selected_day - self.scheduled).abs
-        selected_day = d
-      end
-    end
-
-    puts "### SELECTED #{selected_day} ANCHOR #{self.scheduled} ALL DAYS #{day_cards}"
-    return self.scheduled = selected_day
-  end
-
 end
-

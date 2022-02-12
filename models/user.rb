@@ -1,7 +1,6 @@
 class User < ActiveRecord::Base
   has_many :statistics
   has_many :notes
-  has_many :user_cards
   has_many :progresses
 
   def password=(pwd)
@@ -17,4 +16,3 @@ class User < ActiveRecord::Base
     {id: id, login: login}
   end
 end
-

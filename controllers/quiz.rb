@@ -56,8 +56,6 @@ def get_drill_word(drill, init_session, learning_type = 'reading', fresh = true)
     progress = get_drill_word(drill, init_session, learning_type, fresh) unless drill.leitner_session == init_session
   else
     sp = progress.srs_progresses.where(learning_type: learning_type).first
-    puts "========== #{DateTime.now.strftime('%H:%M:%S')} Session #{drill.leitner_session} #{Progress::LEITNER_BOXES[drill.leitner_session]} card:'#{word_type}' box:#{sp.leitner_box rescue 'n/a'} combo:#{sp.leitner_combo rescue 'n/a'}/4 #{progress.title}"
-    puts "==== #{sp.inspect}"
   end
 
   return progress
