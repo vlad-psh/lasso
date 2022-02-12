@@ -141,6 +141,7 @@ html[class='dark-mode'] body {
 @media (max-width: 568px) {
   body {
     input[type='text'],
+    input[type='password'],
     textarea {
       font-size: clamp(16px, 1em, 2em) !important;
     }

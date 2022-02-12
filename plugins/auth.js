@@ -1,17 +1,22 @@
 import Vue from 'vue'
 
 export default (context, inject) => {
-  const { store, $axios, next, route, redirect } = context
+  const { store, $axios } = context
 
   const $auth = new Vue({
+    computed: {
+      loggedIn() {
+        const user = store.state.env.user
+        if (typeof user === 'undefined') return undefined
+        else return !!user
+      },
+    },
     async created() {
       try {
         const resp = await $axios.get('/api/session')
         store.commit('env/SET_USER', resp.data)
-        if (['login'].includes(route.name)) redirect(302, '/')
       } catch {
-        store.commit('env/SET_USER', false)
-        if (!['login'].includes(route.name)) redirect(302, '/login')
+        store.commit('env/SET_USER', null)
       }
     },
     methods: {
@@ -20,7 +25,6 @@ export default (context, inject) => {
           await $axios.delete('/api/session')
           store.commit('env/SET_USER', null)
         } catch {}
-        next('/login')
       },
       async login({ username, password }) {
         try {
@@ -30,10 +34,6 @@ export default (context, inject) => {
           })
           store.commit('env/SET_USER', resp.data)
         } catch {}
-        next('/')
-      },
-      loggedIn() {
-        return !!store.state.env.user
       },
     },
   })

@@ -19,13 +19,8 @@
     </div>
     <div class="right">
       <div class="main-menu-item username">
-        <template v-if="$store.state.env.user">
-          {{ $store.state.env.user.login }}
-          <a @click="$auth.logout">logout</a>
-        </template>
-        <template v-else>
-          <NuxtLink to="/login">login</NuxtLink>
-        </template>
+        {{ $store.state.env.user.login }}
+        <a @click="$auth.logout">logout</a>
       </div>
     </div>
   </div>

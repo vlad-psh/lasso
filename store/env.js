@@ -1,6 +1,6 @@
 export const state = () => ({
   device: 'pc',
-  user: null,
+  user: undefined, // undefined || null || User object
   activityGroup: 'other',
   quizParams: null,
 })
