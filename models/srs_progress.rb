@@ -2,6 +2,8 @@ class SrsProgress < ActiveRecord::Base
   belongs_to :user
   belongs_to :progress
 
+  validates :progress, uniqueness: { scope: :learning_type }
+
   scope :expired, -> {where(SrsProgress.arel_table[:scheduled].lteq(Date.today))}
 
   enum learning_type: {reading: 0, writing: 1, listening: 2}

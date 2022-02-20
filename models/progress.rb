@@ -1,13 +1,17 @@
 class Progress < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :word, primary_key: :seq, foreign_key: :seq
   belongs_to :kanji
-  has_many :wk_words, primary_key: :seq, foreign_key: :seq
-  has_many :wk_kanji, primary_key: :kanji_id, foreign_key: :kanji_id
+  belongs_to :user
   belongs_to :wk_radical
-  has_and_belongs_to_many :drills
+  belongs_to :word, primary_key: :seq, foreign_key: :seq
+
   has_many :drills_progresses
   has_many :srs_progresses
+  has_many :wk_words, primary_key: :seq, foreign_key: :seq
+  has_many :wk_kanji, primary_key: :kanji_id, foreign_key: :kanji_id
+
+  has_and_belongs_to_many :drills
+
+  validates :seq, uniqueness: { scope: [:user, :title] }
 
   scope :words,    ->{where.not(seq: nil)}
   scope :kanjis,   ->{where.not(kanji_id: nil)}
