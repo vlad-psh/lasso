@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_12_091828) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_02_20_095539) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,16 +22,10 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
     t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
-  create_table "cards_relations", force: :cascade do |t|
-    t.bigint "card_id"
-    t.integer "relation_id", null: false
-    t.index ["card_id"], name: "index_cards_relations_on_card_id"
-  end
-
   create_table "drills", force: :cascade do |t|
     t.string "title"
     t.bigint "user_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.boolean "is_active", default: true
     t.integer "leitner_session", default: 0
     t.integer "leitner_fresh", default: 0
@@ -42,7 +35,7 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
   create_table "drills_progresses", force: :cascade do |t|
     t.bigint "drill_id"
     t.bigint "progress_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["drill_id"], name: "index_drills_progresses_on_drill_id"
     t.index ["progress_id"], name: "index_drills_progresses_on_progress_id"
   end
@@ -74,8 +67,8 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
 
   create_table "notes", force: :cascade do |t|
     t.string "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "user_id"
   end
 
@@ -83,8 +76,8 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
     t.bigint "card_id"
     t.bigint "user_id"
     t.integer "seq"
-    t.datetime "learned_at"
-    t.datetime "burned_at"
+    t.datetime "learned_at", precision: nil
+    t.datetime "burned_at", precision: nil
     t.string "title"
     t.integer "kanji_id"
     t.integer "wk_radical_id"
@@ -99,7 +92,7 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
     t.bigint "sentence_id"
     t.bigint "user_id"
     t.integer "learning_type", default: 0
-    t.datetime "reviewed_at"
+    t.datetime "reviewed_at", precision: nil
     t.index ["sentence_id"], name: "index_sentence_reviews_on_sentence_id"
     t.index ["user_id"], name: "index_sentence_reviews_on_user_id"
   end
@@ -110,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
     t.string "russian"
     t.json "structure"
     t.json "details"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.bigint "drill_id"
     t.bigint "user_id"
     t.index ["drill_id"], name: "index_sentences_on_drill_id"
@@ -132,7 +125,7 @@ ActiveRecord::Schema.define(version: 2022_02_12_091828) do
     t.date "scheduled"
     t.date "transition"
     t.string "last_answer"
-    t.datetime "reviewed_at"
+    t.datetime "reviewed_at", precision: nil
     t.integer "leitner_box"
     t.integer "leitner_last_reviewed_at_session"
     t.integer "leitner_combo", default: 0
