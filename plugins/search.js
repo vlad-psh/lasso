@@ -20,12 +20,12 @@ export default (context, inject) => {
   const $search = new Vue({
     data() {
       return {
-        modes: {
-          primary: { title: '探す', func: this.primarySearch },
-          kokugo: { title: '国語', func: this.kokugo },
-          kanji: { title: '漢字', func: this.kanji },
-          onomat: { title: 'ｵﾉﾏﾄ', func: this.onomat },
-        },
+        modes: [
+          { id: 'primary', title: '探す' },
+          { id: 'kokugo', title: '国語' },
+          { id: 'kanji', title: '漢字' },
+          { id: 'onomat', title: 'ｵﾉﾏﾄ' },
+        ],
       }
     },
     computed: {
@@ -85,8 +85,20 @@ export default (context, inject) => {
         }
         return false
       },
+      async dispatchSearch(mode, params) {
+        switch (mode) {
+          case 'kokugo':
+            return this.kokugo(params)
+          case 'kanji':
+            return this.kanji(params)
+          case 'onomat':
+            return this.onomat(params)
+          default:
+            return await this.primarySearch(params)
+        }
+      },
       async execute(params) {
-        const result = await this.modes[params.mode || 'primary'].func(params)
+        const result = await this.dispatchSearch(params.mode, params)
         if (result && process.browser) {
           const route = this.buildSearchPath(params)
           // TODO: possible redundant navigation (on browser back/fwd button)

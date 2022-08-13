@@ -20,9 +20,9 @@
       </div>
       <div class="search-mode">
         <div
-          v-for="(mode, modeId) of $search.modes"
-          :key="`dictmode-${modeId}`"
-          :class="[modeId, modeId === selectedMode ? 'selected' : null]"
+          v-for="mode of $search.modes"
+          :key="`dictmode-${mode.id}`"
+          :class="[mode.id, mode.id === selectedMode ? 'selected' : null]"
           @click="searchModeClick(modeId)"
         >
           {{ mode.title }}
