@@ -21,7 +21,7 @@
       <div class="search-mode">
         <div
           v-for="(mode, modeId) of $search.modes"
-          :key="'dict-' + modeId"
+          :key="`dictmode-${modeId}`"
           :class="[modeId, modeId === selectedMode ? 'selected' : null]"
           @click="searchModeClick(modeId)"
         >
@@ -30,8 +30,8 @@
       </div>
       <div class="search-results">
         <SearchCandidateItem
-          v-for="item in $store.state.search.results"
-          :key="$store.state.search.query + item[0]"
+          v-for="(item, itemIndex) in $store.state.search.results"
+          :key="`candidate-${itemIndex}`"
           ref="candidates"
           :item="item"
           :is-selected="item[0] === current.seq"
@@ -40,11 +40,7 @@
       </div>
     </div>
     <div class="contents-panel">
-      <WordComponent
-        v-if="currentMode === 'primary'"
-        :key="current.seq"
-        :seq="current.seq"
-      />
+      <WordComponent v-if="currentMode === 'primary'" :seq="current.seq" />
       <JitenImage v-else-if="currentMode === 'jiten'" :payload="current" />
     </div>
   </div>

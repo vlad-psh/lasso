@@ -1,6 +1,6 @@
 <template>
   <div class="vue-word word-card" :data-seq="seq">
-    <WordLoading v-if="!word" />
+    <WordLoading v-if="!word || word.seq !== seq" />
 
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" :seq="seq" />
@@ -49,6 +49,12 @@ export default {
       return (this.word ? this.word.kanji || '' : '')
         .split('')
         .map((k) => this.$store.state.cache.kanji[k])
+    },
+  },
+  watch: {
+    async seq(newSeq, oldSeq) {
+      if (this.word.seq !== newSeq)
+        this.word = await this.$store.dispatch('cache/loadWord', newSeq)
     },
   },
   methods: {

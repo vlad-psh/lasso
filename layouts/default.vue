@@ -9,5 +9,10 @@
 </template>
 
 <script>
-export default {}
+import MainMenu from '@/components/MainMenu'
+import LoginForm from '@/components/LoginForm'
+
+export default {
+  components: { MainMenu, LoginForm },
+}
 </script>
