@@ -4,7 +4,7 @@
       <div class="search-field">
         <input
           ref="searchField"
-          v-model="searchQuery"
+          v-model="searchField"
           v-shortkey.focus="['esc']"
           type="text"
           placeholder="Search..."
@@ -55,13 +55,15 @@ export default {
   async fetch() {
     const { route, store } = this.$nuxt.context
     // if (process.server)
+    this.searchField = route.params.query
     this.searchQuery = route.params.query
     await this.$search.fromRoute(route)
     this.selectedMode = store.state.search.current.mode || 'primary'
   },
   data() {
     return {
-      searchQuery: this.$store.state.search.query,
+      searchField: this.$store.state.search.query,
+      searchQuery: this.$store.state.search.query, // when user press 'Enter'
       selectedMode: 'primary',
     }
   },
@@ -77,6 +79,7 @@ export default {
   },
   watch: {
     '$route.params'() {
+      this.searchField = this.$route.params.query || ''
       this.searchQuery = this.$route.params.query || ''
     },
   },
@@ -98,6 +101,7 @@ export default {
       this.search()
     }, 250),
     search() {
+      this.searchQuery = this.searchField
       this.$search.execute({
         query: this.searchQuery,
         popRoute: true,
@@ -125,7 +129,7 @@ export default {
     },
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
-      this.searchQuery = ''
+      this.searchField = ''
       this.$refs.searchField.focus()
     },
     switchDictionary() {
