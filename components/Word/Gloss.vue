@@ -43,7 +43,6 @@ export default {
   props: {
     payload: { type: Array, required: true },
     lang: { type: String, required: true },
-    seq: { type: Number, default: null },
   },
   data() {
     return {

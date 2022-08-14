@@ -44,6 +44,12 @@ export default {
       errorMessage: null,
     }
   },
+  watch: {
+    textData(newText, oldText) {
+      this.formOpened = false
+      this.textCache = null
+    },
+  },
   methods: {
     openForm() {
       if (!this.textCache) this.textCache = this.textData
@@ -63,6 +69,7 @@ export default {
           app.errorMessage = msg
         },
       })
+      this.textCache = null
     },
   },
 }
