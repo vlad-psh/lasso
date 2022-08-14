@@ -4,6 +4,7 @@
 
     <div v-if="word" class="word-info">
       <WordKrebs :krebs="word.krebs" :seq="seq" />
+      <WordDrills :word="word" />
       <WordPitchNhk :payload="word.nhk_data" />
 
       <WordGloss
