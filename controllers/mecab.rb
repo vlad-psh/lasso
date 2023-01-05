@@ -1,5 +1,3 @@
-require 'mecab/light'
-
 paths \
     mecab_text: '/api/mecab/text',
     mecab_word: '/api/mecab/word/:seq'

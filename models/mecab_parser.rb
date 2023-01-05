@@ -1,21 +1,26 @@
 class MecabParser
   def self.parse(sentence)
-    tagger = MeCab::Light::Tagger.new('')
-    mecab_result = tagger.parse(sentence)
-    # result.map(&:surface)
     result = []
-    mecab_result.each do |e|
-      feature = e.feature.split(',')
-      if ignore_word(e.surface, feature)
-        result << {text: e.surface}
-      else
-        reading = feature[7].try(:hiragana)
-        result << {
-          text: e.surface,
-          reading: reading,
-          base: feature[6],
-          base_reading: base_reading(e.surface, feature[6], reading),
-        }
+    IO.popen('mecab', 'r+') do |stream|
+      stream.puts(sentence)
+      stream.close_write
+      while line = stream.gets do
+        next if line =~ /^EOS/
+        
+        surface, feature = line.split("\t")
+        feature = feature.strip.split(',')
+
+        if ignore_word(surface, feature)
+          result << {text: surface}
+        else
+          reading = feature[7].try(:hiragana)
+          result << {
+            text: surface,
+            reading: reading,
+            base: feature[6],
+            base_reading: base_reading(surface, feature[6], reading),
+          }
+        end
       end
     end
 
