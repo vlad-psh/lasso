@@ -1,27 +1,25 @@
 <template>
-  <div>
+  <div class="search-field">
     <SearchModeSelector
       :selected-mode="selectedMode"
       @change="(modeId) => (selectedMode = modeId)"
       @search="search"
     />
 
-    <div class="search-field">
-      <input
-        ref="searchField"
-        v-model="searchField"
-        v-shortkey.focus="['esc']"
-        type="text"
-        placeholder="Search..."
-        @keydown.enter="search"
-        @keydown.tab.prevent="switchDictionary"
-        @keydown.esc="clearInputField"
-        @keydown.down="$emit('switch-candidate', 'next')"
-        @keydown.up="$emit('switch-candidate', 'prev')"
-      />
-      <div class="clear-button" @click="clearInputField">
-        <ClearIcon />
-      </div>
+    <input
+      ref="searchField"
+      v-model="searchField"
+      v-shortkey.focus="['esc']"
+      type="text"
+      placeholder="Search..."
+      @keydown.enter="search"
+      @keydown.tab.prevent="switchDictionary"
+      @keydown.esc="clearInputField"
+      @keydown.down="$emit('switch-candidate', 'next')"
+      @keydown.up="$emit('switch-candidate', 'prev')"
+    />
+    <div class="clear-button" @click="clearInputField">
+      <ClearIcon />
     </div>
   </div>
 </template>
@@ -64,11 +62,12 @@ export default {
     },
     clearInputField() {
       this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
-      this.searchField = ''
+      // this.searchField = ''
       this.$refs.searchField.focus()
+      this.$refs.searchField.select()
     },
     switchDictionary() {
-      const modes = Object.keys(this.$search.modes)
+      const modes = this.$search.modes.map((i) => i.id)
       const idx = modes.findIndex((i) => i === this.selectedMode)
       this.selectedMode = modes[(idx + 1) % modes.length]
     },
@@ -80,21 +79,26 @@ export default {
 .search-field {
   position: relative;
   border-bottom: 1px solid var(--border-color);
+  padding: 0.4em 0.5em 0.5em;
 
   input[type='text'] {
     background: none;
     border: none;
-    padding: 0.4em 0.6em 0.5em 0.6em;
+    padding: 0.2em 0.6em 0.2em 2.4em;
     box-sizing: border-box;
     width: 100%;
+    border-radius: 0.4em;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
   }
 
   .clear-button {
     position: absolute;
-    right: 0;
-    top: 0;
+    right: 0.3em;
+    top: calc(50% - 0.8em);
     cursor: pointer;
-    font-size: 1.2em;
+    font-size: 1em;
+    line-height: 1em;
     padding: 0.3em 0.5em;
 
     svg {
