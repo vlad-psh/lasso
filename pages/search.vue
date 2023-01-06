@@ -1,33 +1,10 @@
 <template>
   <div id="search-app">
     <div class="browse-panel">
-      <div class="search-field">
-        <input
-          ref="searchField"
-          v-model="searchField"
-          v-shortkey.focus="['esc']"
-          type="text"
-          placeholder="Search..."
-          @keydown.enter="search"
-          @keydown.tab.prevent="switchDictionary"
-          @keydown.esc="clearInputField"
-          @keydown.down="switchCandidate('next')"
-          @keydown.up="switchCandidate('prev')"
-        />
-        <div class="clear-button" @click="clearInputField">
-          <ClearIcon />
-        </div>
-      </div>
-      <div class="search-mode">
-        <div
-          v-for="mode of $search.modes"
-          :key="`dictmode-${mode.id}`"
-          :class="[mode.id, mode.id === selectedMode ? 'selected' : null]"
-          @click="searchModeClick(modeId)"
-        >
-          {{ mode.title }}
-        </div>
-      </div>
+      <SearchInputField
+        @switch-candidate="(direction) => switchCandidate(direction)"
+      />
+
       <div class="search-results">
         <SearchCandidateItem
           v-for="(item, itemIndex) in $store.state.search.results"
@@ -47,25 +24,10 @@
 </template>
 
 <script>
-import debounce from '@/js/debouncer.js'
-import ClearIcon from '@/assets/icons/clear.svg?inline'
-
 export default {
-  components: { ClearIcon },
   async fetch() {
-    const { route, store } = this.$nuxt.context
-    // if (process.server)
-    this.searchField = route.params.query
-    this.searchQuery = route.params.query
+    const { route } = this.$nuxt.context
     await this.$search.fromRoute(route)
-    this.selectedMode = store.state.search.current.mode || 'primary'
-  },
-  data() {
-    return {
-      searchField: this.$store.state.search.query,
-      searchQuery: this.$store.state.search.query, // when user press 'Enter'
-      selectedMode: 'primary',
-    }
   },
   computed: {
     current() {
@@ -75,12 +37,6 @@ export default {
       if (this.current.mode)
         return this.current.mode === 'primary' ? 'primary' : 'jiten'
       return null
-    },
-  },
-  watch: {
-    '$route.params'() {
-      this.searchField = this.$route.params.query || ''
-      this.searchQuery = this.$route.params.query || ''
     },
   },
   mounted() {
@@ -97,19 +53,8 @@ export default {
     )
   },
   methods: {
-    searchLater: debounce(function () {
-      this.search()
-    }, 250),
-    search() {
-      this.searchQuery = this.searchField
-      this.$search.execute({
-        query: this.searchQuery,
-        popRoute: true,
-        mode: this.selectedMode,
-      })
-    },
     selectCandidate(seq) {
-      this.$search.execute({ query: this.searchQuery, seq })
+      this.$search.execute({ seq })
     },
     switchCandidate(direction) {
       const results = this.$store.state.search.results
@@ -127,23 +72,6 @@ export default {
         inline: 'nearest',
       })
     },
-    clearInputField() {
-      this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
-      this.searchField = ''
-      this.$refs.searchField.focus()
-    },
-    switchDictionary() {
-      const modes = Object.keys(this.$search.modes)
-      const idx = modes.findIndex((i) => i === this.selectedMode)
-      this.selectedMode = modes[(idx + 1) % modes.length]
-    },
-    searchModeClick(modeId) {
-      if (this.selectedMode === modeId) this.search()
-      else this.selectedMode = modeId
-    },
-  },
-  head() {
-    return { title: this.searchQuery }
   },
 }
 </script>

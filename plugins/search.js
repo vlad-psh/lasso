@@ -70,7 +70,14 @@ export default (context, inject) => {
         return wp !== -1
       },
       async primarySearch(params) {
-        const searchResult = await store.dispatch('search/search', params.query)
+        let searchResult
+
+        if (params.query) {
+          searchResult = await store.dispatch('search/search', params.query)
+        } else {
+          searchResult = !!params.seq
+        }
+
         // this.$store.commit('cache/ADD_HISTORY', { type: 'word', seq })
         if (searchResult) {
           if (params.seq) store.dispatch('search/selectSeq', params.seq)
@@ -115,6 +122,7 @@ export default (context, inject) => {
         })
       },
       buildSearchPath(params) {
+        params = Object.assign({}, store.state.search.current, params)
         return { name: searchName(params), params }
       },
     },
