@@ -1,6 +1,6 @@
 <template>
   <div class="vue-kanji">
-    <div class="kanji-title no-refocus" :class="htmlClass">
+    <div class="kanji-title no-refocus ja" :class="htmlClass">
       <NuxtLink :to="searchRoute" @click.native="search">{{
         payload.title
       }}</NuxtLink>
@@ -51,7 +51,7 @@
       :payload="similar"
     />
 
-    <div v-if="payload.jp" class="definition">
+    <div v-if="payload.jp" class="definition ja">
       <FlagJP class="svg-icon" />
       <DefinitionNode
         class="gloss-line"
@@ -61,7 +61,7 @@
       </DefinitionNode>
     </div>
 
-    <div v-if="payload.english" class="definition">
+    <div v-if="payload.english" class="definition en">
       <FlagUK class="svg-icon" />
       {{ payload.english.join('; ') }}
     </div>

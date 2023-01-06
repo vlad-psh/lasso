@@ -9,14 +9,14 @@
       <DefinitionNode
         v-for="(line, lineIdx) of payload"
         :key="`l${lineIdx}`"
-        class="gloss-line"
+        class="gloss-line ja"
         node-name="line"
         :children="line.items"
       >
       </DefinitionNode>
     </template>
     <template v-else>
-      <span v-for="(sense, senseIndex) of payload" :key="senseIndex">
+      <span v-for="(sense, senseIndex) of payload" :key="senseIndex" class="en">
         <span v-if="payload.length > 1">{{ bullets[senseIndex] }} </span>
         <span v-if="sense.pos" class="pos"
           >{{ sense.pos.map((i) => i.replace(/^.(.*).$/, '$1')).join(', ') }}
@@ -58,7 +58,6 @@ export default {
 <style lang="scss" scoped>
 .word-details {
   text-align: justify;
-  line-height: 1.6em;
   padding: 0.4em;
 
   .icon {

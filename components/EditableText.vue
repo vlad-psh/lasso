@@ -1,5 +1,5 @@
 <template>
-  <div :class="mode" class="editable-text">
+  <div :class="mode" class="editable-text en">
     <template v-if="formOpened">
       <input
         v-if="mode === 'compact'"

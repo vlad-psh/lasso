@@ -1,13 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400&display=swap');
 
 @import 'styles/login-form.scss';
 
 body {
   margin: 0;
-  font-family: 'PT Serif', Cambria, 'M PLUS Rounded 1c', serif;
-  font-size: 14pt;
-  font-weight: 300;
+  color: var(--color);
+
+  font-family: 'PT Sans', 'Helvetica Neue', 'M PLUS Rounded 1c', serif;
+  font-size: 16.4px;
+  font-weight: 400;
+
+  .ja {
+    font-family: 'M PLUS Rounded 1c', serif;
+    font-weight: 300;
+    line-height: 1.6em;
+  }
+
+  .en {
+    line-height: 1.4em;
+  }
 
   #__layout_inner {
     height: 100vh;
@@ -118,7 +129,11 @@ html[class='dark-mode'] body {
 
 @media (max-width: 950px) {
   body {
-    font-size: 10pt;
+    font-size: 14px;
+
+    .en {
+      font-size: 1.1em;
+    }
   }
 }
 

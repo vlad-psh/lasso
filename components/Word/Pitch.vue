@@ -1,6 +1,6 @@
 <template>
   <div
-    class="word-kreb no-refocus"
+    class="word-kreb no-refocus ja"
     :class="[
       kreb.is_common ? 'common' : null,
       kreb.progress.learned_at ? 'learned' : null,
@@ -72,11 +72,10 @@ export default {
 // TODO: this class is also used in WordInfoPitchNhk component
 .vue-pitch-word {
   $pitch-color: #d00;
-  .br {
-    border-bottom: 1px solid $pitch-color;
-    border-right: 1px solid $pitch-color;
-    margin-right: -1px;
-  }
+  line-height: 1em;
+
+  // Available pitch classes: .br, .tr, .t, .b, .voiceless, .nasal
+  // We aren't using .br and .b because it looks clearer without them (NHK style)
   .tr {
     border-top: 1px solid $pitch-color;
     border-right: 1px solid $pitch-color;
@@ -84,9 +83,6 @@ export default {
   }
   .t {
     border-top: 1px solid $pitch-color;
-  }
-  .b {
-    border-bottom: 1px solid $pitch-color;
   }
   .voiceless::after {
     position: absolute;

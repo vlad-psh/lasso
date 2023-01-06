@@ -1,5 +1,5 @@
 <template>
-  <div class="similars">
+  <div class="similars ja">
     <div
       v-for="(cells, i) of [
         ['jy', 'y'],

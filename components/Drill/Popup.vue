@@ -118,12 +118,13 @@ export default {
         white-space: nowrap;
         line-height: 2.5em;
         padding-right: 0.5em;
+        font-weight: 300;
       }
       .title,
       .status {
         border-style: solid none none none;
         border-width: 1px;
-        border-color: #7773;
+        border-color: var(--border-color);
       }
       &:first-child {
         .title,

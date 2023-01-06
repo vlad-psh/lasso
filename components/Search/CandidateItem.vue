@@ -5,11 +5,16 @@
     @click="onClick(item[0])"
   >
     <div class="title">
-      <div class="text">{{ item[1] }}</div>
-      <div v-if="item[4]" class="common-icon">&#x2b50;</div>
-      <div v-if="item[5]" class="learned-icon"><LearnedIcon /></div>
+      <div class="text ja">{{ item[1] }}</div>
+      <div class="icons">
+        <div v-if="item[5]" class="learned-icon"><LearnedIcon /></div>
+        <div v-if="item[4]" class="common-icon">&#x2b50;</div>
+      </div>
     </div>
-    <div class="details">{{ item[2] }}・{{ item[3] }}</div>
+    <div class="details">
+      <span class="ja">{{ item[2] }}</span
+      >・<span class="en">{{ item[3] }}</span>
+    </div>
   </div>
 </template>
 
@@ -30,7 +35,7 @@ export default {
 .candidate-item {
   padding: 0.2em 0.4em;
   cursor: pointer;
-  border-radius: 0.5em;
+  border-radius: 0.2em;
   margin: 0.1em 0.2em;
 
   &.selected {
@@ -42,7 +47,7 @@ export default {
   &:hover,
   &.selected {
     .title {
-      font-weight: bold;
+      font-weight: 700;
     }
     .details {
       opacity: 1;
@@ -55,11 +60,13 @@ export default {
 
     .text {
       flex-grow: 10;
+      font-weight: 400;
     }
 
     .common-icon,
     .learned-icon {
       display: inline-block;
+      font-size: 0.8em;
 
       svg {
         height: 1em;
@@ -69,7 +76,7 @@ export default {
   }
   .details {
     width: 100%;
-    font-size: 0.7em;
+    font-size: 0.72em;
     opacity: 0.5;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -79,18 +86,11 @@ export default {
 
 @media (max-width: 568px) {
   .candidate-item {
-    padding: 0.12em 0.2em;
+    margin: 0;
+    border-radius: 0;
+
     .title {
       font-size: 0.9em;
-      .common-icon,
-      .learned-icon {
-        font-size: 0.7em;
-      }
-    }
-    .details {
-      width: 14em;
-      padding-left: 0;
-      font-size: 0.7em;
     }
   }
 }

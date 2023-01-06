@@ -24,7 +24,7 @@
             </div>
             <div
               v-shortkey="[word.index]"
-              class="sentence-word word-question"
+              class="sentence-word word-question ja"
               :class="{ answered: !!word.answer }"
               @click="selectWord(wordIndex)"
               @shortkey="selectWord(wordIndex)"
@@ -267,6 +267,12 @@ export default {
     grid-auto-columns: auto;
 
     .answer-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      letter-spacing: 0.15em;
       padding: 0.5em 1em;
       cursor: pointer;
       text-align: center;
@@ -276,6 +282,7 @@ export default {
 
       .answer-details {
         font-size: x-small;
+        letter-spacing: 0em;
         margin: -0.3em 0 -0.2em 0;
         opacity: 0.6;
       }

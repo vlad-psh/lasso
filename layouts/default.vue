@@ -19,11 +19,11 @@ export default {
 
 <style lang="scss">
 body {
-  --color: black;
+  --color: rgb(41, 47, 57);
   --bg: #fff;
   --bg-secondary: #f0f0f0;
 
-  --border-color: rgb(243, 244, 246);
+  --border-color: rgb(0, 5, 10, 0.05);
 
   --light-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
   --darker-bg: rgba(249, 250, 251, 1);

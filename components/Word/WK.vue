@@ -4,10 +4,13 @@
 
     <div v-for="card of cards" :key="card.title" class="wk-element">
       <span class="level">{{ card.level }}</span>
-      {{ card.title }} ・ {{ card.meaning.split(',')[0] }}
+      <span class="ja">{{ card.title }}</span> ・
+      <span class="en">{{ card.meaning.split(',')[0] }}</span>
       <ul>
         <li v-for="(sentence, idx) in card.sentences" :key="idx">
-          {{ sentence.ja }}<br />{{ sentence.en }}
+          <span class="ja">{{ sentence.ja }}</span>
+          <br />
+          <span class="en">{{ sentence.en }}</span>
         </li>
       </ul>
     </div>
@@ -25,6 +28,8 @@ export default {
 
 <style lang="scss">
 .wk-info {
+  padding: 0.4em;
+
   .svg-icon {
     float: left;
     margin-right: 0.5em;
