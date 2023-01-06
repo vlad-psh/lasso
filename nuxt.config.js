@@ -18,6 +18,7 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
+    '@/plugins/axios.client.js', // Order matters (should be before auth)
     '@/plugins/auth.js',
     '@/plugins/search.js',
     '@/plugins/activity.client.js',
