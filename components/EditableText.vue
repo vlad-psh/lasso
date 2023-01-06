@@ -1,6 +1,6 @@
 <template>
   <div :class="mode" class="editable-text">
-    <div v-if="formOpened">
+    <template v-if="formOpened">
       <input
         v-if="mode === 'compact'"
         v-model="textCache"
@@ -12,21 +12,19 @@
         id="word-comment-textarea"
         v-model="textCache"
         @keyup.esc="closeForm()"
+        ref="textarea"
       ></textarea>
       <input type="button" value="Save" @click="updateText()" />
       <div class="error">{{ errorMessage }}</div>
-    </div>
+    </template>
 
-    <div v-else @click="openForm()">
-      <template v-if="textData">
-        <pre>{{ textData }}</pre>
-      </template>
-      <template v-else>
-        <p class="placeholder">
-          {{ placeholder }}
-        </p>
-      </template>
-    </div>
+    <pre v-else-if="!formOpened && textData" @click="openForm()">{{
+      textData
+    }}</pre>
+
+    <p v-else @click="openForm()" class="placeholder">
+      {{ placeholder }}
+    </p>
   </div>
 </template>
 
@@ -54,6 +52,7 @@ export default {
     openForm() {
       if (!this.textCache) this.textCache = this.textData
       this.formOpened = true
+      this.$nextTick(() => this.$refs.textarea?.focus())
     },
     closeForm() {
       this.formOpened = false
@@ -77,8 +76,14 @@ export default {
 
 <style lang="scss">
 .editable-text {
+  pre,
+  textarea,
+  p.placeholder {
+    background: #00000006;
+    border-radius: 0.4em;
+  }
+
   &:hover {
-    background-color: rgba(128, 128, 128, 0.2);
     cursor: pointer;
   }
   &.compact {
@@ -91,29 +96,35 @@ export default {
   } // end of &.compact
 
   &.large {
-    padding: 0.3em 0.12em;
     margin: 0.3em 0;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
 
     textarea {
-      width: 100%;
       height: 8em;
       resize: vertical;
-      font-size: 0.9em;
-      box-sizing: border-box;
+      font-size: inherit;
     }
 
-    pre {
-      border-left: 3px solid #17a0ca;
-      padding-left: 0.5em;
-    }
-
+    textarea,
+    pre,
     p.placeholder {
-      border-left: 3px solid #7774;
-      padding-left: 0.5em;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0.5em 0.8em;
+      border: none;
+      color: inherit;
     }
 
     .error {
       float: right;
+    }
+
+    input[type='button'] {
+      margin-top: 0.5em;
+      cursor: pointer;
     }
   } // end of &.large
 
@@ -125,8 +136,7 @@ export default {
 
   p.placeholder {
     margin: 0;
-    font-style: italic;
-    color: rgba(128, 128, 128, 0.7);
+    color: rgba(128, 128, 128, 0.7) !important;
   }
 
   .error {
