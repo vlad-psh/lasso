@@ -89,7 +89,7 @@ export default {
     width: 100%;
     border-radius: 0.4em;
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgb(229 231 235);
   }
 
   .clear-button {

@@ -76,4 +76,48 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+#search-app {
+  display: grid;
+  grid-template-columns: clamp(10em, 25vw, 22em) 1fr;
+  grid-template-rows: 100%;
+  overflow: hidden;
+
+  .browse-panel {
+    border: 0px solid var(--border-color);
+    border-right-width: 1px;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+
+    .search-results {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+
+  .contents-panel {
+    height: 100%;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 568px) {
+  #search-app {
+    grid-template-columns: 1fr 10em;
+
+    .browse-panel {
+      grid-row: 1;
+      grid-column: 2;
+      border-right-width: 0;
+      border-left-width: 1px;
+    }
+    .contents-panel {
+      grid-row: 1;
+      grid-column: 1;
+      font-size: 1em;
+    }
+  }
+}
+</style>

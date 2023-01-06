@@ -5,10 +5,8 @@
     @click="onClick(item[0])"
   >
     <div class="title">
-      <div class="common-icon" :class="item[4] ? 'common' : 'uncommon'">
-        &#x2b50;
-      </div>
       <div class="text">{{ item[1] }}</div>
+      <div v-if="item[4]" class="common-icon">&#x2b50;</div>
       <div v-if="item[5]" class="learned-icon"><LearnedIcon /></div>
     </div>
     <div class="details">{{ item[2] }}・{{ item[3] }}</div>
@@ -31,11 +29,12 @@ export default {
 <style lang="scss">
 .candidate-item {
   padding: 0.2em 0.4em;
-  border-bottom: 1px solid var(--border-color);
   cursor: pointer;
+  border-radius: 0.5em;
+  margin: 0.1em 0.2em;
 
   &.selected {
-    background: #008ace !important;
+    background-image: linear-gradient(to bottom, #1aa0d5, #095bb3);
     color: white;
   }
   &:hover,
@@ -50,22 +49,15 @@ export default {
   .title {
     display: flex;
     align-items: center;
+    gap: 0.3em;
 
     .text {
       flex-grow: 10;
     }
 
-    .common-icon {
-      display: inline-block;
-      margin-right: 0.2em;
-      font-weight: normal;
-
-      &.uncommon {
-        opacity: 0;
-      }
-    }
+    .common-icon,
     .learned-icon {
-      float: right;
+      display: inline-block;
 
       svg {
         height: 1em;
@@ -74,13 +66,30 @@ export default {
     }
   }
   .details {
-    width: 27em;
-    padding-left: 1.7em;
+    width: 100%;
     font-size: 0.7em;
     opacity: 0.5;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+}
+
+@media (max-width: 568px) {
+  .candidate-item {
+    padding: 0.12em 0.2em;
+    .title {
+      font-size: 0.9em;
+      .common-icon,
+      .learned-icon {
+        font-size: 0.7em;
+      }
+    }
+    .details {
+      width: 14em;
+      padding-left: 0;
+      font-size: 0.7em;
+    }
   }
 }
 </style>
