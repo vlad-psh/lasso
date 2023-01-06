@@ -51,6 +51,8 @@ export default {
 <style lang="scss">
 .icon-nhk {
   display: inline-block;
+  padding: 0.4em;
+
   svg {
     width: 3em;
     height: 1em;

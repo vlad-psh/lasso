@@ -75,18 +75,28 @@ export default {
   }
 }
 .word-kreb {
-  font-size: 1.4em;
+  padding: 0.2em 0.5em;
+  font-size: 1.3em;
   position: relative;
   display: inline-block;
   cursor: pointer;
-  border: none;
-  padding: 0.2em 0.3em;
-  border-radius: 0.15em;
-  box-shadow: inset 1px 1px 10px 1px #62626240;
+  border: 1px solid var(--grey-tag-border-color);
+  border-radius: 0.4em;
+  box-shadow: var(--light-shadow);
+
+  &:hover {
+    background-image: var(--grey-tag-bg-gradient);
+  }
 
   &.common {
-    box-shadow: inset 1px 1px 8px 1px #0277465c;
-    background: #3bc83b0f;
+    background-color: var(--purple-tag-bg);
+    color: var(--purple-tag-color);
+    border-color: transparent;
+    box-shadow: none;
+
+    &:hover {
+      background-image: var(--purple-tag-bg-gradient);
+    }
   }
 }
 .jisho-search-link {

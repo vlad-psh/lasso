@@ -1,30 +1,30 @@
 <template>
-  <div class="vue-word word-card" :data-seq="seq">
-    <WordLoading v-if="!word || word.seq !== seq" />
+  <div class="word-component">
+    <div class="word-card" :data-seq="seq">
+      <WordLoading v-if="!word || word.seq !== seq" />
 
-    <div v-if="word" class="word-info">
-      <WordKrebs :krebs="word.krebs" :seq="seq" />
-      <WordDrills :word="word" />
-      <WordPitchNhk :payload="word.nhk_data" />
+      <div v-if="word" class="word-info">
+        <WordKrebs :krebs="word.krebs" :seq="seq" />
+        <WordDrills :word="word" />
+        <WordPitchNhk :payload="word.nhk_data" />
 
-      <WordGloss v-if="word.meikyo" :payload="word.meikyo" lang="jp" />
-      <WordGloss v-if="word.en" :payload="word.en || []" lang="uk" />
-      <WordGloss v-if="word.ru" :payload="word.ru || []" lang="ru" />
-      <WordGloss v-if="word.az" :payload="word.az || []" lang="az" />
+        <WordGloss v-if="word.meikyo" :payload="word.meikyo" lang="jp" />
+        <WordGloss v-if="word.en" :payload="word.en || []" lang="uk" />
+        <WordGloss v-if="word.ru" :payload="word.ru || []" lang="ru" />
+        <WordGloss v-if="word.az" :payload="word.az || []" lang="az" />
 
-      <EditableText
-        :text-data="word.comment"
-        placeholder="Add comment..."
-        @save="saveComment"
-      />
+        <EditableText
+          :text-data="word.comment"
+          placeholder="Add comment..."
+          @save="saveComment"
+        />
 
-      <WordWK :cards="word.cards || []" />
+        <WordWK :cards="word.cards || []" />
+      </div>
     </div>
 
-    <div class="kanji-info">
-      <div class="kanji-list">
-        <KanjiComponent v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
-      </div>
+    <div class="word-kanji">
+      <KanjiComponent v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
     </div>
   </div>
 </template>
@@ -72,97 +72,39 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // TODO: fix 'non-selectable'
-.word-card {
-  padding: 0.6em;
+.word-component {
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-column-gap: 0.6em;
 
-  .word-details {
-    text-align: justify;
-    padding: 0.3em 0;
-    line-height: 1.6em;
-
-    .icon {
-      // @include non-selectable;
-      display: inline-block;
-      font-size: 1.4em;
-      vertical-align: middle;
-      margin-right: 0.3em;
-      line-height: 0;
-    }
-    .pos {
-      color: green;
-      font-style: italic;
-      font-size: 0.9em;
-    }
-  } /* end of .word-glosses */
-
-  .action-buttons {
-    opacity: 0.4;
-    font-size: 0.8em;
-
-    &:hover {
-      opacity: 1;
-    }
-    a {
-      cursor: pointer;
-    }
+  .word-card {
+    padding: 0.6em;
   }
 
-  .word-comment-form.vue-editable-text {
-    padding: 0.1em 0.6em;
-    margin: -0.1em auto;
-
-    &:hover {
-      background-color: rgba(128, 128, 128, 0.2);
-      cursor: pointer;
-    }
-    p {
-      margin: 0.4em 0;
-      text-align: justify;
-    }
-    textarea {
-      width: 100%;
-      height: 8em;
-      resize: vertical;
-    }
-  } /* end of .word-comment-form */
-
-  .vue-kanji {
+  .word-kanji {
+    border-left: 1px solid var(--border-color);
     max-width: 25em;
     display: inline-block;
     vertical-align: top;
-    margin-bottom: 1em;
 
     .vue-editable-text {
       margin: 0 -0.6em;
       font-size: 0.9em;
     }
   }
-} /* end of .word-card */
-
-.tear-line {
-  width: 100%;
-  height: 16px;
-  background-repeat: repeat-x;
-  background-size: 10px 16px;
-  background-image: url('~assets/backgrounds/tear-line.svg');
-  margin-top: 1em;
-}
+} /* end of .word-component */
 
 @media (max-width: 568px) {
   body {
-    .word-card {
+    .word-component {
       display: block;
 
-      .kanji-list {
+      .word-kanji {
+        border-left: none;
         margin-top: 1em;
-        .vue-kanji {
-          max-width: unset;
-        }
+        max-width: unset;
       }
     }
   }

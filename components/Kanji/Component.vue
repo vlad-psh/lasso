@@ -155,8 +155,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .vue-kanji {
+  box-shadow: var(--light-shadow);
+  background: var(--darker-bg);
+  border: 1px solid var(--border-color);
+  margin: 0.6em;
+  padding: 0.6em;
+  border-radius: 0.4em;
+
   .definition {
     line-height: 1.6em;
     padding: 0.3em 0;
