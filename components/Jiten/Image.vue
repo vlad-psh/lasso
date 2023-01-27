@@ -6,15 +6,14 @@
 
 <script>
 export default {
-  props: {
-    payload: { type: Object, required: true },
-  },
   computed: {
     imgSrc() {
-      const i = this.payload
-      if (!i) return null
-      const page = '0000'.slice(i.page.toString().length) + i.page
-      return `/jiten/data/${i.mode}/${page}.png`
+      const { mode, page } = this.$store.state.search.current
+
+      if (mode === 'primary' || !page) return null
+
+      const pageStr = '0000'.slice(page.toString().length) + page
+      return `/jiten/data/${mode}/${pageStr}.png`
     },
   },
 }

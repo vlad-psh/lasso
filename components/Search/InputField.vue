@@ -7,20 +7,25 @@
     />
 
     <input
+      class="shortkey-enabled"
       ref="searchField"
       v-model="searchField"
-      v-shortkey.focus="['esc']"
+      v-shortkey="{
+        focus: ['esc'],
+        nextCandidate: ['arrowdown'],
+        prevCandidate: ['arrowup'],
+      }"
       type="text"
       placeholder="Search..."
+      @shortkey="shortkey"
       @keydown.enter="search"
       @keydown.tab.prevent="switchDictionary"
-      @keydown.esc="clearInputField"
-      @keydown.down="$emit('switch-candidate', 'next')"
-      @keydown.up="$emit('switch-candidate', 'prev')"
     />
     <div class="clear-button" @click="clearInputField">
       <ClearIcon />
     </div>
+
+    <JitenNavigation v-if="selectedMode !== 'primary'" />
   </div>
 </template>
 
@@ -70,6 +75,15 @@ export default {
       const modes = this.$search.modes.map((i) => i.id)
       const idx = modes.findIndex((i) => i === this.selectedMode)
       this.selectedMode = modes[(idx + 1) % modes.length]
+    },
+    shortkey(event) {
+      if (event.srcKey === 'nextCandidate') {
+        this.$emit('switch-candidate', 'next')
+      } else if (event.srcKey === 'prevCandidate') {
+        this.$emit('switch-candidate', 'prev')
+      } else if (event.srcKey === 'focus') {
+        this.clearInputField()
+      }
     },
   },
 }

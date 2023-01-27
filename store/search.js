@@ -6,6 +6,7 @@ export const state = () => ({
     mode: null, // primary, kokugo, kanji, onomat
     query: null,
     seq: null,
+    page: null,
   },
 })
 

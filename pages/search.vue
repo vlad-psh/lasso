@@ -18,7 +18,7 @@
     </div>
     <div class="contents-panel">
       <WordComponent v-if="currentMode === 'primary'" :seq="current.seq" />
-      <JitenImage v-else-if="currentMode === 'jiten'" :payload="current" />
+      <JitenImage v-else-if="currentMode === 'jiten'" />
     </div>
   </div>
 </template>
