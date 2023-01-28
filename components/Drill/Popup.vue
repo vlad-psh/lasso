@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { compareStrings } from '@/js/helpers.js'
+
 export default {
   props: {
     activeDrills: { type: Array, required: true },
@@ -45,7 +47,7 @@ export default {
           if (activeB) {
             return activeA ? 0 : 1
           } else {
-            return activeA ? -1 : b.id - a.id
+            return activeA ? -1 : compareStrings(b.updatedAt, a.updatedAt)
           }
         })
     },
