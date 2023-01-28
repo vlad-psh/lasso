@@ -5,7 +5,7 @@ paths \
 
 get :drills do
   protect!
-  drills = Drill.where(user: current_user).order(created_at: :desc)
+  drills = Drill.where(user: current_user).order(updated_at: :desc)
   drills.map(&:to_h).to_json
 end
 
@@ -92,6 +92,7 @@ post :drills_words do
   else
     drill.progresses << progress
     progress.update(flagged: true)
+    drill.touch
     return {result: :added}.to_json
   end
 end

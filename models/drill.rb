@@ -20,6 +20,6 @@ class Drill < ActiveRecord::Base
   end
 
   def to_h
-    self.serializable_hash(only: [:id, :title, :is_active, :created_at])
+    self.serializable_hash(only: [:id, :title, :is_active, :updated_at])
   end
 end
