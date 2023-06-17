@@ -19,21 +19,28 @@
     </div>
     <div class="right">
       <div class="main-menu-item username">
-        {{ $store.state.env.user.login }}
-        <a @click="$auth.logout">logout</a>
+        {{ user.login }}
+        <a @click="logout">logout</a>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import SearchIcon from '@/assets/icons/search.svg?inline'
-import BookmarkIcon from '@/assets/icons/bookmark.svg?inline'
-import QAIcon from '@/assets/icons/qa.svg?inline'
+<script setup>
+  import { storeToRefs } from 'pinia'
 
-export default {
-  components: { SearchIcon, BookmarkIcon, QAIcon },
-}
+  import SearchIcon from 'assets/icons/search.svg'
+  import BookmarkIcon from '../assets/icons/bookmark.svg'
+  import QAIcon from 'assets/icons/qa.svg'
+
+  const store = useEnv()
+  const { user } = storeToRefs(store)
+  const { setUser } = store
+
+  const logout = () => {
+    $fetch('/api/session', { method: 'DELETE' })
+    setUser(undefined)
+  }
 </script>
 
 <style lang="scss">
