@@ -18,24 +18,26 @@
   </span>
 </template>
 
-<script>
-export default {
-  props: {
+<script setup>
+  defineProps({
     nodeName: { type: String, required: true },
     children: { type: Array, required: true },
-  },
-  methods: {
-    path(query) {
-      return this.$router.resolve({
-        name: 'sub-search',
-        params: { query },
-      }).href
-    },
-    search(query) {
-      this.$search.execute({ query, mode: 'primary', popRoute: true })
-    },
-  },
-}
+  })
+
+  const router = useRouter()
+  const store = useSearch()
+
+  const path = (query) => {
+    // TODO: Fix links
+    // return router.resolve({
+    //   name: 'sub-search',
+    //   params: { query },
+    // }).href
+  }
+
+  const search = (query) => {
+    store.search(query, 'primary', { popRoute: true })
+  }
 </script>
 
 <style lang="scss">

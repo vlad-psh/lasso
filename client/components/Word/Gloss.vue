@@ -32,27 +32,18 @@
   </div>
 </template>
 
-<script>
-import FlagJP from '@/assets/icons/flag-jp.svg?inline'
-import FlagUK from '@/assets/icons/flag-uk.svg?inline'
-import FlagRU from '@/assets/icons/flag-ru.svg?inline'
-import FlagAZ from '@/assets/icons/flag-az.svg?inline'
+<script setup>
+  import FlagJP from '../../assets/icons/flag-jp.svg'
+  import FlagUK from '../../assets/icons/flag-uk.svg'
+  import FlagRU from '../../assets/icons/flag-ru.svg'
+  import FlagAZ from '../../assets/icons/flag-az.svg'
 
-export default {
-  components: { FlagJP, FlagUK, FlagRU, FlagAZ },
-  props: {
+  defineProps({
     payload: { type: Array, required: true },
     lang: { type: String, required: true },
-  },
-  data() {
-    return {
-      bullets:
-        '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿'.split(
-          ''
-        ),
-    }
-  },
-}
+  })
+
+  const bullets = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳㉑㉒㉓㉔㉕㉖㉗㉘㉙㉚㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿'.split('')
 </script>
 
 <style lang="scss" scoped>

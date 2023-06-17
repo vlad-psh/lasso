@@ -29,47 +29,54 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
+<script setup>
+
+  const props = defineProps({
     seq: { type: Number, required: true },
-  },
-  async fetch() {
-    this.word = await this.$store.dispatch('cache/loadWord', this.seq)
-  },
-  data() {
-    return { word: null }
-  },
-  computed: {
-    kanji() {
-      return (this.word ? this.word.kanji || '' : '')
-        .split('')
-        .map((k) => this.$store.state.cache.kanji[k])
-    },
-  },
-  watch: {
-    async seq(newSeq, oldSeq) {
-      if (this.word.seq !== newSeq)
-        this.word = await this.$store.dispatch('cache/loadWord', newSeq)
-    },
-  },
-  methods: {
-    saveComment(text, cb) {
-      this.$axios
-        .post(`/api/word/${this.seq}/comment`, { comment: text })
-        .then((resp) => {
-          this.$store.commit('cache/UPDATE_WORD_COMMENT', {
-            seq: this.seq,
-            text,
-          })
-          cb.resolve()
-        })
-        .catch((e) => {
-          cb.reject(e.message)
-        })
-    },
-  },
-}
+  })
+
+  const store = useCache()
+  let word = ref()
+  const seqRef = ref(props.seq)
+
+  const loadWord = async (seq) => {
+    word.value = await store.loadWord(seq)
+  }
+
+  watch(() => props.seq, loadWord)
+  loadWord(props.seq)
+
+// export default {
+//   computed: {
+//     kanji() {
+//       return (this.word ? this.word.kanji || '' : '')
+//         .split('')
+//         .map((k) => this.$store.state.cache.kanji[k])
+//     },
+//   },
+//   watch: {
+//     async seq(newSeq, oldSeq) {
+//       if (this.word.seq !== newSeq)
+//         this.word = await this.$store.dispatch('cache/loadWord', newSeq)
+//     },
+//   },
+//   methods: {
+//     saveComment(text, cb) {
+//       this.$axios
+//         .post(`/api/word/${this.seq}/comment`, { comment: text })
+//         .then((resp) => {
+//           this.$store.commit('cache/UPDATE_WORD_COMMENT', {
+//             seq: this.seq,
+//             text,
+//           })
+//           cb.resolve()
+//         })
+//         .catch((e) => {
+//           cb.reject(e.message)
+//         })
+//     },
+//   },
+// }
 </script>
 
 <style lang="scss" scoped>
