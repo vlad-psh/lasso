@@ -46,6 +46,21 @@
   watch(() => props.seq, loadWord)
   loadWord(props.seq)
 
+  const saveComment = async (text, cb) => {
+    try {
+      await $fetch(`/api/word/${props.seq}/comment`, {
+        method: 'POST',
+        body: { comment: text }
+      })
+
+      store.updateWordComment({ seq: props.seq, text })
+      cb.resolve()
+    } catch (e) {
+      console.error('Request failed:', e)
+      cb.reject(e.message)
+    }
+  }
+
 // export default {
 //   computed: {
 //     kanji() {
@@ -54,29 +69,6 @@
 //         .map((k) => this.$store.state.cache.kanji[k])
 //     },
 //   },
-//   watch: {
-//     async seq(newSeq, oldSeq) {
-//       if (this.word.seq !== newSeq)
-//         this.word = await this.$store.dispatch('cache/loadWord', newSeq)
-//     },
-//   },
-//   methods: {
-//     saveComment(text, cb) {
-//       this.$axios
-//         .post(`/api/word/${this.seq}/comment`, { comment: text })
-//         .then((resp) => {
-//           this.$store.commit('cache/UPDATE_WORD_COMMENT', {
-//             seq: this.seq,
-//             text,
-//           })
-//           cb.resolve()
-//         })
-//         .catch((e) => {
-//           cb.reject(e.message)
-//         })
-//     },
-//   },
-// }
 </script>
 
 <style lang="scss" scoped>
