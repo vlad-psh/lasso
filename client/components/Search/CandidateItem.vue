@@ -18,17 +18,14 @@
   </div>
 </template>
 
-<script>
-import LearnedIcon from '@/assets/icons/learned.svg?inline'
+<script setup>
+  import LearnedIcon from '../../assets/icons/learned.svg'
 
-export default {
-  components: { LearnedIcon },
-  props: {
+  defineProps({
     item: { type: Array, required: true },
     isSelected: { type: Boolean },
     onClick: { type: Function, required: true },
-  },
-}
+  })
 </script>
 
 <style lang="scss">

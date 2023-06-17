@@ -8,7 +8,7 @@
 
     <input
       class="shortkey-enabled"
-      ref="searchField"
+      ref="searchFieldRef"
       v-model="searchField"
       v-shortkey="{
         focus: ['esc'],
@@ -18,7 +18,7 @@
       type="text"
       placeholder="Search..."
       @shortkey="shortkey"
-      @keydown.enter="search"
+      @keydown.enter="emitSearch"
       @keydown.tab.prevent="switchDictionary"
     />
     <div class="clear-button" @click="clearInputField">
@@ -29,64 +29,55 @@
   </div>
 </template>
 
-<script>
-import debounce from '@/js/debouncer.js'
-import ClearIcon from '@/assets/icons/clear.svg?inline'
+<script setup>
+  import debounce from '@/js/debouncer.js'
+  import ClearIcon from '../../assets/icons/clear.svg'
 
-export default {
-  components: { ClearIcon },
-  data() {
-    return {
-      searchField: this.$store.state.search.query,
-      searchQuery: this.$store.state.search.query, // when user press 'Enter'
-      selectedMode: 'primary',
+  const store = useSearch()
+  const route = useRoute()
+  let searchFieldRef = ref(null)
+
+  const searchField = ref(store.query)
+  const searchQuery = ref(store.query) // when user press 'Enter'
+  const selectedMode = ref('primary')
+
+  const emitSearch = () => {
+    searchQuery.value = searchField.value
+    store.search(searchQuery.value, selectedMode.value, { popRoute: true })
+  }
+
+  const searchLater = debounce(function () {
+    // TODO: Prevent request while composing japanese text using IME
+    // Otherwise, same (unchanged) request will be sent after each key press
+    emitSearch()
+  }, 250)
+
+  const clearInputField = () => {
+    searchFieldRef.value.focus()
+    searchFieldRef.value.select()
+  }
+
+  const switchDictionary = () => {
+    const modes = store.searchModes.map((i) => i.id)
+    const idx = modes.findIndex((i) => i === selectedMode.value)
+    selectedMode.value = modes[(idx + 1) % modes.length]
+  }
+
+  const shortkey = (event) => {
+    if (event.srcKey === 'nextCandidate') {
+      this.$emit('switch-candidate', 'next')
+    } else if (event.srcKey === 'prevCandidate') {
+      this.$emit('switch-candidate', 'prev')
+    } else if (event.srcKey === 'focus') {
+      this.clearInputField()
     }
-  },
-  // watch: {
-  //   '$route.params'() {
-  //     this.searchField = this.$route.params.query || ''
-  //     this.searchQuery = this.$route.params.query || ''
-  //   },
-  // },
-  mounted() {
-    this.searchField = this.$route.params.query
-    this.searchQuery = this.$route.params.query
-    this.selectedMode = this.$store.state.search.current.mode || 'primary'
-  },
-  methods: {
-    searchLater: debounce(function () {
-      this.search()
-    }, 250),
-    search() {
-      this.searchQuery = this.searchField
-      this.$search.execute({
-        query: this.searchQuery,
-        popRoute: true,
-        mode: this.selectedMode,
-      })
-    },
-    clearInputField() {
-      this.$store.commit('search/RESET_AXIOS_CANCEL_HANDLER')
-      // this.searchField = ''
-      this.$refs.searchField.focus()
-      this.$refs.searchField.select()
-    },
-    switchDictionary() {
-      const modes = this.$search.modes.map((i) => i.id)
-      const idx = modes.findIndex((i) => i === this.selectedMode)
-      this.selectedMode = modes[(idx + 1) % modes.length]
-    },
-    shortkey(event) {
-      if (event.srcKey === 'nextCandidate') {
-        this.$emit('switch-candidate', 'next')
-      } else if (event.srcKey === 'prevCandidate') {
-        this.$emit('switch-candidate', 'prev')
-      } else if (event.srcKey === 'focus') {
-        this.clearInputField()
-      }
-    },
-  },
-}
+  }
+
+  onMounted(() => {
+    searchField.value = route.params.query
+    searchQuery.value = route.params.query
+    selectedMode.value = store.current.mode || 'primary'
+  })
 </script>
 
 <style lang="scss" scoped>
