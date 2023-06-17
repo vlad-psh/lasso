@@ -1,20 +1,19 @@
 <template>
   <div id="__layout_inner">
-    <template v-if="$auth.loggedIn === true">
+    <template v-if="user">
       <MainMenu />
-      <Nuxt keep-alive />
+      <!-- <Nuxt keep-alive /> -->
+      <slot />
     </template>
-    <LoginForm v-else-if="$auth.loggedIn === false" />
+    <LoginForm v-else />
   </div>
 </template>
 
-<script>
-import MainMenu from '@/components/MainMenu'
-import LoginForm from '@/components/LoginForm'
+<script setup>
+  import { storeToRefs } from 'pinia'
 
-export default {
-  components: { MainMenu, LoginForm },
-}
+  const store = useEnv()
+  const { user } = storeToRefs(store)
 </script>
 
 <style lang="scss">
