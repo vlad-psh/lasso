@@ -17,13 +17,12 @@
   </div>
 </template>
 
-<script>
-import CrabIcon from '@/assets/icons/crab.svg?inline'
+<script setup>
+  import CrabIcon from '../../assets/icons/crab.svg'
 
-export default {
-  components: { CrabIcon },
-  props: { cards: { type: Array, required: true } },
-}
+  defineProps({
+    cards: { type: Array, required: true },
+  })
 </script>
 
 <style lang="scss">

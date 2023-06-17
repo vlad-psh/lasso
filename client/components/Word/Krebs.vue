@@ -1,18 +1,18 @@
 <template>
   <div class="word-krebs">
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
-      <Popper trigger="clickToToggle">
-        <div class="popper">
-          <DrillPopup
-            :active-drills="kreb.drills"
-            :kreb-title="kreb.title"
-            :seq="seq"
-          ></DrillPopup>
-        </div>
-        <span slot="reference">
-          <WordPitch :kreb="kreb" />
-        </span>
-      </Popper>
+      <Dropdown trigger="clickToToggle">
+        <WordPitch :kreb="kreb" />
+        <template #popper>
+          <div class="popper">
+            <DrillPopup
+              :active-drills="kreb.drills"
+              :kreb-title="kreb.title"
+              :seq="seq"
+            ></DrillPopup>
+          </div>
+        </template>
+      </Dropdown>
 
       <div v-if="kreb.drills.length > 0" class="drills-counter">
         {{ kreb.drills.length }}
@@ -28,29 +28,27 @@
   </div>
 </template>
 
-<script>
-import Popper from 'vue-popperjs'
-import 'vue-popperjs/dist/vue-popper.css'
+<script setup>
+  import { Dropdown } from 'floating-vue'
+  import 'floating-vue/dist/style.css'
 
-export default {
-  components: { Popper },
-  props: {
+  defineProps({
     krebs: { type: Array, required: true },
     seq: { type: Number, required: true },
-  },
-  methods: {
-    searchRoute(kreb) {
-      return { name: 'sub-search', params: { query: kreb.title } }
-    },
-    search(kreb) {
-      this.$search.execute({
-        query: kreb.title,
-        popRoute: true,
-        mode: 'kokugo',
-      })
-    },
-  },
-}
+  })
+
+  const searchRoute = (kreb) => {
+    // TODO: Fix link
+    // return { name: 'sub-search', params: { query: kreb.title } }
+  }
+
+  const search = (kreb) => {
+    // this.$search.execute({
+    //   query: kreb.title,
+    //   popRoute: true,
+    //   mode: 'kokugo',
+    // })
+  }
 </script>
 
 <style lang="scss">

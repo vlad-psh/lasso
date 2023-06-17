@@ -14,38 +14,34 @@
   </div>
 </template>
 
-<script>
-import NHKIcon from '@/assets/icons/nhk.svg?inline'
+<script setup>
+  import NHKIcon from '../../assets/icons/nhk.svg'
 
-export default {
-  components: { NHKIcon },
-  props: {
+  const props = defineProps({
     payload: { type: Object, default: null },
-  },
-  computed: {
-    words() {
-      const words = []
-      for (const w of Object.keys(this.payload)) {
-        const word = []
-        for (const c of w.split('')) {
-          if (c === '@') {
-            word[word.length - 1].cl.push('voiceless')
-          } else if (c === '~') {
-            word[word.length - 1].cl.push('nasal')
-          } else if (c === '=') {
-            word[word.length - 1].cl.push('t')
-          } else if (c === '^') {
-            word[word.length - 1].cl.push('tr')
-          } else {
-            word.push({ ch: c, cl: [] })
-          }
+  })
+
+  const words = computed(() => {
+    const words = []
+    for (const w of Object.keys(props.payload)) {
+      const word = []
+      for (const c of w.split('')) {
+        if (c === '@') {
+          word[word.length - 1].cl.push('voiceless')
+        } else if (c === '~') {
+          word[word.length - 1].cl.push('nasal')
+        } else if (c === '=') {
+          word[word.length - 1].cl.push('t')
+        } else if (c === '^') {
+          word[word.length - 1].cl.push('tr')
+        } else {
+          word.push({ ch: c, cl: [] })
         }
-        words.push(word)
       }
-      return words
-    },
-  },
-}
+      words.push(word)
+    }
+    return words
+  })
 </script>
 
 <style lang="scss">

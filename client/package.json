@@ -7,16 +7,17 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "devDependencies": {
-    "@unhead/vue": "^1.1.27",
-    "nuxt": "^3.5.3"
-  },
   "dependencies": {
     "@nuxtjs/color-mode": "^3.2.0",
     "@pinia/nuxt": "^0.4.11",
+    "floating-vue": "^2.0.0-beta.22",
+    "nuxt": "^3.5.3",
     "pinia": "^2.1.4",
     "sass": "^1.63.4",
     "vite-svg-loader": "^4.0.0",
     "vue-popperjs": "^2.3.0"
+  },
+  "devDependencies": {
+    "@unhead/vue": "^1.1.27"
   }
 }
