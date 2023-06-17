@@ -2,6 +2,8 @@ Gemfile.lock
 yarn.lock
 
 server/config/*.yml
+# Configuration for Procfiles
+.env
 
 # Dependency directories
 node_modules/
