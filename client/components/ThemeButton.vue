@@ -1,29 +1,19 @@
 <template>
   <a class="icon" @click="switchValue()">
-    <SunIcon v-if="$colorMode.preference === 'light'" />
+    <SunIcon v-if="colorMode === 'light'" />
     <MoonIcon v-else />
   </a>
 </template>
 
-<script>
-import SunIcon from '@/assets/icons/sun.svg?inline'
-import MoonIcon from '@/assets/icons/moon.svg?inline'
+<script setup>
+  import SunIcon from '../assets/icons/sun.svg'
+  import MoonIcon from '../assets/icons/moon.svg'
 
-export default {
-  components: {
-    SunIcon,
-    MoonIcon,
-  },
-  methods: {
-    switchValue() {
-      if (this.$colorMode.preference === 'dark') {
-        this.$colorMode.preference = 'light'
-      } else {
-        this.$colorMode.preference = 'dark'
-      }
-    },
-  },
-}
+  const colorMode = useColorMode()
+
+  const switchValue = () => {
+    colorMode.preference = colorMode.preference === 'dark' ? 'light' : 'dark'
+  }
 </script>
 
 <style lang="scss"></style>

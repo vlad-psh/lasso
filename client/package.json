@@ -8,9 +8,11 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@unhead/vue": "^1.1.27",
     "nuxt": "^3.5.3"
   },
   "dependencies": {
+    "@nuxtjs/color-mode": "^3.2.0",
     "@pinia/nuxt": "^0.4.11",
     "pinia": "^2.1.4",
     "sass": "^1.63.4",

@@ -3,6 +3,7 @@ import svgLoader from "vite-svg-loader"
 
 export default defineNuxtConfig({
   modules: [
+    '@nuxtjs/color-mode',
     '@pinia/nuxt',
   ],
 
@@ -18,5 +19,9 @@ export default defineNuxtConfig({
     plugins: [
       svgLoader(),
     ],
-  }
+  },
+
+  colorMode: {
+    preference: 'light', // disable system mode
+  },
 })
