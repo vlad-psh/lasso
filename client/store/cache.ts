@@ -32,13 +32,13 @@ export const useCache = defineStore('cache', {
     },
 
     async loadDrills(force = false) {
-      if (this.drills === null || force) {
-        try {
-          this.setDrills([])
-          const resp = await $fetch<string>('/api/drills')
-          this.setDrills(JSON.parse(resp))
-        } catch (e) {}
-      }
+      if (this.drills !== null && !force) return
+
+      try {
+        this.setDrills([])
+        const resp = await $fetch<string>('/api/drills')
+        this.setDrills(JSON.parse(resp))
+      } catch (e) {}
     },
 
     pushWord(word: IWord) {

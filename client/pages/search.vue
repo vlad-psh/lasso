@@ -30,6 +30,7 @@
   import { storeToRefs } from 'pinia';
 
   const store = useSearch()
+  const cache = useCache()
   const { current: currentRef } = storeToRefs(store)
   const { results } = storeToRefs(store)
   let candidates = ref(null)
@@ -58,6 +59,10 @@
     store.selectSeq(results[idx][0])
     scrollToIndex(idx)
   }
+
+  onMounted(() => {
+    cache.loadDrills(true)
+  })
 </script>
 
 <style lang="scss" scoped>

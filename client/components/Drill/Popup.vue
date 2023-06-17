@@ -23,57 +23,50 @@
   </div>
 </template>
 
-<script>
-import { compareStrings } from '@/js/helpers.js'
+<script setup>
+  import { compareStrings } from '@/js/helpers.js'
+  import { storeToRefs } from 'pinia'
 
-export default {
-  props: {
+  const props = defineProps({
     activeDrills: { type: Array, required: true },
     krebTitle: { type: String, required: true },
     seq: { type: Number, required: true },
-  },
-  data() {
-    return {
-      selectedDrills: [],
-    }
-  },
-  computed: {
-    drills() {
-      return (this.$store.state.cache.drills || [])
-        .filter((a) => a.is_active || this.activeDrills.includes(a.id))
-        .sort((a, b) => {
-          const activeA = this.activeDrills.includes(a.id)
-          const activeB = this.activeDrills.includes(b.id)
-          if (activeB) {
-            return activeA ? 0 : 1
-          } else {
-            return activeA ? -1 : compareStrings(b.updatedAt, a.updatedAt)
-          }
-        })
-    },
-  },
-  mounted() {
-    // TODO: Improve: One word can have multiple krebs and 'drill select' components
-    // But we should get drills list only once. Right now we have simple protetion
-    // condition in store/cache. Think how possibly we can improve it.
-    this.$store.dispatch('cache/loadDrills')
-    this.selectedDrills = [...this.activeDrills]
-  },
-  methods: {
-    async submit(drillId) {
-      const resp = await this.$axios.post('/api/drills/words', {
-        drill_id: drillId,
-        title: this.krebTitle,
-        seq: this.seq,
+  })
+
+  const selectedDrills = ref(props.activeDrills)
+  const cache = useCache()
+  const { drills: cachedDrills } = storeToRefs(cache)
+
+  const drills = computed(() => {
+    return (cachedDrills.value || [])
+      .filter((a) => a.is_active || props.activeDrills.includes(a.id))
+      .sort((a, b) => {
+        const activeA = props.activeDrills.includes(a.id)
+        const activeB = props.activeDrills.includes(b.id)
+        if (activeB) {
+          return activeA ? 0 : 1
+        } else {
+          return activeA ? -1 : compareStrings(b.updatedAt, a.updatedAt)
+        }
       })
-      if (resp.data.result === 'added') {
-        this.selectedDrills.push(drillId)
-      } else if (resp.data.result === 'removed') {
-        this.selectedDrills = this.selectedDrills.filter((i) => i !== drillId)
-      }
-    },
-  },
-}
+  })
+
+  const submit = async (drillId) => {
+    const resp = await $fetch('/api/drills/words', {
+      method: 'POST',
+      body: {
+        drill_id: drillId,
+        title: props.krebTitle,
+        seq: props.seq,
+      },
+    })
+    const json = JSON.parse(resp)
+    if (json.result === 'added') {
+      selectedDrills.value = [...selectedDrills.value, drillId]
+    } else if (json.result === 'removed') {
+      selectedDrills.value = selectedDrills.value.filter((i) => i !== drillId)
+    }
+  }
 </script>
 
 <style lang="scss">
