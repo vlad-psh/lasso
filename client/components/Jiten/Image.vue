@@ -4,19 +4,17 @@
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    imgSrc() {
-      const { mode, page } = this.$store.state.search.current
+<script setup>
+const search = useSearch()
 
-      if (mode === 'primary' || !page) return null
+const imgSrc = computed(() => {
+  const { mode, page } = search.current
 
-      const pageStr = '0000'.slice(page.toString().length) + page
-      return `/jiten/data/${mode}/${pageStr}.png`
-    },
-  },
-}
+  if (mode === 'primary' || !page) return null
+
+  const pageStr = '0000'.slice(page.toString().length) + page
+  return `/jiten/data/${mode}/${pageStr}.png`
+})
 </script>
 
 <style lang="scss">

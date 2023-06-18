@@ -4,23 +4,23 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
+<script setup>
+  const store = useSearch()
+
+  const props = defineProps({
     selectedMode: { type: String, default: null },
-  },
-  computed: {
-    modeLabel() {
-      return this.$search.modes.find((i) => i.id === this.selectedMode).title
-    },
-  },
-  methods: {
-    searchModeClick(modeId) {
-      if (this.selectedMode === modeId) this.$emit('search')
-      else this.$emit('change', modeId)
-    },
-  },
-}
+  })
+
+  const emit = defineEmits(['search', 'change'])
+
+  const modeLabel = computed(() => {
+    return store.searchModes.find((i) => i.id === props.selectedMode).title
+  })
+
+  const searchModeClick = (modeId) => {
+    if (props.selectedMode === modeId) emit('search')
+    else emit('change', modeId)
+  }
 </script>
 
 <style lang="scss" scoped>

@@ -3,7 +3,7 @@
     <SearchModeSelector
       :selected-mode="selectedMode"
       @change="(modeId) => (selectedMode = modeId)"
-      @search="search"
+      @search="emitSearch"
     />
 
     <input

@@ -21,7 +21,7 @@
         v-if="currentMode === 'primary'"
         :seq="currentRef.seq"
       />
-      <!-- <JitenImage v-else-if="currentMode === 'jiten'" /> -->
+      <JitenImage v-else-if="currentMode === 'jiten'" />
     </div>
   </div>
 </template>

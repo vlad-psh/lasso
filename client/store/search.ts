@@ -1,3 +1,8 @@
+import kokugoDic from '@/js/sakuin/kokugo.js'
+import kanjiDic from '@/js/sakuin/kanji.js'
+import onomatDic from '@/js/sakuin/onomat.js'
+import kanaProcess from '@/js/kana_helpers.js'
+
 type TSearchMode = 'primary' | 'kokugo' | 'kanji' | 'onomat'
 
 interface ICurrent {
@@ -62,9 +67,13 @@ export const useSearch = defineStore('search', {
   },
 
   actions: {
-    async search(query: string , mode: TSearchMode, params: { seq?: number, popRoute?: boolean }) {
-      // TODO: Handle other search types: 'kokugo, kanji, onomat'
-      await this.normalSearch(query, params.seq)
+    async search(query: string, mode: TSearchMode, params: { seq?: number, popRoute?: boolean }) {
+      switch (mode) {
+        case 'kokugo': return this.kokugoSearch(query)
+        case 'kanji': return this.kanjiSearch(query)
+        case 'onomat': return this.onomatSearch(query)
+        default: await this.normalSearch(query, params.seq)
+      }
     },
 
     async normalSearch(queryString: string, seq?: number) {
@@ -90,6 +99,36 @@ export const useSearch = defineStore('search', {
       } catch (e) {
         // If request was canceled or failed
         console.log('Search request failed: ', e)
+      }
+    },
+
+    kokugoSearch(query: string) {
+      const w = kanaProcess(query)
+      const wp = kokugoDic.findIndex((i) => i >= w)
+      if (wp !== -1) {
+        this.current = { mode: 'kokugo', page: wp + 1, query }
+        // store.commit('env/SET_ACTIVITY_GROUP', 'kokugo')
+      }
+    },
+
+    kanjiSearch(query: string) {
+      const result = kanjiDic.find((i) => new RegExp(query).test(i))
+      if (result) {
+        this.current = {
+          mode: 'kanji',
+          page: Number.parseInt(result.split(' ')[0]),
+          query,
+        }
+        // store.commit('env/SET_ACTIVITY_GROUP', 'kanji')
+      }
+    },
+
+    onomatSearch(query: string) {
+      const w = kanaProcess(query)
+      const wp = onomatDic.findIndex((i) => i >= w)
+      if (wp !== -1) {
+        this.current = { mode: 'onomat', page: wp + 1, query }
+        // store.commit('env/SET_ACTIVITY_GROUP', 'onomat')
       }
     },
 
