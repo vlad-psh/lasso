@@ -30,16 +30,21 @@
 </template>
 
 <script setup>
+  import { storeToRefs } from 'pinia'
 
   const props = defineProps({
     seq: { type: Number, required: true },
   })
 
-  const store = useCache()
-  let word = ref()
+  const cache = useCache()
+  const word = ref()
+  const kanji = ref([])
+  const { kanji: cachedKanji } = storeToRefs(cache)
 
   const loadWord = async (seq) => {
-    word.value = await store.loadWord(seq)
+    word.value = await cache.loadWord(seq)
+    kanji.value = word.value.kanji.split('')
+      .map((k) => cachedKanji.value[k])
   }
 
   watch(() => props.seq, loadWord)
@@ -52,22 +57,13 @@
         body: { comment: text }
       })
 
-      store.updateWordComment({ seq: props.seq, text })
+      cache.updateWordComment({ seq: props.seq, text })
       cb.resolve()
     } catch (e) {
       console.error('Request failed:', e)
       cb.reject(e.message)
     }
   }
-
-// export default {
-//   computed: {
-//     kanji() {
-//       return (this.word ? this.word.kanji || '' : '')
-//         .split('')
-//         .map((k) => this.$store.state.cache.kanji[k])
-//     },
-//   },
 </script>
 
 <style lang="scss" scoped>

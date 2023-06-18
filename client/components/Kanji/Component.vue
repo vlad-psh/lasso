@@ -74,85 +74,76 @@
   </div>
 </template>
 
-<script>
-import radicalsList from '@/js/radicals_list.js'
-import FlagJP from '@/assets/icons/flag-jp.svg?inline'
-import FlagUK from '@/assets/icons/flag-uk.svg?inline'
+<script setup>
+  import radicalsList from '@/js/radicals_list.js'
+  import FlagJP from '../../assets/icons/flag-jp.svg'
+  import FlagUK from '../../assets/icons/flag-uk.svg'
 
-export default {
-  components: { FlagJP, FlagUK },
-  props: {
+  const props = defineProps({
     payload: { type: Object, required: true },
-  },
-  data() {
-    return {}
-  },
-  computed: {
-    learned() {
-      return !!this.payload.progress.learned_at
-    },
-    htmlClass() {
-      return [
-        'grade-' + (this.payload.grade || 'no'),
-        this.payload.learned ? 'learned' : null,
-      ]
-    },
-    gradeText() {
-      const grade = this.payload.grade
-      if (grade >= 1 && grade <= 6) {
-        return [null, '１', '２', '３', '４', '５', '６'][grade] + '年'
-      } else if (grade === 8) {
-        return '常用'
-      } else if (grade === 9 || grade === 10) {
-        return '人名'
-      } else {
-        return '表外'
-      }
-    },
-    classicalRadical() {
-      return radicalsList[this.payload.radnum - 1]
-    },
-    searchRoute() {
-      return { name: 'sub-search', params: { query: this.payload.title } }
-    },
-    bookSearchRoute() {
-      return {
-        name: 'jiten',
-        params: { query: this.payload.title, mode: 'kanji' },
-      }
-    },
-  },
-  methods: {
-    search() {
-      this.$search.execute({
-        query: this.payload.title,
-        mode: 'primary',
-        popRoute: true,
+  })
+
+  const store = useSearch()
+  const cache = useCache()
+
+  const learned = computed(() => !!props.payload.progress.learned_at)
+
+  const htmlClass = computed(() => {
+    return [
+      'grade-' + (props.payload.grade || 'no'),
+      props.payload.learned ? 'learned' : null,
+    ]
+  })
+
+  const gradeText = computed(() => {
+    const grade = props.payload.grade
+    if (grade >= 1 && grade <= 6) {
+      return [null, '１', '２', '３', '４', '５', '６'][grade] + '年'
+    } else if (grade === 8) {
+      return '常用'
+    } else if (grade === 9 || grade === 10) {
+      return '人名'
+    } else {
+      return '表外'
+    }
+  })
+
+  const classicalRadical = computed(() => {
+    return radicalsList[props.payload.radnum - 1]
+  })
+
+  const searchRoute = computed(() => {
+    return { name: 'sub-search', params: { query: props.payload.title } }
+  })
+
+  const bookSearchRoute = computed(() => {
+    return {
+      name: 'jiten',
+      params: { query: props.payload.title, mode: 'kanji' },
+    }
+  })
+
+  const search = () => {
+    store.search(props.payload.title, 'primary', { popRoute: true })
+  }
+
+  const searchBook = () => {
+    store.search(props.payload.title, 'kanji', { popRoute: true })
+  }
+
+  const saveComment = (text, cb) => {
+    $fetch(`/api/kanji/${props.payload.title}/comment`, {
+      method: 'POST',
+      body: { comment: text }
+    })
+      .then((resp) => {
+        cache.updateKanjiComment({ kanji: props.payload.title, text })
+        cb.resolve()
       })
-    },
-    searchBook() {
-      this.$search.execute({
-        query: this.payload.title,
-        mode: 'kanji',
-        popRoute: true,
+      .catch((e) => {
+        cb.reject(e.message)
       })
-    },
-    saveComment(text, cb) {
-      this.$axios
-        .post(`/api/kanji/${this.payload.title}/comment`, { comment: text })
-        .then((resp) => {
-          this.$store.commit('cache/UPDATE_KANJI_COMMENT', {
-            kanji: this.payload.title,
-            text,
-          })
-          cb.resolve()
-        })
-        .catch((e) => {
-          cb.reject(e.message)
-        })
-    },
-  },
-}
+  }
 </script>
 
 <style lang="scss" scoped>
@@ -177,7 +168,7 @@ export default {
   float: left;
   margin-right: 0.1em;
   padding: 0.05em;
-  background: url('~assets/backgrounds/kanji-grid.svg');
+  background: url('assets/backgrounds/kanji-grid.svg');
   background-size: 68px 68px;
   background-position: center;
 
