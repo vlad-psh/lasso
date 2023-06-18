@@ -6,7 +6,7 @@
 
     <div class="table">
       <div
-        v-for="drill of $store.state.cache.drills"
+        v-for="drill of cache.drills"
         :key="drill.id"
         class="drill"
       >
@@ -40,12 +40,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  async fetch() {
-    await this.$store.dispatch('cache/loadDrills')
-  },
-}
+<script setup>
+  const cache = useCache()
+
+  onMounted(() => cache.loadDrills(true))
 </script>
 
 <style lang="scss">

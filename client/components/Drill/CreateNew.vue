@@ -26,38 +26,39 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      expanded: false,
-      drillName: '',
-      error: null,
-    }
-  },
-  methods: {
-    async submit() {
-      this.error = null
-      try {
-        const resp = await this.$axios.post('/api/drills', {
-          title: this.drillName,
-        })
+<script setup>
+  const cache = useCache()
 
-        this.expanded = false
-        this.drillName = ''
-        this.$store.commit('cache/ADD_DRILL', resp.data)
-      } catch (e) {
-        this.error = e.response.data
-      }
-    },
-    expand() {
-      this.expanded = true
-      this.$nextTick(() => {
-        this.$refs.inputField.focus()
+  const expanded = ref(false)
+  const drillName = ref('')
+  const error = ref(null)
+  const inputField = ref()
+
+  const submit = async () => {
+    error.value = null
+    try {
+      const resp = await $fetch('/api/drills', {
+        method: 'POST',
+        body: {
+          title: drillName.value,
+        },
       })
-    },
-  },
-}
+      const json = JSON.parse(resp)
+
+      expanded.value = false
+      drillName.value = ''
+      cache.addDrill(json)
+    } catch (e) {
+      error.value = e
+    }
+  }
+
+  const expand = () => {
+    expanded.value = true
+    nextTick(() => {
+      inputField.value.focus()
+    })
+  }
 </script>
 
 <style lang="scss" scoped>
