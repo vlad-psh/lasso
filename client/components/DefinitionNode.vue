@@ -28,11 +28,10 @@
   const store = useSearch()
 
   const path = (query) => {
-    // TODO: Fix links
-    // return router.resolve({
-    //   name: 'sub-search',
-    //   params: { query },
-    // }).href
+    return router.resolve({
+      name: 'sub-search',
+      params: { query },
+    }).href
   }
 
   const search = (query) => {

@@ -33,11 +33,6 @@ const searchName = (params: ICurrent) => {
   }
 }
 
-const buildSearchPath = (params: ICurrent) => {
-  params = Object.assign({}, store.state.search.current, params)
-  return { name: searchName(params), params }
-}
-
 export const useSearch = defineStore('search', {
   state: () => ({
     query: '', // query value for completed search
@@ -59,7 +54,10 @@ export const useSearch = defineStore('search', {
     },
 
     searchPath(state) {
-        return buildSearchPath(state.current)
+      return {
+        name: searchName(state.current),
+        params: state.current,
+      }
     },
   },
 

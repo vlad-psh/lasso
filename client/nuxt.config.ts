@@ -21,6 +21,28 @@ export default defineNuxtConfig({
     ],
   },
 
+  hooks: {
+    'pages:extend'(pages) {
+      pages.push({
+        name: 'index',
+        path: '/',
+        file: '~/pages/search.vue',
+      }, {
+        name: 'sub-search',
+        path: '/search/:query/:seq?',
+        file: '~/pages/search.vue',
+      }, {
+        name: 'jiten',
+        path: '/jiten/:mode/:query',
+        file: '~/pages/search.vue',
+      }, {
+        name: 'sub-quiz',
+        path: '/quiz/:drill_id/:type',
+        file: '~/pages/quiz.vue',
+      })
+    },
+  },
+
   colorMode: {
     preference: 'light', // disable system mode
   },

@@ -2,14 +2,14 @@
   <div id="main-menu">
     <div class="center">
       <div class="main-menu-item">
-        <NuxtLink class="icon" :to="$search.path"><SearchIcon /></NuxtLink>
+        <NuxtLink class="icon" :to="search.searchPath"><SearchIcon /></NuxtLink>
       </div>
       <div class="main-menu-item">
         <NuxtLink class="icon" to="/drills"><BookmarkIcon /></NuxtLink>
       </div>
-      <div v-if="$store.state.env.quizParams" class="main-menu-item">
+      <div v-if="store.quizParams" class="main-menu-item">
         <NuxtLink
-          :to="{ name: 'sub-quiz', params: $store.state.env.quizParams }"
+          :to="{ name: 'sub-quiz', params: store.quizParams }"
           ><QAIcon
         /></NuxtLink>
       </div>
@@ -34,6 +34,7 @@
   import QAIcon from 'assets/icons/qa.svg'
 
   const store = useEnv()
+  const search = useSearch()
   const { user } = storeToRefs(store)
   const { setUser } = store
 

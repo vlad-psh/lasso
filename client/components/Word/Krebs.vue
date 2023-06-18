@@ -37,17 +37,14 @@
     seq: { type: Number, required: true },
   })
 
+  const store = useSearch()
+
   const searchRoute = (kreb) => {
-    // TODO: Fix link
-    // return { name: 'sub-search', params: { query: kreb.title } }
+    return { name: 'jiten', params: { mode: 'kokugo', query: kreb.title } }
   }
 
   const search = (kreb) => {
-    // this.$search.execute({
-    //   query: kreb.title,
-    //   popRoute: true,
-    //   mode: 'kokugo',
-    // })
+    store.search(kreb.title, 'kokugo', { popRoute: true })
   }
 </script>
 
