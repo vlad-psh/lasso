@@ -1,4 +1,4 @@
-export default ({ store }, inject) => {
+export default defineNuxtPlugin(async (_nuxtApp) => {
   const startEvents = [
     'load',
     'mousedown',
@@ -32,12 +32,18 @@ export default ({ store }, inject) => {
     }
   }
   function tick() {
-    const aGroup = store.state.env.activityGroup
+    const env = useEnv()
+    const aGroup = env.activityGroup
     storage[aGroup] = (storage[aGroup] || 0) + 1
     if (storage[aGroup] === submitInterval) {
-      const submitUrl = `/api/activity/${aGroup}/${submitInterval}`
-      fetch(submitUrl, { method: 'POST', credentials: 'same-origin' })
-      storage[aGroup] = 0
+      $fetch(`/api/activity/${aGroup}/${submitInterval}`, {
+        method: 'POST',
+        credentials: 'same-origin'
+      })
+        .then(() => storage[aGroup] = 0)
+        .catch((e) => {
+          if (e.status !== 405) console.error(e)
+        })
     }
   }
-}
+})

@@ -3,6 +3,8 @@ import kanjiDic from '@/js/sakuin/kanji.js'
 import onomatDic from '@/js/sakuin/onomat.js'
 import kanaProcess from '@/js/kana_helpers.js'
 
+import { useEnv } from './env'
+
 type TSearchMode = 'primary' | 'kokugo' | 'kanji' | 'onomat'
 
 interface ICurrent {
@@ -96,6 +98,8 @@ export const useSearch = defineStore('search', {
           query: query,
           seq:   seq || this.results[0][0]
         }
+
+        useEnv().setActivityGroup('search')
       } catch (e) {
         // If request was canceled or failed
         console.log('Search request failed: ', e)
@@ -107,7 +111,7 @@ export const useSearch = defineStore('search', {
       const wp = kokugoDic.findIndex((i) => i >= w)
       if (wp !== -1) {
         this.current = { mode: 'kokugo', page: wp + 1, query }
-        // store.commit('env/SET_ACTIVITY_GROUP', 'kokugo')
+        useEnv().setActivityGroup('kokugo')
       }
     },
 
@@ -119,7 +123,7 @@ export const useSearch = defineStore('search', {
           page: Number.parseInt(result.split(' ')[0]),
           query,
         }
-        // store.commit('env/SET_ACTIVITY_GROUP', 'kanji')
+        useEnv().setActivityGroup('kanji')
       }
     },
 
@@ -128,7 +132,7 @@ export const useSearch = defineStore('search', {
       const wp = onomatDic.findIndex((i) => i >= w)
       if (wp !== -1) {
         this.current = { mode: 'onomat', page: wp + 1, query }
-        // store.commit('env/SET_ACTIVITY_GROUP', 'onomat')
+        useEnv().setActivityGroup('onomat')
       }
     },
 

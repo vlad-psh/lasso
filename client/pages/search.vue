@@ -31,6 +31,7 @@
 
   const store = useSearch()
   const cache = useCache()
+  const env = useEnv()
   const { current: currentRef } = storeToRefs(store)
   const { results } = storeToRefs(store)
   let candidates = ref(null)
@@ -61,7 +62,9 @@
   }
 
   onMounted(() => {
+    // TODO: Keepalive search page
     cache.loadDrills(true)
+    env.setActivityGroup(currentRef.value.mode || 'search')
   })
 </script>
 
