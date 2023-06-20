@@ -158,6 +158,10 @@
   .definition {
     line-height: 1.6em;
     padding: 0.3em 0;
+
+    .svg-icon {
+      margin-right: 0.3em;
+    }
   }
 }
 .kanji-title {
@@ -197,7 +201,7 @@
     display: inline-block;
     color: white;
     padding: 0.1em 0.2em;
-    margin: 0.05em 0 0.05em 0;
+    margin: 0.05em 0.3em;
     border-radius: 2px;
     font-weight: bold;
 

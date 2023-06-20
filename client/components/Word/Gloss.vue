@@ -51,18 +51,15 @@
   text-align: justify;
   padding: 0.4em;
 
-  .icon {
+  .svg-icon {
     // @include non-selectable;
-    display: inline-block;
-    font-size: 1.4em;
-    vertical-align: middle;
     margin-right: 0.3em;
-    line-height: 0;
   }
   .pos {
     color: green;
     font-style: italic;
     font-size: 0.9em;
+    margin-right: 0.3em;
   }
 }
 </style>

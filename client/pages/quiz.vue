@@ -72,108 +72,122 @@
   </div>
 </template>
 
-<script>
-export default {
-  middleware: ({ store, route }) => {
-    store.commit('env/SET_ACTIVITY_GROUP', 'srs')
-    store.commit('env/SET_QUIZ_PARAMS', route.params)
-  },
-  async fetch() {
-    const { route } = this.$nuxt.context
-    const resp = await this.$axios.get('/api/question', {
+<script setup>
+  const route = useRoute()
+  const env = useEnv()
+
+  const sentence = ref({})
+  const selectedIndex = ref()
+  const loading = ref(false)
+
+  const loadQuestion = async () => {
+    const resp = await $fetch('/api/question', {
       params: {
         drill_id: route.params.drill_id,
-        type: route.params.type,
+        type:     route.params.type,
       },
     })
+    const json = JSON.parse(resp)
 
     let componentIndex = 1
-    for (const segment of resp.data.structure)
+    for (const segment of json.structure)
       if (segment.seq) {
         segment.answer = null
         segment.index = componentIndex++
       }
 
-    this.sentence = resp.data
-    this.loading = false
-  },
-  data() {
-    return { sentence: {}, selectedIndex: null, loading: false }
-  },
-  computed: {
-    segments() {
-      return this.sentence.structure || []
-    },
-    selectedSegment() {
-      return this.selectedIndex !== null
-        ? this.segments[this.selectedIndex]
-        : null
-    },
-    selectedSeq() {
-      return this.selectedSegment ? this.selectedSegment.seq : null
-    },
-    allAnswered() {
-      const mainWord = this.segments.find((i) => i.highlight === true)
-      if (mainWord !== undefined) {
-        return mainWord.answer !== null
-      } else {
-        const unanswered = this.segments.filter((i) => i.seq && !i.answer)
-        return !!(unanswered.length === 0 && this.segments.length !== 0)
-      }
-    },
-  },
-  methods: {
-    shortkey(event) {
-      if (this.selectedSegment) {
-        if (event.srcKey === 'correct' || event.srcKey === 'incorrect') {
-          this.setAnswer(event.srcKey)
-        } else if (event.srcKey === 'esc') this.selectedIndex = null
-      }
-      if (event.srcKey === 'space') {
-        this.allAnswered ? this.submit() : this.selectHighlighted()
-      }
-    },
-    selectWord(sentenceIndex) {
-      this.selectedIndex =
-        this.selectedSeq &&
-        this.selectedSeq === this.segments[sentenceIndex].seq
-          ? null
-          : sentenceIndex
-    },
-    selectHighlighted() {
-      const i = this.segments.findIndex((s) => s.highlight === true)
-      this.selectWord(i !== -1 ? i : 0) // select highlighted or first
-    },
-    setAnswer(answerText) {
-      this.selectedSegment.answer = answerText
-      this.selectedIndex = null
-    },
-    resetAnswer() {
-      this.selectedSegment.answer = null
-    },
-    async submit() {
-      this.loading = true
-      const answers = this.segments
-        .filter((i) => i.seq)
-        .map(function (i) {
-          return { seq: i.seq, base: i.base, answer: i.answer }
-        })
+    loading.value = false
 
-      try {
-        await this.$axios.post('/api/quiz', {
-          drill_id: this.$route.params.drill_id,
-          type: this.$route.params.type,
-          sentence_id: this.sentence.id,
+    return json
+  }
+
+  // TODO: Use 'useAsyncData' hook
+  loadQuestion().then(json => sentence.value = json)
+
+  env.setActivityGroup('srs')
+  env.setQuizParams(route.params)
+
+  const segments = computed(() => {
+    return sentence.value.structure || []
+  })
+
+  const selectedSegment = computed(() => {
+    return selectedIndex !== null
+      ? segments.value[selectedIndex.value]
+      : null
+  })
+
+  const selectedSeq = computed(() => {
+    return selectedSegment.value ? selectedSegment.value.seq : null
+  })
+
+  const allAnswered = computed(() => {
+    const mainWord = segments.value.find((i) => i.highlight === true)
+    if (mainWord !== undefined) {
+      return mainWord.answer !== null
+    } else {
+      const unanswered = segments.value.filter((i) => i.seq && !i.answer)
+      return !!(unanswered.length === 0 && segments.value.length !== 0)
+    }
+  })
+
+  const shortkey = (event) => {
+    if (selectedSegment.value) {
+      if (event.srcKey === 'correct' || event.srcKey === 'incorrect') {
+        setAnswer(event.srcKey)
+      } else if (event.srcKey === 'esc') selectedIndex.value = null
+    }
+    if (event.srcKey === 'space') {
+      allAnswered.value ? submit() : selectHighlighted()
+    }
+  }
+
+  const selectWord = (sentenceIndex) => {
+    selectedIndex.value =
+      selectedSeq.value &&
+      selectedSeq.value === segments.value[sentenceIndex].seq
+        ? null
+        : sentenceIndex
+  }
+
+  const selectHighlighted = () => {
+    const i = segments.value.findIndex((s) => s.highlight === true)
+    selectWord(i !== -1 ? i : 0) // select highlighted or first
+  }
+
+  const setAnswer = (answerText) => {
+    selectedSegment.value.answer = answerText
+    selectedIndex.value = null
+  }
+
+  const resetAnswer = () => {
+    selectedSegment.value.answer = null
+  }
+
+  const submit = async () => {
+    loading.value = true
+    const answers = segments.value
+      .filter((i) => i.seq)
+      .map(function (i) {
+        return { seq: i.seq, base: i.base, answer: i.answer }
+      })
+
+    try {
+      await $fetch('/api/quiz', {
+        method: 'POST',
+        body: {
+          drill_id:    route.params.drill_id,
+          type:        route.params.type,
+          sentence_id: sentence.value.id,
           answers,
-        })
+        },
+      })
 
-        this.$fetch()
-      } catch (e) {
-        alert(e)
-      }
-    },
-  },
-}
+      sentence.value = await loadQuestion()
+    } catch (e) {
+      alert(e)
+    }
+  }
 </script>
 
 <style lang="scss">

@@ -124,6 +124,7 @@
     a {
       text-decoration: none;
       opacity: 0.6;
+      margin-left: 0.3em;
 
       &:hover {
         opacity: 1;

@@ -56,6 +56,10 @@
   margin-bottom: 0.3em;
   border-bottom: none;
 
+  .v-popper {
+    display: inline-block;
+  }
+
   .drills-counter {
     display: inline-block;
     background: #febb10;
@@ -67,6 +71,7 @@
     vertical-align: sub;
     font-size: 0.65em;
     line-height: 1.3em;
+    margin-left: 0.5em;
   }
 }
 .word-kreb {
