@@ -1,10 +1,15 @@
 <template>
   <div id="__layout_inner">
-    <template v-if="user">
+    <template v-if="route.name === 'signup-token'">
+      <slot />
+    </template>
+
+    <template v-else-if="user">
       <MainMenu />
       <!-- <Nuxt keep-alive /> -->
       <slot />
     </template>
+
     <LoginForm v-else />
   </div>
 </template>
@@ -12,6 +17,7 @@
 <script setup>
   import { storeToRefs } from 'pinia'
 
+  const route = useRoute()
   const store = useEnv()
   const { user } = storeToRefs(store)
 </script>

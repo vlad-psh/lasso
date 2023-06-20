@@ -28,36 +28,3 @@
     setUser(JSON.parse(resp))
   }
 </script>
-
-<style lang="scss" scoped>
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-
-    &.readonly:after {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ffffff77;
-      z-index: 1000;
-    }
-  }
-  input {
-    padding: 0.2em 0.5em;
-    margin: 0.5em 0;
-    border: revert !important;
-    background: revert !important;
-    color: revert !important;
-  }
-  .error {
-    background: #ff00008f;
-    padding: 0.2em 0.6em;
-    font-size: 0.9em;
-  }
-</style>
