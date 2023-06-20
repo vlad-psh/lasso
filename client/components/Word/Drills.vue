@@ -13,36 +13,33 @@
   </div>
 </template>
 
-<script>
-import BookmarkIcon from '@/assets/icons/bookmark.svg?inline'
+<script setup>
+  import BookmarkIcon from '../../assets/icons/bookmark.svg'
 
-export default {
-  components: { BookmarkIcon },
-  props: {
+  const cache = useCache()
+  const props = defineProps({
     word: { type: Object, required: true },
-  },
-  computed: {
-    drills() {
-      const drills = this.$store.state.cache.drills || []
+  })
 
-      const drillObjs = this.word.krebs
-        .reduce(
-          (acc, kreb) => (kreb.drills ? [...acc, ...kreb.drills] : acc),
-          []
-        )
-        .map(
-          (id) =>
-            drills.find((drill) => drill.id === id) || {
-              id,
-              title: `Drill #${id}`,
-            }
-        )
-        .filter((drill) => drill !== undefined)
+  const drills = computed(() => {
+    const drills = cache.drills || []
 
-      return drillObjs
-    },
-  },
-}
+    const drillObjs = props.word.krebs
+      .reduce(
+        (acc, kreb) => (kreb.drills ? [...acc, ...kreb.drills] : acc),
+        []
+      )
+      .map(
+        (id) =>
+          drills.find((drill) => drill.id === id) || {
+            id,
+            title: `Drill #${id}`,
+          }
+      )
+      .filter((drill) => drill !== undefined)
+
+    return drillObjs
+  })
 </script>
 
 <style lang="scss" scoped>
