@@ -132,196 +132,206 @@
   </div>
 </template>
 
-<script>
-import FlagJP from '@/assets/icons/flag-jp.svg?inline'
-import FlagUK from '@/assets/icons/flag-uk.svg?inline'
+<script setup>
+  import FlagJP from '../../assets/icons/flag-jp.svg'
+  import FlagUK from '../../assets/icons/flag-uk.svg'
 
-export default {
-  components: { FlagJP, FlagUK },
-  props: {
+  const props = defineProps({
     drillId: { type: Number, required: true },
-  },
-  data() {
-    return {
-      jpSentence: null,
-      enSentence: null,
-      structure: [],
-      editMode: false,
-      selection: {
-        section: null,
-        start: null,
-        end: null,
-        word: {
-          base: null,
-          gloss: null,
-          reading: null,
-          seq: null,
-          text: null,
-          index: null,
-        },
-      },
-    }
-  }, // end of methods
-  methods: {
-    selectWord(item, kreb) {
-      this.selection.word.seq = item.seq
-      this.selection.word.gloss = item.gloss
-      this.selection.word.base = kreb
+  })
+
+  const jpSentence = ref()
+  const enSentence = ref()
+  const structure = ref([])
+  const editMode = ref(false)
+  const selection = reactive({
+    section: null,
+    start: null,
+    end: null,
+    word: {
+      base: null,
+      gloss: null,
+      reading: null,
+      seq: null,
+      text: null,
+      index: null,
     },
-    async searchWord(query, cb) {
-      const resp = await this.$axios.post('/api/autocomplete/word', { query })
-      cb(resp.data)
-    },
-    async processRawSentence() {
-      this.editMode = true
+  })
 
-      const resp = await this.$axios.post('/api/mecab/text', {
-        sentence: this.jpSentence,
-      })
-      this.structure = resp.data
-      this.resetSegment(null) // compact consecutive 'text' elements (without seq)
-    },
-    async textFragmentSelected() {
-      const structureIndex = this.selection.section
-      const start = Math.min(this.selection.start, this.selection.end)
-      const finish = Math.max(this.selection.start, this.selection.end)
+  const selectWord = (item, kreb) => {
+    selection.word.seq = item.seq
+    selection.word.gloss = item.gloss
+    selection.word.base = kreb
+  }
 
-      const selectedText = this.structure[structureIndex].text.substring(
-        start,
-        finish
-      )
+  const searchWord = async (query, cb) => {
+    const resp = await $fetch('/api/autocomplete/word', { method: 'POST', body: { query } })
+    console.log('got response', resp)
+    cb(JSON.parse(resp))
+  }
 
-      const resp = await this.$axios.post('/api/mecab/text', {
-        sentence: selectedText,
-      })
-      const jdata = resp.data
-      const result = []
-      let newSectionIndex = null
-      for (let idx = 0; idx < this.structure.length; idx++) {
-        const substr = this.structure[idx]
-        if (idx === structureIndex) {
-          if (start !== 0)
-            result.push({ text: substr.text.substring(0, start) })
+  const processRawSentence = async () => {
+    editMode.value = true
 
-          if (jdata.length === 1 && jdata[0].seq !== undefined) {
-            jdata[0].text = jdata.reduce((acc, v) => acc + v.text, '')
-            jdata[0].reading = jdata.reduce(
-              (acc, v) => acc + (v.reading || v.text),
-              ''
-            )
-            result.push(jdata[0])
-          } else {
-            result.push({ text: selectedText, seq: 0, reading: selectedText })
-            newSectionIndex = result.length - 1
-          }
+    const resp = await $fetch('/api/mecab/text', {
+      method: 'POST',
+      body: { sentence: jpSentence.value },
+    })
+    structure.value = JSON.parse(resp)
+    resetSegment(null) // compact consecutive 'text' elements (without seq)
+  }
 
-          if (substr.text.length > finish)
-            result.push({
-              text: substr.text.substring(finish, substr.text.length),
-            })
+  const textFragmentSelected = async () => {
+    const structureIndex = selection.section
+    const start = Math.min(selection.start, selection.end)
+    const finish = Math.max(selection.start, selection.end)
+
+    const selectedText = structure.value[structureIndex].text.substring(
+      start,
+      finish
+    )
+
+    const resp = await $fetch('/api/mecab/text', {
+      method: 'POST',
+      body: { sentence: selectedText },
+    })
+    const jdata = JSON.parse(resp)
+    const result = []
+    let newSectionIndex = null
+    for (let idx = 0; idx < structure.value.length; idx++) {
+      const substr = structure.value[idx]
+      if (idx === structureIndex) {
+        if (start !== 0)
+          result.push({ text: substr.text.substring(0, start) })
+
+        if (jdata.length === 1 && jdata[0].seq !== undefined) {
+          jdata[0].text = jdata.reduce((acc, v) => acc + v.text, '')
+          jdata[0].reading = jdata.reduce(
+            (acc, v) => acc + (v.reading || v.text),
+            ''
+          )
+          result.push(jdata[0])
         } else {
-          result.push(substr)
+          result.push({ text: selectedText, seq: 0, reading: selectedText })
+          newSectionIndex = result.length - 1
         }
-      }
-      this.structure = result
-      this.selection.section = null // reset selection
-      this.resetSegment(null) // compact consecutive 'text' elements (without seq)
-      if (newSectionIndex !== null) this.editWord(newSectionIndex) // open editor for current word
-    },
-    resetSegment(partIdx) {
-      const result = []
-      let tmpString = ''
-      if (partIdx !== null) {
-        delete this.structure[partIdx].seq // also: reading, base, gloss
-      }
 
-      for (const part of this.structure) {
-        if (part.seq === undefined) {
-          tmpString += part.text
-        } else {
-          if (tmpString !== '') {
-            result.push({ text: tmpString })
-            tmpString = ''
-          }
-          result.push(part)
-        }
-      }
-
-      if (tmpString !== '') {
-        result.push({ text: tmpString })
-        tmpString = ''
-      }
-
-      this.selection.word.index = null
-      this.structure = result
-    },
-    clearProcessedSentence() {
-      this.editMode = false
-      this.structure = []
-    },
-    async saveProcessedSentence() {
-      await this.$axios.post('/api/sentences', {
-        japanese: this.jpSentence,
-        english: this.enSentence,
-        structure: this.structure,
-        drill_id: this.drillId,
-      })
-
-      // alert(data);
-      this.jpSentence = null
-      // this.enSentence = null;
-      this.structure = []
-      this.editMode = false
-    },
-    separatorClick(section, position) {
-      if (
-        this.selection.section === null ||
-        this.selection.section !== section
-      ) {
-        this.selection.section = section
-        this.selection.start = position
-      } else if (this.selection.start === position) {
-        // reset selection if separator clicked twice
-        this.selection.section = null
+        if (substr.text.length > finish)
+          result.push({
+            text: substr.text.substring(finish, substr.text.length),
+          })
       } else {
-        this.selection.end = position
-        this.textFragmentSelected()
+        result.push(substr)
       }
-    },
-    editWord(section) {
-      for (const prop of ['base', 'gloss', 'reading', 'seq', 'text']) {
-        this.selection.word[prop] = this.structure[section][prop]
+    }
+    structure.value = result
+    selection.section = null // reset selection
+    resetSegment(null) // compact consecutive 'text' elements (without seq)
+    if (newSectionIndex !== null) editWord(newSectionIndex) // open editor for current word
+  }
+
+  const resetSegment = (partIdx) => {
+    const result = []
+    let tmpString = ''
+    if (partIdx !== null) {
+      delete structure.value[partIdx].seq // also: reading, base, gloss
+    }
+
+    for (const part of structure.value) {
+      if (part.seq === undefined) {
+        tmpString += part.text
+      } else {
+        if (tmpString !== '') {
+          result.push({ text: tmpString })
+          tmpString = ''
+        }
+        result.push(part)
       }
-      this.selection.word.index = section
-    },
-    updateWord() {
-      const section = this.selection.word.index
-      for (const prop of ['base', 'gloss', 'reading', 'seq', 'text']) {
-        this.structure[section][prop] = this.selection.word[prop]
-      }
-      this.selection.word.index = null
-    },
-    stretchSelectedWord() {
-      const idx = this.selection.word.index
-      const nextWord = this.structure[idx + 1]
-      // return if this is the last word in sentence or if next word is a word object (not a simple text)
-      if (!nextWord || nextWord.seq || nextWord.text.length === 0) return
-      this.structure[idx].reading += nextWord.text[0]
-      this.structure[idx].text += nextWord.text[0]
-      nextWord.text = nextWord.text.substr(1) // cut first letter
-      this.editWord(idx)
-    },
-    shrinkSelectedWord() {
-      const idx = this.selection.word.index
-      const nextWord = this.structure[idx + 1]
-      if (!nextWord || nextWord.seq) return
-      nextWord.text = this.structure[idx].text.substr(-1) + nextWord.text
-      this.structure[idx].reading = this.structure[idx].reading.slice(0, -1)
-      this.structure[idx].text = this.structure[idx].text.slice(0, -1)
-      this.editWord(idx)
-    },
-  },
-}
+    }
+
+    if (tmpString !== '') {
+      result.push({ text: tmpString })
+      tmpString = ''
+    }
+
+    selection.word.index = null
+    structure.value = result
+  }
+
+  const clearProcessedSentence = () => {
+    editMode.value = false
+    structure.value = []
+  }
+
+  const saveProcessedSentence = async () => {
+    await $fetch('/api/sentences', {
+      method: 'POST',
+      body: {
+        japanese: jpSentence.value,
+        english: enSentence.value,
+        structure: structure.value,
+        drill_id: props.drillId,
+      },
+    })
+
+    // alert(data);
+    jpSentence.value = null
+    // enSentence.value = null;
+    structure.value = []
+    editMode.value = false
+  }
+
+  const separatorClick = (section, position) => {
+    if (
+      selection.section === null ||
+      selection.section !== section
+    ) {
+      selection.section = section
+      selection.start = position
+    } else if (selection.start === position) {
+      // reset selection if separator clicked twice
+      selection.section = null
+    } else {
+      selection.end = position
+      textFragmentSelected()
+    }
+  }
+
+  const editWord = (section) => {
+    for (const prop of ['base', 'gloss', 'reading', 'seq', 'text']) {
+      selection.word[prop] = structure.value[section][prop]
+    }
+    selection.word.index = section
+  }
+
+  const updateWord = () => {
+    const section = selection.word.index
+    for (const prop of ['base', 'gloss', 'reading', 'seq', 'text']) {
+      structure.value[section][prop] = selection.word[prop]
+    }
+    selection.word.index = null
+  }
+
+  const stretchSelectedWord = () => {
+    const idx = selection.word.index
+    const nextWord = structure.value[idx + 1]
+    // return if this is the last word in sentence or if next word is a word object (not a simple text)
+    if (!nextWord || nextWord.seq || nextWord.text.length === 0) return
+    structure.value[idx].reading += nextWord.text[0]
+    structure.value[idx].text += nextWord.text[0]
+    nextWord.text = nextWord.text.substr(1) // cut first letter
+    editWord(idx)
+  }
+
+  const shrinkSelectedWord = () => {
+    const idx = selection.word.index
+    const nextWord = structure.value[idx + 1]
+    if (!nextWord || nextWord.seq) return
+    nextWord.text = structure.value[idx].text.substr(-1) + nextWord.text
+    structure.value[idx].reading = structure.value[idx].reading.slice(0, -1)
+    structure.value[idx].text = structure.value[idx].text.slice(0, -1)
+    editWord(idx)
+  }
 </script>
 
 <style lang="scss">

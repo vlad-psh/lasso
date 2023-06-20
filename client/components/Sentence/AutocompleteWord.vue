@@ -24,31 +24,28 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
+<script setup>
+  defineProps({
     placeholder: { type: String, default: 'Search...' },
-  },
-  data() {
-    return {
-      inputValue: null,
-      candidates: [],
-      expanded: false,
-    }
-  },
-  methods: {
-    inputChanged(el) {
-      this.$emit('search', el.target.value, (x) => {
-        this.candidates = x || []
-        this.expanded = true
-      })
-    },
-    candidateSelected(item, kreb) {
-      this.expanded = false
-      this.$emit('select', item, kreb)
-    },
-  },
-}
+  })
+
+  const inputValue = ref()
+  const candidates = ref([])
+  const expanded = ref(false)
+
+  const emit = defineEmits(['search', 'select'])
+
+  const inputChanged = (el) => {
+    emit('search', el.target.value, (x) => {
+      candidates.value = x || []
+      expanded.value = true
+    })
+  }
+
+  const candidateSelected = (item, kreb) => {
+    expanded.value = false
+    emit('select', item, kreb)
+  }
 </script>
 
 <style lang="scss" scoped>
