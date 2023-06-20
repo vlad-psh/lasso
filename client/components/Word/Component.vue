@@ -37,7 +37,6 @@
 
   const store = useCache()
   let word = ref()
-  const seqRef = ref(props.seq)
 
   const loadWord = async (seq) => {
     word.value = await store.loadWord(seq)

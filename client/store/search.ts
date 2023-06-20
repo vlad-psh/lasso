@@ -66,7 +66,7 @@ export const useSearch = defineStore('search', {
   actions: {
     async search(query: string , mode: TSearchMode, params: { seq?: number, popRoute?: boolean }) {
       // TODO: Handle other search types: 'kokugo, kanji, onomat'
-      await this.normalSearch(query)
+      await this.normalSearch(query, params.seq)
     },
 
     async normalSearch(queryString: string, seq?: number) {
@@ -87,7 +87,7 @@ export const useSearch = defineStore('search', {
         this.current = {
           mode: 'primary',
           query: query,
-          seq:   this.results[0][0]
+          seq:   seq || this.results[0][0]
         }
       } catch (e) {
         // If request was canceled or failed

@@ -50,64 +50,72 @@
   </div>
 </template>
 
-<script>
-import DoubleClickButton from '../../components/DoubleClickButton.vue'
-export default {
-  components: { DoubleClickButton },
-  async asyncData({ $axios, params }) {
-    const resp = await $axios.get(`/api/drill/${params.id}`)
-    return resp.data
-  },
-  computed: {
-    readingQuiz() {
-      return {
-        name: 'sub-quiz',
-        params: { drill_id: this.drill.id, type: 'reading' },
-      }
-    },
-    writingQuiz() {
-      return {
-        name: 'sub-quiz',
-        params: { drill_id: this.drill.id, type: 'writing' },
-      }
-    },
-  },
-  methods: {
-    async reset(group) {
-      await this.$axios.patch(`/api/drill/${this.drill.id}`, {
+<script setup>
+  const drill = ref()
+  const words = ref([])
+  const sentences = ref([])
+
+  const store = useSearch()
+  const cache = useCache()
+  const route = useRoute()
+  const resp = await $fetch(`/api/drill/${route.params.id}`)
+  const json = JSON.parse(resp)
+
+  drill.value = json.drill
+  words.value = json.words
+  sentences.value = json.sentences
+
+  const readingQuiz = {
+    name: 'sub-quiz',
+    params: { drill_id: drill.value.id, type: 'reading' },
+  }
+
+  const writingQuiz = {
+    name: 'sub-quiz',
+    params: { drill_id: drill.value.id, type: 'writing' },
+  }
+
+  const reset = async (group) => {
+    await $fetch(`/api/drill/${drill.value.id}`, {
+      method: 'PATCH',
+      body: {
         reset: group,
+      },
+    })
+    const data = await this.$options.asyncData(this.$root.$options.context)
+    Object.assign(this.$data, data)
+  }
+
+  const searchPath = (word) => {
+    return {
+      name: 'sub-search',
+      params: { query: word.title || word.base || word.text, seq: word.seq },
+    }
+  }
+
+  const search = (word) => {
+    store.search(
+      word.title || word.text,
+      'primary',
+      { seq: word.seq, pushRoute: true }
+    )
+  }
+
+  const saveTitle = (newTitle, cb) => {
+    $fetch(`/api/drill/${drill.value.id}`, {
+      method: 'PATCH',
+      body: { title: newTitle }
+    })
+      .then((resp) => {
+        const json = JSON.parse(resp)
+        cache.updateDrill(json)
+        drill.value = json
+        cb.resolve()
       })
-      const data = await this.$options.asyncData(this.$root.$options.context)
-      Object.assign(this.$data, data)
-    },
-    searchPath(word) {
-      return {
-        name: 'sub-search',
-        params: { query: word.title || word.base || word.text, seq: word.seq },
-      }
-    },
-    search(word) {
-      this.$search.execute({
-        query: word.title || word.text,
-        seq: word.seq,
-        mode: 'primary',
-        pushRoute: true,
+      .catch((e) => {
+        cb.reject(e.message)
       })
-    },
-    saveTitle(newTitle, cb) {
-      this.$axios
-        .patch(`/api/drill/${this.drill.id}`, { title: newTitle })
-        .then((resp) => {
-          this.$store.commit('cache/UPDATE_DRILL', resp.data)
-          this.drill.title = resp.data.title
-          cb.resolve()
-        })
-        .catch((e) => {
-          cb.reject(e.message)
-        })
-    },
-  },
-}
+  }
 </script>
 
 <style lang="scss">
