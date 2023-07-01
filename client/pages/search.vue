@@ -2,7 +2,7 @@
   <div id="search-app">
     <div class="browse-panel">
       <SearchInputField
-        @switch-candidate="(direction) => switchCandidate(direction)"
+        @switch-candidate="(direction) => shiftCandidate(direction)"
       />
 
       <div class="search-results">
@@ -12,7 +12,7 @@
           ref="candidates"
           :item="item"
           :is-selected="item[0] === currentRef.seq"
-          :on-click="() => store.selectSeq(item[0])"
+          :on-click="() => openCandidate(item[0])"
         />
       </div>
     </div>
@@ -52,19 +52,22 @@
     })
   }
 
-  const switchCandidate = (direction) => {
-    let idx = results.value.findIndex((i) => i[0] === currentRef.value.seq)
-
-    if (direction === 'prev' && idx > 0) idx--
-    else if (direction === 'next' && idx + 1 < results.value.length) idx++
-
-    const seq = results.value[idx][0]
+  const openCandidate = (seq) => {
     store.selectSeq(seq)
     router.replace({
       name: router.currentRoute.value.name,
       params: { ...router.currentRoute.value.params, seq },
     })
     scrollToIndex(idx)
+  }
+
+  const shiftCandidate = (direction) => {
+    let idx = results.value.findIndex((i) => i[0] === currentRef.value.seq)
+
+    if (direction === 'prev' && idx > 0) idx--
+    else if (direction === 'next' && idx + 1 < results.value.length) idx++
+
+    openCandidate(results.value[idx][0])
   }
 
   onMounted(() => {
