@@ -1,6 +1,13 @@
 <template>
-  <div class="search-mode" :class="selectedMode">
-    {{ modeLabel }}
+  <div class="search-mode">
+    <div
+      v-for="mode in store.searchModes"
+      :key="mode.id"
+      :class="[mode.id, selectedMode === mode.id ? 'active' : null]"
+      @click="() => searchModeClick(mode.id)"
+    >
+      <span>{{ mode.title }}</span>
+    </div>
   </div>
 </template>
 
@@ -13,10 +20,6 @@
 
   const emit = defineEmits(['search', 'change'])
 
-  const modeLabel = computed(() => {
-    return store.searchModes.find((i) => i.id === props.selectedMode).title
-  })
-
   const searchModeClick = (modeId) => {
     if (props.selectedMode === modeId) emit('search')
     else emit('change', modeId)
@@ -25,31 +28,44 @@
 
 <style lang="scss" scoped>
 .search-mode {
-  display: inline-block;
-  position: absolute;
-  padding: 0.44em 0.3em;
-  border-radius: 0.5em;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  text-align: center;
-  font-size: 0.8em;
-  cursor: pointer;
-  color: white;
-  font-weight: bold;
-  background: black;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.1em;
+  padding: 0.1em;
 
-  &.primary {
-    background: #6c05a5;
+  div {
+    flex-grow: 100;
+    font-size: 0.9em;
+    min-width: 5em;
+    padding: 0.1em 0 0.2em;
+    text-align: center;
+    cursor: pointer;
+    --color: white;
+    border: 1px solid var(--bg-color);
+
+    span {
+      padding: 0.2em 0.3em 0.1em;
+    }
+
+    &:hover, &.active {
+      background: var(--bg-color);
+      color: var(--color);
+    }
   }
-  &.kokugo {
-    background: #f5203e;
+
+  .primary {
+    --bg-color: #6c05a5;
   }
-  &.kanji {
-    background: #66a48e;
+  .kokugo {
+    --bg-color: #f5203e;
   }
-  &.onomat {
-    background: #fce35a;
-    color: #665616;
+  .kanji {
+    --bg-color: #66a48e;
+  }
+  .onomat {
+    --bg-color: #fce35a;
+    --color: #665616;
   }
 }
 </style>

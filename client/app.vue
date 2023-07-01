@@ -182,7 +182,7 @@ html[class='dark-mode'] body {
     input[type='text'],
     input[type='password'],
     textarea {
-      font-size: clamp(16px, 1em, 2em) !important;
+      font-size: clamp(16px, 1em, 1em) !important;
     }
   }
 }

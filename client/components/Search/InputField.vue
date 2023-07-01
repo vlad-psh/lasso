@@ -6,23 +6,25 @@
       @search="emitSearch"
     />
 
-    <input
-      class="shortkey-enabled"
-      ref="searchFieldRef"
-      v-model="searchField"
-      disabled-v-shortkey="{
-        focus: ['esc'],
-        nextCandidate: ['arrowdown'],
-        prevCandidate: ['arrowup'],
-      }"
-      type="text"
-      placeholder="Search..."
-      @shortkey="shortkey"
-      @keydown.enter="emitSearch"
-      @keydown.tab.prevent="switchDictionary"
-    />
-    <div class="clear-button" @click="clearInputField">
-      <ClearIcon />
+    <div class="input-wrapper">
+      <input
+        class="shortkey-enabled"
+        ref="searchFieldRef"
+        v-model="searchField"
+        disabled-v-shortkey="{
+          focus: ['esc'],
+          nextCandidate: ['arrowdown'],
+          prevCandidate: ['arrowup'],
+        }"
+        type="text"
+        placeholder="Search..."
+        @shortkey="shortkey"
+        @keydown.enter="emitSearch"
+        @keydown.tab.prevent="switchDictionary"
+      />
+      <div class="clear-button" @click="clearInputField">
+        <ClearIcon />
+      </div>
     </div>
 
     <JitenNavigation v-if="selectedMode !== 'primary'" />
@@ -85,28 +87,28 @@
 
 <style lang="scss" scoped>
 .search-field {
-  position: relative;
   border-bottom: 1px solid var(--border-color);
-  padding: 0.4em 0.5em 0.5em;
+
+  .input-wrapper {
+    margin: 2px 0;
+    position: relative;
+  }
 
   input[type='text'] {
     background: none;
     border: none;
-    padding: 0.2em 0.6em 0.2em 2.4em;
+    padding: 0.2em 0.6em 0.2em 0.6em;
     box-sizing: border-box;
     width: 100%;
-    border-radius: 0.4em;
-    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid rgb(229 231 235);
   }
 
   .clear-button {
     position: absolute;
-    right: 0.3em;
-    top: calc(50% - 0.8em);
+    right: 0.2em;
+    bottom: 2px;
     cursor: pointer;
-    font-size: 1em;
-    line-height: 1em;
+    font-size: clamp(16px, 1em, 1em);
+    line-height: 0.8em;
     padding: 0.3em 0.5em;
 
     svg {
@@ -117,12 +119,6 @@
     &:hover {
       opacity: 0.6;
     }
-  }
-}
-
-@media (max-width: 568px) {
-  .search-field input[type='text'] {
-    font-size: 16px;
   }
 }
 </style>
