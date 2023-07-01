@@ -32,6 +32,7 @@
   const store = useSearch()
   const cache = useCache()
   const env = useEnv()
+  const router = useRouter()
   const { current: currentRef } = storeToRefs(store)
   const { results } = storeToRefs(store)
   let candidates = ref(null)
@@ -52,12 +53,17 @@
   }
 
   const switchCandidate = (direction) => {
-    let idx = results.findIndex((i) => i[0] === currentSearch.seq)
+    let idx = results.value.findIndex((i) => i[0] === currentRef.value.seq)
 
     if (direction === 'prev' && idx > 0) idx--
-    else if (direction === 'next' && idx + 1 < results.length) idx++
+    else if (direction === 'next' && idx + 1 < results.value.length) idx++
 
-    store.selectSeq(results[idx][0])
+    const seq = results.value[idx][0]
+    store.selectSeq(seq)
+    router.replace({
+      name: router.currentRoute.value.name,
+      params: { ...router.currentRoute.value.params, seq },
+    })
     scrollToIndex(idx)
   }
 

@@ -41,6 +41,7 @@
   const searchField = ref(store.query)
   const searchQuery = ref(store.query) // when user press 'Enter'
   const selectedMode = ref('primary')
+  const emit = defineEmits(['switch-candidate'])
 
   const emitSearch = () => {
     searchQuery.value = searchField.value
@@ -67,9 +68,9 @@
 
   const shortkey = (event) => {
     if (event.srcKey === 'nextCandidate') {
-      this.$emit('switch-candidate', 'next')
+      emit('switch-candidate', 'next')
     } else if (event.srcKey === 'prevCandidate') {
-      this.$emit('switch-candidate', 'prev')
+      emit('switch-candidate', 'prev')
     } else if (event.srcKey === 'focus') {
       this.clearInputField()
     }
