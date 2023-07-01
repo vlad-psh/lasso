@@ -10,7 +10,7 @@
       class="shortkey-enabled"
       ref="searchFieldRef"
       v-model="searchField"
-      v-shortkey="{
+      disabled-v-shortkey="{
         focus: ['esc'],
         nextCandidate: ['arrowdown'],
         prevCandidate: ['arrowup'],

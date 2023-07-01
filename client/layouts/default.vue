@@ -4,22 +4,23 @@
       <slot />
     </template>
 
-    <template v-else-if="user">
+    <template v-else-if="env.user">
       <MainMenu />
       <!-- <Nuxt keep-alive /> -->
       <slot />
     </template>
 
-    <LoginForm v-else />
+    <LoginForm v-else-if="env.user === null" />
   </div>
 </template>
 
 <script setup>
-  import { storeToRefs } from 'pinia'
-
   const route = useRoute()
-  const store = useEnv()
-  const { user } = storeToRefs(store)
+  const env = useEnv()
+
+  useOriginFetch('/api/session')
+    .then(resp => env.setUser(resp.data.value))
+    .catch(_error => env.setUser(null))
 </script>
 
 <style lang="scss">

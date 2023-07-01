@@ -40,7 +40,7 @@
 
   const logout = () => {
     $fetch('/api/session', { method: 'DELETE' })
-    setUser(undefined)
+    setUser(null)
   }
 </script>
 
