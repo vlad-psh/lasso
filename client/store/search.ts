@@ -74,66 +74,73 @@ export const useSearch = defineStore('search', {
         case 'kokugo': return this.kokugoSearch(query)
         case 'kanji': return this.kanjiSearch(query)
         case 'onomat': return this.onomatSearch(query)
-        default: await this.normalSearch(query, params.seq)
+        default: return await this.normalSearch(query, params?.seq)
       }
     },
 
     async normalSearch(queryString: string, seq?: number) {
-      const query = queryString.trim()
+      return new Promise((resolve, reject) => {
+        const query = queryString.trim()
 
-      if (!query || query === this.query) return
+        if (!query || query === this.query) return
 
-      try {
-        const resp = await $fetch<string>(
+        $fetch<string>(
           '/api/search',
           { method: 'POST', body: { query } },
-        )
+        ).then(resp => {
+          this.selectedIdx = null
+          this.results = JSON.parse(resp) as TSearchResult[]
+          this.query = query
 
-        this.selectedIdx = null
-        this.results = JSON.parse(resp) as TSearchResult[]
-        this.query = query
+          this.current = {
+            mode: 'primary',
+            query: query,
+            seq:   seq || this.results[0][0]
+          }
 
-        this.current = {
-          mode: 'primary',
-          query: query,
-          seq:   seq || this.results[0][0]
-        }
-
-        useEnv().setActivityGroup('search')
-      } catch (e) {
-        // If request was canceled or failed
-        console.log('Search request failed: ', e)
-      }
+          useEnv().setActivityGroup('search')
+          resolve({ name: 'sub-search', params: { query, seq } })
+        }).catch(error => reject(error))
+      })
     },
 
     kokugoSearch(query: string) {
-      const w = kanaProcess(query)
-      const wp = kokugoDic.findIndex((i) => i >= w)
-      if (wp !== -1) {
-        this.current = { mode: 'kokugo', page: wp + 1, query }
-        useEnv().setActivityGroup('kokugo')
-      }
+      return new Promise(resolve => {
+        const w = kanaProcess(query)
+        const wp = kokugoDic.findIndex((i) => i >= w)
+        if (wp !== -1) {
+          this.current = { mode: 'kokugo', page: wp + 1, query }
+          useEnv().setActivityGroup('kokugo')
+
+          resolve({ name: 'jiten', params: { mode: 'kokugo', query } })
+        }
+      })
     },
 
     kanjiSearch(query: string) {
-      const result = kanjiDic.find((i) => new RegExp(query).test(i))
-      if (result) {
-        this.current = {
-          mode: 'kanji',
-          page: Number.parseInt(result.split(' ')[0]),
-          query,
+      return new Promise(resolve => {
+        const result = kanjiDic.find((i) => new RegExp(query).test(i))
+        const page = result ? Number.parseInt(result.split(' ')[0]) : null
+        if (page) {
+          this.current = { mode: 'kanji', page, query }
+          useEnv().setActivityGroup('kanji')
+
+          resolve({ name: 'jiten', params: { mode: 'kanji', query } })
         }
-        useEnv().setActivityGroup('kanji')
-      }
+      })
     },
 
     onomatSearch(query: string) {
-      const w = kanaProcess(query)
-      const wp = onomatDic.findIndex((i) => i >= w)
-      if (wp !== -1) {
-        this.current = { mode: 'onomat', page: wp + 1, query }
-        useEnv().setActivityGroup('onomat')
-      }
+      return new Promise(resolve => {
+        const w = kanaProcess(query)
+        const wp = onomatDic.findIndex((i) => i >= w)
+        if (wp !== -1) {
+          this.current = { mode: 'onomat', page: wp + 1, query }
+          useEnv().setActivityGroup('onomat')
+
+          resolve({ name: 'jiten', params: { mode: 'onomat', query } })
+        }
+      })
     },
 
     selectSeq(seq: number) {

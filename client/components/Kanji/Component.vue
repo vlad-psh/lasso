@@ -85,6 +85,7 @@
 
   const store = useSearch()
   const cache = useCache()
+  const router = useRouter()
 
   const learned = computed(() => !!props.payload.progress.learned_at)
 
@@ -124,11 +125,13 @@
   })
 
   const search = () => {
-    store.search(props.payload.title, 'primary', { popRoute: true })
+    store.search(props.payload.title, 'primary')
+      .then(router.push)
   }
 
   const searchBook = () => {
-    store.search(props.payload.title, 'kanji', { popRoute: true })
+    store.search(props.payload.title, 'kanji')
+      .then(router.push)
   }
 
   const saveComment = (text, cb) => {

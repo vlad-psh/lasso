@@ -58,6 +58,7 @@
   const store = useSearch()
   const cache = useCache()
   const route = useRoute()
+  const router = useRouter()
   const resp = await $fetch(`/api/drill/${route.params.id}`)
   const json = JSON.parse(resp)
 
@@ -94,11 +95,8 @@
   }
 
   const search = (word) => {
-    store.search(
-      word.title || word.text,
-      'primary',
-      { seq: word.seq, pushRoute: true }
-    )
+    store.search(word.title || word.text, 'primary', { seq: word.seq })
+      .then(router.replace)
   }
 
   const saveTitle = (newTitle, cb) => {

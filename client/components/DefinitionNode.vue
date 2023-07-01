@@ -35,7 +35,8 @@
   }
 
   const search = (query) => {
-    store.search(query, 'primary', { popRoute: true })
+    store.search(query, 'primary')
+      .then(router.push)
   }
 </script>
 

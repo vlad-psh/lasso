@@ -35,6 +35,7 @@
 
   const store = useSearch()
   const route = useRoute()
+  const router = useRouter()
   let searchFieldRef = ref(null)
 
   const searchField = ref(store.query)
@@ -43,7 +44,8 @@
 
   const emitSearch = () => {
     searchQuery.value = searchField.value
-    store.search(searchQuery.value, selectedMode.value, { popRoute: true })
+    store.search(searchQuery.value, selectedMode.value)
+      .then(router.push)
   }
 
   const searchLater = debounce(function () {
