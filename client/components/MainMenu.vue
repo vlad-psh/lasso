@@ -7,9 +7,9 @@
       <div class="main-menu-item">
         <NuxtLink class="icon" to="/drills"><BookmarkIcon /></NuxtLink>
       </div>
-      <div v-if="store.quizParams" class="main-menu-item">
+      <div v-if="env.quizParams" class="main-menu-item">
         <NuxtLink
-          :to="{ name: 'sub-quiz', params: store.quizParams }"
+          :to="{ name: 'sub-quiz', params: env.quizParams }"
           ><QAIcon
         /></NuxtLink>
       </div>
@@ -33,14 +33,13 @@
   import BookmarkIcon from '../assets/icons/bookmark.svg'
   import QAIcon from 'assets/icons/qa.svg'
 
-  const store = useEnv()
+  const env = useEnv()
   const search = useSearch()
-  const { user } = storeToRefs(store)
-  const { setUser } = store
+  const { user } = storeToRefs(env)
 
   const logout = () => {
     $fetch('/api/session', { method: 'DELETE' })
-    setUser(null)
+    env.setUser(null)
   }
 </script>
 

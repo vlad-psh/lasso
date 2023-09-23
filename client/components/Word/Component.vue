@@ -37,6 +37,7 @@
   })
 
   const cache = useCache()
+  const env = useEnv()
   const word = ref()
   const kanji = ref([])
   const { kanji: cachedKanji } = storeToRefs(cache)
@@ -64,6 +65,10 @@
       cb.reject(e.message)
     }
   }
+
+  onActivated(() => {
+    env.setActivityGroup('search')
+  })
 </script>
 
 <style lang="scss" scoped>

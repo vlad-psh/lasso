@@ -5,16 +5,16 @@
 </template>
 
 <script setup>
-const search = useSearch()
+  const search = useSearch()
 
-const imgSrc = computed(() => {
-  const { mode, page } = search.current
+  const imgSrc = computed(() => {
+    const { mode, page } = search.current
 
-  if (mode === 'primary' || !page) return null
+    if (mode === 'primary' || !page) return null
 
-  const pageStr = '0000'.slice(page.toString().length) + page
-  return `/jiten/data/${mode}/${pageStr}.png`
-})
+    const pageStr = '0000'.slice(page.toString().length) + page
+    return `/jiten/data/${mode}/${pageStr}.png`
+  })
 </script>
 
 <style lang="scss">

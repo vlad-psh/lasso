@@ -31,7 +31,6 @@
 
   const store = useSearch()
   const cache = useCache()
-  const env = useEnv()
   const router = useRouter()
   const { current: currentRef } = storeToRefs(store)
   const { results } = storeToRefs(store)
@@ -52,7 +51,7 @@
     })
   }
 
-  const openCandidate = (seq) => {
+  const openCandidate = (seq, idx) => {
     store.selectSeq(seq)
     router.replace({
       name: router.currentRoute.value.name,
@@ -67,13 +66,12 @@
     if (direction === 'prev' && idx > 0) idx--
     else if (direction === 'next' && idx + 1 < results.value.length) idx++
 
-    openCandidate(results.value[idx][0])
+    openCandidate(results.value[idx][0], idx)
   }
 
   onMounted(() => {
     // TODO: Keepalive search page
     cache.loadDrills(true)
-    env.setActivityGroup(currentRef.value.mode || 'search')
   })
 </script>
 
