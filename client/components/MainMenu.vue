@@ -1,9 +1,6 @@
 <template>
   <div id="main-menu">
-    <SearchInputField
-      @switch-candidate="() => {}"
-    />
-    <!-- @switch-candidate="(direction) => shiftCandidate(direction)" -->
+    <SearchInputField />
 
     <div class="center">
       <div class="main-menu-item">

@@ -33,6 +33,7 @@
     key: route => route.name,
     keepalive: true,
   })
+
   cache.loadDrills() // Will load drills lists only if NOT already loaded
   store.search(
     route.params.query,
@@ -41,6 +42,13 @@
       seq: Number.parseInt(route.params.seq),
     }
   )
+
+  watch(() => route.params.seq, (seqStr) => {
+    const seq = Number.parseInt(seqStr)
+    const idx = results.value.findIndex(i => i[0] === seq)
+    store.selectSeq(seq)
+    scrollToIndex(idx)
+  })
 
   const scrollToIndex = (idx) => {
     if (!(candidates && candidates[idx])) return
@@ -53,22 +61,11 @@
   }
 
   const openCandidate = (seq, idx) => {
-    store.selectSeq(seq)
     router.replace({
-      name: router.currentRoute.value.name,
-      params: { ...router.currentRoute.value.params, seq },
+      name: 'search',
+      params: { query: route.params.query, seq },
     })
-    scrollToIndex(idx)
   }
-
-  /* const shiftCandidate = (direction) => {
-    let idx = results.value.findIndex((i) => i[0] === currentRef.value.seq)
-
-    if (direction === 'prev' && idx > 0) idx--
-    else if (direction === 'next' && idx + 1 < results.value.length) idx++
-
-    openCandidate(results.value[idx][0], idx)
-  } */
 </script>
 
 <style lang="scss" scoped>

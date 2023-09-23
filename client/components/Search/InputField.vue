@@ -9,7 +9,7 @@
       class="shortkey-enabled"
       ref="searchFieldRef"
       v-model="searchField"
-      disabled-v-shortkey="{
+      v-shortkey="{
         focus: ['esc'],
         nextCandidate: ['arrowdown'],
         prevCandidate: ['arrowup'],
@@ -29,16 +29,17 @@
 <script setup>
   import debounce from '@/js/debouncer.js'
   import ClearIcon from '../../assets/icons/clear.svg'
+  import { storeToRefs } from 'pinia';
 
   const store = useSearch()
   const route = useRoute()
   const router = useRouter()
   let searchFieldRef = ref(null)
+  const { results, current: currentRef } = storeToRefs(store)
 
   const searchField = ref(store.query)
   const searchQuery = ref(store.query) // when user press 'Enter'
   const selectedMode = ref('primary')
-  const emit = defineEmits(['switch-candidate'])
 
   const emitSearch = () => {
     searchQuery.value = searchField.value
@@ -65,12 +66,29 @@
 
   const shortkey = (event) => {
     if (event.srcKey === 'nextCandidate') {
-      emit('switch-candidate', 'next')
+      shiftCandidate('next')
     } else if (event.srcKey === 'prevCandidate') {
-      emit('switch-candidate', 'prev')
+      shiftCandidate('prev')
     } else if (event.srcKey === 'focus') {
       this.clearInputField()
     }
+  }
+
+  const shiftCandidate = (direction) => {
+    if (store.current.mode !== 'primary') return
+
+    let idx = results.value.findIndex((i) => i[0] === currentRef.value.seq)
+
+    if (direction === 'prev' && idx > 0) idx--
+    else if (direction === 'next' && idx + 1 < results.value.length) idx++
+
+    router.replace({
+      name: 'search',
+      params: {
+        query: route.params.query,
+        seq:   results.value[idx][0],
+      },
+    })
   }
 
   onMounted(() => {

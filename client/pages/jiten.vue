@@ -1,6 +1,6 @@
 <template>
   <div id="jiten-app">
-    <JitenNavigation />
+    <JitenNavigation :key="route.params.mode" />
     <JitenImage />
   </div>
 </template>
