@@ -1,14 +1,13 @@
 <template>
   <div id="__layout_inner">
     <template v-if="route.name === 'signup-token'">
-      <slot />
+      <NuxtPage />
     </template>
 
     <template v-else-if="env.user">
       <MainMenu />
-      <!-- <Nuxt keep-alive /> -->
       <div class="main-content">
-        <slot />
+        <NuxtPage />
       </div>
     </template>
 

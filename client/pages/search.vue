@@ -32,9 +32,23 @@
   const store = useSearch()
   const cache = useCache()
   const router = useRouter()
+  const route = useRoute()
   const { current: currentRef } = storeToRefs(store)
   const { results } = storeToRefs(store)
   let candidates = ref(null)
+
+  definePageMeta({
+    key: route => route.name,
+    keepalive: true,
+  })
+  cache.loadDrills() // Will load drills lists only if NOT already loaded
+  store.search(
+    route.params.query,
+    'primary',
+    {
+      seq: Number.parseInt(route.params.seq),
+    }
+  )
 
   const currentMode = computed(() => {
     if (!currentRef.value.mode) return null
@@ -68,11 +82,6 @@
 
     openCandidate(results.value[idx][0], idx)
   }
-
-  onMounted(() => {
-    // TODO: Keepalive search page
-    cache.loadDrills(true)
-  })
 </script>
 
 <style lang="scss" scoped>
