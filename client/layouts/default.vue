@@ -48,11 +48,42 @@ body {
   --grey-tag-bg-gradient: linear-gradient(to bottom, transparent, #f3f4f6);
   --grey-tag-border-color: var(--border-color);
 
-  --menu-height: 2em;
+  --menu-height: 2.5rem;
   --menu-bg-color: #222;
 
   .main-content {
     margin-top: var(--menu-height);
+  }
+
+ .popper {
+    background-color: #fff;
+    box-shadow: #555 0 0 100px 0;
+    padding: 0;
+    border-radius: 0.5em;
+    border: none;
+
+    .popper__arrow {
+      border: none;
+      width: 25px;
+      height: 11px;
+      background-color: white;
+      mask-image: url('assets/icons/popover-arrow.svg');
+      mask-size: 25px 11px;
+    }
+
+    &[x-placement^='bottom'] {
+      margin-top: 22px;
+      .popper__arrow {
+        top: -10.5px;
+      }
+    }
+    &[x-placement^='top'] {
+      margin-bottom: 22px;
+      .popper__arrow {
+        bottom: -10.5px;
+        transform: rotate(180deg);
+      }
+    }
   }
 }
 
@@ -74,5 +105,14 @@ html[class='dark-mode'] body {
   );
 
   --grey-tag-bg-gradient: linear-gradient(to bottom, transparent, #f3f4f610);
+
+  .popper {
+    box-shadow: #000 0 0 100px 0;
+    &,
+    .popper__arrow {
+      background-color: var(--bg-secondary);
+      color: var(--color);
+    }
+  }
 }
 </style>

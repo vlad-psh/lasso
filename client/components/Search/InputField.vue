@@ -5,30 +5,26 @@
       @change="(modeId) => (selectedMode = modeId)"
       @search="emitSearch"
     />
-
-    <div class="input-wrapper">
-      <input
-        class="shortkey-enabled"
-        ref="searchFieldRef"
-        v-model="searchField"
-        disabled-v-shortkey="{
-          focus: ['esc'],
-          nextCandidate: ['arrowdown'],
-          prevCandidate: ['arrowup'],
-        }"
-        type="text"
-        placeholder="Search..."
-        @shortkey="shortkey"
-        @keydown.enter="emitSearch"
-        @keydown.tab.prevent="switchDictionary"
-      />
-      <div class="clear-button" @click="clearInputField">
-        <ClearIcon />
-      </div>
+    <input
+      class="shortkey-enabled"
+      ref="searchFieldRef"
+      v-model="searchField"
+      disabled-v-shortkey="{
+        focus: ['esc'],
+        nextCandidate: ['arrowdown'],
+        prevCandidate: ['arrowup'],
+      }"
+      type="text"
+      placeholder="Search..."
+      @shortkey="shortkey"
+      @keydown.enter="emitSearch"
+      @keydown.tab.prevent="switchDictionary"
+    />
+    <div class="clear-button" @click="clearInputField">
+      <ClearIcon />
     </div>
-
-    <JitenNavigation v-if="selectedMode !== 'primary'" />
   </div>
+  <JitenNavigation v-if="selectedMode !== 'primary'" />
 </template>
 
 <script setup>
@@ -87,29 +83,42 @@
 
 <style lang="scss" scoped>
 .search-field {
-  border-bottom: 1px solid var(--border-color);
-
-  .input-wrapper {
-    margin: 2px 0;
-    position: relative;
-  }
+  height: var(--menu-height);
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  background: rgb(73, 74, 79, 0.35);
 
   input[type='text'] {
     background: none;
     border: none;
     padding: 0.2em 0.6em 0.2em 0.6em;
     box-sizing: border-box;
-    width: 100%;
+    color: white;
+    flex-grow: 2;
+    border-bottom: 1px solid transparent;
+    border-radius: 0 !important; // iOS has rounded corners by default
+
+    &:active,
+    &:focus {
+      background: white;
+      color: unset;
+      outline-width: 0;
+      outline: none;
+      border-bottom: 1px solid var(--border-color);
+    }
   }
 
   .clear-button {
     position: absolute;
-    right: 0.2em;
-    bottom: 2px;
+    right: 0;
+    top: 0;
+    height: var(--menu-height);
     cursor: pointer;
-    font-size: clamp(16px, 1em, 1em);
-    line-height: 0.8em;
-    padding: 0.3em 0.5em;
+    padding: 0 0.5em;
+    display: flex;
+    align-items: center;
+    line-height: 0.9em;
 
     svg {
       height: 0.9em;

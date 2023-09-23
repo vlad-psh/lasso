@@ -108,43 +108,4 @@
     opacity: 0.6;
   }
 }
-body .popper {
-  background-color: #fff;
-  box-shadow: #555 0 0 100px 0;
-  padding: 0;
-  border-radius: 0.5em;
-  border: none;
-
-  .popper__arrow {
-    border: none;
-    width: 25px;
-    height: 11px;
-    background-color: white;
-    mask-image: url('assets/icons/popover-arrow.svg');
-    mask-size: 25px 11px;
-  }
-
-  &[x-placement^='bottom'] {
-    margin-top: 22px;
-    .popper__arrow {
-      top: -10.5px;
-    }
-  }
-  &[x-placement^='top'] {
-    margin-bottom: 22px;
-    .popper__arrow {
-      bottom: -10.5px;
-      transform: rotate(180deg);
-    }
-  }
-}
-
-html[class='dark-mode'] body .popper {
-  box-shadow: #000 0 0 100px 0;
-  &,
-  .popper__arrow {
-    background-color: var(--bg-secondary);
-    color: var(--color);
-  }
-}
 </style>
