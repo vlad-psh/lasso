@@ -19,7 +19,7 @@
   const env = useEnv()
 
   useOriginFetch('/api/session')
-    .then(resp => env.setUser(resp.data.value))
+    .then(resp => env.setUser(JSON.parse(resp.data.value)))
     .catch(_error => env.setUser(null))
 </script>
 
