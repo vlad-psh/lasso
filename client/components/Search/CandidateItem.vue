@@ -38,17 +38,15 @@
   &.selected {
     background-image: linear-gradient(to bottom, #1aa0d5, #095bb3);
     color: white;
-    padding: 0.4em 0.4em;
-  }
+    padding: 0.2em 0.4em 0.4em;
 
-  &:hover,
-  &.selected {
-    .title {
-      font-weight: 700;
-    }
     .details {
       opacity: 1;
     }
+  }
+
+  &:hover {
+   background-color: #77777722;
   }
   .title {
     display: flex;
