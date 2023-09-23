@@ -5,11 +5,18 @@ interface IWordResponse {
   kanjis: IKanji[],
 }
 
+interface ICache {
+  words: IWordsCollection,
+  kanji: IKanjiCollection,
+  drills: IDrill[] | null,
+  history: any[],
+}
+
 export const useCache = defineStore('cache', {
-  state: () => ({
-    words: {} as IWordsCollection,
-    kanji: {} as IKanjiCollection,
-    drills: [] as IDrill[],
+  state: (): ICache => ({
+    words: {},
+    kanji: {},
+    drills: null,
     history: [],
   }),
 
@@ -35,10 +42,11 @@ export const useCache = defineStore('cache', {
       if (this.drills !== null && !force) return
 
       try {
-        this.setDrills([])
         const resp = await $fetch<string>('/api/drills')
-        this.setDrills(JSON.parse(resp))
-      } catch (e) {}
+        this.drills = JSON.parse(resp)
+      } catch (e) {
+        this.drills = null
+      }
     },
 
     pushWord(word: IWord) {
@@ -54,10 +62,6 @@ export const useCache = defineStore('cache', {
 
     addHistory(val) {
       this.history.unshift(val)
-    },
-
-    setDrills(val: IDrill[]) {
-      this.drills = val
     },
 
     updateWordComment({ seq, text }: { seq: number, text: string }) {
