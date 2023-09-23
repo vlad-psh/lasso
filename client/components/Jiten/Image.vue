@@ -19,6 +19,8 @@
 
 <style lang="scss">
 .image-view {
+  margin-top: var(--menu-height); // Additional margin for jiten-navigation
+
   img {
     width: 100%;
   }

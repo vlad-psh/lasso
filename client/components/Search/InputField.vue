@@ -24,7 +24,6 @@
       <ClearIcon />
     </div>
   </div>
-  <JitenNavigation v-if="selectedMode !== 'primary'" />
 </template>
 
 <script setup>
@@ -47,11 +46,11 @@
       .then(router.push)
   }
 
-  const searchLater = debounce(function () {
+  /* const searchLater = debounce(function () {
     // TODO: Prevent request while composing japanese text using IME
     // Otherwise, same (unchanged) request will be sent after each key press
     emitSearch()
-  }, 250)
+  }, 250) */
 
   const clearInputField = () => {
     searchFieldRef.value.focus()
@@ -84,9 +83,11 @@
 <style lang="scss" scoped>
 .search-field {
   height: var(--menu-height);
+  width: var(--search-input-width);
   display: flex;
   align-items: stretch;
   justify-content: stretch;
+  position: relative;
   background: rgb(73, 74, 79, 0.35);
 
   input[type='text'] {
@@ -98,11 +99,12 @@
     flex-grow: 2;
     border-bottom: 1px solid transparent;
     border-radius: 0 !important; // iOS has rounded corners by default
+    min-width: 0;
 
     &:active,
     &:focus {
       background: white;
-      color: unset;
+      color: #222;
       outline-width: 0;
       outline: none;
       border-bottom: 1px solid var(--border-color);

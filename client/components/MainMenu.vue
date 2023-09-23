@@ -1,5 +1,10 @@
 <template>
   <div id="main-menu">
+    <SearchInputField
+      @switch-candidate="() => {}"
+    />
+    <!-- @switch-candidate="(direction) => shiftCandidate(direction)" -->
+
     <div class="center">
       <div class="main-menu-item">
         <NuxtLink class="icon" :to="search.searchPath"><SearchIcon /></NuxtLink>
@@ -53,6 +58,8 @@
   background-color: var(--menu-bg-color);
   color: white;
   font-family: Segoe UI, Helvetica Neue, sans-serif;
+  display: flex;
+  justify-content: flex-start;
 
   & > div.center,
   & > div.right {
@@ -61,10 +68,12 @@
     align-items: center;
     height: var(--menu-height);
   }
+  & > div.center {
+    flex-grow: 100;
+  }
   & > div.right {
-    position: absolute;
-    top: 0;
-    right: 0;
+    flex-grow: 50;
+    justify-content: flex-end;
   }
   .main-menu-item {
     a {
@@ -84,6 +93,7 @@
     }
     &.username {
       font-size: 0.7em;
+      padding: 0.7em;
     }
   }
 } /* end of #main-menu */
@@ -91,12 +101,11 @@
 @media (max-width: 568px) {
   body {
     #main-menu {
-      text-align: left;
+      flex-direction: row-reverse;
 
       & > div.right {
-        left: 0;
-        right: initial;
-        margin-left: 0.4em;
+        flex-grow: 0;
+        justify-content: flex-start;
       }
     }
   }

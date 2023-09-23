@@ -76,28 +76,35 @@ export const useSearch = defineStore('search', {
       }
     },
 
+    setCurrentSearch(query: string, results: TSearchResult[], seq?: number) {
+      useEnv().setActivityGroup('search')
+
+      this.selectedIdx = null
+      this.results = results
+      this.query = query
+      this.current = {
+        mode: 'primary',
+        query: query,
+        seq:   seq || results[0][0]
+      }
+    },
+
     async normalSearch(queryString: string, seq?: number) {
       return new Promise((resolve, reject) => {
         const query = queryString.trim()
 
-        if (!query || query === this.query) return
+        if (!query || query === this.query) {
+          this.setCurrentSearch(this.query, this.results)
+          resolve(this.searchPath)
+          return
+        }
 
         $fetch<string>(
           '/api/search',
           { method: 'POST', body: { query } },
         ).then(resp => {
-          this.selectedIdx = null
-          this.results = JSON.parse(resp) as TSearchResult[]
-          this.query = query
-
-          this.current = {
-            mode: 'primary',
-            query: query,
-            seq:   seq || this.results[0][0]
-          }
-
-          useEnv().setActivityGroup('search')
-          resolve({ name: 'search', params: { query, seq } })
+          this.setCurrentSearch(query, JSON.parse(resp) as TSearchResult[], seq)
+          resolve(this.searchPath)
         }).catch(error => reject(error))
       })
     },

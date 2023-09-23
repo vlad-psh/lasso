@@ -49,6 +49,7 @@ body {
 
   --menu-height: 2.5rem;
   --menu-bg-color: #222;
+  --search-input-width: clamp(10em, 25vw, 22em);
 
   .main-content {
     margin-top: var(--menu-height);

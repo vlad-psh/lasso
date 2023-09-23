@@ -33,7 +33,7 @@ export default defineNuxtConfig({
       }, {
         name: 'jiten',
         path: '/jiten/:mode/:query',
-        file: '~/pages/search.vue',
+        file: '~/pages/jiten.vue',
       }, {
         name: 'quiz',
         path: '/quiz/:drill_id/:type',

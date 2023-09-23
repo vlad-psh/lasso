@@ -1,10 +1,6 @@
 <template>
   <div id="search-app">
     <div class="browse-panel">
-      <SearchInputField
-        @switch-candidate="(direction) => shiftCandidate(direction)"
-      />
-
       <div class="search-results">
         <SearchCandidateItem
           v-for="(item, itemIndex) in results"
@@ -17,11 +13,7 @@
       </div>
     </div>
     <div class="contents-panel">
-      <WordComponent
-        v-if="currentMode === 'primary'"
-        :seq="currentRef.seq"
-      />
-      <JitenImage v-else-if="currentMode === 'jiten'" />
+      <WordComponent :seq="currentRef.seq" />
     </div>
   </div>
 </template>
@@ -50,11 +42,6 @@
     }
   )
 
-  const currentMode = computed(() => {
-    if (!currentRef.value.mode) return null
-    return currentRef.value.mode === 'primary' ? 'primary' : 'jiten'
-  })
-
   const scrollToIndex = (idx) => {
     if (!(candidates && candidates[idx])) return
 
@@ -74,27 +61,24 @@
     scrollToIndex(idx)
   }
 
-  const shiftCandidate = (direction) => {
+  /* const shiftCandidate = (direction) => {
     let idx = results.value.findIndex((i) => i[0] === currentRef.value.seq)
 
     if (direction === 'prev' && idx > 0) idx--
     else if (direction === 'next' && idx + 1 < results.value.length) idx++
 
     openCandidate(results.value[idx][0], idx)
-  }
+  } */
 </script>
 
 <style lang="scss" scoped>
 #search-app {
-  --search-results-width: clamp(10em, 25vw, 22em);
-
   .browse-panel {
     position: fixed;
-    z-index: 150; // on top of "main menu" (which has z-index = 100)
-    top: 0;
+    top: var(--menu-height);
     left: 0;
-    height: 100%;
-    width: var(--search-results-width);
+    height: calc(100% - var(--menu-height));
+    width: var(--search-input-width);
     border: 0px solid var(--border-color);
     border-right-width: 1px;
     display: grid;
@@ -108,7 +92,7 @@
   }
 
   .contents-panel {
-    margin-left: var(--search-results-width);
+    margin-left: var(--search-input-width);
   }
 }
 
@@ -122,7 +106,7 @@
     }
     .contents-panel {
       margin-left: unset;
-      margin-right: var(--search-results-width);
+      margin-right: var(--search-input-width);
       font-size: 1em;
     }
   }

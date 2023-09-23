@@ -53,8 +53,9 @@
 
     height: var(--menu-height);
     flex-grow: 100;
-    font-size: 0.9em;
+    font-size: 0.7em;
     padding: 0 0.5em 0 0.7em;
+    white-space: nowrap;
 
     cursor: pointer;
     color: var(--color);

@@ -47,11 +47,14 @@
 
 <style lang="scss" scoped>
 .jiten-navigation {
+  width: var(--search-input-width);
   display: flex;
   justify-content: space-around;
   align-items: center;
   background: var(--bg-secondary);
-  padding: 0.3em;
+  padding: 0.3em 0;
+  position: fixed;
+  top: var(--menu-height);
 }
 
 input {
@@ -77,6 +80,9 @@ input {
 }
 
 @media (max-width: 568px) {
+  .jiten-navigation {
+    right: 0;
+  }
   input {
     max-width: 2.5em;
   }
