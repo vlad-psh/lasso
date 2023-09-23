@@ -2,6 +2,14 @@
 import svgLoader from "vite-svg-loader"
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      title: 'Lasso',
+    }
+  },
+
   modules: [
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
