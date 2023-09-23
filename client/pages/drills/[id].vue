@@ -67,12 +67,12 @@
   sentences.value = json.sentences
 
   const readingQuiz = {
-    name: 'sub-quiz',
+    name: 'quiz',
     params: { drill_id: drill.value.id, type: 'reading' },
   }
 
   const writingQuiz = {
-    name: 'sub-quiz',
+    name: 'quiz',
     params: { drill_id: drill.value.id, type: 'writing' },
   }
 
@@ -89,7 +89,7 @@
 
   const searchPath = (word) => {
     return {
-      name: 'sub-search',
+      name: 'search',
       params: { query: word.title || word.base || word.text, seq: word.seq },
     }
   }

@@ -18,7 +18,7 @@
         <div>
           <NuxtLink
             :to="{
-              name: 'sub-quiz',
+              name: 'quiz',
               params: { drill_id: drill.id, type: 'reading' },
             }"
             class="quiz-link"
@@ -28,7 +28,7 @@
         <div>
           <NuxtLink
             :to="{
-              name: 'sub-quiz',
+              name: 'quiz',
               params: { drill_id: drill.id, type: 'writing' },
             }"
             class="quiz-link"

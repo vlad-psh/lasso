@@ -29,7 +29,7 @@
 
   const path = (query) => {
     return router.resolve({
-      name: 'sub-search',
+      name: 'search',
       params: { query },
     }).href
   }

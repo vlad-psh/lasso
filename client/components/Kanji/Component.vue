@@ -114,7 +114,7 @@
   })
 
   const searchRoute = computed(() => {
-    return { name: 'sub-search', params: { query: props.payload.title } }
+    return { name: 'search', params: { query: props.payload.title } }
   })
 
   const bookSearchRoute = computed(() => {

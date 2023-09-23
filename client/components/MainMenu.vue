@@ -9,7 +9,7 @@
       </div>
       <div v-if="env.quizParams" class="main-menu-item">
         <NuxtLink
-          :to="{ name: 'sub-quiz', params: env.quizParams }"
+          :to="{ name: 'quiz', params: env.quizParams }"
           ><QAIcon
         /></NuxtLink>
       </div>

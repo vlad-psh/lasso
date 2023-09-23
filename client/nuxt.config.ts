@@ -25,18 +25,17 @@ export default defineNuxtConfig({
     'pages:extend'(pages) {
       pages.push({
         name: 'index',
-        path: '/',
-        file: '~/pages/search.vue',
+        redirect: { name: 'search' },
       }, {
-        name: 'sub-search',
-        path: '/search/:query/:seq?',
+        name: 'search',
+        path: '/search/:query?/:seq?',
         file: '~/pages/search.vue',
       }, {
         name: 'jiten',
         path: '/jiten/:mode/:query',
         file: '~/pages/search.vue',
       }, {
-        name: 'sub-quiz',
+        name: 'quiz',
         path: '/quiz/:drill_id/:type',
         file: '~/pages/quiz.vue',
       })

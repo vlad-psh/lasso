@@ -33,10 +33,8 @@ const SEARCH_MODES = [
 const searchName = (params: ICurrent) => {
   if (['kokugo', 'kanji', 'onomat'].includes(params.mode)) {
     return 'jiten'
-  } else if (params.query) {
-    return 'sub-search'
   } else {
-    return 'index'
+    return 'search'
   }
 }
 
@@ -99,7 +97,7 @@ export const useSearch = defineStore('search', {
           }
 
           useEnv().setActivityGroup('search')
-          resolve({ name: 'sub-search', params: { query, seq } })
+          resolve({ name: 'search', params: { query, seq } })
         }).catch(error => reject(error))
       })
     },
