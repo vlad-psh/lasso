@@ -7,7 +7,9 @@
     <template v-else-if="env.user">
       <MainMenu />
       <!-- <Nuxt keep-alive /> -->
-      <slot />
+      <div class="main-content">
+        <slot />
+      </div>
     </template>
 
     <LoginForm v-else-if="env.user === null" />
@@ -45,6 +47,13 @@ body {
   --grey-tag-bg: transparent;
   --grey-tag-bg-gradient: linear-gradient(to bottom, transparent, #f3f4f6);
   --grey-tag-border-color: var(--border-color);
+
+  --menu-height: 2em;
+  --menu-bg-color: #222;
+
+  .main-content {
+    margin-top: var(--menu-height);
+  }
 }
 
 html[class='dark-mode'] body {

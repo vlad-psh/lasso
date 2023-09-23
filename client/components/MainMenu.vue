@@ -45,7 +45,12 @@
 
 <style lang="scss">
 #main-menu {
-  background-color: #222;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--menu-bg-color);
   color: white;
   font-family: Segoe UI, Helvetica Neue, sans-serif;
 
@@ -54,7 +59,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 2em;
+    height: var(--menu-height);
   }
   & > div.right {
     position: absolute;

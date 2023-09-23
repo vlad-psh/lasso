@@ -77,15 +77,17 @@
 
 <style lang="scss" scoped>
 #search-app {
-  display: grid;
-  grid-template-columns: clamp(10em, 25vw, 22em) 1fr;
-  grid-template-rows: 100%;
-  overflow: hidden;
+  --search-results-width: clamp(10em, 25vw, 22em);
 
   .browse-panel {
+    position: fixed;
+    z-index: 150; // on top of "main menu" (which has z-index = 100)
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--search-results-width);
     border: 0px solid var(--border-color);
     border-right-width: 1px;
-    height: 100%;
     display: grid;
     grid-template-rows: auto auto 1fr;
 
@@ -97,24 +99,21 @@
   }
 
   .contents-panel {
-    height: 100%;
-    overflow-y: auto;
+    margin-left: var(--search-results-width);
   }
 }
 
 @media (max-width: 568px) {
   #search-app {
-    grid-template-columns: 1fr 10em;
-
     .browse-panel {
-      grid-row: 1;
-      grid-column: 2;
+      left: unset;
+      right: 0;
       border-right-width: 0;
       border-left-width: 1px;
     }
     .contents-panel {
-      grid-row: 1;
-      grid-column: 1;
+      margin-left: unset;
+      margin-right: var(--search-results-width);
       font-size: 1em;
     }
   }

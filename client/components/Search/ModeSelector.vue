@@ -6,7 +6,7 @@
       :class="[mode.id, selectedMode === mode.id ? 'active' : null]"
       @click="() => searchModeClick(mode.id)"
     >
-      <span>{{ mode.title }}</span>
+      {{ mode.title }}
     </div>
   </div>
 </template>
@@ -31,26 +31,30 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.1em;
-  padding: 0.1em;
+  padding: 0.1em 0;
+  background: var(--menu-bg-color);
 
   div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: calc(var(--menu-height) - 0.4em);
     flex-grow: 100;
     font-size: 0.9em;
     min-width: 5em;
-    padding: 0.1em 0 0.2em;
-    text-align: center;
+    margin: 0.1em;
+
     cursor: pointer;
     --color: white;
     border: 1px solid var(--bg-color);
-
-    span {
-      padding: 0.2em 0.3em 0.1em;
-    }
+    border-radius: 0.3em;
+    color: var(--color);
+    background: var(--bg-color);
+    filter: saturate(0.5) brightness(0.5);
 
     &:hover, &.active {
-      background: var(--bg-color);
-      color: var(--color);
+      filter: none;
     }
   }
 
