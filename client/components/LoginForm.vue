@@ -1,6 +1,5 @@
 <template>
   <div class="middle-content">
-    <h2>Login</h2>
     <form>
       <input v-model="username" type="text" placeholder="Username" />
       <input v-model="password" type="password" placeholder="Password" />
@@ -28,3 +27,9 @@
     setUser(JSON.parse(resp))
   }
 </script>
+
+<style lang="scss" scoped>
+form {
+  margin-top: 10em;
+}
+</style>

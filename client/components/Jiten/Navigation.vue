@@ -1,6 +1,8 @@
 <template>
   <div class="jiten-navigation">
-    <div class="hint" @click="leftPage">Shift + ←</div>
+    <div class="hint" @click="leftPage">
+      <span class="hotkey">Shift + </span>←
+    </div>
     <input
       class="shortkey-enabled"
       v-model="page"
@@ -13,7 +15,9 @@
       placeholder="..."
       type="text"
     />
-    <div class="hint" @click="rightPage">Shift + →</div>
+    <div class="hint" @click="rightPage">
+      <span class="hotkey">Shift + </span>→
+    </div>
   </div>
 </template>
 
@@ -47,14 +51,12 @@
 
 <style lang="scss" scoped>
 .jiten-navigation {
-  width: var(--search-input-width);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background: var(--bg-secondary);
-  padding: 0.3em 0;
-  position: fixed;
-  top: var(--menu-height);
+  --gap: 1.5em;
+  padding: 0.3em var(--gap);
+  gap: var(--gap);
 }
 
 input {
@@ -81,10 +83,13 @@ input {
 
 @media (max-width: 568px) {
   .jiten-navigation {
-    right: 0;
+    --gap: 0.6em;
   }
   input {
     max-width: 2.5em;
+  }
+  .hotkey {
+    display: none;
   }
 }
 </style>

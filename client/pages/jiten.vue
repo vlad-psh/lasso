@@ -1,8 +1,5 @@
 <template>
-  <div id="jiten-app">
-    <JitenNavigation :key="route.params.mode" />
-    <JitenImage />
-  </div>
+  <JitenImage />
 </template>
 
 <script setup>
@@ -22,6 +19,3 @@
     }
   )
 </script>
-
-<style lang="scss" scoped>
-</style>

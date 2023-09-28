@@ -17,12 +17,13 @@
   })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .image-view {
-  margin-top: var(--menu-height); // Additional margin for jiten-navigation
+  text-align: center;
 
   img {
     width: 100%;
+    max-width: 75em;
   }
 }
 </style>

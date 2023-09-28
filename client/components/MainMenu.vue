@@ -1,6 +1,7 @@
 <template>
   <div id="main-menu">
     <SearchInputField />
+    <JitenNavigation v-if="route.name === 'jiten'" :key="route.params.mode"/>
 
     <div class="center">
       <div class="main-menu-item">
@@ -35,6 +36,7 @@
   import BookmarkIcon from '../assets/icons/bookmark.svg'
   import QAIcon from 'assets/icons/qa.svg'
 
+  const route = useRoute()
   const env = useEnv()
   const search = useSearch()
   const { user } = storeToRefs(env)

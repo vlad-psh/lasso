@@ -70,7 +70,7 @@
     } else if (event.srcKey === 'prevCandidate') {
       shiftCandidate('prev')
     } else if (event.srcKey === 'focus') {
-      this.clearInputField()
+      clearInputField()
     }
   }
 

@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="contents-panel">
-      <WordComponent :seq="currentRef.seq" />
+      <WordComponent v-if="currentRef.seq" :seq="currentRef.seq" />
     </div>
   </div>
 </template>
