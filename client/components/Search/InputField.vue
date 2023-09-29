@@ -1,28 +1,45 @@
 <template>
-  <div class="search-field">
-    <SearchModeSelector
-      :selected-mode="selectedMode"
-      @change="(modeId) => (selectedMode = modeId)"
-      @search="emitSearch"
-    />
-    <input
-      class="shortkey-enabled"
-      ref="searchFieldRef"
-      v-model="searchField"
-      v-shortkey="{
-        focus: ['esc'],
-        nextCandidate: ['arrowdown'],
-        prevCandidate: ['arrowup'],
-      }"
-      type="text"
-      placeholder="Search..."
-      @shortkey="shortkey"
-      @keydown.enter="emitSearch"
-      @keydown.tab.prevent="switchDictionary"
-    />
-    <div class="clear-button" @click="clearInputField">
-      <ClearIcon />
-    </div>
+  <div class="search-component">
+    <template
+      v-for="mode, idx in store.searchModes"
+      :key="mode.id"
+    >
+      <div
+        class="mode-item"
+        :class="mode.id"
+        @click="() => changeSearchMode(idx)"
+        v-shortkey="['meta', idx + 1]"
+        @shortkey="() => changeSearchMode(idx)"
+      >
+        {{ mode.title }}
+      </div>
+
+      <div
+        class="input-wrapper"
+        :class="selectedMode === mode.id ? 'enabled' : 'disabled'"
+      >
+        <input
+          class="shortkey-enabled"
+          ref="inputFieldRefs"
+          v-model="inputValues[mode.id]"
+          v-shortkey="{
+            focus: ['esc'],
+            nextCandidate: ['arrowdown'],
+            prevCandidate: ['arrowup'],
+          }"
+          type="text"
+          placeholder="Search..."
+          @shortkey="shortkey"
+          @keydown.enter="emitSearch"
+          @keydown.tab.prevent="switchSearchMode"
+        />
+        <div class="clear-button" @click="clearInputField">
+          <ClearIcon />
+        </div>
+      </div>
+    </template>
+
+    <JitenNavigation v-if="route.name === 'jiten'" :key="route.params.mode"/>
   </div>
 </template>
 
@@ -34,16 +51,14 @@
   const store = useSearch()
   const route = useRoute()
   const router = useRouter()
-  let searchFieldRef = ref(null)
   const { results, current: currentRef } = storeToRefs(store)
 
-  const searchField = ref(store.query)
-  const searchQuery = ref(store.query) // when user press 'Enter'
+  const inputFieldRefs = ref([])
+  const inputValues = reactive({})
   const selectedMode = ref('primary')
 
   const emitSearch = () => {
-    searchQuery.value = searchField.value
-    store.search(searchQuery.value, selectedMode.value)
+    store.search(inputValues[selectedMode.value], selectedMode.value)
       .then(router.push)
   }
 
@@ -53,15 +68,24 @@
     emitSearch()
   }, 250) */
 
+  const changeSearchMode = (modeIdx) => {
+    const mode = store.searchModes[modeIdx]
+    if (!mode) return
+
+    selectedMode.value = mode.id
+    emitSearch()
+    inputFieldRefs.value[modeIdx]?.focus()
+  }
+
+  const switchSearchMode = () => {
+    const modes = store.searchModes.map((i) => i.id)
+    const idx = modes.findIndex((i) => i === selectedMode.value)
+    changeSearchMode((idx + 1) % modes.length)
+  }
+
   const clearInputField = () => {
     searchFieldRef.value.focus()
     searchFieldRef.value.select()
-  }
-
-  const switchDictionary = () => {
-    const modes = store.searchModes.map((i) => i.id)
-    const idx = modes.findIndex((i) => i === selectedMode.value)
-    selectedMode.value = modes[(idx + 1) % modes.length]
   }
 
   const shortkey = (event) => {
@@ -92,21 +116,66 @@
   }
 
   onMounted(() => {
-    searchField.value = route.params.query
-    searchQuery.value = route.params.query
     selectedMode.value = store.current.mode || 'primary'
+    inputValues[selectedMode.value] = route.params.query
   })
 </script>
 
 <style lang="scss" scoped>
-.search-field {
+.mode-item {
+  cursor: pointer;
+  color: var(--color);
+  background: var(--bg-color);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  padding: 0.2em 0.5em;
+  font-size: 0.8em;
+
+  &:hover {
+    filter: saturate(0.8) brightness(0.8);
+  }
+
+  &.primary {
+    --bg-color: #6c05a5;
+    --color: white;
+  }
+  &.kokugo {
+    --bg-color: #f5203e;
+    --color: white;
+  }
+  &.kanji {
+    --bg-color: #66a48e;
+    --color: white;
+  }
+  &.onomat {
+    --bg-color: #fce35a;
+    --color: #665616;
+  }
+}
+
+.search-component {
   height: var(--menu-height);
   width: var(--search-input-width);
   display: flex;
-  align-items: stretch;
   justify-content: stretch;
-  position: relative;
-  background: rgb(73, 74, 79, 0.35);
+  align-items: stretch;
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+
+    &.disabled {
+      input {
+        width: 0 !important;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .clear-button {
+        display: none;
+      }
+    }
+  }
 
   input[type='text'] {
     background: none;
@@ -114,10 +183,10 @@
     padding: 0.2em 0.6em 0.2em 0.6em;
     box-sizing: border-box;
     color: white;
-    flex-grow: 2;
     border-bottom: 1px solid transparent;
     border-radius: 0 !important; // iOS has rounded corners by default
-    min-width: 0;
+    width: 15em;
+    transition: width 0.2s, padding 0.2s;
 
     &:active,
     &:focus {
