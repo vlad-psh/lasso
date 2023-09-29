@@ -31,7 +31,8 @@
           placeholder="Search..."
           @shortkey="shortkey"
           @keydown.enter="emitSearch"
-          @keydown.tab.prevent="switchSearchMode"
+          @keydown.tab.prevent="changeSearchMode((idx + 1) % modesCount)"
+          @keydown.shift.tab.prevent="changeSearchMode((idx - 1 + modesCount) % modesCount)"
         />
         <div class="clear-button" @click="clearInputField">
           <ClearIcon />
@@ -56,6 +57,7 @@
   const inputFieldRefs = ref([])
   const inputValues = reactive({})
   const selectedMode = ref('primary')
+  const modesCount = store.searchModes.length
 
   const emitSearch = () => {
     store.search(inputValues[selectedMode.value], selectedMode.value)
@@ -75,12 +77,6 @@
     selectedMode.value = mode.id
     emitSearch()
     inputFieldRefs.value[modeIdx]?.focus()
-  }
-
-  const switchSearchMode = () => {
-    const modes = store.searchModes.map((i) => i.id)
-    const idx = modes.findIndex((i) => i === selectedMode.value)
-    changeSearchMode((idx + 1) % modes.length)
   }
 
   const clearInputField = () => {
