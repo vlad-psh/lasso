@@ -1,15 +1,19 @@
 <template>
-  <div class="search-component">
+  <div
+    class="search-component"
+    @keydown.tab.prevent="() => switchSearchMode(1)"
+    @keydown.shift.tab.prevent="() => switchSearchMode(-1)"
+  >
     <template
-      v-for="mode, idx in store.searchModes"
+      v-for="(mode, idx) in SEARCH_MODES"
       :key="mode.id"
     >
       <div
         class="mode-item"
         :class="mode.id"
-        @click="() => changeSearchMode(idx)"
+        @click="() => setSearchMode(idx)"
         v-shortkey="['meta', idx + 1]"
-        @shortkey="() => changeSearchMode(idx)"
+        @shortkey="() => setSearchMode(idx)"
       >
         {{ mode.title }}
       </div>
@@ -31,8 +35,6 @@
           placeholder="Search..."
           @shortkey="shortkey"
           @keydown.enter="emitSearch"
-          @keydown.tab.prevent="changeSearchMode((idx + 1) % modesCount)"
-          @keydown.shift.tab.prevent="changeSearchMode((idx - 1 + modesCount) % modesCount)"
         />
         <div class="clear-button" @click="clearInputField">
           <ClearIcon />
@@ -44,7 +46,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+  import { reactive, computed } from 'vue'
   import debounce from '@/js/debouncer.js'
   import ClearIcon from '../../assets/icons/clear.svg'
   import { storeToRefs } from 'pinia';
@@ -54,13 +57,27 @@
   const router = useRouter()
   const { results, current: currentRef } = storeToRefs(store)
 
+  const SEARCH_MODES = [
+    { id: 'primary', title: '探す' },
+    { id: 'kokugo', title: '国語' },
+    { id: 'kanji', title: '漢字' },
+    { id: 'onomat', title: 'ｵﾉﾏﾄ' },
+  ]
+
   const inputFieldRefs = ref([])
-  const inputValues = reactive({})
+  const inputValues = reactive({
+    primary: '',
+    kokugo: '',
+    kanji: '',
+    onomat: '',
+  })
   const selectedMode = ref('primary')
-  const modesCount = store.searchModes.length
 
   const emitSearch = () => {
-    store.search(inputValues[selectedMode.value], selectedMode.value)
+    const query = inputValues[selectedMode.value]
+    if (!query) return
+
+    store.search(query, selectedMode.value)
       .then(router.push)
   }
 
@@ -70,24 +87,31 @@
     emitSearch()
   }, 250) */
 
-  const changeSearchMode = (modeIdx) => {
-    const mode = store.searchModes[modeIdx]
-    if (!mode) return
-
-    selectedMode.value = mode.id
+  const setSearchMode = (idx: number) => {
+    selectedMode.value = SEARCH_MODES[idx].id
     emitSearch()
-    inputFieldRefs.value[modeIdx]?.focus()
+    inputFieldRefs.value[idx].focus()
+  }
+
+  const selectedModeIdx = computed(() => SEARCH_MODES.findIndex(i => i.id == selectedMode.value))
+  const modesCount = SEARCH_MODES.length
+
+  const switchSearchMode = (incr: number) => {
+    // Extra 'modesCount' is added to handle negative values of 'incr' well
+    const newIdx = (selectedModeIdx.value + incr + modesCount) % modesCount
+    setSearchMode(newIdx)
   }
 
   const clearInputField = () => {
-    searchFieldRef.value.focus()
-    searchFieldRef.value.select()
+    const currentInputField = inputFieldRefs.value[selectedModeIdx.value]
+    currentInputField.focus()
+    currentInputField.select()
   }
 
   const shortkey = (event) => {
-    if (event.srcKey === 'nextCandidate') {
+    if (event.srcKey === 'nextCandidate' && selectedMode.value === 'primary') {
       shiftCandidate('next')
-    } else if (event.srcKey === 'prevCandidate') {
+    } else if (event.srcKey === 'prevCandidate' && selectedMode.value === 'primary') {
       shiftCandidate('prev')
     } else if (event.srcKey === 'focus') {
       clearInputField()

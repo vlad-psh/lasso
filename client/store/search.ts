@@ -23,13 +23,6 @@ type TSearchResult = [
   isLearned: boolean,
 ]
 
-const SEARCH_MODES = [
-  { id: 'primary', title: '探す' },
-  { id: 'kokugo', title: '国語' },
-  { id: 'kanji', title: '漢字' },
-  { id: 'onomat', title: 'ｵﾉﾏﾄ' },
-]
-
 const searchName = (params: ICurrent) => {
   if (['kokugo', 'kanji', 'onomat'].includes(params.mode)) {
     return 'jiten'
@@ -49,7 +42,6 @@ export const useSearch = defineStore('search', {
       seq: undefined,
       page: undefined,
     } as ICurrent,
-    searchModes: SEARCH_MODES,
   }),
 
   getters: {
