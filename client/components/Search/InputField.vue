@@ -4,9 +4,11 @@
     @keydown.tab.prevent="() => switchSearchMode(1)"
     @keydown.shift.tab.prevent="() => switchSearchMode(-1)"
   >
-    <template
+    <div
       v-for="(mode, idx) in SEARCH_MODES"
       :key="mode.id"
+      class="search-mode"
+      :class="selectedMode === mode.id ? 'enabled' : 'disabled'"
     >
       <div
         class="mode-item"
@@ -15,32 +17,27 @@
         v-shortkey="['meta', idx + 1]"
         @shortkey="() => setSearchMode(idx)"
       >
-        {{ mode.title }}
+        <component :is="mode.svg" />
       </div>
 
-      <div
-        class="input-wrapper"
-        :class="selectedMode === mode.id ? 'enabled' : 'disabled'"
-      >
-        <input
-          class="shortkey-enabled"
-          ref="inputFieldRefs"
-          v-model="inputValues[mode.id]"
-          v-shortkey="{
-            focus: ['esc'],
-            nextCandidate: ['arrowdown'],
-            prevCandidate: ['arrowup'],
-          }"
-          type="text"
-          placeholder="Search..."
-          @shortkey="shortkey"
-          @keydown.enter="emitSearch"
-        />
-        <div class="clear-button" @click="clearInputField">
-          <ClearIcon />
-        </div>
+      <input
+        class="shortkey-enabled"
+        ref="inputFieldRefs"
+        v-model="inputValues[mode.id]"
+        v-shortkey="{
+          focus: ['esc'],
+          nextCandidate: ['arrowdown'],
+          prevCandidate: ['arrowup'],
+        }"
+        type="text"
+        placeholder="Search..."
+        @shortkey="shortkey"
+        @keydown.enter="emitSearch"
+      />
+      <div class="clear-button" @click="clearInputField">
+        <ClearIcon />
       </div>
-    </template>
+    </div>
 
     <JitenNavigation v-if="route.name === 'jiten'" :key="route.params.mode"/>
   </div>
@@ -50,6 +47,10 @@
   import { reactive, computed } from 'vue'
   import debounce from '@/js/debouncer.js'
   import ClearIcon from '../../assets/icons/clear.svg'
+  import DictPrimaryLabel from '../../assets/icons/dict-primary.svg'
+  import DictKokugoLabel from '../../assets/icons/dict-kokugo.svg'
+  import DictKanjiLabel from '../../assets/icons/dict-kanji.svg'
+  import DictOnomatLabel from '../../assets/icons/dict-onomat.svg'
   import { storeToRefs } from 'pinia';
 
   const store = useSearch()
@@ -58,10 +59,10 @@
   const { results, current: currentRef } = storeToRefs(store)
 
   const SEARCH_MODES = [
-    { id: 'primary', title: '探す' },
-    { id: 'kokugo', title: '国語' },
-    { id: 'kanji', title: '漢字' },
-    { id: 'onomat', title: 'ｵﾉﾏﾄ' },
+    { id: 'primary', title: '検索', svg: DictPrimaryLabel },
+    { id: 'kokugo', title: '国語', svg: DictKokugoLabel },
+    { id: 'kanji', title: '漢字', svg: DictKanjiLabel },
+    { id: 'onomat', title: 'ｵﾉﾏﾄ', svg: DictOnomatLabel },
   ]
 
   const inputFieldRefs = ref([])
@@ -142,57 +143,77 @@
 </script>
 
 <style lang="scss" scoped>
-.mode-item {
-  cursor: pointer;
-  color: var(--color);
-  background: var(--bg-color);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  padding: 0.2em 0.5em;
-  font-size: 0.8em;
-
-  &:hover {
-    filter: saturate(0.8) brightness(0.8);
-  }
-
-  &.primary {
-    --bg-color: #6c05a5;
-    --color: white;
-  }
-  &.kokugo {
-    --bg-color: #f5203e;
-    --color: white;
-  }
-  &.kanji {
-    --bg-color: #66a48e;
-    --color: white;
-  }
-  &.onomat {
-    --bg-color: #fce35a;
-    --color: #665616;
-  }
-}
-
 .search-component {
   height: var(--menu-height);
-  width: var(--search-input-width);
   display: flex;
   justify-content: stretch;
   align-items: stretch;
 
-  .input-wrapper {
+  .search-mode {
     position: relative;
     display: flex;
     align-items: stretch;
 
     &.disabled {
+      .mode-item {
+        &:hover {
+          filter: saturate(0.8) brightness(0.8);
+          cursor: pointer;
+        }
+
+        svg {
+          height: 35px;
+        }
+      }
+
       input {
         width: 0 !important;
         padding-left: 0;
         padding-right: 0;
       }
+
       .clear-button {
         display: none;
+      }
+    }
+
+    &.enabled {
+      background: white;
+
+      svg {
+        border-radius: 3px;
+        height: 28px;
+        width: 18px;
+      }
+    }
+
+    .mode-item {
+      background: var(--bg-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: var(--menu-height);
+
+      svg {
+        transition: width 0.1s, height 0.1s;
+      }
+
+      &.primary svg {
+        background: #6c05a5;
+        color: white;
+      }
+      &.kokugo svg {
+        background: #f5203e;
+        color: white;
+      }
+      &.kanji svg {
+        background: #66a48e;
+        color: white;
+      }
+      &.onomat svg {
+        background: #fce35a;
+        color: #665616;
       }
     }
   }
@@ -206,7 +227,7 @@
     border-bottom: 1px solid transparent;
     border-radius: 0 !important; // iOS has rounded corners by default
     width: 15em;
-    transition: width 0.2s, padding 0.2s;
+    transition: width 0.2s ease-in-out, padding 0.2s;
 
     &:active,
     &:focus {
@@ -236,6 +257,16 @@
 
     &:hover {
       opacity: 0.6;
+    }
+  }
+}
+
+@media (max-width: 568px) {
+  .search-component {
+    flex-direction: row-reverse;
+
+    .search-mode input {
+      width: 7em;
     }
   }
 }
