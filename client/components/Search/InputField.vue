@@ -197,33 +197,35 @@
 
       svg {
         transition: width 0.1s, height 0.1s;
+        color: var(--color);
+        background: var(--background);
       }
 
-      &.primary svg {
-        background: #6c05a5;
-        color: white;
+      &.primary {
+        --background: #6c05a5;
+        --color: white;
       }
-      &.kokugo svg {
-        background: #f5203e;
-        color: white;
+      &.kokugo {
+        --background: #f5203e;
+        --color: white;
       }
-      &.kanji svg {
-        background: #66a48e;
-        color: white;
+      &.kanji {
+        --background: #66a48e;
+        --color: white;
       }
-      &.onomat svg {
-        background: #fce35a;
-        color: #665616;
+      &.onomat {
+        --background: #fce35a;
+        --color: #665616;
       }
     }
   }
 
   input[type='text'] {
-    background: none;
     border: none;
-    padding: 0.2em 0.6em 0.2em 0.6em;
+    padding: 0.2em 0.6em 0.2em 0.2em;
     box-sizing: border-box;
-    color: white;
+    background: white;
+    color: #222;
     border-bottom: 1px solid transparent;
     border-radius: 0 !important; // iOS has rounded corners by default
     width: 15em;
@@ -231,8 +233,6 @@
 
     &:active,
     &:focus {
-      background: white;
-      color: #222;
       outline-width: 0;
       outline: none;
       border-bottom: 1px solid var(--border-color);

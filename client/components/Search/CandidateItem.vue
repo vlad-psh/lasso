@@ -6,10 +6,8 @@
   >
     <div class="title">
       <div class="text ja">{{ item[1] }}</div>
-      <div class="icons">
-        <div v-if="item[5]" class="learned-icon"><LearnedIcon /></div>
-        <div v-if="item[4]" class="common-icon">&#x2b50;</div>
-      </div>
+      <div v-if="item[5]" class="learned-icon"><LearnedIcon /></div>
+      <div v-if="item[4]" class="common-icon green">CW</div>
     </div>
     <div class="details">
       <span class="ja">{{ item[2] }}</span
@@ -30,7 +28,7 @@
 
 <style lang="scss">
 .candidate-item {
-  padding: 0.2em 0.4em;
+  padding: 0.2em 0 0.2em 0.4em;
   cursor: pointer;
   border-radius: 0.2em;
   margin: 0.1em 0.2em;
@@ -38,7 +36,12 @@
   &.selected {
     background-image: linear-gradient(to bottom, #1aa0d5, #095bb3);
     color: white;
-    padding: 0.2em 0.4em 0.4em;
+    padding: 0.2em 0 0.4em 0.4em;
+
+    .title .common-icon {
+      background-color: var(--bg);
+      color: var(--color);
+    }
 
     .details {
       opacity: 1;
@@ -58,7 +61,6 @@
       font-weight: 400;
     }
 
-    .common-icon,
     .learned-icon {
       display: inline-block;
       font-size: 0.8em;
@@ -67,6 +69,16 @@
         height: 1em;
         width: 1em;
       }
+    }
+    .common-icon {
+      display: inline-block;
+      font-weight: bold;
+      font-size: 0.6em;
+      line-height: 1.2em;
+      padding: 0.1em 0.2em 0 0.2em;
+      margin-right: 0.4em;
+      opacity: 0.7;
+      border-radius: 0.2em;
     }
   }
   .details {
