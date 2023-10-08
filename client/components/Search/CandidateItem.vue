@@ -6,7 +6,7 @@
   >
     <div class="title">
       <div class="text ja">{{ item[1] }}</div>
-      <div v-if="item[5]" class="learned-icon"><LearnedIcon /></div>
+      <div v-if="item[5]" class="learned-icon">💮</div>
       <div v-if="item[4]" class="common-icon green">CW</div>
     </div>
     <div class="details">
@@ -17,8 +17,6 @@
 </template>
 
 <script setup>
-  import LearnedIcon from '../../assets/icons/learned.svg'
-
   defineProps({
     item: { type: Array, required: true },
     isSelected: { type: Boolean },
