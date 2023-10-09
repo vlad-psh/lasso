@@ -4,9 +4,6 @@
 
     <div class="center">
       <div class="main-menu-item">
-        <NuxtLink class="icon" :to="search.searchPath"><SearchIcon /></NuxtLink>
-      </div>
-      <div class="main-menu-item">
         <NuxtLink class="icon" to="/drills"><BookmarkIcon /></NuxtLink>
       </div>
       <div v-if="env.quizParams" class="main-menu-item">
@@ -31,7 +28,6 @@
 <script setup>
   import { storeToRefs } from 'pinia'
 
-  import SearchIcon from 'assets/icons/search.svg'
   import BookmarkIcon from '../assets/icons/bookmark.svg'
   import QAIcon from 'assets/icons/qa.svg'
 

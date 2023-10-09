@@ -33,6 +33,7 @@
         placeholder="Search..."
         @shortkey="shortkey"
         @keydown.enter="emitSearch"
+        @focus="() => setSearchMode(idx)"
       />
       <div class="clear-button" @click="clearInputField">
         <ClearIcon />
@@ -156,11 +157,6 @@
 
     &.disabled {
       .mode-item {
-        &:hover {
-          filter: saturate(0.8) brightness(0.8);
-          cursor: pointer;
-        }
-
         svg {
           height: 35px;
         }
@@ -178,7 +174,8 @@
     }
 
     &.enabled {
-      background: white;
+      background: #7771;
+      color: #eee;
 
       svg {
         border-radius: 3px;
@@ -188,12 +185,17 @@
     }
 
     .mode-item {
-      background: var(--bg-color);
+      background: inherit;
       display: flex;
       align-items: center;
       justify-content: center;
       width: 26px;
       height: var(--menu-height);
+      cursor: pointer;
+
+      &:hover {
+        filter: saturate(0.8) brightness(0.8);
+      }
 
       svg {
         transition: width 0.1s, height 0.1s;
@@ -224,9 +226,8 @@
     border: none;
     padding: 0.2em 0.6em 0.2em 0.2em;
     box-sizing: border-box;
-    background: white;
-    color: #222;
-    border-bottom: 1px solid transparent;
+    background: inherit;
+    color: inherit;
     border-radius: 0 !important; // iOS has rounded corners by default
     width: 15em;
     transition: width 0.2s ease-in-out, padding 0.2s;
@@ -235,7 +236,6 @@
     &:focus {
       outline-width: 0;
       outline: none;
-      border-bottom: 1px solid var(--border-color);
     }
   }
 
