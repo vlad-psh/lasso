@@ -1,22 +1,22 @@
 <template>
   <div class="jiten-navigation">
-    <div class="hint" @click="leftPage">
-      <span class="hotkey">Shift + </span>←
+    <div class="hint" @click="prevPage">
+      <span class="hotkey">↑</span>
     </div>
     <input
       class="shortkey-enabled"
       v-model="page"
       @keydown.enter="commitPageChange"
       v-shortkey="{
-        rightPage: ['shift', 'arrowright'],
-        leftPage: ['shift', 'arrowleft'],
+        prevPage: ['arrowup'],
+        nextPage: ['arrowdown'],
       }"
       @shortkey="changePage"
       placeholder="..."
       type="text"
     />
-    <div class="hint" @click="rightPage">
-      <span class="hotkey">Shift + </span>→
+    <div class="hint" @click="nextPage">
+      <span class="hotkey">↓</span>
     </div>
   </div>
 </template>
@@ -29,22 +29,21 @@
     search.updateCurrent({ page: page.value })
   }
 
-  const leftPage = () => {
+  const nextPage = () => {
     page.value = page.value + 1
     commitPageChange()
   }
 
-  const rightPage = () => {
+  const prevPage = () => {
     page.value = page.value - 1
     commitPageChange()
   }
 
   const changePage = (event) => {
-    // Currently we only have books with reverse page order, so 'left' is the 'next page'
-    if (event.srcKey === 'leftPage') {
-      leftPage()
-    } else if (event.srcKey === 'rightPage') {
-      rightPage()
+    if (event.srcKey === 'prevPage') {
+      prevPage()
+    } else if (event.srcKey === 'nextPage') {
+      nextPage()
     }
   }
 </script>
