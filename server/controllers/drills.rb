@@ -52,7 +52,7 @@ end
 #
 # params[:id] [Number] Drill ID
 # params[:title] [String] Optional. New title for drill
-# params[:enabled] [String] Optional. Use it to enable/disable drill list. '0' stands for 'false'
+# params[:is_active] [String] Optional. Use it to enable/disable drill list. '0' stands for 'false'
 # params[:reset] [String] Optional. Use it to reset progresses. Values: 'reading' or 'writing'
 patch :drill do
   protect!
@@ -61,7 +61,7 @@ patch :drill do
   halt(403, "Access denied") if drill.user_id != current_user.id
 
   drill.title = params[:title] if params[:title].present?
-  drill.is_active = params[:enabled] == '0' ? false : true if params[:enabled].present?
+  drill.is_active = params[:is_active] if params.key?(:is_active)
 
   drill.reset_leitner(:reading) if params[:reset] == 'reading'
   drill.reset_leitner(:writing) if params[:reset] == 'writing'

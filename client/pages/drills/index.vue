@@ -10,7 +10,12 @@
         :key="drill.id"
         class="drill"
       >
-        <div>{{ drill.is_active ? '✏️' : null }}</div>
+        <a
+          @click="() => toggleActive(drill.id, !drill.is_active)"
+          class="active-icon"
+        >
+          {{ drill.is_active ? '✏️' : '　' }}
+        </a>
         <div>
           <NuxtLink :to="'/drills/' + drill.id">{{ drill.title }}</NuxtLink>
           <div class="created-at">{{ drill.created_at }}</div>
@@ -44,6 +49,14 @@
   const cache = useCache()
 
   onMounted(() => cache.loadDrills(true))
+
+  const toggleActive = async (drillId, newValue) => {
+    const resp = await $fetch(`/api/drill/${drillId}`, {
+      method: 'PATCH',
+      body: { is_active: newValue },
+    })
+    cache.updateDrill(JSON.parse(resp))
+  }
 </script>
 
 <style lang="scss">
@@ -67,6 +80,12 @@
       .created-at {
         opacity: 0.7;
         font-size: 0.75em;
+      }
+      .active-icon {
+        cursor: pointer;
+        &:hover {
+          opacity: 0.7;
+        }
       }
 
       a.quiz-link {
