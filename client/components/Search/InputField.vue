@@ -75,6 +75,13 @@
   })
   const selectedMode = ref('primary')
 
+  // When search is performed by an outside component (eg. click on
+  // mecab-parsed word node)
+  watch(currentRef, () => {
+    selectedMode.value = currentRef.value.mode
+    inputValues[currentRef.value.mode] = currentRef.value.query
+  })
+
   const emitSearch = () => {
     const query = inputValues[selectedMode.value]
     if (!query) return
