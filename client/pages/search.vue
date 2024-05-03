@@ -43,11 +43,19 @@
     }
   )
 
+  // When another candidate item is selected
   watch(() => route.params.seq, (seqStr) => {
     const seq = Number.parseInt(seqStr)
     const idx = results.value.findIndex(i => i[0] === seq)
     store.selectSeq(seq)
     scrollToIndex(idx)
+  })
+
+  // When clicked on mecab-parsed word node (both query and seq will be changed)
+  // When going back/forward browser's history
+  watch(() => route.params.query, (query) => {
+    const seq = Number.parseInt(route.params.seq)
+    store.search(query, 'primary', { seq })
   })
 
   const scrollToIndex = (idx) => {
