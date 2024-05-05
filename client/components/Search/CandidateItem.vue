@@ -3,6 +3,7 @@
     class="candidate-item no-refocus"
     :class="{ selected: isSelected }"
     @click="onClick(item[0])"
+    role="button"
   >
     <div class="title">
       <div class="text ja">{{ item[1] }}</div>

@@ -7,6 +7,7 @@
           :key="drill.id"
           class="item"
           @click="submit(drill.id)"
+          role="button"
         >
           <div class="margin"></div>
           <div class="title">{{ drill.title }}</div>

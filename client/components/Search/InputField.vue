@@ -16,6 +16,7 @@
         @click="() => setSearchMode(idx)"
         v-shortkey="['meta', idx + 1]"
         @shortkey="() => setSearchMode(idx)"
+        role="tab"
       >
         <component :is="mode.svg" />
       </div>
@@ -35,7 +36,7 @@
         @keydown.enter="emitSearch"
         @focus="() => setSearchMode(idx)"
       />
-      <div class="clear-button" @click="clearInputField">
+      <div class="clear-button" @click="clearInputField" role="button">
         <ClearIcon />
       </div>
     </div>

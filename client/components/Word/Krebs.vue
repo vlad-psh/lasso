@@ -2,7 +2,7 @@
   <div class="word-krebs">
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
       <Dropdown trigger="clickToToggle">
-        <WordPitch :kreb="kreb" />
+        <WordPitch :kreb="kreb" role="button" />
         <template #popper>
           <div class="popper">
             <DrillPopup

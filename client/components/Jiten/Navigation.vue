@@ -1,6 +1,6 @@
 <template>
   <div class="jiten-navigation">
-    <div class="hint" @click="prevPage">
+    <div class="hint" @click="prevPage" role="button">
       <span class="hotkey">↑</span>
     </div>
     <input
@@ -15,7 +15,7 @@
       placeholder="..."
       type="text"
     />
-    <div class="hint" @click="nextPage">
+    <div class="hint" @click="nextPage" role="button">
       <span class="hotkey">↓</span>
     </div>
   </div>

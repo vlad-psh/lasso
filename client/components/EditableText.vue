@@ -18,11 +18,11 @@
       <div class="error">{{ errorMessage }}</div>
     </template>
 
-    <pre v-else-if="!formOpened && textData" @click="openForm()">{{
+    <pre v-else-if="!formOpened && textData" @click="openForm()" role="button">{{
       textData
     }}</pre>
 
-    <p v-else @click="openForm()" class="placeholder">
+    <p v-else @click="openForm()" class="placeholder" role="button">
       {{ placeholder }}
     </p>
   </div>
