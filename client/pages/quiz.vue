@@ -2,10 +2,11 @@
   <div
     id="sentence-quiz-app"
     v-shortkey="{
-      correct: ['y'],
-      incorrect: ['n'],
+      correct: ['y',],
+      incorrect: ['k'],
       esc: ['esc'],
       space: ['space'],
+      enter: ['enter'],
     }"
     class="study-card"
     @shortkey="shortkey"
@@ -46,7 +47,18 @@
 
     <div v-if="selectedSeq">
       <div v-if="selectedSegment.answer" class="answer-buttons">
-        <div class="answer-button yellow" @click="resetAnswer">
+        <div
+          class="answer-button"
+          :class="{
+            red: selectedSegment.answer === 'incorrect',
+            green: selectedSegment.answer === 'correct',
+          }"
+          @click="resetAnswer"
+          v-shortkey="{
+            reset: ['backspace'],
+          }"
+          @shortkey="shortkey"
+        >
           RESET
           <div class="answer-details">
             Answered: {{ selectedSegment.answer }}
@@ -134,11 +146,18 @@
   const shortkey = (event) => {
     if (selectedSegment.value) {
       if (event.srcKey === 'correct' || event.srcKey === 'incorrect') {
-        setAnswer(event.srcKey)
-      } else if (event.srcKey === 'esc') selectedIndex.value = null
+        setAnswer(event.srcKey, false)
+      } else if (event.srcKey === 'esc') {
+        selectedIndex.value = null
+      } else if (event.srcKey === 'reset') {
+        resetAnswer()
+      }
     }
     if (event.srcKey === 'space') {
-      allAnswered.value ? submit() : selectHighlighted()
+      selectHighlighted()
+    } else if (event.srcKey === 'enter' && !!allAnswered.value) {
+      selectedIndex.value = null
+      submit()
     }
   }
 
@@ -155,9 +174,9 @@
     selectWord(i !== -1 ? i : 0) // select highlighted or first
   }
 
-  const setAnswer = (answerText) => {
+  const setAnswer = (answerText, unselect = true) => {
     selectedSegment.value.answer = answerText
-    selectedIndex.value = null
+    if (unselect) selectedIndex.value = null
   }
 
   const resetAnswer = () => {
