@@ -323,7 +323,7 @@
   } /* end of .answer-buttons */
 } /* end of #sentence-quiz-app */
 
-html[class='dark-mode'] body {
+html[class~='dark-mode'] body {
   #sentence-quiz-app {
     .sentence-question {
       background: none;

@@ -87,7 +87,7 @@ body {
   }
 }
 
-html[class='dark-mode'] body {
+html[class~='dark-mode'] body {
   --color: #ccc; // main text color
   --color-secondary: #8799a5; // little bit darker text
   --bg: #16202a; // #0d192b

@@ -197,7 +197,7 @@
   }
 } /* end of .elements-list */
 
-html[class='dark-mode'] body .elements-list .element-container {
+html[class~='dark-mode'] body .elements-list .element-container {
   .pristine {
     background-color: rgba(72, 72, 72, 0.14);
     color: #8799a5;

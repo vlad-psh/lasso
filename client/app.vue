@@ -122,7 +122,7 @@ body {
   }
 }
 
-html[class='dark-mode'] body {
+html[class~='dark-mode'] body {
   background: var(--bg);
   color: var(--color);
 
