@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'sinatra/content_for'
+require 'sinatra/json'
 require 'sinatra-snap'
 require 'rack/contrib'
 

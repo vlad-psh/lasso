@@ -5,7 +5,7 @@ import kanaProcess from '@/js/kana_helpers.js'
 
 import { useEnv } from './env'
 
-type TSearchMode = 'primary' | 'kokugo' | 'kanji' | 'onomat'
+type TSearchMode = 'primary' | 'kokugo' | 'kanji' | 'onomat' | 'drill'
 
 interface ICurrent {
   mode?: TSearchMode,
@@ -37,7 +37,7 @@ export const useSearch = defineStore('search', {
     selectedIdx: null,
     results: [] as TSearchResult[], // candidates array (short info)
     current: {
-      mode: undefined, // primary, kokugo, kanji, onomat
+      mode: undefined, // primary, kokugo, kanji, onomat, drill
       query: undefined,
       seq: undefined,
       page: undefined,

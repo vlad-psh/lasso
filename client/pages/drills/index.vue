@@ -14,7 +14,7 @@
           @click="() => toggleActive(drill.id, !drill.is_active)"
           class="active-icon"
         >
-          {{ drill.is_active ? '✏️' : '　' }}
+          {{ drill.is_active ? '☑️' : '　' }}
         </a>
         <div>
           <NuxtLink :to="'/drills/' + drill.id">{{ drill.title }}</NuxtLink>

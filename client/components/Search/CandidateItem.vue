@@ -19,7 +19,7 @@
 
 <script setup>
   defineProps({
-    item: { type: Array, required: true },
+    item: { type: Array, required: true }, // [ seq, title, reading, translation, isCommon, isLearned ]
     isSelected: { type: Boolean },
     onClick: { type: Function, required: true },
   })

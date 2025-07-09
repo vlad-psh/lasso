@@ -24,7 +24,7 @@ get :drill do
 
   words = drill.drills_progresses. \
     eager_load(progress: [:word, :srs_progresses]). \
-    order(created_at: :asc).map do |dp|
+    order(created_at: :desc).map do |dp|
       p = dp.progress
       w = p.word
       {
@@ -41,11 +41,11 @@ get :drill do
       }
   end
 
-  {
+  json({
     drill: drill,
     words: words,
     sentences: drill.sentences.map{|i| i.study_hash(current_user)},
-  }.to_json
+  })
 end
 
 # Change drill list

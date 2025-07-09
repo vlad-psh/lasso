@@ -1,207 +1,74 @@
 <template>
-  <div class="drill-details middle-content">
-    <h1>
-      <EditableText
-        :text-data="drill.title"
-        placeholder="Title..."
-        mode="compact"
-        @save="saveTitle"
-      ></EditableText>
-      <NuxtLink :to="readingQuiz">📰</NuxtLink>
-      <NuxtLink :to="writingQuiz">✍️</NuxtLink>
-    </h1>
-
-    <div v-for="groupName of ['reading', 'writing']" :key="groupName">
-      <h3>
-        {{ groupName }}
-        <DoubleClickButton @click="reset(groupName)"> reset </DoubleClickButton>
-      </h3>
-      <div class="elements-list">
-        <NuxtLink
-          v-for="(word, idx) of words"
-          :key="'word' + idx"
-          :to="searchPath(word)"
-          class="element-container"
-          @click.native="search(word)"
-        >
-          <div :class="word.progress[groupName]" class="element">
-            {{ word.title }}
-          </div>
-        </NuxtLink>
+  <SplitPage>
+    <template v-slot:list>
+      <div class="title">{{data.drill.title}}</div>
+      <div
+        v-for="(item, itemIndex) in data.words"
+        :class="{ selected: item.seq === currentRef.seq }"
+        :key="`candidate-${itemIndex}`"
+        ref="candidates"
+        class="candidate-item"
+        @click="() => openCandidate(item.seq)"
+      >
+        {{ item.title }}
       </div>
-    </div>
-
-    <h3>sentences</h3>
-    <SentenceForm :drill-id="drill.id" />
-    <ul>
-      <li v-for="(sentence, idx) of sentences" :key="`s${idx}`">
-        <span
-          v-for="(word, wordIdx) of sentence.structure"
-          :key="`s${idx}-${wordIdx}`"
-          ><NuxtLink
-            v-if="word.seq"
-            :to="searchPath(word)"
-            @click.native="search(word)"
-            >{{ word.text }}</NuxtLink
-          ><template v-else>{{ word.text }}</template></span
-        >
-      </li>
-    </ul>
-  </div>
+    </template>
+    <template v-slot:content>
+      <WordComponent v-if="currentRef.seq" :seq="currentRef.seq" />
+    </template>
+  </SplitPage>
 </template>
 
 <script setup>
-  const drill = ref()
-  const words = ref([])
-  const sentences = ref([])
+  import { storeToRefs } from 'pinia';
 
   const store = useSearch()
   const cache = useCache()
   const route = useRoute()
   const router = useRouter()
-  const resp = await $fetch(`/api/drill/${route.params.id}`)
-  const json = JSON.parse(resp)
+  const { current: currentRef } = storeToRefs(store)
+  const { data } = await useAPI(`/api/drill/${route.params.id}`)
 
-  drill.value = json.drill
-  words.value = json.words
-  sentences.value = json.sentences
-
-  const readingQuiz = {
-    name: 'quiz',
-    params: { drill_id: drill.value.id, type: 'reading' },
-  }
-
-  const writingQuiz = {
-    name: 'quiz',
-    params: { drill_id: drill.value.id, type: 'writing' },
-  }
-
-  const reset = async (group) => {
-    await $fetch(`/api/drill/${drill.value.id}`, {
-      method: 'PATCH',
-      body: {
-        reset: group,
-      },
+  const openCandidate = (seq, idx) => {
+    router.replace({
+      name: 'drills-id',
+      params: { id: route.params.id },
+      query: { seq },
     })
-    const data = await this.$options.asyncData(this.$root.$options.context)
-    Object.assign(this.$data, data)
   }
 
-  const searchPath = (word) => {
-    return {
-      name: 'search',
-      params: { query: word.title || word.base || word.text, seq: word.seq },
-    }
-  }
-
-  const search = (word) => {
-    store.search(word.title || word.text, 'primary', { seq: word.seq })
-      .then(router.push)
-  }
-
-  const saveTitle = (newTitle, cb) => {
-    $fetch(`/api/drill/${drill.value.id}`, {
-      method: 'PATCH',
-      body: { title: newTitle }
-    })
-      .then((resp) => {
-        const json = JSON.parse(resp)
-        cache.updateDrill(json)
-        drill.value = json
-        cb.resolve()
-      })
-      .catch((e) => {
-        cb.reject(e.message)
-      })
-  }
+  watch(() => route.query.seq, (seqStr) => {
+    const seq = Number.parseInt(seqStr)
+    store.updateCurrent({ mode: 'drill', query: undefined, seq })
+  })
 </script>
 
-<style lang="scss">
-.drill-details {
-  h1 {
-    a {
-      text-decoration: none;
-      opacity: 0.6;
-      margin-left: 0.3em;
-
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
-
-  ul {
-    text-align: left;
-  }
-}
-.elements-list {
+<style lang="scss" scoped>
+:deep(.search-results) {
   display: flex;
-  flex-flow: row wrap;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+:deep(.search-results .candidate-item) {
+  padding: 0.4em 0.5em;
+}
+:deep(.search-results .candidate-item.selected) {
+  padding: 0.4em 0.5em;
+}
+.title {
   width: 100%;
-
-  &::after {
-    content: '';
-    flex-grow: 1000000000;
-  }
-  .element-container {
-    display: inline-block;
-    min-width: 4em;
-    text-align: center;
-    font-size: 0.7em;
-    font-weight: 100;
-    flex: auto;
-    text-decoration: none;
-
-    .element {
-      padding: 0.4em 0.3em;
-      position: relative;
-      font-size: 1.4em;
-      line-height: 1.5em;
-      border-width: 0 1px 1px 0;
-      border-style: solid;
-    }
-
-    .pristine {
-      background-color: rgba(157, 157, 157, 0.1); /*#f5f5f5*/
-      color: #638686;
-      border-color: #b4c6c6;
-    }
-    .apprentice {
-      background-color: #a8dba8;
-      color: #357878;
-      border-color: #96c496;
-    }
-    .guru {
-      background-color: #79bd9a; /* #882d9e; */
-      color: #0b486b; /* enlightened bg */
-      border-color: #6ca98a;
-    }
-    .master {
-      background-color: #3b8686; /* #294ddb; */
-      color: #c7e3c7;
-      border-color: #357878;
-    }
-    .enlightened {
-      background-color: #0b486b; /* #0093dd; */
-      color: #79bd9a; /* guru bg */
-      border-color: #094060;
-    }
-    .burned {
-      /* gradient can be created here: http://www.patternify.com/ */
-      // background: $pattern-burned repeat;
-      // background-size: 3px 3px;
-      background-color: #0b486b;
-      color: #79bd9a;
-      border-color: #022030;
-    }
-  }
-} /* end of .elements-list */
-
-html[class~='dark-mode'] body .elements-list .element-container {
-  .pristine {
-    background-color: rgba(72, 72, 72, 0.14);
-    color: #8799a5;
-    border-color: #5da8c61f;
+  text-align: center;
+  background: linear-gradient(to bottom, #7770, #7777775e);
+  font-size: 0.7em;
+  font-weight: bold;
+  text-shadow: 0 1px 0 white;
+  padding: 0.3em 0 0.3em;
+}
+html[class~='dark-mode'] body {
+  .title {
+    color: #c5c4d0;
+    text-shadow: 0 1px 0 #3c3c3c;
+    background: linear-gradient(to top, rgba(119, 119, 119, 0), rgba(74, 107, 143, 0.37))
   }
 }
 </style>
