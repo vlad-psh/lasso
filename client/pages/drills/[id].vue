@@ -29,7 +29,9 @@
   const { current: currentRef } = storeToRefs(store)
   const { data } = await useAPI(`/api/drill/${route.params.id}`)
 
-  const openCandidate = (seq, idx) => {
+  cache.loadDrills() // Will load drills lists only if NOT already loaded
+
+  const openCandidate = (seq) => {
     router.replace({
       name: 'drills-id',
       params: { id: route.params.id },
@@ -37,10 +39,14 @@
     })
   }
 
-  watch(() => route.query.seq, (seqStr) => {
+  const openWord = (seqStr) => {
     const seq = Number.parseInt(seqStr)
     store.updateCurrent({ mode: 'drill', query: undefined, seq })
-  })
+  }
+
+  if (route.query.seq) openWord(route.query.seq)
+
+  watch(() => route.query.seq, openWord)
 </script>
 
 <style lang="scss" scoped>
