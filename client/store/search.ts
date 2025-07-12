@@ -59,7 +59,7 @@ export const useSearch = defineStore('search', {
   },
 
   actions: {
-    async search(query: string, mode: TSearchMode, params: { seq?: number, popRoute?: boolean }) {
+    async search(query: string, mode: TSearchMode, params: { seq?: number }) {
       switch (mode) {
         case 'kokugo': return this.kokugoSearch(query)
         case 'kanji': return this.kanjiSearch(query)

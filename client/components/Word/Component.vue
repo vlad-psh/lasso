@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="word-kanji">
+    <div class="word-kanji" v-if="kanji">
       <KanjiComponent v-for="k of kanji" :key="'kanji' + k.id" :payload="k" />
     </div>
   </div>
@@ -44,7 +44,7 @@
 
   const loadWord = async (seq) => {
     word.value = await cache.loadWord(seq)
-    kanji.value = word.value.kanji.split('')
+    kanji.value = (word.value.kanji || '').split('')
       .map((k) => cachedKanji.value[k])
   }
 

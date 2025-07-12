@@ -1,18 +1,18 @@
 <template>
   <div class="word-krebs">
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
-      <Dropdown trigger="clickToToggle">
+      <!-- <Dropdown trigger="clickToToggle"> -->
         <WordPitch :kreb="kreb" role="button" />
-        <template #popper>
-          <div class="popper">
-            <DrillPopup
-              :active-drills="kreb.drills"
-              :kreb-title="kreb.title"
-              :seq="seq"
-            ></DrillPopup>
-          </div>
-        </template>
-      </Dropdown>
+      <!--   <template #popper> -->
+      <!--     <div class="popper"> -->
+      <!--       <DrillPopup -->
+      <!--         :active-drills="kreb.drills" -->
+      <!--         :kreb-title="kreb.title" -->
+      <!--         :seq="seq" -->
+      <!--       ></DrillPopup> -->
+      <!--     </div> -->
+      <!--   </template> -->
+      <!-- </Dropdown> -->
 
       <div v-if="kreb.drills.length > 0" class="drills-counter">
         {{ kreb.drills.length }}
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-  import { Dropdown } from 'floating-vue'
+  // import { Dropdown } from 'floating-vue'
   import 'floating-vue/dist/style.css'
 
   defineProps({
@@ -40,11 +40,11 @@
   const store = useSearch()
 
   const searchRoute = (kreb) => {
-    return { name: 'jiten', params: { mode: 'kokugo', query: kreb.title } }
+    return { name: 'jiten', query: { mode: 'kokugo', query: kreb.title } }
   }
 
   const search = (kreb) => {
-    store.search(kreb.title, 'kokugo', { popRoute: true })
+    store.search(kreb.title, 'kokugo')
   }
 </script>
 

@@ -1,5 +1,3 @@
-import { IDrill, IKanji, IKanjiCollection, IWord, IWordsCollection } from "~/types"
-
 interface IWordResponse {
   words: IWord[],
   kanjis: IKanji[],

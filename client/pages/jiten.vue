@@ -12,10 +12,10 @@
   })
 
   store.search(
-    route.params.query,
-    route.params.mode,
+    route.query.query,
+    route.query.mode,
     {
-      seq: Number.parseInt(route.params.seq),
+      seq: Number.parseInt(route.query.seq),
     }
   )
 </script>

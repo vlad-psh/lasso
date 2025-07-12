@@ -34,15 +34,15 @@
 
   cache.loadDrills() // Will load drills lists only if NOT already loaded
   store.search(
-    route.params.query,
+    route.query.query,
     'primary',
     {
-      seq: Number.parseInt(route.params.seq),
+      seq: Number.parseInt(route.query.seq),
     }
   )
 
   // When another candidate item is selected
-  watch(() => route.params.seq, (seqStr) => {
+  watch(() => route.query.seq, (seqStr) => {
     const seq = Number.parseInt(seqStr)
     const idx = results.value.findIndex(i => i[0] === seq)
     store.selectSeq(seq)
@@ -51,8 +51,8 @@
 
   // When clicked on mecab-parsed word node (both query and seq will be changed)
   // When going back/forward browser's history
-  watch(() => route.params.query, (query) => {
-    const seq = Number.parseInt(route.params.seq)
+  watch(() => route.query.query, (query) => {
+    const seq = Number.parseInt(route.query.seq)
     store.search(query, 'primary', { seq })
   })
 
@@ -69,7 +69,7 @@
   const openCandidate = (seq, idx) => {
     router.replace({
       name: 'search',
-      params: { query: route.params.query, seq },
+      query: { query: route.query.query, seq },
     })
   }
 </script>

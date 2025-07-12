@@ -114,13 +114,13 @@
   })
 
   const searchRoute = computed(() => {
-    return { name: 'search', params: { query: props.payload.title } }
+    return { name: 'search', query: { query: props.payload.title } }
   })
 
   const bookSearchRoute = computed(() => {
     return {
       name: 'jiten',
-      params: { query: props.payload.title, mode: 'kanji' },
+      query: { query: props.payload.title, mode: 'kanji' },
     }
   })
 

@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <JitenNavigation v-if="route.name === 'jiten'" :key="route.params.mode"/>
+    <JitenNavigation v-if="route.name === 'jiten'" :key="route.query.mode"/>
   </div>
 </template>
 
@@ -88,7 +88,9 @@
     if (!query) return
 
     store.search(query, selectedMode.value)
-      .then(router.push)
+      .then(result => {
+        router.push({ name: result.name, query: result.params })
+      })
   }
 
   /* const searchLater = debounce(function () {
@@ -138,8 +140,8 @@
 
     router.replace({
       name: 'search',
-      params: {
-        query: route.params.query,
+      query: {
+        query: route.query.query,
         seq:   results.value[idx][0],
       },
     })
@@ -147,7 +149,7 @@
 
   onMounted(() => {
     selectedMode.value = store.current.mode || 'primary'
-    inputValues[selectedMode.value] = route.params.query
+    inputValues[selectedMode.value] = route.query.query
   })
 </script>
 

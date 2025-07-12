@@ -30,13 +30,13 @@
   const path = (query) => {
     return router.resolve({
       name: 'search',
-      params: { query },
+      query: { query },
     }).href
   }
 
   const search = (query) => {
     store.search(query, 'primary')
-      .then(router.push)
+      .then(result => router.push({ name: result.name, query: result.params }))
   }
 </script>
 

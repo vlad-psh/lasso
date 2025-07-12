@@ -27,30 +27,13 @@ export default defineNuxtConfig({
     plugins: [
       svgLoader(),
     ],
-  },
-
-  hooks: {
-    'pages:extend'(pages) {
-      pages.push({
-        name: 'index',
-        redirect: { name: 'search' },
-      }, {
-        name: 'search',
-        path: '/search/:query?/:seq?',
-        file: '~/pages/search.vue',
-      }, {
-        name: 'jiten',
-        path: '/jiten/:mode/:query',
-        file: '~/pages/jiten.vue',
-      }, {
-        name: 'quiz',
-        path: '/quiz/:drill_id/:type',
-        file: '~/pages/quiz.vue',
-      })
-    },
+    server: {
+      allowedHosts: true,
+    }
   },
 
   colorMode: {
     preference: 'light', // disable system mode
   },
+
 })

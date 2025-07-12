@@ -96,7 +96,7 @@
 
   const search = (word) => {
     store.search(word.title || word.text, 'primary', { seq: word.seq })
-      .then(router.push)
+      .then(result => router.push({ name: result.name, query: result.params })
   }
 
   const saveTitle = (newTitle, cb) => {
