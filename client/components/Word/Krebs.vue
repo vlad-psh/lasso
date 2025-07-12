@@ -1,18 +1,16 @@
 <template>
   <div class="word-krebs">
     <div v-for="kreb of krebs" :key="kreb.title" class="kreb-item">
-      <!-- <Dropdown trigger="clickToToggle"> -->
+      <Popper :arrow="true" :interactive="true" placement="bottom">
         <WordPitch :kreb="kreb" role="button" />
-      <!--   <template #popper> -->
-      <!--     <div class="popper"> -->
-      <!--       <DrillPopup -->
-      <!--         :active-drills="kreb.drills" -->
-      <!--         :kreb-title="kreb.title" -->
-      <!--         :seq="seq" -->
-      <!--       ></DrillPopup> -->
-      <!--     </div> -->
-      <!--   </template> -->
-      <!-- </Dropdown> -->
+        <template #content>
+          <DrillPopup
+            :active-drills="kreb.drills"
+            :kreb-title="kreb.title"
+            :seq="seq"
+          />
+        </template>
+      </Popper>
 
       <div v-if="kreb.drills.length > 0" class="drills-counter">
         {{ kreb.drills.length }}
@@ -29,8 +27,7 @@
 </template>
 
 <script setup>
-  // import { Dropdown } from 'floating-vue'
-  import 'floating-vue/dist/style.css'
+  import Popper from "vue3-popper";
 
   defineProps({
     krebs: { type: Array, required: true },
@@ -55,10 +52,6 @@
   margin-right: 0.6em;
   margin-bottom: 0.3em;
   border-bottom: none;
-
-  .v-popper {
-    display: inline-block;
-  }
 
   .drills-counter {
     display: inline-block;
